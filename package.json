@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/bitcoinjs-lib": "^3.4.0",
     "bitcoinjs-lib": "^3.3.2",
     "dotenv": "^5.0.1",
     "qtumjs-wallet": "0.0.6"
