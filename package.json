@@ -12,6 +12,7 @@
   "dependencies": {
     "bitcoinjs-lib": "^3.3.2",
     "dotenv": "^5.0.1",
+    "ethereumjs-abi": "^0.6.5",
     "qtumjs-wallet": "0.0.6"
   }
 }
