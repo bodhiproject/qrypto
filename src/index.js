@@ -1,4 +1,3 @@
-require('dotenv').config()
 const QWallet = require('qtumjs-wallet')
 const abi = require('ethereumjs-abi')
 
@@ -18,7 +17,7 @@ async function mainWallet() {
   }
   const wallet = network.fromWIF(privateKey)
   const info = await wallet.getInfo()
-  // console.log("wallet info:", info)
+  console.log("wallet info:", info)
 
   // Send - generate, sign, and send tx//////////////////////
   // let amountToSend = 0.15 * 1e8
