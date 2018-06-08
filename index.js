@@ -28,4 +28,8 @@ async function mainWallet() {
   console.log(sentTx);
 }
 
-mainWallet().catch((err) => console.log(err))
+try {
+  await mainWallet();
+} catch (err) {
+  console.log(err);
+}
