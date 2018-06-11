@@ -2,7 +2,9 @@
 # Created by https://www.gitignore.io/api/node,linux,macos,windows,visualstudio,visualstudiocode
 
 ###CUSTOM
-dist/background.js
+dist/background.bundle.js
+dist/popup.bundle.js
+src/script_no_chromeext_no_react.js
 
 ### Linux ###
 *~

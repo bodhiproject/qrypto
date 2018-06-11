@@ -4,7 +4,7 @@
   "description": "Light Client",
   "permissions": ["activeTab", "declarativeContent", "storage"],
   "background": {
-    "scripts": ["dist/background.js"],
+    "scripts": ["dist/background.bundle.js"],
     "persistent": false
   },
   "page_action": {
