@@ -1,0 +1,63 @@
+{
+  "name": "Name of your chrome extension",
+  "description": "Description of your chrome extension.",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_icon": "images/icon128.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "background": {
+    "scripts": [
+      "hot-reload.js",
+      "commons.all.js",
+      "commons.exclude-contentscript.js",
+      "commons.exclude-popup.js",
+      "commons.exclude-inpage.js",
+      "commons.background-contentscript.js",
+      "commons.background-popup.js",
+      "commons.background-inpage.js",
+      "background.js"
+    ]
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "file://*/*",
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "commons.all.js",
+        "commons.exclude-background.js",
+        "commons.exclude-popup.js",
+        "commons.exclude-inpage.js",
+        "commons.background-contentscript.js",
+        "commons.contentscript-popup.js",
+        "commons.contentscript-inpage.js",
+        "contentscript.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "web_accessible_resources": [
+    "commons.all.js",
+    "commons.exclude-background.js",
+    "commons.exclude-contentscript.js",
+    "commons.exclude-popup.js",
+    "commons.background-inpage.js",
+    "commons.contentscript-inpage.js",
+    "commons.popup-inpage.js",
+    "inpage.js"
+  ],
+  "externally_connectable": {
+    "ids": ["*"]
+  }
+}
