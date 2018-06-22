@@ -1,24 +1,27 @@
 import * as React from 'react';
-import {
-  withRouter
-} from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
+import { inject, observer } from 'mobx-react';
 
-class MainAccount extends React.Component<any, {}> {
+@withRouter
+@inject('store')
+@observer
+export default class MainAccount extends React.Component<any, {}> {
 
   handleClick = () => {
     this.props.history.push('/accountdetail')
   }
   
   public render(){
+    const { info } = this.props.store.walletStore
+    
     return(
       <div onClick={this.handleClick}>
-        <h3>MainAccount</h3>
-        <h6>Stormtrooper</h6>
-        <p>Qn....</p>
-        0.09999 QTUM
+        <h3>Main Account Page</h3>
+        <h6>{`<Account Name>`}</h6>
+        <p>{info.addrStr}</p>
+        <p>{info.balance} QTUM</p>
+        <p>= {`<123... USD>`}</p>
       </div>
     )
   }
 }
-
-export default withRouter(MainAccount)

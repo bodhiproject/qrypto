@@ -53,28 +53,28 @@ class App extends React.Component<IProps, IState> {
 
     return (
       <MobxProvider store={store}>
-      <Router>
-        <div >
-          {/* TODO - this will later become if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic, else route to login, as such I think redirect is the right way to go */}
-          <Redirect to='/importmnemonic' />
-          {/* <Link to="/">Home</Link>
-          <Link to="/importmnemonic">ImportMnemonic</Link>      
-          <Button variant="contained" color="primary">Hello World</Button>
-          <input type="text" onChange={this.handleInputChange} value={mnemonic} />
-          <button onClick={this.handleRecover}>
-            create wallet
-          </button>
+        <Router>
+          <div >
+            {/* TODO - this will later become if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic, else route to login, as such I think redirect is the right way to go */}
+            <Redirect to='/importmnemonic' />
+            {/* <Link to="/">Home</Link>
+            <Link to="/importmnemonic">ImportMnemonic</Link>      
+            <Button variant="contained" color="primary">Hello World</Button>
+            <input type="text" onChange={this.handleInputChange} value={mnemonic} />
+            <button onClick={this.handleRecover}>
+              create wallet
+            </button>
 
-          {wallet && this.renderWallet()} */}
+            {wallet && this.renderWallet()} */}
 
-          <Route exact path="/" component={Home} />
-          <Route exact path="/importmnemonic" component={ImportMnemonic} />
-          <Route exact path="/accountdetail" component={AccountDetail} />
-          <Route exact path="/send" component={Send} />
-          <Route exact path="/sendconfirm" component={SendConfirm} />
-          <Route exact path="/receive" component={Receive} />
-        </div>
-      </Router>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/importmnemonic" component={ImportMnemonic} />
+            <Route exact path="/accountdetail" component={AccountDetail} />
+            <Route exact path="/send" component={Send} />
+            <Route exact path="/sendconfirm" component={SendConfirm} />
+            <Route exact path="/receive" component={Receive} />
+          </div>
+        </Router>
       </MobxProvider>
     )
   }

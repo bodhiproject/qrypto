@@ -2,19 +2,23 @@ import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import { withRouter } from 'react-router-dom'
 
-class Send extends React.Component<any, {}> {
+@withRouter
+export default class Send extends React.Component<any, {}> {
 
   handleCreate = () => {
     this.props.history.push('/sendconfirm')
   }
   
   public render(){
+    const { info } = this.props.store.walletStore
+    
     return(
       <div>
-        <h3>Send</h3>
-        <h6>Sub-address 01</h6>
-        <p>Qn....</p>
-        <p>0.09999 QTUM</p>
+        <h3>Send Page</h3>
+        <h6>{`<Account Name>`}</h6>
+        <p>{info.addrStr}</p>
+        <p>{info.balance} QTUM</p>
+        <p>= {`<123... USD>`}</p>
         <Button variant="contained" color="primary" onClick={this.handleCreate}>
           Create
         </Button>
@@ -22,5 +26,3 @@ class Send extends React.Component<any, {}> {
     )
   }
 }
-
-export default withRouter(Send)
