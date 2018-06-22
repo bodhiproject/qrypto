@@ -11,6 +11,8 @@ import Send from './pages/Send';
 import Receive from './pages/Receive';
 import SendConfirm from './pages/SendConfirm';
 
+import { Provider as MobxProvider } from 'mobx-react'
+import store from '../stores/AppStore'
 // function recoverWallet(mnemonic: string): Wallet {
 //   const network = networks.testnet
 //   return network.fromMnemonic(mnemonic)
@@ -50,6 +52,7 @@ class App extends React.Component<IProps, IState> {
     // const { mnemonic, wallet } = this.state
 
     return (
+      <MobxProvider store={store}>
       <Router>
         <div >
           {/* TODO - this will later become if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic, else route to login, as such I think redirect is the right way to go */}
@@ -72,6 +75,7 @@ class App extends React.Component<IProps, IState> {
           <Route exact path="/receive" component={Receive} />
         </div>
       </Router>
+      </MobxProvider>
     )
   }
 
