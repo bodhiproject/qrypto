@@ -15,9 +15,7 @@ import store from '../stores/AppStore'
 class App extends Component<IProps, {}> {
 
   componentWillUnmount() {
-    const { stopGetInfoPolling } = this.props.store.walletStore;
-
-    stopGetInfoPolling();
+    this.props.store.walletStore.stopGetInfoPolling();
   }
 
   public render() {
