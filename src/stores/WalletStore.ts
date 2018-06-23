@@ -48,12 +48,15 @@ class WalletStore {
   }
 
   @action
-  public async startGetInfoPolling() {
-    this.getInfoInterval = setInterval(this.getWalletInfo, 5000);
+  public startGetInfoPolling() {
+    const self = this;
+    this.getInfoInterval = setInterval(async () => {
+      self.info = await self.qjsWallet.getInfo();
+    }, 5000);
   }
 
   @action
-  public async stopGetInfoPolling() {
+  public stopGetInfoPolling() {
     if (this.getInfoInterval) {
       clearInterval(this.getInfoInterval);
     }
@@ -67,8 +70,7 @@ class WalletStore {
 
   @action
   private async getWalletInfo() {
-    console.log('getWalletInfo', this.qjsWallet);
-    this.info = await this.qjsWallet.getInfo()
+    this.info = await this.qjsWallet.getInfo();
   }
 }
 

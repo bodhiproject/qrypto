@@ -39,16 +39,11 @@ export default class MainAccount extends Component<any, {}> {
   }
   
   public render() {
-    const { info } = this.props.store.walletStore
-    console.log("info:", info)
+    const { info } = this.props.store.walletStore;
 
     return(
       <div style={{ margin: 16 }}>
-        <MainAccountCard
-          address={info.addrStr}
-          balance={info.balance}
-          handleClick={this.handleClick}
-        />
+        <MainAccountCard address={info.addrStr} balance={info.balance} handleClick={this.handleClick} />
       </div>
     )
   }

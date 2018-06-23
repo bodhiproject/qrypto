@@ -11,7 +11,6 @@ import _ from 'lodash';
 export default class ImportMnemonic extends Component<{}, IState> {
 
   public render(){ 
-    console.log("render props:", this.props)
     const { history } = this.props;
     const { mnemonic } = this.props.store.walletStore;
 
