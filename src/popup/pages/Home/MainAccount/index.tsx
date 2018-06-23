@@ -42,7 +42,7 @@ export default class MainAccount extends Component<any, {}> {
     const { info } = this.props.store.walletStore;
 
     return(
-      <div style={{ margin: 16 }}>
+      <div>
         <MainAccountCard address={info.addrStr} balance={info.balance} handleClick={this.handleClick} />
       </div>
     )

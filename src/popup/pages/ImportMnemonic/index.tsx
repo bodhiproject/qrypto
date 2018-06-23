@@ -11,11 +11,10 @@ import _ from 'lodash';
 export default class ImportMnemonic extends Component<{}, IState> {
 
   public render(){ 
-    const { history } = this.props;
-    const { mnemonic } = this.props.store.walletStore;
+    const { history, store: { walletStore } } = this.props;
 
     // Route to home page if mnemonic is found in storage
-    if (!_.isEmpty(mnemonic)) {
+    if (!_.isEmpty(walletStore.mnemonic)) {
       history.push('/');
     }
 
@@ -27,16 +26,15 @@ export default class ImportMnemonic extends Component<{}, IState> {
           fullWidth
           required
           label="Mnemonic"
-          value={mnemonic}
           style={{ marginBottom: 16 }}
-          onChange={(e) => mnemonic = e.target.value}
-          error={_.isEmpty(mnemonic)}
+          onChange={(e) => walletStore.enteredMnemonic = e.target.value}
+          error={_.isEmpty(walletStore.enteredMnemonic)}
         />
         <Button
           variant="contained"
           color="primary"
           onClick={this.recoverAndGoToHomePage}
-          disabled={_.isEmpty(mnemonic)}
+          disabled={_.isEmpty(walletStore.enteredMnemonic)}
         >
           Import Wallet
         </Button>
@@ -47,7 +45,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
   public recoverAndGoToHomePage = () => {
     const { store: { walletStore }, history } = this.props;
 
-    walletStore.handleRecover();
+    walletStore.onImportNewMnemonic();
     history.push('/');
   }
 }

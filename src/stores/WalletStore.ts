@@ -5,6 +5,7 @@ import { observable, action, runInAction } from 'mobx';
 class WalletStore {
   qjsWallet:any = null
   @observable mnemonic = ''
+  @observable enteredMnemonic: string = ''
   @observable info: any = {}
   @observable tip = ''
 
@@ -25,10 +26,10 @@ class WalletStore {
     })
   }
 
-  public handleRecover() {
-    this.qjsWallet = this.recoverWallet()
-    chrome.storage.local.set({ mnemonic: this.mnemonic })
-    this.getWalletInfo()
+  @action
+  public onImportNewMnemonic() {
+    this.qjsWallet = this.recoverWallet(this.enteredMnemonic);
+    chrome.storage.local.set({ mnemonic: this.enteredMnemonic });
   }
 
   @action
