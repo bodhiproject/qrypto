@@ -10,7 +10,12 @@ import MainAccount from './MainAccount';
 class Home extends React.Component<any, {}> {
 
   goToDetail = () => {
-    this.props.history.push('/account-detail')
+    this.props.history.push('/account-detail');
+  }
+
+  onLogoutButtonClick = () => {
+    this.props.store.walletStore.clearMnemonic();
+    this.props.history.push('/import-mnemonic');
   }
 
   public render() {
@@ -33,7 +38,7 @@ class Home extends React.Component<any, {}> {
           open={Boolean(homeStore.settingsMenuAnchor)}
           onClose={() => homeStore.settingsMenuAnchor = null}
         >
-          <MenuItem>Logout</MenuItem>
+          <MenuItem onClick={this.onLogoutButtonClick}>Logout</MenuItem>
         </Menu>
         <MainAccount />
       </div>

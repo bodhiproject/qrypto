@@ -10,6 +10,10 @@ import _ from 'lodash';
 @observer
 export default class ImportMnemonic extends Component<{}, IState> {
 
+  componentWillMount() {
+    this.props.store.walletStore.stopGetInfoPolling();
+  }
+
   public render(){ 
     const { history, store: { walletStore } } = this.props;
 

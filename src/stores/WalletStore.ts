@@ -64,6 +64,12 @@ class WalletStore {
   }
 
   @action
+  public clearMnemonic = () => {
+    this.mnemonic = '';
+    this.enteredMnemonic = '';
+  }
+
+  @action
   private async getWalletInfo() {
     this.info = await this.qjsWallet.getInfo();
   }
