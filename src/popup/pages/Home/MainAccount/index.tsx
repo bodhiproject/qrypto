@@ -23,14 +23,18 @@ export default class MainAccount extends Component<any, {}> {
     return(
       <div style={{ margin: 16 }}>
         <h3>Main Account Page</h3>
-        <Card onClick={this.handleClick} style={{ cursor: 'pointer' }}>
-          <CardContent style={{ margin: 8 }}>
-            <Typography variant="title" style={{ marginBottom: 8 }}>Account Name</Typography>
-            <Typography variant="caption">{info.addrStr}</Typography>
-            <Typography variant="caption">{info.balance} QTUM</Typography>
-          </CardContent>
-        </Card>
+        <MainAccountCard address={info.addrStr} balance={info.balance} onClick={this.handleClick} />
       </div>
     )
   }
 }
+
+const MainAccountCard = ({ address, balance, onClick }) => (
+  <Card onClick={onClick} style={{ cursor: 'pointer' }}>
+    <CardContent style={{ margin: 8 }}>
+      <Typography variant="title" style={{ marginBottom: 8 }}>Account Name</Typography>
+      <Typography variant="caption">{address}</Typography>
+      <Typography variant="caption">{balance} QTUM</Typography>
+    </CardContent>
+  </Card>
+);
