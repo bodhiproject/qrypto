@@ -16,24 +16,13 @@ class WalletStore {
     console.log("wallet store constructor")
     chrome.storage.local.get('mnemonic', ({ mnemonic }) => {
       if (mnemonic == null) {
-        return
+        return;
       }
 
-      this.mnemonic = mnemonic
-      this.qjsWallet = this.recoverWallet(mnemonic)
-      this.info = this.getWalletInfo()
+      this.mnemonic = mnemonic;
+      this.qjsWallet = this.recoverWallet(mnemonic);
+      this.info = this.getWalletInfo();
     })
-  }
-
-  private recoverWallet(mnemonic: string = this.mnemonic): Wallet {
-    console.log("wallet store recoverWallet, mnemonic:", mnemonic)
-    const network = networks.testnet
-    return network.fromMnemonic(mnemonic)
-  }
-
-  @action
-  private async getWalletInfo() {
-    this.info = await this.qjsWallet.getInfo()
   }
 
   public handleRecover() {
@@ -56,6 +45,30 @@ class WalletStore {
       console.log(err)
       this.tip = err.message
     }
+  }
+
+  @action
+  public async startGetInfoPolling() {
+    this.getInfoInterval = setInterval(this.getWalletInfo, 5000);
+  }
+
+  @action
+  public async stopGetInfoPolling() {
+    if (this.getInfoInterval) {
+      clearInterval(this.getInfoInterval);
+    }
+  }
+
+  private recoverWallet(mnemonic: string = this.mnemonic): Wallet {
+    console.log("wallet store recoverWallet, mnemonic:", mnemonic)
+    const network = networks.testnet
+    return network.fromMnemonic(mnemonic)
+  }
+
+  @action
+  private async getWalletInfo() {
+    console.log('getWalletInfo', this.qjsWallet);
+    this.info = await this.qjsWallet.getInfo()
   }
 }
 

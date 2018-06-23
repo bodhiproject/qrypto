@@ -30,6 +30,10 @@ export default class MainAccount extends Component<any, {}> {
     }
   }
 
+  componentWillMount() {
+    this.props.store.walletStore.startGetInfoPolling();
+  }
+
   componentWillUnmount() {
     this.props.store.ui.prevLocation = '/';
   }

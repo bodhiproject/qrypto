@@ -12,26 +12,32 @@ export default class ImportMnemonic extends Component<{}, IState> {
 
   public render(){ 
     console.log("render props:", this.props)
-    const { walletStore } = this.props.store
+    const { history } = this.props;
+    const { mnemonic } = this.props.store.walletStore;
+
+    // Route to home page if mnemonic is found in storage
+    if (!_.isEmpty(mnemonic)) {
+      history.push('/');
+    }
 
     return(
       <div style={{ margin: 16 }}>
         <Typography variant="title" style={{ marginBottom: 16 }}>Enter Your Wallet Mnemonic</Typography>
         <TextField
-          autofocus
+          autoFocus
           fullWidth
           required
           label="Mnemonic"
-          value={walletStore.mnemonic}
+          value={mnemonic}
           style={{ marginBottom: 16 }}
-          onChange={(e) => walletStore.mnemonic = e.target.value}
-          error={_.isEmpty(walletStore.mnemonic)}
+          onChange={(e) => mnemonic = e.target.value}
+          error={_.isEmpty(mnemonic)}
         />
         <Button
           variant="contained"
           color="primary"
           onClick={this.recoverAndGoToHomePage}
-          disabled={_.isEmpty(walletStore.mnemonic)}
+          disabled={_.isEmpty(mnemonic)}
         >
           Import Wallet
         </Button>
@@ -40,10 +46,10 @@ export default class ImportMnemonic extends Component<{}, IState> {
   }
 
   public recoverAndGoToHomePage = () => {
-    const { store: { walletStore }, history } = this.props
+    const { store: { walletStore }, history } = this.props;
 
-    walletStore.handleRecover()
-    history.push('/')
+    walletStore.handleRecover();
+    history.push('/');
   }
 }
 
