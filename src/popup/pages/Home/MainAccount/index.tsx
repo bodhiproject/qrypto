@@ -52,29 +52,32 @@ export default class MainAccount extends Component<any, {}> {
 
 const MainAccountCard = ({ address, balance, handleClick }) => (
   <Card id="mainCard" onClick={(e) => handleClick('mainCard', e)} style={{ cursor: 'pointer' }}>
-    <CardContent style={{ margin: 8 }}>
+    <CardContent>
       <Typography variant="title" style={{ marginBottom: 8 }}>Account Name</Typography>
       <Typography variant="caption">{address}</Typography>
       <Typography variant="caption" style={{ marginBottom: 8 }}>{balance} QTUM</Typography>
-      <Button
-        id="sendButton"
-        color="primary"
-        variant="raised"
-        size="small"
-        onClick={(e) => handleClick('sendButton', e)}
-        style={{ marginRight: 8 }}
-       >
-         Send
-       </Button>
-      <Button
-        id="receiveButton"
-        color="primary"
-        variant="raised"
-        size="small"
-        onClick={(e) => handleClick('receiveButton', e)}
-       >
-         Receive
-       </Button>
+      <div style={{ textAlign: 'right' }}>
+        <Button
+          id="sendButton"
+          color="primary"
+          variant="raised"
+          size="small"
+          onClick={(e) => handleClick('sendButton', e)}
+          style={{ marginRight: 8, minWidth: 0, minHeight: 0, fontSize: 11 }}
+         >
+           Send
+         </Button>
+        <Button
+          id="receiveButton"
+          color="primary"
+          variant="raised"
+          size="small"
+          onClick={(e) => handleClick('receiveButton', e)}
+          style={{ minWidth: 0, minHeight: 0, fontSize: 11 }}
+         >
+           Receive
+         </Button>
+      </div>
     </CardContent>
   </Card>
 );
