@@ -1,6 +1,6 @@
-import * as React from 'react';
+import * as React from 'react'
 import { withRouter } from 'react-router-dom'
-import { inject, observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react'
 
 @withRouter
 @inject('store')
@@ -8,12 +8,16 @@ import { inject, observer } from 'mobx-react';
 export default class MainAccount extends React.Component<any, {}> {
 
   handleClick = () => {
-    this.props.history.push('/accountdetail')
+    this.props.history.push('/account-detail')
+  }
+
+  componentWillUnmount() {
+    this.props.store.ui.prevLocation = '/'
   }
   
   public render(){
     const { info } = this.props.store.walletStore
-    
+    console.log("info:", info)
     return(
       <div onClick={this.handleClick}>
         <h3>Main Account Page</h3>

@@ -1,20 +1,27 @@
-import * as React from 'react';
-import {
-  withRouter
-} from 'react-router-dom'
+import * as React from 'react'
+import { inject, observer } from 'mobx-react'
+import { NavBar } from '../../components/NavBar'
 
-class Receive extends React.Component<any, {}> {
+@inject('store')
+@observer
+export default class Receive extends React.Component<any, {}> {
+
+  componentDidMount() {
+    this.props.store.ui.prevLocation = '/account-detail'
+  }
   
   public render(){
+    const { info } = this.props.store.walletStore
+
     return(
       <div>
-        <h3>Receive</h3>
-        <h6>Sub-address 01</h6>
-        <p>Qn....</p>
-        <p>0.09999 QTUM</p>
+        <NavBar hasBackButton={true} title={'Receive Page'} />
+        <h6>{`<Account Name>`}</h6>
+        <p>{info.addrStr}</p>
+        <p>{info.balance} QTUM</p>
+        <p>= {`<123... USD>`}</p>
+        <p>{`<QRC CODE>`}</p>
       </div>
     )
   }
 }
-
-export default withRouter(Receive)

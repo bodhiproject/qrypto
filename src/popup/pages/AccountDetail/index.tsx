@@ -2,11 +2,11 @@ import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react';
+import { NavBar } from '../../components/NavBar'
 
-@withRouter
 @inject('store')
 @observer
-export default class AccountDetail extends React.Component<any, {}> {
+class AccountDetail extends React.Component<any, {}> {
 
   goToSend = () => {
     this.props.history.push('/send')
@@ -15,11 +15,16 @@ export default class AccountDetail extends React.Component<any, {}> {
   goToReceive = () => {
     this.props.history.push('/receive')
   }
+
+  componentDidMount() {
+    this.props.store.ui.prevLocation = '/'
+  }
   
   public render(){
     const { info } = this.props.store.walletStore
     return(
       <div>
+        <NavBar hasBackButton={true} title={'Account Detail Page'} />
         <h3>Account Detail Page</h3>
         <h6>{`<Account Name>`}</h6>
         <p>{info.addrStr}</p>
@@ -35,3 +40,5 @@ export default class AccountDetail extends React.Component<any, {}> {
     )
   }
 }
+
+export default withRouter(AccountDetail)

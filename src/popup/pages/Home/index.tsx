@@ -7,7 +7,7 @@ import MainAccount from './MainAccount';
 class Home extends React.Component<any, {}> {
 
   goToDetail = () => {
-    this.props.history.push('/accountdetail')
+    this.props.history.push('/account-detail')
   }
 
   public render(){

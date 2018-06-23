@@ -1,77 +1,35 @@
 import * as React from 'react'
-import { networks, Wallet, Insight} from 'qtumjs-wallet'
-import './App.scss';
-import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
+import './App.scss'
+import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom"
 
-import Button from '@material-ui/core/Button';
-import ImportMnemonic from './pages/ImportMnemonic';
-import Home from './pages/Home';
-import AccountDetail from './pages/AccountDetail';
+import ImportMnemonic from './pages/ImportMnemonic'
+import Home from './pages/Home'
+import AccountDetail from './pages/AccountDetail'
 import Send from './pages/Send';
-import Receive from './pages/Receive';
-import SendConfirm from './pages/SendConfirm';
+import Receive from './pages/Receive'
+import SendConfirm from './pages/SendConfirm'
 
 import { Provider as MobxProvider } from 'mobx-react'
 import store from '../stores/AppStore'
-// function recoverWallet(mnemonic: string): Wallet {
-//   const network = networks.testnet
-//   return network.fromMnemonic(mnemonic)
-// }
 
-class App extends React.Component<IProps, IState> {
-
-  public constructor(props: IProps) {
-    super(props)
-
-    // this.state = {
-    //   mnemonic: '',
-    //   amount: 0,
-    //   receiver: '',
-    //   tip: '',
-    // }
-  }
-
-  // public componentDidMount() {
-  //   if (!!this.state.mnemonic) {
-  //     return
-  //   }
-
-  //   chrome.storage.local.get('mnemonic', ({ mnemonic }) => {
-  //     if (mnemonic == null) {
-  //       return
-  //     }
-
-  //     const wallet = recoverWallet(mnemonic)
-  //     this.setState({ mnemonic, wallet })
-  //     this.getWalletInfo()
-  //   })
-  // }
+class App extends React.Component<IProps, {}> {
 
   public render() {
-
-    // const { mnemonic, wallet } = this.state
 
     return (
       <MobxProvider store={store}>
         <Router>
           <div >
-            {/* TODO - this will later become if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic, else route to login, as such I think redirect is the right way to go */}
-            <Redirect to='/importmnemonic' />
-            {/* <Link to="/">Home</Link>
-            <Link to="/importmnemonic">ImportMnemonic</Link>      
-            <Button variant="contained" color="primary">Hello World</Button>
-            <input type="text" onChange={this.handleInputChange} value={mnemonic} />
-            <button onClick={this.handleRecover}>
-              create wallet
-            </button>
-
-            {wallet && this.renderWallet()} */}
+            {/* TODO - this will later become:
+            - if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic, 
+            -else route to login */}
+            <Redirect to='/import-mnemonic' />
 
             <Route exact path="/" component={Home} />
-            <Route exact path="/importmnemonic" component={ImportMnemonic} />
-            <Route exact path="/accountdetail" component={AccountDetail} />
+            <Route exact path="/import-mnemonic" component={ImportMnemonic} />
+            <Route exact path="/account-detail" component={AccountDetail} />
             <Route exact path="/send" component={Send} />
-            <Route exact path="/sendconfirm" component={SendConfirm} />
+            <Route exact path="/send-confirm" component={SendConfirm} />
             <Route exact path="/receive" component={Receive} />
           </div>
         </Router>
@@ -79,79 +37,82 @@ class App extends React.Component<IProps, IState> {
     )
   }
 
-  public renderWallet() {
-    const {info, tip} = this.state
+  //TODO? handleRefresh to update QTUM balance? where do we want to put this button?
 
-    return (
-      <div>
-        {info && this.renderInfo()}
-        {tip && this.renderTip()}
-      </div>
-    )
-  }
+  //REFERENCE
+  // public renderWallet() {
+  //   const {info, tip} = this.state
 
-  public renderInfo() {
-    const info = this.state.info!
-    const { amount, receiver } = this.state
+  //   return (
+  //     <div>
+  //       {info && this.renderInfo()}
+  //       {tip && this.renderTip()}
+  //     </div>
+  //   )
+  // }
 
-    return (
-      <div>
-        <p>Address: {info.addStr}</p>
-        <p>
-          Balance: {info.balance} QTUM
-          <button onClick={this.handleRefresh}>Refresh</button>
-        </p>
-        <p>Pending txs: {info.unconfirmedTxApperances}</p>
-        <p>Send to address:</p>
-        <input type="text" onChange={this.handleReceiverChange} value={receiver}/>
-        <p>Amount:</p>
-        <input type="number" onChange={this.handleAmountChange} value={amount} />
-        <button onClick={this.handleSendTo} disabled={!(amount && receiver)}>send!</button>
-      </div>
-    )
-  }
+  // public renderInfo() {
+  //   const info = this.state.info!
+  //   const { amount, receiver } = this.state
 
-  public renderTip() {
-    const tip = this.state.tip!
+  //   return (
+  //     <div>
+  //       <p>Address: {info.addStr}</p>
+  //       <p>
+  //         Balance: {info.balance} QTUM
+  //         <button onClick={this.handleRefresh}>Refresh</button>
+  //       </p>
+  //       <p>Pending txs: {info.unconfirmedTxApperances}</p>
+  //       <p>Send to address:</p>
+  //       <input type="text" onChange={this.handleReceiverChange} value={receiver}/>
+  //       <p>Amount:</p>
+  //       <input type="number" onChange={this.handleAmountChange} value={amount} />
+  //       <button onClick={this.handleSendTo} disabled={!(amount && receiver)}>send!</button>
+  //     </div>
+  //   )
+  // }
 
-    return (
-      <p>{tip}</p>
-    )
-  }
+  // public renderTip() {
+  //   const tip = this.state.tip!
 
-  private handleAmountChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    const value = event.target.value
-    this.setState({ amount: value ? parseFloat(value) : 0 })
-  }
+  //   return (
+  //     <p>{tip}</p>
+  //   )
+  // }
 
-  private handleReceiverChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ receiver: event.target.value })
-  }
+  // private handleAmountChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+  //   const value = event.target.value
+  //   this.setState({ amount: value ? parseFloat(value) : 0 })
+  // }
 
-  private handleRefresh = () => {
-    this.setState({ tip: 'refreshing balance...' })
-    // this.getWalletInfo()
-  }
+  // private handleReceiverChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+  //   this.setState({ receiver: event.target.value })
+  // }
 
-  private handleSendTo =  async () => {
-    this.setState({ tip: 'sending...'})
+  // private handleRefresh = () => {
+  //   this.setState({ tip: 'refreshing balance...' })
+  //   // this.getWalletInfo()
+  // }
 
-    const { receiver, amount } = this.state
+  // private handleSendTo =  async () => {
+  //   this.setState({ tip: 'sending...'})
 
-    const wallet = this.state.wallet!
+  //   const { receiver, amount } = this.state
 
-    try {
-      await wallet.send(receiver, amount * 1e8, {
-        feeRate: 4000,
-      })
+  //   const wallet = this.state.wallet!
 
-      this.setState({ tip: 'done' })
-    } catch (err) {
-      console.log(err)
-      this.setState({ tip: err.message })
-    }
+  //   try {
+  //     await wallet.send(receiver, amount * 1e8, {
+  //       feeRate: 4000,
+  //     })
 
-  }
+  //     this.setState({ tip: 'done' })
+  //   } catch (err) {
+  //     console.log(err)
+  //     this.setState({ tip: err.message })
+  //   }
+
+  // }
 
   // private async getWalletInfo() {
   //   const wallet = this.state.wallet!
@@ -183,13 +144,13 @@ interface IProps {
   port: chrome.runtime.Port
 }
 
-interface IState {
-  mnemonic: string
-  wallet?: Wallet
-  info?: Insight.IGetInfo
-  receiver: string
-  amount: number
-  tip: string
-}
+// interface IState {
+//   mnemonic: string
+//   wallet?: Wallet
+//   info?: Insight.IGetInfo
+//   receiver: string
+//   amount: number
+//   tip: string
+// }
 
 export default App
