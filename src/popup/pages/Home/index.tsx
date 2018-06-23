@@ -23,15 +23,16 @@ class Home extends React.Component<any, {}> {
 
     return (
       <div style={{ margin: 16 }}>
-        <IconButton
-          aria-owns={homeStore.settingsMenuAnchor ? 'settingsMenu' : null}
-          aria-haspopup="true"
-          color="primary"
-          onClick={(e) => homeStore.settingsMenuAnchor = e.currentTarget}
-          style={{ flex: 'end', textAlign: 'right' }}
-        >
-          <Settings />
-        </IconButton>
+        <div style={{ textAlign: 'right' }}>
+          <IconButton
+            aria-owns={homeStore.settingsMenuAnchor ? 'settingsMenu' : null}
+            aria-haspopup="true"
+            color="primary"
+            onClick={(e) => homeStore.settingsMenuAnchor = e.currentTarget}
+          >
+            <Settings />
+          </IconButton>
+        </div>
         <Menu
           id="settingsMenu"
           anchorEl={homeStore.settingsMenuAnchor}
