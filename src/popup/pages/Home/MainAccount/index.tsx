@@ -8,35 +8,73 @@ import { Typography, Card, CardContent, Button } from '@material-ui/core';
 @observer
 export default class MainAccount extends Component<any, {}> {
 
-  handleClick = () => {
-    this.props.history.push('/account-detail')
+  handleClick = (id, event) => {
+    event.stopPropagation();
+
+    switch (id) {
+      case 'mainCard': {
+        this.props.history.push('/account-detail');
+        break;
+      }
+      case 'sendButton': {
+        this.props.history.push('/send');
+        break;
+      }
+      case 'receiveButton': {
+        this.props.history.push('/receive');
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   }
 
   componentWillUnmount() {
-    this.props.store.ui.prevLocation = '/'
+    this.props.store.ui.prevLocation = '/';
   }
   
-  public render(){
+  public render() {
     const { info } = this.props.store.walletStore
     console.log("info:", info)
 
     return(
       <div style={{ margin: 16 }}>
-        <h3>Main Account Page</h3>
-        <MainAccountCard address={info.addrStr} balance={info.balance} onClick={this.handleClick} />
+        <MainAccountCard
+          address={info.addrStr}
+          balance={info.balance}
+          handleClick={this.handleClick}
+        />
       </div>
     )
   }
 }
 
-const MainAccountCard = ({ address, balance, onClick }) => (
-  <Card onClick={onClick} style={{ cursor: 'pointer' }}>
+const MainAccountCard = ({ address, balance, handleClick }) => (
+  <Card id="mainCard" onClick={(e) => handleClick('mainCard', e)} style={{ cursor: 'pointer' }}>
     <CardContent style={{ margin: 8 }}>
       <Typography variant="title" style={{ marginBottom: 8 }}>Account Name</Typography>
       <Typography variant="caption">{address}</Typography>
       <Typography variant="caption" style={{ marginBottom: 8 }}>{balance} QTUM</Typography>
-      <Button color="primary" variant="raised" size="small" onClick={onClick} style={{ marginRight: 8 }}>Send</Button>
-      <Button color="primary" variant="raised" size="small" onClick={onClick}>Receive</Button>
+      <Button
+        id="sendButton"
+        color="primary"
+        variant="raised"
+        size="small"
+        onClick={(e) => handleClick('sendButton', e)}
+        style={{ marginRight: 8 }}
+       >
+         Send
+       </Button>
+      <Button
+        id="receiveButton"
+        color="primary"
+        variant="raised"
+        size="small"
+        onClick={(e) => handleClick('receiveButton', e)}
+       >
+         Receive
+       </Button>
     </CardContent>
   </Card>
 );
