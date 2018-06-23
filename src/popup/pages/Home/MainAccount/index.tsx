@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { Typography, Card, CardContent } from '@material-ui/core';
+import { Typography, Card, CardContent, Button } from '@material-ui/core';
 
 @withRouter
 @inject('store')
@@ -34,7 +34,9 @@ const MainAccountCard = ({ address, balance, onClick }) => (
     <CardContent style={{ margin: 8 }}>
       <Typography variant="title" style={{ marginBottom: 8 }}>Account Name</Typography>
       <Typography variant="caption">{address}</Typography>
-      <Typography variant="caption">{balance} QTUM</Typography>
+      <Typography variant="caption" style={{ marginBottom: 8 }}>{balance} QTUM</Typography>
+      <Button color="primary" variant="raised" size="small" onClick={onClick} style={{ marginRight: 8 }}>Send</Button>
+      <Button color="primary" variant="raised" size="small" onClick={onClick}>Receive</Button>
     </CardContent>
   </Card>
 );
