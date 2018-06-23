@@ -8,7 +8,7 @@ import _ from 'lodash';
 @withRouter
 @inject('store')
 @observer
-class ImportMnemonic extends React.Component<{}, IState> {
+export default class ImportMnemonic extends React.Component<{}, IState> {
 
   public render(){ 
     console.log("render props:", this.props)
@@ -51,5 +51,3 @@ interface IState {
   walletStore: any
   history: any
 }
-
-export default ImportMnemonic 
