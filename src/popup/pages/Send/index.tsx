@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { Component } from 'react';
 import { Button } from '@material-ui/core'
 import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
@@ -8,7 +8,7 @@ import { NavBar } from '../../components/NavBar'
 @withRouter
 @inject('store')
 @observer
-export default class Send extends React.Component<any, {}> {
+export default class Send extends Component<any, {}> {
 
   handleCreate = () => {
     this.props.history.push('/send-confirm')

@@ -1,23 +1,45 @@
-import * as React from 'react';
+import React, { Component } from 'react'
 import { networks, Wallet, Insight} from 'qtumjs-wallet'
 import { Redirect, withRouter } from "react-router-dom";
-import Button from '@material-ui/core/Button';
+import { Typography, TextField, Button } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
+import _ from 'lodash';
 
 @withRouter
 @inject('store')
 @observer
-class ImportMnemonic extends React.Component<{}, IState> {
+export default class ImportMnemonic extends Component<{}, IState> {
+
+  componentWillMount() {
+    this.props.store.walletStore.stopGetInfoPolling();
+  }
 
   public render(){ 
-    console.log("render props:", this.props)
-    const { walletStore } = this.props.store
+    const { history, store: { walletStore } } = this.props;
+
+    // Route to home page if mnemonic is found in storage
+    if (!_.isEmpty(walletStore.mnemonic)) {
+      history.push('/');
+    }
 
     return(
-      <div>
-        <h3>ImportMnemonic Page</h3>
-        <input type="text" onChange={(e) => walletStore.mnemonic = e.target.value} value={walletStore.mnemonic} />
-        <Button variant="contained" color="primary" onClick={this.recoverAndGoToHomePage}>
+      <div style={{ margin: 16 }}>
+        <Typography variant="title" style={{ marginBottom: 16 }}>Enter Your Wallet Mnemonic</Typography>
+        <TextField
+          autoFocus
+          fullWidth
+          required
+          label="Mnemonic"
+          style={{ marginBottom: 16 }}
+          onChange={(e) => walletStore.enteredMnemonic = e.target.value}
+          error={_.isEmpty(walletStore.enteredMnemonic)}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={this.recoverAndGoToHomePage}
+          disabled={_.isEmpty(walletStore.enteredMnemonic)}
+        >
           Import Wallet
         </Button>
       </div>  
@@ -25,9 +47,10 @@ class ImportMnemonic extends React.Component<{}, IState> {
   }
 
   public recoverAndGoToHomePage = () => {
-    const { store: { walletStore }, history } = this.props
-    walletStore.handleRecover ()
-    history.push('/')
+    const { store: { walletStore }, history } = this.props;
+
+    walletStore.onImportNewMnemonic();
+    history.push('/');
   }
 }
 
@@ -35,5 +58,3 @@ interface IState {
   walletStore: any
   history: any
 }
-
-export default ImportMnemonic 

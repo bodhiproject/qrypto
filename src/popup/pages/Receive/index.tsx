@@ -1,10 +1,10 @@
-import * as React from 'react'
+import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react'
 import { NavBar } from '../../components/NavBar'
 
 @inject('store')
 @observer
-export default class Receive extends React.Component<any, {}> {
+export default class Receive extends Component<any, {}> {
 
   componentDidMount() {
     this.props.store.ui.prevLocation = '/account-detail'

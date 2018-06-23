@@ -5,6 +5,7 @@ import { observable, action, runInAction } from 'mobx';
 class WalletStore {
   qjsWallet:any = null
   @observable mnemonic = ''
+  @observable enteredMnemonic: string = ''
   @observable info: any = {}
   @observable tip = ''
 
@@ -16,30 +17,19 @@ class WalletStore {
     console.log("wallet store constructor")
     chrome.storage.local.get('mnemonic', ({ mnemonic }) => {
       if (mnemonic == null) {
-        return
+        return;
       }
 
-      this.mnemonic = mnemonic
-      this.qjsWallet = this.recoverWallet(mnemonic)
-      this.info = this.getWalletInfo()
+      this.mnemonic = mnemonic;
+      this.qjsWallet = this.recoverWallet(mnemonic);
+      this.info = this.getWalletInfo();
     })
   }
 
-  private recoverWallet(mnemonic: string = this.mnemonic): Wallet {
-    console.log("wallet store recoverWallet, mnemonic:", mnemonic)
-    const network = networks.testnet
-    return network.fromMnemonic(mnemonic)
-  }
-
   @action
-  private async getWalletInfo() {
-    this.info = await this.qjsWallet.getInfo()
-  }
-
-  public handleRecover() {
-    this.qjsWallet = this.recoverWallet()
-    chrome.storage.local.set({ mnemonic: this.mnemonic })
-    this.getWalletInfo()
+  public onImportNewMnemonic() {
+    this.qjsWallet = this.recoverWallet(this.enteredMnemonic);
+    chrome.storage.local.set({ mnemonic: this.enteredMnemonic });
   }
 
   @action
@@ -56,6 +46,38 @@ class WalletStore {
       console.log(err)
       this.tip = err.message
     }
+  }
+
+  @action
+  public startGetInfoPolling() {
+    const self = this;
+    this.getInfoInterval = setInterval(async () => {
+      self.info = await self.qjsWallet.getInfo();
+    }, 5000);
+  }
+
+  @action
+  public stopGetInfoPolling() {
+    if (this.getInfoInterval) {
+      clearInterval(this.getInfoInterval);
+    }
+  }
+
+  @action
+  public clearMnemonic = () => {
+    this.mnemonic = '';
+    this.enteredMnemonic = '';
+  }
+
+  @action
+  private async getWalletInfo() {
+    this.info = await this.qjsWallet.getInfo();
+  }
+
+  private recoverWallet(mnemonic: string = this.mnemonic): Wallet {
+    console.log("wallet store recoverWallet, mnemonic:", mnemonic)
+    const network = networks.testnet
+    return network.fromMnemonic(mnemonic)
   }
 }
 

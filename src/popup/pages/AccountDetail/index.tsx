@@ -1,12 +1,13 @@
-import * as React from 'react';
+import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react';
 import { NavBar } from '../../components/NavBar'
 
+@withRouter
 @inject('store')
 @observer
-class AccountDetail extends React.Component<any, {}> {
+export default class AccountDetail extends Component<any, {}> {
 
   goToSend = () => {
     this.props.history.push('/send')
@@ -40,5 +41,3 @@ class AccountDetail extends React.Component<any, {}> {
     )
   }
 }
-
-export default withRouter(AccountDetail)

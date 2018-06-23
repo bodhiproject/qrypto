@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { Component } from 'react';
 import './App.scss'
 import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom"
 
@@ -12,7 +12,11 @@ import SendConfirm from './pages/SendConfirm'
 import { Provider as MobxProvider } from 'mobx-react'
 import store from '../stores/AppStore'
 
-class App extends React.Component<IProps, {}> {
+class App extends Component<IProps, {}> {
+
+  componentWillUnmount() {
+    this.props.store.walletStore.stopGetInfoPolling();
+  }
 
   public render() {
 
