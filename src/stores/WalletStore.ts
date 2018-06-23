@@ -62,15 +62,15 @@ class WalletStore {
     }
   }
 
+  @action
+  private async getWalletInfo() {
+    this.info = await this.qjsWallet.getInfo();
+  }
+
   private recoverWallet(mnemonic: string = this.mnemonic): Wallet {
     console.log("wallet store recoverWallet, mnemonic:", mnemonic)
     const network = networks.testnet
     return network.fromMnemonic(mnemonic)
-  }
-
-  @action
-  private async getWalletInfo() {
-    this.info = await this.qjsWallet.getInfo();
   }
 }
 
