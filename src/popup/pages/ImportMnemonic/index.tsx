@@ -32,7 +32,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
           color="primary"
           onClick={this.recoverAndGoToHomePage}
           disabled={_.isEmpty(walletStore.mnemonic)}
-         >
+        >
           Import Wallet
         </Button>
       </div>  
