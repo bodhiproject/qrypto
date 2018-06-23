@@ -27,7 +27,12 @@ class ImportMnemonic extends React.Component<{}, IState> {
           onChange={(e) => walletStore.mnemonic = e.target.value}
           error={_.isEmpty(walletStore.mnemonic)}
         />
-        <Button variant="contained" color="primary" onClick={this.recoverAndGoToHomePage}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={this.recoverAndGoToHomePage}
+          disabled={_.isEmpty(walletStore.mnemonic)}
+         >
           Import Wallet
         </Button>
       </div>  
@@ -36,7 +41,8 @@ class ImportMnemonic extends React.Component<{}, IState> {
 
   public recoverAndGoToHomePage = () => {
     const { store: { walletStore }, history } = this.props
-    walletStore.handleRecover ()
+
+    walletStore.handleRecover()
     history.push('/')
   }
 }
