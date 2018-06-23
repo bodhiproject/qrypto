@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "chrome-call": "^3.0.0",
+    "lodash": "^4.17.10",
     "mobx": "^5.0.3",
     "mobx-react": "^5.2.3",
     "qtumjs-wallet": "^0.0.6",

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { networks, Wallet, Insight} from 'qtumjs-wallet'
 import { Redirect, withRouter } from "react-router-dom";
-import Button from '@material-ui/core/Button';
+import { Typography, TextField, Button } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
+import _ from 'lodash';
 
 @withRouter
 @inject('store')
@@ -14,9 +15,18 @@ class ImportMnemonic extends React.Component<{}, IState> {
     const { walletStore } = this.props.store
 
     return(
-      <div>
-        <h3>ImportMnemonic Page</h3>
-        <input type="text" onChange={(e) => walletStore.mnemonic = e.target.value} value={walletStore.mnemonic} />
+      <div style={{ margin: 16 }}>
+        <Typography variant="title" style={{ marginBottom: 16 }}>Enter Your Wallet Mnemonic</Typography>
+        <TextField
+          autofocus
+          fullWidth
+          required
+          label="Mnemonic"
+          value={walletStore.mnemonic}
+          style={{ marginBottom: 16 }}
+          onChange={(e) => walletStore.mnemonic = e.target.value}
+          error={_.isEmpty(walletStore.mnemonic)}
+        />
         <Button variant="contained" color="primary" onClick={this.recoverAndGoToHomePage}>
           Import Wallet
         </Button>
