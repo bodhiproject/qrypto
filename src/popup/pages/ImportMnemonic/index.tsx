@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { Component } from 'react'
 import { networks, Wallet, Insight} from 'qtumjs-wallet'
 import { Redirect, withRouter } from "react-router-dom";
 import { Typography, TextField, Button } from '@material-ui/core';
@@ -8,7 +8,7 @@ import _ from 'lodash';
 @withRouter
 @inject('store')
 @observer
-export default class ImportMnemonic extends React.Component<{}, IState> {
+export default class ImportMnemonic extends Component<{}, IState> {
 
   public render(){ 
     console.log("render props:", this.props)

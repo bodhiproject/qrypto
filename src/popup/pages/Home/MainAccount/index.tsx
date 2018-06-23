@@ -1,11 +1,12 @@
-import * as React from 'react'
-import { withRouter } from 'react-router-dom'
-import { inject, observer } from 'mobx-react'
+import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { inject, observer } from 'mobx-react';
+import { Typography, Card, CardContent } from '@material-ui/core';
 
 @withRouter
 @inject('store')
 @observer
-export default class MainAccount extends React.Component<any, {}> {
+export default class MainAccount extends Component<any, {}> {
 
   handleClick = () => {
     this.props.history.push('/account-detail')
@@ -18,13 +19,17 @@ export default class MainAccount extends React.Component<any, {}> {
   public render(){
     const { info } = this.props.store.walletStore
     console.log("info:", info)
+
     return(
-      <div onClick={this.handleClick}>
+      <div style={{ margin: 16 }}>
         <h3>Main Account Page</h3>
-        <h6>{`<Account Name>`}</h6>
-        <p>{info.addrStr}</p>
-        <p>{info.balance} QTUM</p>
-        <p>= {`<123... USD>`}</p>
+        <Card onClick={this.handleClick} style={{ cursor: 'pointer' }}>
+          <CardContent style={{ margin: 8 }}>
+            <Typography variant="title" style={{ marginBottom: 8 }}>Account Name</Typography>
+            <Typography variant="caption">{info.addrStr}</Typography>
+            <Typography variant="caption">{info.balance} QTUM</Typography>
+          </CardContent>
+        </Card>
       </div>
     )
   }
