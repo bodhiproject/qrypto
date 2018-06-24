@@ -4,7 +4,6 @@ import * as React from 'react'
 // import SettingsButton from './SettingsButton'
 import BackButton from './BackButton'
 
-
 export const NavBar = ({ hasBackButton = false, title = '' }) => (
   <div>
     {/* <TopBar>

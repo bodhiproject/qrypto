@@ -1,25 +1,24 @@
 import React, { Component } from 'react'
-import { networks, Wallet, Insight} from 'qtumjs-wallet'
-import { Redirect, withRouter } from "react-router-dom";
-import { Typography, TextField, Button } from '@material-ui/core';
-import { inject, observer } from 'mobx-react';
-import _ from 'lodash';
+import { withRouter } from 'react-router-dom'
+import { Typography, TextField, Button } from '@material-ui/core'
+import { inject, observer } from 'mobx-react'
+import _ from 'lodash'
 
 @withRouter
 @inject('store')
 @observer
 export default class ImportMnemonic extends Component<{}, IState> {
 
-  componentWillMount() {
-    this.props.store.walletStore.stopGetInfoPolling();
+  public componentWillMount() {
+    this.props.store.walletStore.stopGetInfoPolling()
   }
 
-  public render(){ 
-    const { history, store: { walletStore } } = this.props;
+  public render() {
+    const { history, store: { walletStore } } = this.props
 
     // Route to home page if mnemonic is found in storage
     if (!_.isEmpty(walletStore.mnemonic)) {
-      history.push('/');
+      history.push('/')
     }
 
     return(
@@ -42,15 +41,15 @@ export default class ImportMnemonic extends Component<{}, IState> {
         >
           Import Wallet
         </Button>
-      </div>  
+      </div>
     )
   }
 
   public recoverAndGoToHomePage = () => {
-    const { store: { walletStore }, history } = this.props;
+    const { store: { walletStore }, history } = this.props
 
-    walletStore.onImportNewMnemonic();
-    history.push('/');
+    walletStore.onImportNewMnemonic()
+    history.push('/')
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import { NavBar } from '../../components/NavBar'
 
@@ -6,11 +6,11 @@ import { NavBar } from '../../components/NavBar'
 @observer
 export default class Receive extends Component<any, {}> {
 
-  componentDidMount() {
+  public componentDidMount() {
     this.props.store.ui.prevLocation = '/account-detail'
   }
-  
-  public render(){
+
+  public render() {
     const { info } = this.props.store.walletStore
 
     return(

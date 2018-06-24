@@ -1,8 +1,7 @@
-import { observable } from 'mobx';
-
+import { observable } from 'mobx'
 
 class HomeStore {
-  @observable settingsMenuAnchor
+  @observable public settingsMenuAnchor
 }
 
-export default new HomeStore();
+export default new HomeStore()

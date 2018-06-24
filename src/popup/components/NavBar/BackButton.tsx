@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { withRouter } from 'react-router-dom'
-import { inject, observer, propTypes } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 // import LeftArrow from './LeftArrow'
 
 const BackButton = ({ store, history }) => (
@@ -9,7 +9,7 @@ const BackButton = ({ store, history }) => (
   </div>
 )
 
-//TODO replace with an arrow icon
+// TODO replace with an arrow icon
 const LeftArrow = () => (
   <p>BACK</p>
 )
@@ -17,7 +17,7 @@ const LeftArrow = () => (
 export default withRouter(inject('store')(observer(BackButton)))
 
 // Syntax Reference re inject
-// const inject = (context) => (component) => 
+// const inject = (context) => (component) =>
 
 // function inject(storeName) {
 
