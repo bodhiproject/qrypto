@@ -1,21 +1,21 @@
-import React, { Component } from 'react'
-import './App.scss'
-import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
+import React, { Component } from 'react';
+import './App.scss';
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 
-import ImportMnemonic from './pages/ImportMnemonic'
-import Home from './pages/Home'
-import AccountDetail from './pages/AccountDetail'
-import Send from './pages/Send'
-import Receive from './pages/Receive'
-import SendConfirm from './pages/SendConfirm'
+import ImportMnemonic from './pages/ImportMnemonic';
+import Home from './pages/Home';
+import AccountDetail from './pages/AccountDetail';
+import Send from './pages/Send';
+import Receive from './pages/Receive';
+import SendConfirm from './pages/SendConfirm';
 
-import { Provider as MobxProvider } from 'mobx-react'
-import store from '../stores/AppStore'
+import { Provider as MobxProvider } from 'mobx-react';
+import store from '../stores/AppStore';
 
 class App extends Component<IProps, {}> {
 
   public componentWillUnmount() {
-    this.props.store.walletStore.stopGetInfoPolling()
+    this.props.store.walletStore.stopGetInfoPolling();
   }
 
   public render() {
@@ -38,7 +38,7 @@ class App extends Component<IProps, {}> {
           </div>
         </Router>
       </MobxProvider>
-    )
+    );
   }
 
   // TODO? handleRefresh to update QTUM balance? where do we want to put this button?
@@ -145,7 +145,7 @@ class App extends Component<IProps, {}> {
 }
 
 interface IProps {
-  port: chrome.runtime.Port
+  port: chrome.runtime.Port;
 }
 
 // interface IState {
@@ -157,4 +157,4 @@ interface IProps {
 //   tip: string
 // }
 
-export default App
+export default App;

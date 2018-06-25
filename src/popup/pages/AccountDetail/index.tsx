@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
-import Button from '@material-ui/core/Button'
-import { withRouter } from 'react-router-dom'
-import { inject, observer } from 'mobx-react'
-import { NavBar } from '../../components/NavBar'
+import React, { Component } from 'react';
+import Button from '@material-ui/core/Button';
+import { withRouter } from 'react-router-dom';
+import { inject, observer } from 'mobx-react';
+import { NavBar } from '../../components/NavBar';
 
 @withRouter
 @inject('store')
@@ -10,19 +10,19 @@ import { NavBar } from '../../components/NavBar'
 export default class AccountDetail extends Component<any, {}> {
 
   public goToSend = () => {
-    this.props.history.push('/send')
+    this.props.history.push('/send');
   }
 
   public goToReceive = () => {
-    this.props.history.push('/receive')
+    this.props.history.push('/receive');
   }
 
   public componentDidMount() {
-    this.props.store.ui.prevLocation = '/'
+    this.props.store.ui.prevLocation = '/';
   }
 
   public render() {
-    const { info } = this.props.store.walletStore
+    const { info } = this.props.store.walletStore;
     return(
       <div>
         <NavBar hasBackButton={true} title={'Account Detail Page'} />
@@ -38,6 +38,6 @@ export default class AccountDetail extends Component<any, {}> {
           RECEIVE
         </Button>
       </div>
-    )
+    );
   }
 }

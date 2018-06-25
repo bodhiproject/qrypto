@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom'
-import { inject, observer } from 'mobx-react'
-import { Typography, Card, CardContent, Button } from '@material-ui/core'
+import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { inject, observer } from 'mobx-react';
+import { Typography, Card, CardContent, Button } from '@material-ui/core';
 
 @withRouter
 @inject('store')
@@ -9,43 +9,43 @@ import { Typography, Card, CardContent, Button } from '@material-ui/core'
 export default class MainAccount extends Component<any, {}> {
 
   public handleClick = (id, event) => {
-    event.stopPropagation()
+    event.stopPropagation();
 
     switch (id) {
       case 'mainCard': {
-        this.props.history.push('/account-detail')
-        break
+        this.props.history.push('/account-detail');
+        break;
       }
       case 'sendButton': {
-        this.props.history.push('/send')
-        break
+        this.props.history.push('/send');
+        break;
       }
       case 'receiveButton': {
-        this.props.history.push('/receive')
-        break
+        this.props.history.push('/receive');
+        break;
       }
       default: {
-        break
+        break;
       }
     }
   }
 
   public componentWillMount() {
-    this.props.store.walletStore.startGetInfoPolling()
+    this.props.store.walletStore.startGetInfoPolling();
   }
 
   public componentWillUnmount() {
-    this.props.store.ui.prevLocation = '/'
+    this.props.store.ui.prevLocation = '/';
   }
 
   public render() {
-    const { info } = this.props.store.walletStore
+    const { info } = this.props.store.walletStore;
 
     return(
       <div>
         <MainAccountCard address={info.addrStr} balance={info.balance} handleClick={this.handleClick} />
       </div>
-    )
+    );
   }
 }
 
@@ -79,4 +79,4 @@ const MainAccountCard = ({ address, balance, handleClick }) => (
       </div>
     </CardContent>
   </Card>
-)
+);

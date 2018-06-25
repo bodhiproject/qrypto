@@ -1,17 +1,17 @@
-import React, { Component } from 'react'
-import { inject, observer } from 'mobx-react'
-import { NavBar } from '../../components/NavBar'
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
+import { NavBar } from '../../components/NavBar';
 
 @inject('store')
 @observer
 export default class Receive extends Component<any, {}> {
 
   public componentDidMount() {
-    this.props.store.ui.prevLocation = '/account-detail'
+    this.props.store.ui.prevLocation = '/account-detail';
   }
 
   public render() {
-    const { info } = this.props.store.walletStore
+    const { info } = this.props.store.walletStore;
 
     return(
       <div>
@@ -22,6 +22,6 @@ export default class Receive extends Component<any, {}> {
         <p>= {`<123... USD>`}</p>
         <p>{`<QRC CODE>`}</p>
       </div>
-    )
+    );
   }
 }

@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
-import { Button } from '@material-ui/core'
-import { withRouter } from 'react-router-dom'
-import { inject, observer } from 'mobx-react'
-import { NavBar } from '../../components/NavBar'
+import React, { Component } from 'react';
+import { Button } from '@material-ui/core';
+import { withRouter } from 'react-router-dom';
+import { inject, observer } from 'mobx-react';
+import { NavBar } from '../../components/NavBar';
 
 @withRouter
 @inject('store')
@@ -10,16 +10,16 @@ import { NavBar } from '../../components/NavBar'
 export default class Send extends Component<any, {}> {
 
   public handleCreate = () => {
-    this.props.history.push('/send-confirm')
+    this.props.history.push('/send-confirm');
   }
 
   public componentDidMount() {
-    this.props.store.ui.prevLocation = '/account-detail'
+    this.props.store.ui.prevLocation = '/account-detail';
   }
 
   public render() {
-    const { walletStore } = this.props.store
-    const { info } = walletStore
+    const { walletStore } = this.props.store;
+    const { info } = walletStore;
 
     return(
       <div>
@@ -40,6 +40,6 @@ export default class Send extends Component<any, {}> {
           Create
         </Button>
       </div>
-    )
+    );
   }
 }

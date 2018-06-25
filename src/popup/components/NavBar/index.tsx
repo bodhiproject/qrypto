@@ -1,8 +1,8 @@
-import * as React from 'react'
+import * as React from 'react';
 // import styled from 'styled-components'
 // import NetworkSelector from './NetworkSelector'
 // import SettingsButton from './SettingsButton'
-import BackButton from './BackButton'
+import BackButton from './BackButton';
 
 export const NavBar = ({ hasBackButton = false, title = '' }) => (
   <div>
@@ -17,7 +17,7 @@ export const NavBar = ({ hasBackButton = false, title = '' }) => (
       </div>
     )}
   </div>
-)
+);
 
 // const Col = () => (
 //   <div style={{
