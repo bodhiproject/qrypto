@@ -4,12 +4,12 @@ import uiStore from './UiStore';
 import homeStore from './HomeStore';
 
 class AppStore {
-  location = '/import-mnemonic'
-  ui = {}
-  walletStore = {}
-  homeStore = {}
+  public location = '/import-mnemonic';
+  public ui = {};
+  public walletStore = {};
+  public homeStore = {};
 
-  constructor(){
+  constructor() {
     this.ui = uiStore;
     this.walletStore = walletStore;
     this.homeStore = homeStore;

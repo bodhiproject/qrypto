@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import './App.scss'
-import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom"
+import './App.scss';
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 
-import ImportMnemonic from './pages/ImportMnemonic'
-import Home from './pages/Home'
-import AccountDetail from './pages/AccountDetail'
+import ImportMnemonic from './pages/ImportMnemonic';
+import Home from './pages/Home';
+import AccountDetail from './pages/AccountDetail';
 import Send from './pages/Send';
-import Receive from './pages/Receive'
-import SendConfirm from './pages/SendConfirm'
+import Receive from './pages/Receive';
+import SendConfirm from './pages/SendConfirm';
 
-import { Provider as MobxProvider } from 'mobx-react'
-import store from '../stores/AppStore'
+import { Provider as MobxProvider } from 'mobx-react';
+import store from '../stores/AppStore';
 
 class App extends Component<IProps, {}> {
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     this.props.store.walletStore.stopGetInfoPolling();
   }
 
@@ -25,9 +25,9 @@ class App extends Component<IProps, {}> {
         <Router>
           <div >
             {/* TODO - this will later become:
-            - if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic, 
+            - if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic,
             -else route to login */}
-            <Redirect to='/import-mnemonic' />
+            <Redirect to="/import-mnemonic" />
 
             <Route exact path="/" component={Home} />
             <Route exact path="/import-mnemonic" component={ImportMnemonic} />
@@ -38,12 +38,12 @@ class App extends Component<IProps, {}> {
           </div>
         </Router>
       </MobxProvider>
-    )
+    );
   }
 
-  //TODO? handleRefresh to update QTUM balance? where do we want to put this button?
+  // TODO? handleRefresh to update QTUM balance? where do we want to put this button?
 
-  //REFERENCE
+  // REFERENCE
   // public renderWallet() {
   //   const {info, tip} = this.state
 
@@ -145,7 +145,7 @@ class App extends Component<IProps, {}> {
 }
 
 interface IProps {
-  port: chrome.runtime.Port
+  port: chrome.runtime.Port;
 }
 
 // interface IState {
@@ -157,4 +157,4 @@ interface IProps {
 //   tip: string
 // }
 
-export default App
+export default App;

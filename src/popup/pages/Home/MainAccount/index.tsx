@@ -8,7 +8,7 @@ import { Typography, Card, CardContent, Button } from '@material-ui/core';
 @observer
 export default class MainAccount extends Component<any, {}> {
 
-  handleClick = (id, event) => {
+  public handleClick = (id, event) => {
     event.stopPropagation();
 
     switch (id) {
@@ -30,14 +30,14 @@ export default class MainAccount extends Component<any, {}> {
     }
   }
 
-  componentWillMount() {
+  public componentWillMount() {
     this.props.store.walletStore.startGetInfoPolling();
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     this.props.store.ui.prevLocation = '/';
   }
-  
+
   public render() {
     const { info } = this.props.store.walletStore;
 
@@ -45,7 +45,7 @@ export default class MainAccount extends Component<any, {}> {
       <div>
         <MainAccountCard address={info.addrStr} balance={info.balance} handleClick={this.handleClick} />
       </div>
-    )
+    );
   }
 }
 

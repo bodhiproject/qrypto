@@ -9,11 +9,11 @@ import MainAccount from './MainAccount';
 @observer
 class Home extends React.Component<any, {}> {
 
-  goToDetail = () => {
+  public goToDetail = () => {
     this.props.history.push('/account-detail');
   }
 
-  onLogoutButtonClick = () => {
+  public onLogoutButtonClick = () => {
     this.props.store.walletStore.clearMnemonic();
     this.props.history.push('/import-mnemonic');
   }
@@ -43,11 +43,11 @@ class Home extends React.Component<any, {}> {
         </Menu>
         <MainAccount />
       </div>
-    )
+    );
   }
 }
 
-export default Home 
-//TODO ??why doesn't this work, why do I have to put the click on the component itself
+export default Home;
+// TODO ??why doesn't this work, why do I have to put the click on the component itself
 {/* <MainAccount onClick={this.goToDetail}/> */}
-// export default withRouter(Home) 
+// export default withRouter(Home)

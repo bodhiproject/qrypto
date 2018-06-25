@@ -1,6 +1,5 @@
-import React, { Component } from 'react'
-import { networks, Wallet, Insight} from 'qtumjs-wallet'
-import { Redirect, withRouter } from "react-router-dom";
+import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { Typography, TextField, Button } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import _ from 'lodash';
@@ -10,11 +9,11 @@ import _ from 'lodash';
 @observer
 export default class ImportMnemonic extends Component<{}, IState> {
 
-  componentWillMount() {
+  public componentWillMount() {
     this.props.store.walletStore.stopGetInfoPolling();
   }
 
-  public render(){ 
+  public render() {
     const { history, store: { walletStore } } = this.props;
 
     // Route to home page if mnemonic is found in storage
@@ -42,8 +41,8 @@ export default class ImportMnemonic extends Component<{}, IState> {
         >
           Import Wallet
         </Button>
-      </div>  
-    )
+      </div>
+    );
   }
 
   public recoverAndGoToHomePage = () => {
@@ -55,6 +54,6 @@ export default class ImportMnemonic extends Component<{}, IState> {
 }
 
 interface IState {
-  walletStore: any
-  history: any
+  walletStore: any;
+  history: any;
 }
