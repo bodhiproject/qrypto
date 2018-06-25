@@ -5,8 +5,6 @@ class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public tip = '';
 
-  private qjsWallet?: Wallet = undefined;
-
   @observable private mnemonic: string = '';
   @observable private enteredMnemonic: string = '';
 
@@ -14,6 +12,7 @@ class WalletStore {
   @observable private sendToTokenType = 'QTUM';
   @observable private sendToAmount: any = '0';
 
+  private qjsWallet?: Wallet = undefined;
   private getInfoInterval?: NodeJS.Timer = undefined;
 
   constructor() {
