@@ -9,7 +9,7 @@ import Theme from '../../../config/theme';
 
 @inject('store')
 @observer
-export default class Send extends Component<any, {}> {
+export default class Send extends Component {
   public componentDidMount() {
     this.props.store.ui.prevLocation = '/account-detail';
   }
