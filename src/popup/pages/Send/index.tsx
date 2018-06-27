@@ -16,6 +16,10 @@ export default class Send extends Component {
 
   public render() {
     const { walletStore } = this.props.store;
+    const { sendToAddress, sendToTokenType, sendToAmount } = walletStore;
+
+    console.log(sendToTokenType);
+    console.log(sendToAmount);
 
     return (
       <div style={{ width: '100%', height: '100%' }}>
@@ -25,7 +29,7 @@ export default class Send extends Component {
             <FromField walletStore={walletStore} />
             <ToField walletStore={walletStore} />
             <TokenField walletStore={walletStore} />
-            <AmountField walletStore={walletStore} />
+            <AmountField amount={sendToAmount} token={sendToTokenType} walletStore={walletStore} />
           </div>
           <SendButton />
         </div>
@@ -89,11 +93,17 @@ const TokenField = ({ walletStore }) => (
   </div>
 );
 
-const AmountField = ({ walletStore }) => (
+const AmountField = ({ amount, token, walletStore }) => (
   <div style={{ marginBottom: Theme.spacing.custom(26) }}>
     <div style={{ width: '100%', flexDirection: 'row', display: 'inline-flex' }}>
       <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold', flex: 1 }}>Amount</Typography>
-      <Button color="primary" style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}>Max</Button>
+      <Button
+        color="primary"
+        style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}
+        onClick={() => walletStore.sendToAmount = walletStore.info.balance}
+      >
+        Max
+      </Button>
     </div>
     <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <TextField
@@ -101,7 +111,8 @@ const AmountField = ({ walletStore }) => (
         type="number"
         multiline={false}
         placeholder="0.00"
-        InputProps={{ 
+        value={amount}
+        InputProps={{
           endAdornment: (
             <Typography
               style={{
@@ -112,7 +123,7 @@ const AmountField = ({ walletStore }) => (
                 alignItems: 'center'
               }}
              >
-              {walletStore.sendToTokenType}
+              {token}
             </Typography>
           ),
           disableUnderline: true,

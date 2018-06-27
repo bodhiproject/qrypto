@@ -9,7 +9,7 @@ class WalletStore {
   @observable private mnemonic: string = '';
   @observable private enteredMnemonic: string = '';
 
-  @observable private sendToAddress = 'qcdw8hSkYmxt7kmHFoZ6J5aYUdM3A29idz';
+  @observable private sendToAddress = '';
   @observable private sendToTokenType = 'QTUM';
   @observable private sendToAmount: any = '0';
 
