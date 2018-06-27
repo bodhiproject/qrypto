@@ -105,7 +105,7 @@ export default class MainAccount extends Component<any, {}> {
 
     return info && (
       <div>
-        <Card raised id="mainCard" onClick={(e) => handleClick('mainCard', e)} style={styles.card}>
+        <Card raised id="mainCard" onClick={(e) => this.handleClick('mainCard', e)} style={styles.card}>
           <CardContent style={styles.cardContent}>
             <Typography style={styles.acctName}>{'Default Account'}</Typography>
             <Typography style={styles.address}>{info.addrStr}</Typography>
@@ -118,20 +118,20 @@ export default class MainAccount extends Component<any, {}> {
               <Button
                 id="sendButton"
                 color="secondary"
-                variant="raised"
+                variant="contained"
                 size="small"
-                onClick={(e) => handleClick('sendButton', e)}
                 style={styles.actionButton}
+                onClick={(e) => this.handleClick('sendButton', e)}
                >
                  Send
                </Button>
               <Button
                 id="receiveButton"
                 color="secondary"
-                variant="raised"
+                variant="contained"
                 size="small"
-                onClick={(e) => handleClick('receiveButton', e)}
                 style={styles.actionButton}
+                onClick={(e) => this.handleClick('receiveButton', e)}
                >
                  Receive
                </Button>
