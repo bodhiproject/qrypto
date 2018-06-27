@@ -6,7 +6,6 @@ import { inject, observer } from 'mobx-react';
 
 import { NavBar } from '../../components/NavBar';
 
-@withRouter
 @inject('store')
 @observer
 export default class Send extends Component<any, {}> {
