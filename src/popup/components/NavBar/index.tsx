@@ -5,26 +5,27 @@ import { Typography } from '@material-ui/core';
 import BackButton from './BackButton';
 import SettingsButton from './SettingsButton';
 import NetworkSelector from './NetworkSelector';
+import theme from '../../../config/theme';
 
 const styles = {
   root: {
     width: '100%',
-    margin: 8,
+    margin: theme.spacing.xs,
     flexDirection: 'row',
     display: 'inline-flex',
   },
   leftButtonsContainer: {
-    marginRight: 4,
+    marginRight: theme.spacing.unit,
     cursor: 'pointer',
   },
   locationContainer: {
-    height: 24,
+    height: theme.icon.size,
     display: 'flex',
     alignItems: 'center',
     flex: 1,
   },
   locationText: {
-    fontSize: 14,
+    fontSize: theme.font.md,
     fontWeight: 'bold',
   },
 };

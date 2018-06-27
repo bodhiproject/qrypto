@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Button, withStyles } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
@@ -30,7 +30,7 @@ export default class NetworkSelector extends Component {
 
   public render() {
     return (
-      <div>
+      <Fragment>
         <Button
           color="secondary"
           variant="contained"
@@ -41,7 +41,7 @@ export default class NetworkSelector extends Component {
            Testnet
            <ArrowDropDown /> 
          </Button>
-      </div>
+      </Fragment>
     );
   }
 }
