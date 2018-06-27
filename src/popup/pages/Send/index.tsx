@@ -18,14 +18,6 @@ export default class Send extends Component<any, {}> {
     // TODO: implement
   }
 
-  private onToChange = (value) => {
-    // TODO: implement
-  }
-
-  private onTokenChange = (value) => {
-    // TODO: implement
-  }
-
   public handleCreate = () => {
     this.props.history.push('/send-confirm');
   }
@@ -39,12 +31,13 @@ export default class Send extends Component<any, {}> {
     const { info } = walletStore;
 
     return (
-      <div>
+      <div style={{ width: '100%' }}>
         <NavBar hasBackButton={true} title='Send' />
         <div style={{ margin: 8 }}>
           <FromField info={info} onFromChange={this.onFromChange} />
-          {<ToField onToChange={this.onToChange} />}
-          {<TokenField onTokenChange={this.onTokenChange} />}
+          <ToField walletStore={walletStore} />
+          <TokenField walletStore={walletStore} />
+          <AmountField walletStore={walletStore} />
 
           {/*
           <div>
@@ -89,7 +82,7 @@ const FromField = ({ info, onFromChange }) => (
   </div>
 );
 
-const ToField = ({ onToChange }) => (
+const ToField = ({ walletStore }) => (
   <div style={{ marginBottom: 16 }}>
     <Typography variant='subheading' style={{ fontWeight: 'bold' }}>To</Typography>
     <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
@@ -98,27 +91,49 @@ const ToField = ({ onToChange }) => (
         type='text'
         multiline={false}
         InputProps={{ endAdornment: <ArrowDropDown /> }}
-        onChange={(e) => onToChange(e.target.value)}
+        onChange={(event) => walletStore.sendToAddress = event.target.value}
       />
     </div>
   </div>
 );
 
-const TokenField = ({ onTokenChange }) => (
+const TokenField = ({ walletStore }) => (
   <div style={{ marginBottom: 16 }}>
     <Typography variant='subheading' style={{ fontWeight: 'bold' }}>Token</Typography>
     <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
       <Select
         disableUnderline
         value='QTUM'
-        onChange={onTokenChange}
         inputProps={{ name: 'from', id: 'from' }}
         style={{ width: '100%' }}
+        onChange={(event) => walletStore.sendToTokenType = event.target.value}
       >
         <MenuItem value='QTUM'>
           <Typography style={{ fontSize: 16, fontWeight: 'bold' }}>QTUM</Typography>
         </MenuItem>
       </Select>
+    </div>
+  </div>
+);
+
+const AmountField = ({ walletStore }) => (
+  <div style={{ marginBottom: 16 }}>
+    <div style={{ width: '100%', flexDirection: 'row', display: 'inline-flex' }}>
+      <Typography variant='subheading' style={{ fontWeight: 'bold', flex: 1 }}>Amount</Typography>
+      <Button color="primary" style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}>Max</Button>
+    </div>
+    <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
+      <TextField
+        fullWidth
+        type='number'
+        multiline={false}
+        InputProps={{ endAdornment: (
+          <Typography style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 8, display: 'flex', alignItems: 'center' }}>
+            {walletStore.sendToTokenType}
+          </Typography>
+        )}}
+        onChange={(event) => walletStore.sendToAmount = event.target.value}
+      />
     </div>
   </div>
 );
