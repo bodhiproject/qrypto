@@ -8,7 +8,7 @@ import NetworkSelector from './NetworkSelector';
 
 export const NavBar = ({ hasBackButton = false, hasSettingsButton = false, hasNetworkSelector = false, title = '' }) => (
   <div style={{ margin: 8, flexDirection: 'row', display: 'inline-flex' }}>
-    <div style={{ marginRight: 8, cursor: 'pointer' }}>
+    <div style={{ marginRight: 4, cursor: 'pointer' }}>
       {hasBackButton && <BackButton />}
       {hasSettingsButton && <SettingsButton />}
     </div>

@@ -6,11 +6,7 @@ import { ArrowBack } from '@material-ui/icons';
 
 const BackButton = ({ store, history }) => (
   <div>
-    <IconButton
-      onClick={(e) => history.push(store.ui.prevLocation)}
-      style={{ width: 24, height: 24 }}
-      disableRipple
-    >
+    <IconButton onClick={(e) => history.push(store.ui.prevLocation)} style={{ width: 24, height: 24 }}>
       <ArrowBack style={{ fontSize: 14 }} />
     </IconButton>
   </div>

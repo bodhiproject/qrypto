@@ -23,7 +23,6 @@ export default class SettingsButton extends Component {
           color="primary"
           onClick={(e) => ui.settingsMenuAnchor = e.currentTarget}
           style={{ width: 24, height: 24 }}
-          disableRipple
         >
           <Settings style={{ fontSize: 18 }} />
         </IconButton>
