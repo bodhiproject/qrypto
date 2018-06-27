@@ -11,7 +11,12 @@ import Theme from '../../../config/theme';
 @observer
 export default class Send extends Component {
   public componentDidMount() {
-    this.props.store.ui.prevLocation = '/account-detail';
+    const { store } = this.props;
+
+    store.ui.prevLocation = '/account-detail';
+
+    // Set default sender address
+    store.walletStore.senderAddress = store.walletStore.info.addrStr;
   }
 
   public render() {
