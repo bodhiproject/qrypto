@@ -8,10 +8,10 @@ class WalletStore {
 
   @observable private mnemonic: string = '';
   @observable private enteredMnemonic: string = '';
-
-  @observable private sendToAddress = 'qcdw8hSkYmxt7kmHFoZ6J5aYUdM3A29idz';
-  @observable private sendToTokenType = 'QTUM';
-  @observable private sendToAmount: any = '0';
+  @observable private senderAddress: string = '';
+  @observable private receiverAddress: string = '';
+  @observable private token: string = 'QTUM';
+  @observable private amount: string = '0';
 
   private qjsWallet?: Wallet = undefined;
   private getInfoInterval?: NodeJS.Timer = undefined;
@@ -38,7 +38,7 @@ class WalletStore {
   public async send() {
     this.tip = 'sending...';
     try {
-      await this.qjsWallet!.send(this.sendToAddress, this.sendToAmount * 1e8, {
+      await this.qjsWallet!.send(this.receiverAddress, this.amount * 1e8, {
         feeRate: 4000,
       });
       runInAction(() => {

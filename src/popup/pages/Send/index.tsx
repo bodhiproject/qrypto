@@ -11,21 +11,27 @@ import Theme from '../../../config/theme';
 @observer
 export default class Send extends Component {
   public componentDidMount() {
-    this.props.store.ui.prevLocation = '/account-detail';
+    const { store } = this.props;
+
+    store.ui.prevLocation = '/account-detail';
+
+    // Set default sender address
+    store.walletStore.senderAddress = store.walletStore.info.addrStr;
   }
 
   public render() {
     const { walletStore } = this.props.store;
+    const { info, token, amount } = walletStore;
 
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <NavBar hasBackButton={true} title="Send" />
         <div style={{ margin: Theme.spacing.sm }}>
           <div style={{ flex: 1 }}>
-            <FromField walletStore={walletStore} />
-            <ToField walletStore={walletStore} />
-            <TokenField walletStore={walletStore} />
-            <AmountField walletStore={walletStore} />
+            <FromField info={info} walletStore={walletStore} />
+            <ToField info={info} walletStore={walletStore} />
+            <TokenField token={token} walletStore={walletStore} />
+            <AmountField amount={amount} token={token} walletStore={walletStore} />
           </div>
           <SendButton />
         </div>
@@ -34,52 +40,60 @@ export default class Send extends Component {
   }
 }
 
-const FromField = ({ walletStore }) => (
+const Heading = ({ name }) => (
+  <Typography
+    style={{ marginBottom: Theme.spacing.unit, fontSize: Theme.font.sm, fontWeight: 'bold' }}
+  >
+    {name}
+  </Typography>
+);
+
+const FromField = ({ info, walletStore }) => (
   <div style={{ marginBottom: Theme.spacing.lg }}>
-    <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold' }}>From</Typography>
+    <Heading name="From" />
     <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <Select
         disableUnderline
-        value={walletStore.info.addrStr}
-        onChange={(event) => walletStore.fromAddress = event.target.value}
+        value={info.addrStr}
+        onChange={(event) => walletStore.senderAddress = event.target.value}
         inputProps={{ name: 'from', id: 'from' }}
         style={{ width: '100%' }}
       >
-        <MenuItem value={walletStore.info.addrStr}>
+        <MenuItem value={info.addrStr}>
           <Typography style={{ fontSize: Theme.font.md, fontWeight: 'bold' }}>{'Default Account'}</Typography>
         </MenuItem>
       </Select>
-      <Typography style={{ fontSize: Theme.font.md, color: '#333333' }}>{walletStore.info.balance} QTUM</Typography>
+      <Typography style={{ fontSize: Theme.font.md, color: '#333333' }}>{info.balance} QTUM</Typography>
     </div>
   </div>
 );
 
-const ToField = ({ walletStore }) => (
+const ToField = ({ info, walletStore }) => (
   <div style={{ marginBottom: Theme.spacing.lg }}>
-    <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold' }}>To</Typography>
+    <Heading name="To" />
     <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <TextField
         fullWidth
         type="text"
         multiline={false}
-        placeholder={walletStore.info.addrStr}
+        placeholder={info.addrStr}
         InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
-        onChange={(event) => walletStore.sendToAddress = event.target.value}
+        onChange={(event) => walletStore.receiverAddress = event.target.value}
       />
     </div>
   </div>
 );
 
-const TokenField = ({ walletStore }) => (
+const TokenField = ({ token, walletStore }) => (
   <div style={{ marginBottom: Theme.spacing.lg }}>
-    <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold' }}>Token</Typography>
+    <Heading name="Token" />
     <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <Select
         disableUnderline
-        value="QTUM"
+        value={token}
         inputProps={{ name: 'from', id: 'from' }}
         style={{ width: '100%' }}
-        onChange={(event) => walletStore.sendToTokenType = event.target.value}
+        onChange={(event) => walletStore.token = event.target.value}
       >
         <MenuItem value="QTUM">
           <Typography style={{ fontSize: Theme.font.md, fontWeight: 'bold' }}>QTUM</Typography>
@@ -89,11 +103,19 @@ const TokenField = ({ walletStore }) => (
   </div>
 );
 
-const AmountField = ({ walletStore }) => (
+const AmountField = ({ amount, token, walletStore }) => (
   <div style={{ marginBottom: Theme.spacing.custom(26) }}>
     <div style={{ width: '100%', flexDirection: 'row', display: 'inline-flex' }}>
-      <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold', flex: 1 }}>Amount</Typography>
-      <Button color="primary" style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}>Max</Button>
+      <div style={{ flex: 1 }}>
+        <Heading name="Amount" />
+      </div>
+      <Button
+        color="primary"
+        style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}
+        onClick={() => walletStore.amount = walletStore.info.balance}
+      >
+        Max
+      </Button>
     </div>
     <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <TextField
@@ -101,7 +123,8 @@ const AmountField = ({ walletStore }) => (
         type="number"
         multiline={false}
         placeholder="0.00"
-        InputProps={{ 
+        value={amount}
+        InputProps={{
           endAdornment: (
             <Typography
               style={{
@@ -112,12 +135,12 @@ const AmountField = ({ walletStore }) => (
                 alignItems: 'center'
               }}
              >
-              {walletStore.sendToTokenType}
+              {token}
             </Typography>
           ),
           disableUnderline: true,
         }}
-        onChange={(event) => walletStore.sendToAmount = event.target.value}
+        onChange={(event) => walletStore.amount = event.target.value}
       />
     </div>
   </div>
