@@ -60,7 +60,7 @@ export default createMuiTheme({
       light: secondaryColorLight,
       main: secondaryColor,
       dark: secondaryColorDark,
-      contrastText: white,
+      contrastText: primaryColor,
     },
     background: {
       default: white,

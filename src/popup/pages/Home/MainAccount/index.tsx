@@ -9,6 +9,7 @@ import theme from '../../../../config/theme';
 const styles = {
   card: {
     cursor: 'pointer',
+    borderRadius: theme.border.radius,
   },
   cardContent: {
     padding: theme.spacing.md,
@@ -23,7 +24,7 @@ const styles = {
   address: {
     fontSize: theme.font.sm,
     color: theme.palette.text.light,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
   },
   amountContainer: {
     width: '100%',
@@ -32,19 +33,27 @@ const styles = {
     display: 'inline-flex',
   },
   tokenAmount: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: theme.palette.text.light,
-    marginRight: theme.spacing.sm,
+    marginRight: theme.spacing.xs,
   },
   token: {
     fontSize: theme.font.sm,
     color: theme.palette.text.light,
-    flex: 1
+    flex: 1,
+    alignSelf: 'flex-end',
+    marginBottom: 6,
   },
   rightArrow: {
-    fontSize: 20,
+    fontSize: 22,
     color: theme.palette.text.light,
+    alignSelf: 'center',
+  },
+  actionButton: {
+    padding: `${theme.spacing.unit} ${theme.spacing.sm}`,
+    marginRight: theme.spacing.xs,
+    fontSize: theme.font.sm,
   },
 };
 
@@ -104,21 +113,21 @@ export default class MainAccount extends Component<any, {}> {
             <div style={{ textAlign: 'right' }}>
               <Button
                 id="sendButton"
-                color="primary"
+                color="secondary"
                 variant="raised"
                 size="small"
                 onClick={(e) => handleClick('sendButton', e)}
-                style={{ marginRight: 8, minWidth: 0, minHeight: 0, fontSize: 11 }}
+                style={styles.actionButton}
                >
                  Send
                </Button>
               <Button
                 id="receiveButton"
-                color="primary"
+                color="secondary"
                 variant="raised"
                 size="small"
                 onClick={(e) => handleClick('receiveButton', e)}
-                style={{ minWidth: 0, minHeight: 0, fontSize: 11 }}
+                style={styles.actionButton}
                >
                  Receive
                </Button>
