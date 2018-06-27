@@ -4,6 +4,7 @@ import { observable, action, runInAction } from 'mobx';
 class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public tip = '';
+  @observable public fromAddress = '';
 
   @observable private mnemonic: string = '';
   @observable private enteredMnemonic: string = '';

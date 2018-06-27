@@ -10,32 +10,19 @@ import { NavBar } from '../../components/NavBar';
 @inject('store')
 @observer
 export default class Send extends Component<any, {}> {
-  state = {
-    from: '',
-  }
-
-  private onFromChange = (value) => {
-    // TODO: implement
-  }
-
-  public handleCreate = () => {
-    this.props.history.push('/send-confirm');
-  }
-
   public componentDidMount() {
     this.props.store.ui.prevLocation = '/account-detail';
   }
 
   public render() {
     const { walletStore } = this.props.store;
-    const { info } = walletStore;
 
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <NavBar hasBackButton={true} title="Send" />
-        <div style={{ height: '100%', margin: 8 }}>
+        <div style={{ height: '100%', margin: 16 }}>
           <div style={{ flex: 1 }}>
-            <FromField info={info} onFromChange={this.onFromChange} />
+            <FromField walletStore={walletStore} />
             <ToField walletStore={walletStore} />
             <TokenField walletStore={walletStore} />
             <AmountField walletStore={walletStore} />
@@ -47,28 +34,28 @@ export default class Send extends Component<any, {}> {
   }
 }
 
-const FromField = ({ info, onFromChange }) => (
-  <div style={{ marginBottom: 16 }}>
+const FromField = ({ walletStore }) => (
+  <div style={{ marginBottom: 20 }}>
     <Typography variant="subheading" style={{ fontWeight: 'bold' }}>From</Typography>
     <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
       <Select
         disableUnderline
-        value={info.addrStr}
-        onChange={onFromChange}
+        value={walletStore.info.addrStr}
+        onChange={(event) => walletStore.fromAddress = event.target.value}
         inputProps={{ name: 'from', id: 'from' }}
         style={{ width: '100%' }}
       >
-        <MenuItem value={info.addrStr}>
+        <MenuItem value={walletStore.info.addrStr}>
           <Typography style={{ fontSize: 16, fontWeight: 'bold' }}>{'Default Account'}</Typography>
         </MenuItem>
       </Select>
-      <Typography style={{ fontSize: 14, color: '#333333' }}>{info.balance} QTUM</Typography>
+      <Typography style={{ fontSize: 14, color: '#333333' }}>{walletStore.info.balance} QTUM</Typography>
     </div>
   </div>
 );
 
 const ToField = ({ walletStore }) => (
-  <div style={{ marginBottom: 16 }}>
+  <div style={{ marginBottom: 20 }}>
     <Typography variant="subheading" style={{ fontWeight: 'bold' }}>To</Typography>
     <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
       <TextField
@@ -83,7 +70,7 @@ const ToField = ({ walletStore }) => (
 );
 
 const TokenField = ({ walletStore }) => (
-  <div style={{ marginBottom: 16 }}>
+  <div style={{ marginBottom: 20 }}>
     <Typography variant="subheading" style={{ fontWeight: 'bold' }}>Token</Typography>
     <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
       <Select
@@ -102,7 +89,7 @@ const TokenField = ({ walletStore }) => (
 );
 
 const AmountField = ({ walletStore }) => (
-  <div style={{ marginBottom: 60 }}>
+  <div style={{ marginBottom: 48 }}>
     <div style={{ width: '100%', flexDirection: 'row', display: 'inline-flex' }}>
       <Typography variant="subheading" style={{ fontWeight: 'bold', flex: 1 }}>Amount</Typography>
       <Button color="primary" style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}>Max</Button>
@@ -123,8 +110,8 @@ const AmountField = ({ walletStore }) => (
   </div>
 );
 
-const SendButton = () => (
-  <Button fullWidth variant="contained" color="primary">
+const SendButton = withRouter(({ history }) => (
+  <Button fullWidth variant="contained" color="primary" onClick={() => history.push('/send-confirm')}>
     Send
   </Button>
-);
+));
