@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 
 import { NavBar } from '../../components/NavBar';
+import Theme from '../../../config/theme';
 
 @inject('store')
 @observer
@@ -19,7 +20,7 @@ export default class Send extends Component<any, {}> {
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <NavBar hasBackButton={true} title="Send" />
-        <div style={{ height: '100%', margin: 16 }}>
+        <div style={{ margin: Theme.spacing.xs }}>
           <div style={{ flex: 1 }}>
             <FromField walletStore={walletStore} />
             <ToField walletStore={walletStore} />
@@ -34,7 +35,7 @@ export default class Send extends Component<any, {}> {
 }
 
 const FromField = ({ walletStore }) => (
-  <div style={{ marginBottom: 20 }}>
+  <div style={{ marginBottom: Theme.spacing.md }}>
     <Typography variant="subheading" style={{ fontWeight: 'bold' }}>From</Typography>
     <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
       <Select
@@ -54,7 +55,7 @@ const FromField = ({ walletStore }) => (
 );
 
 const ToField = ({ walletStore }) => (
-  <div style={{ marginBottom: 20 }}>
+  <div style={{ marginBottom: Theme.spacing.md }}>
     <Typography variant="subheading" style={{ fontWeight: 'bold' }}>To</Typography>
     <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
       <TextField
@@ -69,7 +70,7 @@ const ToField = ({ walletStore }) => (
 );
 
 const TokenField = ({ walletStore }) => (
-  <div style={{ marginBottom: 20 }}>
+  <div style={{ marginBottom: Theme.spacing.md }}>
     <Typography variant="subheading" style={{ fontWeight: 'bold' }}>Token</Typography>
     <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
       <Select
@@ -88,7 +89,7 @@ const TokenField = ({ walletStore }) => (
 );
 
 const AmountField = ({ walletStore }) => (
-  <div style={{ marginBottom: 48 }}>
+  <div style={{ marginBottom: Theme.spacing.custom(12) }}>
     <div style={{ width: '100%', flexDirection: 'row', display: 'inline-flex' }}>
       <Typography variant="subheading" style={{ fontWeight: 'bold', flex: 1 }}>Amount</Typography>
       <Button color="primary" style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}>Max</Button>
