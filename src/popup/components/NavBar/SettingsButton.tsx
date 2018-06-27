@@ -13,25 +13,25 @@ export default class SettingsButton extends Component {
   }
 
   public render() {
-    const { homeStore } = this.props.store;
+    const { ui } = this.props.store;
 
     return (
       <div>
-        <div style={{ textAlign: 'right' }}>
-          <IconButton
-            aria-owns={homeStore.settingsMenuAnchor ? 'settingsMenu' : null}
-            aria-haspopup="true"
-            color="primary"
-            onClick={(e) => homeStore.settingsMenuAnchor = e.currentTarget}
-          >
-            <Settings />
-          </IconButton>
-        </div>
+        <IconButton
+          aria-owns={ui.settingsMenuAnchor ? 'settingsMenu' : null}
+          aria-haspopup="true"
+          color="primary"
+          onClick={(e) => ui.settingsMenuAnchor = e.currentTarget}
+          style={{ width: 24, height: 24 }}
+          disableRipple
+        >
+          <Settings style={{ fontSize: 18 }} />
+        </IconButton>
         <Menu
           id="settingsMenu"
-          anchorEl={homeStore.settingsMenuAnchor}
-          open={Boolean(homeStore.settingsMenuAnchor)}
-          onClose={() => homeStore.settingsMenuAnchor = null}
+          anchorEl={ui.settingsMenuAnchor}
+          open={Boolean(ui.settingsMenuAnchor)}
+          onClose={() => ui.settingsMenuAnchor = null}
         >
           <MenuItem onClick={this.onLogoutButtonClick}>Logout</MenuItem>
         </Menu>

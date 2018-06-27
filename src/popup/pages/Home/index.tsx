@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import { NavBar } from '../../components/NavBar';
 import MainAccount from './MainAccount';
 
 class Home extends Component<any, {}> {
@@ -10,8 +11,11 @@ class Home extends Component<any, {}> {
 
   public render() {
     return (
-      <div style={{ margin: 16 }}>
-        <MainAccount />
+      <div>
+        <NavBar hasSettingsButton={true} title='Home' />
+        <div style={{ margin: 16 }}>
+          <MainAccount />
+        </div>
       </div>
     );
   }
