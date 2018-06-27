@@ -3,19 +3,9 @@ import { createMuiTheme } from '@material-ui/core';
 
 /* Fonts */
 const fontLato = 'Lato, Helvetica, Arial, sans-serif';
-
-const fontSizeTitleLg = 36;
-const fontSizeTitleMd = 32;
-const fontSizeTitleSm = 24;
-const fontSizeTextLg = 20;
-const fontSizeTextMd = 18;
-const fontSizeTextSm = 16;
-const fontSizeMeta = 14;
-
-const lineHeightLg = '133.33%';
-const lineHeightSm = '125%';
-
-const iconSize = 24;
+const fontSizeSm = 12;
+const fontSizeMd = 14;
+const fontSizeLg = 16;
 
 /* Colors */
 const primaryColor = '#5246d9';
@@ -50,6 +40,9 @@ const borderRadius = 4;
 
 /* Button */
 const buttonRadius = 16;
+
+/* Icons */
+const iconSize = 24;
 
 const px = (value) => value.toString().concat('px');
 
@@ -135,6 +128,11 @@ export default createMuiTheme({
         fontWeight: 'bold',
       },
     },
+    MuiInput: {
+      root: {
+        fontSize: fontSizeMd,
+      },
+    },
   //   MuiSelect: {
   //     select: {
   //       '&:focus': {
@@ -204,13 +202,9 @@ export default createMuiTheme({
   },
 
   font: {
-    titleLg: px(fontSizeTitleLg),
-    titleMd: px(fontSizeTitleMd),
-    titleSm: px(fontSizeTitleSm),
-    textLg: px(fontSizeTextLg),
-    textMd: px(fontSizeTextMd),
-    textSm: px(fontSizeTextSm),
-    meta: px(fontSizeMeta),
+    sm: px(fontSizeSm),
+    md: px(fontSizeMd),
+    lg: px(fontSizeLg),
   },
 
   icon: {

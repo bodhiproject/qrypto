@@ -35,9 +35,9 @@ export default class Send extends Component<any, {}> {
 }
 
 const FromField = ({ walletStore }) => (
-  <div style={{ marginBottom: Theme.spacing.md }}>
-    <Typography variant="subheading" style={{ fontWeight: 'bold' }}>From</Typography>
-    <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
+  <div style={{ marginBottom: Theme.spacing.lg }}>
+    <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold' }}>From</Typography>
+    <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <Select
         disableUnderline
         value={walletStore.info.addrStr}
@@ -46,23 +46,24 @@ const FromField = ({ walletStore }) => (
         style={{ width: '100%' }}
       >
         <MenuItem value={walletStore.info.addrStr}>
-          <Typography style={{ fontSize: 16, fontWeight: 'bold' }}>{'Default Account'}</Typography>
+          <Typography style={{ fontSize: Theme.font.md, fontWeight: 'bold' }}>{'Default Account'}</Typography>
         </MenuItem>
       </Select>
-      <Typography style={{ fontSize: 14, color: '#333333' }}>{walletStore.info.balance} QTUM</Typography>
+      <Typography style={{ fontSize: Theme.font.md, color: '#333333' }}>{walletStore.info.balance} QTUM</Typography>
     </div>
   </div>
 );
 
 const ToField = ({ walletStore }) => (
-  <div style={{ marginBottom: Theme.spacing.md }}>
-    <Typography variant="subheading" style={{ fontWeight: 'bold' }}>To</Typography>
-    <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
+  <div style={{ marginBottom: Theme.spacing.lg }}>
+    <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold' }}>To</Typography>
+    <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <TextField
         fullWidth
         type="text"
         multiline={false}
-        InputProps={{ endAdornment: <ArrowDropDown /> }}
+        placeholder={walletStore.info.addrStr}
+        InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
         onChange={(event) => walletStore.sendToAddress = event.target.value}
       />
     </div>
@@ -70,9 +71,9 @@ const ToField = ({ walletStore }) => (
 );
 
 const TokenField = ({ walletStore }) => (
-  <div style={{ marginBottom: Theme.spacing.md }}>
-    <Typography variant="subheading" style={{ fontWeight: 'bold' }}>Token</Typography>
-    <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
+  <div style={{ marginBottom: Theme.spacing.lg }}>
+    <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold' }}>Token</Typography>
+    <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <Select
         disableUnderline
         value="QTUM"
@@ -81,7 +82,7 @@ const TokenField = ({ walletStore }) => (
         onChange={(event) => walletStore.sendToTokenType = event.target.value}
       >
         <MenuItem value="QTUM">
-          <Typography style={{ fontSize: 16, fontWeight: 'bold' }}>QTUM</Typography>
+          <Typography style={{ fontSize: Theme.font.md, fontWeight: 'bold' }}>QTUM</Typography>
         </MenuItem>
       </Select>
     </div>
@@ -89,21 +90,33 @@ const TokenField = ({ walletStore }) => (
 );
 
 const AmountField = ({ walletStore }) => (
-  <div style={{ marginBottom: Theme.spacing.custom(20) }}>
+  <div style={{ marginBottom: Theme.spacing.custom(26) }}>
     <div style={{ width: '100%', flexDirection: 'row', display: 'inline-flex' }}>
-      <Typography variant="subheading" style={{ fontWeight: 'bold', flex: 1 }}>Amount</Typography>
+      <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold', flex: 1 }}>Amount</Typography>
       <Button color="primary" style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}>Max</Button>
     </div>
-    <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
+    <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <TextField
         fullWidth
         type="number"
         multiline={false}
-        InputProps={{ endAdornment: (
-          <Typography style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 8, display: 'flex', alignItems: 'center' }}>
-            {walletStore.sendToTokenType}
-          </Typography>
-        )}}
+        placeholder="0.00"
+        InputProps={{ 
+          endAdornment: (
+            <Typography
+              style={{
+                fontSize: Theme.font.md,
+                fontWeight: 'bold',
+                marginLeft: Theme.spacing.sm,
+                display: 'flex',
+                alignItems: 'center'
+              }}
+             >
+              {walletStore.sendToTokenType}
+            </Typography>
+          ),
+          disableUnderline: true,
+        }}
         onChange={(event) => walletStore.sendToAmount = event.target.value}
       />
     </div>
