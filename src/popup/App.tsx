@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import './App.scss';
+import { Provider as MobxProvider } from 'mobx-react';
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 
+import './App.scss';
 import ImportMnemonic from './pages/ImportMnemonic';
 import Home from './pages/Home';
 import AccountDetail from './pages/AccountDetail';
 import Send from './pages/Send';
 import Receive from './pages/Receive';
 import SendConfirm from './pages/SendConfirm';
-
-import { Provider as MobxProvider } from 'mobx-react';
 import store from '../stores/AppStore';
+import theme from '../config/theme';
 
 class App extends Component<IProps, {}> {
 
@@ -22,21 +23,23 @@ class App extends Component<IProps, {}> {
 
     return (
       <MobxProvider store={store}>
-        <Router>
-          <div >
-            {/* TODO - this will later become:
-            - if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic,
-            -else route to login */}
-            <Redirect to="/import-mnemonic" />
+        <MuiThemeProvider theme={theme}>
+          <Router>
+            <div >
+              {/* TODO - this will later become:
+              - if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic,
+              -else route to login */}
+              <Redirect to="/import-mnemonic" />
 
-            <Route exact path="/" component={Home} />
-            <Route exact path="/import-mnemonic" component={ImportMnemonic} />
-            <Route exact path="/account-detail" component={AccountDetail} />
-            <Route exact path="/send" component={Send} />
-            <Route exact path="/send-confirm" component={SendConfirm} />
-            <Route exact path="/receive" component={Receive} />
-          </div>
-        </Router>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/import-mnemonic" component={ImportMnemonic} />
+              <Route exact path="/account-detail" component={AccountDetail} />
+              <Route exact path="/send" component={Send} />
+              <Route exact path="/send-confirm" component={SendConfirm} />
+              <Route exact path="/receive" component={Receive} />
+            </div>
+          </Router>
+        </MuiThemeProvider>
       </MobxProvider>
     );
   }

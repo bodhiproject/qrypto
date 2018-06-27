@@ -20,7 +20,7 @@ export default class Send extends Component<any, {}> {
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <NavBar hasBackButton={true} title="Send" />
-        <div style={{ margin: Theme.spacing.xs }}>
+        <div style={{ margin: Theme.spacing.sm }}>
           <div style={{ flex: 1 }}>
             <FromField walletStore={walletStore} />
             <ToField walletStore={walletStore} />
@@ -89,7 +89,7 @@ const TokenField = ({ walletStore }) => (
 );
 
 const AmountField = ({ walletStore }) => (
-  <div style={{ marginBottom: Theme.spacing.custom(12) }}>
+  <div style={{ marginBottom: Theme.spacing.custom(20) }}>
     <div style={{ width: '100%', flexDirection: 'row', display: 'inline-flex' }}>
       <Typography variant="subheading" style={{ fontWeight: 'bold', flex: 1 }}>Amount</Typography>
       <Button color="primary" style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}>Max</Button>

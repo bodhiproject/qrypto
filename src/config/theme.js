@@ -48,6 +48,9 @@ const borderColor = '#cccccc';
 const borderSize = 1;
 const borderRadius = 4;
 
+/* Button */
+const buttonRadius = 16;
+
 const px = (value) => value.toString().concat('px');
 
 export default createMuiTheme({
@@ -124,27 +127,19 @@ export default createMuiTheme({
   // },
 
   // Overrides Material components globally
-  // overrides: {
+  overrides: {
+    MuiButton: {
+      root: {
+        padding: spacingXs,
+        borderRadius: buttonRadius,
+        fontWeight: 'bold',
+      },
+    },
   //   MuiSelect: {
   //     select: {
   //       '&:focus': {
   //         backgroundColor: 'transparent',
   //       },
-  //     },
-  //   },
-  //   MuiButton: {
-  //     root: {
-  //       borderRadius: px(spacingLg),
-  //       textTransform: 'none',
-  //     },
-  //     raised: {
-  //       backgroundColor: 'white',
-  //       color: primaryColor,
-  //     },
-  //     sizeLarge: {
-  //       fontSize: px(fontSizeTextLg),
-  //       fontWeight: 700,
-  //       minHeight: px(spacingLg),
   //     },
   //   },
   //   MuiDialogContentText: {
@@ -195,7 +190,7 @@ export default createMuiTheme({
   //       right: 0,
   //     },
   //   },
-  // },
+  },
 
   /* User-defined variables */
   spacing: {
