@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { Settings } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 
+@withRouter
 @inject('store')
 @observer
 export default class SettingsButton extends Component {
