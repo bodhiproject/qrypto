@@ -5,17 +5,13 @@ import * as React from 'react';
 import BackButton from './BackButton';
 
 export const NavBar = ({ hasBackButton = false, title = '' }) => (
-  <div>
+  <div style={{ margin: 8, flexDirection: 'row', display: 'inline-flex' }}>
+    {hasBackButton && <BackButton />}
+    {title}
     {/* <TopBar>
       <NetworkSelector />
       <SettingsButton />
     </TopBar> */}
-    {hasBackButton && (
-      <div>
-        <BackButton />
-        {title}
-      </div>
-    )}
   </div>
 );
 
