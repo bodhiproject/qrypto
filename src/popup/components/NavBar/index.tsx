@@ -6,14 +6,37 @@ import BackButton from './BackButton';
 import SettingsButton from './SettingsButton';
 import NetworkSelector from './NetworkSelector';
 
+const styles = {
+  root: {
+    width: '100%',
+    margin: 8,
+    flexDirection: 'row',
+    display: 'inline-flex',
+  },
+  leftButtonsContainer: {
+    marginRight: 4,
+    cursor: 'pointer',
+  },
+  locationContainer: {
+    height: 24,
+    display: 'flex',
+    alignItems: 'center',
+    flex: 1,
+  },
+  locationText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+};
+
 export const NavBar = ({ hasBackButton = false, hasSettingsButton = false, hasNetworkSelector = false, title = '' }) => (
-  <div style={{ margin: 8, flexDirection: 'row', display: 'inline-flex' }}>
-    <div style={{ marginRight: 4, cursor: 'pointer' }}>
+  <div style={styles.root}>
+    <div style={styles.leftButtonsContainer}>
       {hasBackButton && <BackButton />}
       {hasSettingsButton && <SettingsButton />}
     </div>
-    <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
-      <Typography style={{ fontSize: 14, fontWeight: 'bold' }}>{title}</Typography>
+    <div style={styles.locationContainer}>
+      <Typography style={styles.locationText}>{title}</Typography>
     </div>
     {hasNetworkSelector && <NetworkSelector />}
   </div>

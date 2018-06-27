@@ -12,7 +12,7 @@ class Home extends Component<any, {}> {
   public render() {
     return (
       <div>
-        <NavBar hasSettingsButton={true} title="Home" />
+        <NavBar hasSettingsButton hasNetworkSelector title="Home" />
         <div style={{ margin: 16 }}>
           <MainAccount />
         </div>
