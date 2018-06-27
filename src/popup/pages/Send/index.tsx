@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Typography, Select, MenuItem, Button } from '@material-ui/core';
+import { Typography, Select, MenuItem, TextField, Button } from '@material-ui/core';
+import { ArrowDropDown } from '@material-ui/icons';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 
@@ -34,6 +35,7 @@ export default class Send extends Component<any, {}> {
         <NavBar hasBackButton={true} title='Send' />
         <div style={{ margin: 8 }}>
           <FromField info={info} onFromChange={this.onFromChange} />
+          {<ToField />}
 
           {/*
           <div>
@@ -59,7 +61,7 @@ export default class Send extends Component<any, {}> {
 }
 
 const FromField = ({ info, onFromChange }) => (
-  <div>
+  <div style={{ marginBottom: 16 }}>
     <Typography variant='subheading' style={{ fontWeight: 'bold' }}>From</Typography>
     <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
       <Select
@@ -74,6 +76,22 @@ const FromField = ({ info, onFromChange }) => (
         </MenuItem>
       </Select>
       <Typography style={{ fontSize: 14, color: '#333333' }}>{info.balance} QTUM</Typography>
+    </div>
+  </div>
+);
+
+const ToField = ({ info, onFromChange }) => (
+  <div>
+    <Typography variant='subheading' style={{ fontWeight: 'bold' }}>To</Typography>
+    <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
+      <TextField
+        fullWidth
+        type='text'
+        multiline={false}
+        InputProps={{
+          endAdornment: <ArrowDropDown />
+        }}
+      />
     </div>
   </div>
 );
