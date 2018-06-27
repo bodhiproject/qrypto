@@ -43,7 +43,7 @@ export default class MainAccount extends Component<any, {}> {
 
     return(
       <div>
-        <MainAccountCard address={info.addrStr} balance={info.balance} handleClick={this.handleClick} />
+        {info && <MainAccountCard address={info.addrStr} balance={info.balance} handleClick={this.handleClick} />}
       </div>
     );
   }

@@ -7,12 +7,10 @@ class AppStore {
   public location = '/import-mnemonic';
   public ui = {};
   public walletStore = {};
-  public homeStore = {};
 
   constructor() {
     this.ui = uiStore;
     this.walletStore = walletStore;
-    this.homeStore = homeStore;
   }
 }
 

@@ -1,21 +1,21 @@
 import * as React from 'react';
+import { Typography } from '@material-ui/core';
 // import styled from 'styled-components'
-// import NetworkSelector from './NetworkSelector'
-// import SettingsButton from './SettingsButton'
-import BackButton from './BackButton';
 
-export const NavBar = ({ hasBackButton = false, title = '' }) => (
-  <div>
-    {/* <TopBar>
-      <NetworkSelector />
-      <SettingsButton />
-    </TopBar> */}
-    {hasBackButton && (
-      <div>
-        <BackButton />
-        {title}
-      </div>
-    )}
+import BackButton from './BackButton';
+import SettingsButton from './SettingsButton';
+import NetworkSelector from './NetworkSelector';
+
+export const NavBar = ({ hasBackButton = false, hasSettingsButton = false, hasNetworkSelector = false, title = '' }) => (
+  <div style={{ margin: 8, flexDirection: 'row', display: 'inline-flex' }}>
+    <div style={{ marginRight: 4, cursor: 'pointer' }}>
+      {hasBackButton && <BackButton />}
+      {hasSettingsButton && <SettingsButton />}
+    </div>
+    <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
+      <Typography style={{ fontSize: 14, fontWeight: 'bold' }}>{title}</Typography>
+    </div>
+    {hasNetworkSelector && <NetworkSelector />}
   </div>
 );
 
