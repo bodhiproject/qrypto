@@ -18,9 +18,6 @@ export default class Send extends Component {
     const { walletStore } = this.props.store;
     const { sendToAddress, sendToTokenType, sendToAmount } = walletStore;
 
-    console.log(sendToTokenType);
-    console.log(sendToAmount);
-
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <NavBar hasBackButton={true} title="Send" />
@@ -38,9 +35,17 @@ export default class Send extends Component {
   }
 }
 
+const Heading = ({ name }) => (
+  <Typography
+    style={{ marginBottom: Theme.spacing.unit, fontSize: Theme.font.sm, fontWeight: 'bold' }}
+  >
+    {name}
+  </Typography>
+);
+
 const FromField = ({ walletStore }) => (
   <div style={{ marginBottom: Theme.spacing.lg }}>
-    <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold' }}>From</Typography>
+    <Heading name="From" />
     <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <Select
         disableUnderline
@@ -60,7 +65,7 @@ const FromField = ({ walletStore }) => (
 
 const ToField = ({ walletStore }) => (
   <div style={{ marginBottom: Theme.spacing.lg }}>
-    <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold' }}>To</Typography>
+    <Heading name="To" />
     <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <TextField
         fullWidth
@@ -76,7 +81,7 @@ const ToField = ({ walletStore }) => (
 
 const TokenField = ({ walletStore }) => (
   <div style={{ marginBottom: Theme.spacing.lg }}>
-    <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold' }}>Token</Typography>
+    <Heading name="Token" />
     <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
       <Select
         disableUnderline
@@ -96,7 +101,9 @@ const TokenField = ({ walletStore }) => (
 const AmountField = ({ amount, token, walletStore }) => (
   <div style={{ marginBottom: Theme.spacing.custom(26) }}>
     <div style={{ width: '100%', flexDirection: 'row', display: 'inline-flex' }}>
-      <Typography style={{ fontSize: Theme.font.sm, fontWeight: 'bold', flex: 1 }}>Amount</Typography>
+      <div style={{ flex: 1 }}>
+        <Heading name="Amount" />
+      </div>
       <Button
         color="primary"
         style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}
