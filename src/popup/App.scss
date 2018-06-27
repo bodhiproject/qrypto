@@ -7,3 +7,51 @@ body {
   width: 350px;
   min-height: 550px;
 }
+
+:global {
+  .account-detail-header {
+    color: white;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(300.29deg, #8E6BF1 -9.7%, #5539DF 85.28%);
+  }
+
+  .header-content {
+    padding: 16px;
+
+    address {
+      font-family: Montserrat;
+      font-style: normal;
+      font-weight: normal;
+      line-height: 16px;
+      font-size: 12px;
+    }
+
+    .detail-balance {
+      em {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 42px;
+        font-size: 32px;
+        margin-right: 8px;
+      }
+
+      span {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 24px;
+        font-size: 12px;
+      }
+    }
+
+    .detail-exchange {
+      font-family: Montserrat;
+      font-style: normal;
+      font-weight: normal;
+      line-height: 16px;
+      font-size: 12px;
+    }
+
+  }
+}

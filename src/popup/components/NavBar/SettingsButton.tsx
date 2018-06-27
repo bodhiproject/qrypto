@@ -26,7 +26,7 @@ export default class SettingsButton extends Component {
           onClick={(e) => ui.settingsMenuAnchor = e.currentTarget}
           style={{ width: 24, height: 24 }}
         >
-          <Settings style={{ fontSize: 18 }} />
+          <Settings style={{ fontSize: 18, ...(this.props.fontStyle || {}) }} />
         </IconButton>
         <Menu
           id="settingsMenu"

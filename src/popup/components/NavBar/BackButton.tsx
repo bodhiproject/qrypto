@@ -4,10 +4,10 @@ import { inject, observer } from 'mobx-react';
 import { IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 
-const BackButton = ({ store, history }) => (
+const BackButton = ({ store, history, fontStyle = {} }) => (
   <div>
     <IconButton onClick={(e) => history.push(store.ui.prevLocation)} style={{ width: 24, height: 24 }}>
-      <ArrowBack style={{ fontSize: 14 }} />
+      <ArrowBack style={{ fontSize: 14, ...fontStyle }} />
     </IconButton>
   </div>
 );
