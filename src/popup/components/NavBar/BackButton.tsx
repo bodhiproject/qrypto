@@ -5,7 +5,7 @@ import { ArrowBack } from '@material-ui/icons';
 
 const BackButton = ({ store, history }) => (
   <div onClick={() => history.push(store.ui.prevLocation)}>
-    <ArrowBack style={{ marginRight: 8 }} />
+    <ArrowBack style={{ fontSize: 18, marginRight: 8, cursor: 'pointer' }} />
   </div>
 );
 
