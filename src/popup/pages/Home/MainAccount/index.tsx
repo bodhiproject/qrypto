@@ -50,6 +50,10 @@ const styles = {
     color: theme.palette.text.light,
     alignSelf: 'center',
   },
+  actionButtonsContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
   actionButton: {
     padding: `${theme.spacing.unit} ${theme.spacing.sm}`,
     marginRight: theme.spacing.xs,
@@ -110,7 +114,7 @@ export default class MainAccount extends Component<any, {}> {
               <Typography style={styles.token}>QTUM</Typography>
               <KeyboardArrowRight style={styles.rightArrow} />
             </div>
-            <div style={{ textAlign: 'right' }}>
+            <div style={styles.actionButtonsContainer}>
               <Button
                 id="sendButton"
                 color="secondary"
