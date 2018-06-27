@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { Typography, Card, CardContent, Button, IconButton } from '@material-ui/core';
+import { Typography, Card, CardContent, Button } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
 
 import theme from '../../../../config/theme';
