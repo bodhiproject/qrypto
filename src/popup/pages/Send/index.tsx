@@ -14,7 +14,15 @@ export default class Send extends Component<any, {}> {
     from: '',
   }
 
-  private onFromChange = () => {
+  private onFromChange = (value) => {
+    // TODO: implement
+  }
+
+  private onToChange = (value) => {
+    // TODO: implement
+  }
+
+  private onTokenChange = (value) => {
     // TODO: implement
   }
 
@@ -35,7 +43,8 @@ export default class Send extends Component<any, {}> {
         <NavBar hasBackButton={true} title='Send' />
         <div style={{ margin: 8 }}>
           <FromField info={info} onFromChange={this.onFromChange} />
-          {<ToField />}
+          {<ToField onToChange={this.onToChange} />}
+          {<TokenField onTokenChange={this.onTokenChange} />}
 
           {/*
           <div>
@@ -80,18 +89,36 @@ const FromField = ({ info, onFromChange }) => (
   </div>
 );
 
-const ToField = ({ info, onFromChange }) => (
-  <div>
+const ToField = ({ onToChange }) => (
+  <div style={{ marginBottom: 16 }}>
     <Typography variant='subheading' style={{ fontWeight: 'bold' }}>To</Typography>
     <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
       <TextField
         fullWidth
         type='text'
         multiline={false}
-        InputProps={{
-          endAdornment: <ArrowDropDown />
-        }}
+        InputProps={{ endAdornment: <ArrowDropDown /> }}
+        onChange={(e) => onToChange(e.target.value)}
       />
+    </div>
+  </div>
+);
+
+const TokenField = ({ onTokenChange }) => (
+  <div style={{ marginBottom: 16 }}>
+    <Typography variant='subheading' style={{ fontWeight: 'bold' }}>Token</Typography>
+    <div style={{ padding: 12, border: '1px solid #cccccc', borderRadius: 4 }}>
+      <Select
+        disableUnderline
+        value='QTUM'
+        onChange={onTokenChange}
+        inputProps={{ name: 'from', id: 'from' }}
+        style={{ width: '100%' }}
+      >
+        <MenuItem value='QTUM'>
+          <Typography style={{ fontSize: 16, fontWeight: 'bold' }}>QTUM</Typography>
+        </MenuItem>
+      </Select>
     </div>
   </div>
 );
