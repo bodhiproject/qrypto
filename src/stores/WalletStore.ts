@@ -1,9 +1,14 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
 import { observable, action, runInAction } from 'mobx';
+import transactionStore from './TransactionStore';
+import Transaction from './Transaction';
 
 class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public tip = '';
+  @observable public fromAddress = '';
+
+  public transactions = transactionStore;
 
   @observable private mnemonic: string = '';
   @observable private enteredMnemonic: string = '';
@@ -23,7 +28,7 @@ class WalletStore {
 
       this.mnemonic = mnemonic;
       this.qjsWallet = this.recoverWallet(mnemonic);
-      this.info = await this.getWalletInfo();
+      this.getWalletInfo();
     });
   }
 
@@ -72,6 +77,12 @@ class WalletStore {
   @action
   private async getWalletInfo() {
     this.info = await this.qjsWallet!.getInfo();
+
+    const { transactions } = this.info;
+    this.transactions.items = transactions.map((id) => {
+      return new Transaction({ id });
+    });
+
     return this.info;
   }
 

@@ -132,7 +132,7 @@ const AmountField = ({ amount, token, walletStore }) => (
                 fontWeight: 'bold',
                 marginLeft: Theme.spacing.sm,
                 display: 'flex',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
              >
               {token}

@@ -5,15 +5,44 @@ import { Typography } from '@material-ui/core';
 import BackButton from './BackButton';
 import SettingsButton from './SettingsButton';
 import NetworkSelector from './NetworkSelector';
+import theme from '../../../config/theme';
 
-export const NavBar = ({ hasBackButton = false, hasSettingsButton = false, hasNetworkSelector = false, title = '' }) => (
-  <div style={{ margin: 8, flexDirection: 'row', display: 'inline-flex' }}>
-    <div style={{ marginRight: 4, cursor: 'pointer' }}>
-      {hasBackButton && <BackButton />}
+const styles = {
+  root: {
+    display: 'flex',
+    margin: theme.spacing.xs,
+  },
+  leftButtonsContainer: {
+    marginRight: theme.spacing.unit,
+    cursor: 'pointer',
+  },
+  locationContainer: {
+    height: theme.icon.size,
+    display: 'flex',
+    alignItems: 'center',
+    flex: 1,
+  },
+  locationText: {
+    fontSize: theme.font.md,
+    fontWeight: 'bold',
+  },
+};
+
+export const NavBar = ({ hasBackButton = false, hasSettingsButton = false, hasNetworkSelector = false, title = '', fontColor = '' }) => (
+  <div style={styles.root}>
+    <div style={styles.leftButtonsContainer}>
+      {hasBackButton && <BackButton fontColor={fontColor} />}
       {hasSettingsButton && <SettingsButton />}
     </div>
-    <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
-      <Typography style={{ fontSize: 14, fontWeight: 'bold' }}>{title}</Typography>
+    <div style={styles.locationContainer}>
+      <Typography
+        style={{
+          ...styles.locationText,
+          ...(fontColor ? { color: fontColor } : {}),
+        }}
+      >
+        {title}
+      </Typography>
     </div>
     {hasNetworkSelector && <NetworkSelector />}
   </div>
