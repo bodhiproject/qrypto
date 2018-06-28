@@ -4,6 +4,12 @@
 //   color: $primary-color;
 // }
 
+@mixin font {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: normal;
+}
+
 :global {
   #root {
     width: 350px;
@@ -30,9 +36,7 @@
     padding: 16px;
 
     address {
-      font-family: Montserrat;
-      font-style: normal;
-      font-weight: normal;
+      @include font;
       line-height: 16px;
       font-size: 12px;
     }
@@ -57,9 +61,7 @@
     }
 
     .detail-exchange {
-      font-family: Montserrat;
-      font-style: normal;
-      font-weight: normal;
+      @include font;
       line-height: 16px;
       font-size: 12px;
     }
