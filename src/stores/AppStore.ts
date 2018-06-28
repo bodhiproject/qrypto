@@ -1,7 +1,6 @@
 
 import walletStore from './WalletStore';
 import uiStore from './UiStore';
-import homeStore from './HomeStore';
 
 class AppStore {
   public location = '/import-mnemonic';

@@ -6,6 +6,7 @@ const fontLato = 'Lato, Helvetica, Arial, sans-serif';
 const fontSizeSm = 12;
 const fontSizeMd = 14;
 const fontSizeLg = 16;
+const fontSizeXl = 18;
 
 /* Colors */
 const primaryColor = '#5246d9';
@@ -59,7 +60,7 @@ export default createMuiTheme({
       light: secondaryColorLight,
       main: secondaryColor,
       dark: secondaryColorDark,
-      contrastText: white,
+      contrastText: primaryColor,
     },
     background: {
       default: white,
@@ -67,7 +68,8 @@ export default createMuiTheme({
     text: {
       primary: textColorPrimary,
       secondary: textColorSecondary,
-      hint: textColorLight,
+      hint: textColorSecondary,
+      light: textColorLight,
     },
     divider: borderColor,
   },
@@ -205,6 +207,7 @@ export default createMuiTheme({
     sm: px(fontSizeSm),
     md: px(fontSizeMd),
     lg: px(fontSizeLg),
+    xl: px(fontSizeXl),
   },
 
   icon: {
