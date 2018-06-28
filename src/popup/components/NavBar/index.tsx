@@ -30,14 +30,21 @@ const styles = {
   },
 };
 
-export const NavBar = ({ hasBackButton = false, hasSettingsButton = false, hasNetworkSelector = false, title = '' }) => (
+export const NavBar = ({ hasBackButton = false, hasSettingsButton = false, hasNetworkSelector = false, title = '', fontColor = '' }) => (
   <div style={styles.root}>
     <div style={styles.leftButtonsContainer}>
-      {hasBackButton && <BackButton />}
+      {hasBackButton && <BackButton fontColor={fontColor} />}
       {hasSettingsButton && <SettingsButton />}
     </div>
     <div style={styles.locationContainer}>
-      <Typography style={styles.locationText}>{title}</Typography>
+      <Typography
+        style={{
+          ...styles.locationText,
+          ...(fontColor ? { color: fontColor } : {}),
+        }}
+      >
+        {title}
+      </Typography>
     </div>
     {hasNetworkSelector && <NetworkSelector />}
   </div>

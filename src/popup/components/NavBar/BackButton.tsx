@@ -13,10 +13,17 @@ const styles = {
   },
 };
 
-const BackButton = ({ store, history }) => (
+const BackButton = ({ store, history, fontColor }) => (
   <Fragment>
-    <IconButton onClick={() => history.push(store.ui.prevLocation)} style={styles.iconButton}>
-      <ArrowBack style={{ fontSize: theme.font.md }} />
+    <IconButton
+      style={styles.iconButton}
+      onClick={() => history.push(store.ui.prevLocation)}>
+      <ArrowBack
+        style={{
+          fontSize: theme.font.md,
+          ...(fontColor ? {color: fontColor} : {}),
+        }}
+      />
     </IconButton>
   </Fragment>
 );
