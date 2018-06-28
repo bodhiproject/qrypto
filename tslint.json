@@ -2,6 +2,14 @@
   "defaultSeverity": "error",
   "extends": ["tslint:recommended"],
   "jsRules": {},
+  "linterOptions": {
+    "exclude": [
+      "dist",
+      "node_modules",
+      "scripts",
+      "static"
+    ]
+  },
   "rules": {
     "no-var-requires": false,
     "semicolon": [true, "always"],
@@ -17,7 +25,8 @@
       "allow-pascal-case"
     ],
     "no-empty-interface": false,
-    "no-unused-variable": true
+    "no-unused-variable": true,
+    "max-line-length": [true, {"ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |//"}]
   },
   "rulesDirectory": []
 }

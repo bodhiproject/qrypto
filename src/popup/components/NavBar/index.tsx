@@ -7,20 +7,19 @@ import { ArrowBack, Settings, ArrowDropDown } from '@material-ui/icons';
 
 import styles from './styles';
 
-
 @withStyles(styles, { withTheme: true })
 @withRouter
 @inject('store')
 @observer
 export default class NavBar extends Component {
-  static propTypes = {
+  public static propTypes = {
     classes: PropTypes.object.isRequired,
     hasBackButton: PropTypes.boolean,
     hasSettingsButton: PropTypes.boolean,
     hasNetworkSelector: PropTypes.boolean,
   };
 
-  static defaultProps = {
+  public static defaultProps = {
     hasBackButton: false,
     hasSettingsButton: false,
     hasNetworkSelector: false,
@@ -101,6 +100,6 @@ const NetworkSelector = ({ classes, onNetworkSelectionClick }) => (
     onClick={onNetworkSelectionClick}
   >
     Testnet
-    <ArrowDropDown /> 
+    <ArrowDropDown />
   </Button>
 );

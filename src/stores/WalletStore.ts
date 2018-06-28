@@ -7,8 +7,12 @@ class WalletStore {
 
   @observable private mnemonic: string = '';
   @observable private enteredMnemonic: string = '';
+  // TODO: remove when var is used
+  // tslint:disable-next-line
   @observable private senderAddress: string = '';
   @observable private receiverAddress: string = '';
+  // TODO: remove when var is used
+  // tslint:disable-next-line
   @observable private token: string = 'QTUM';
   @observable private amount: string = '0';
 
