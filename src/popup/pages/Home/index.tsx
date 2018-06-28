@@ -8,10 +8,10 @@ import MainAccount from './MainAccount';
 
 @withStyles(styles, { withTheme: true })
 export default class Home extends Component<any, {}> {
-  static propTypes = {
+  public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
-  
+
   public goToDetail = () => {
     this.props.history.push('/account-detail');
   }
@@ -28,7 +28,7 @@ export default class Home extends Component<any, {}> {
       </div>
     );
   }
-};
+}
 // TODO ??why doesn't this work, why do I have to put the click on the component itself
 {/* <MainAccount onClick={this.goToDetail}/> */}
 // export default withRouter(Home)

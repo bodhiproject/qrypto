@@ -12,7 +12,7 @@ import styles from './styles';
 @inject('store')
 @observer
 export default class MainAccount extends Component<any, {}> {
-  static propTypes = {
+  public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
 

@@ -12,7 +12,7 @@ import NavBar from '../../components/NavBar';
 @inject('store')
 @observer
 export default class Send extends Component<any, {}> {
-  static propTypes = {
+  public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
 
