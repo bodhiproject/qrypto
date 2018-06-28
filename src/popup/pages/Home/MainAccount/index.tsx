@@ -1,66 +1,12 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { Typography, Card, CardContent, Button } from '@material-ui/core';
+import { Typography, Card, CardContent, Button, withStyles } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
 
-import theme from '../../../../config/theme';
+import styles from './styles';
 
-const styles = {
-  card: {
-    cursor: 'pointer',
-    borderRadius: theme.border.radius,
-  },
-  cardContent: {
-    padding: theme.spacing.md,
-    background: theme.palette.primary.main,
-  },
-  acctName: {
-    fontSize: theme.font.md,
-    fontWeight: 'bold',
-    color: theme.palette.text.light,
-    marginBottom: theme.spacing.unit,
-  },
-  address: {
-    fontSize: theme.font.sm,
-    color: theme.palette.text.light,
-    marginBottom: theme.spacing.md,
-  },
-  amountContainer: {
-    width: '100%',
-    marginBottom: theme.spacing.sm,
-    flexDirection: 'row',
-    display: 'inline-flex',
-  },
-  tokenAmount: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: theme.palette.text.light,
-    marginRight: theme.spacing.xs,
-  },
-  token: {
-    fontSize: theme.font.sm,
-    color: theme.palette.text.light,
-    flex: 1,
-    alignSelf: 'flex-end',
-    marginBottom: 6,
-  },
-  rightArrow: {
-    fontSize: 22,
-    color: theme.palette.text.light,
-    alignSelf: 'center',
-  },
-  actionButtonsContainer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  actionButton: {
-    padding: `${theme.spacing.unit} ${theme.spacing.sm}`,
-    marginRight: theme.spacing.xs,
-    fontSize: theme.font.sm,
-  },
-};
-
+@withStyles(styles, { withTheme: true })
 @withRouter
 @inject('store')
 @observer
@@ -97,6 +43,7 @@ export default class MainAccount extends Component<any, {}> {
   }
 
   public render() {
+    const { classes } = this.props;
     const { info } = this.props.store.walletStore;
 
     if (!info) {
@@ -105,22 +52,22 @@ export default class MainAccount extends Component<any, {}> {
 
     return info && (
       <div>
-        <Card raised id="mainCard" onClick={(e) => this.handleClick('mainCard', e)} style={styles.card}>
-          <CardContent style={styles.cardContent}>
-            <Typography style={styles.acctName}>{'Default Account'}</Typography>
-            <Typography style={styles.address}>{info.addrStr}</Typography>
-            <div style={styles.amountContainer}>
-              <Typography style={styles.tokenAmount}>{info.balance}</Typography>
-              <Typography style={styles.token}>QTUM</Typography>
-              <KeyboardArrowRight style={styles.rightArrow} />
+        <Card raised id="mainCard" onClick={(e) => this.handleClick('mainCard', e)} className={classes.card}>
+          <CardContent className={classes.cardContent}>
+            <Typography className={classes.acctName}>{'Default Account'}</Typography>
+            <Typography className={classes.address}>{info.addrStr}</Typography>
+            <div className={classes.amountContainer}>
+              <Typography className={classes.tokenAmount}>{info.balance}</Typography>
+              <Typography className={classes.token}>QTUM</Typography>
+              <KeyboardArrowRight className={classes.rightArrow} />
             </div>
-            <div style={styles.actionButtonsContainer}>
+            <div className={classes.actionButtonsContainer}>
               <Button
                 id="sendButton"
                 color="secondary"
                 variant="contained"
                 size="small"
-                style={styles.actionButton}
+                className={classes.actionButton}
                 onClick={(e) => this.handleClick('sendButton', e)}
                >
                  Send
@@ -130,7 +77,7 @@ export default class MainAccount extends Component<any, {}> {
                 color="secondary"
                 variant="contained"
                 size="small"
-                style={styles.actionButton}
+                className={classes.actionButton}
                 onClick={(e) => this.handleClick('receiveButton', e)}
                >
                  Receive

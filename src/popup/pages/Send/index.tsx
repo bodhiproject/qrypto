@@ -7,7 +7,6 @@ import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import { NavBar } from '../../components/NavBar';
-import Theme from '../../../config/theme';
 
 @withStyles(styles, { withTheme: true })
 @inject('store')
