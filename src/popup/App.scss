@@ -53,5 +53,23 @@ body {
       font-size: 12px;
     }
 
+    .detail-header-btn-group {
+      text-align: right;
+      margin-bottom: 8px;
+    }
+
+    .detail-header-btn {
+      background-color: #FFF;
+      color: #5539DF;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      padding-left: 16px;
+      padding-right: 16px;
+
+      &.send-btn {
+        margin-right: 16px;
+      }
+    }
+
   }
 }

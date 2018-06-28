@@ -31,16 +31,16 @@ export default class AccountDetail extends Component<any, {}> {
             <address>{info.addrStr}</address>
             <p className="detail-balance"><em>{info.balance}</em> <span>QTUM</span></p>
             <p className="detail-exchange">$1234.56 USD</p>
-            <div style={{ textAlign: 'right', marginBottom: '8px' }}>
+            <div className="detail-header-btn-group">
               <Button 
                 variant="contained"
                 color="primary"
                 onClick={this.goToSend}
-                style={{ ...styles.btn, marginRight: '16px' }}
+                className="detail-header-btn send-btn"
               >
                 SEND
               </Button>
-              <Button variant="contained" color="primary" onClick={this.goToReceive} style={styles.btn}>
+              <Button variant="contained" color="primary" onClick={this.goToReceive} className="detail-header-btn">
                 RECEIVE
               </Button>
             </div>
@@ -50,14 +50,3 @@ export default class AccountDetail extends Component<any, {}> {
     );
   }
 }
-
-const styles = {
-  btn: {
-    backgroundColor: '#FFF',
-    color: '#5539DF',
-    paddingTop: '8px',
-    paddingBottom: '8px',
-    paddingLeft: '16px',
-    paddingRight: '16px',
-  },
-};
