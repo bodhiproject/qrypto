@@ -36,7 +36,7 @@ export default class AccountDetail extends Component<any, {}> {
     const { activeTabIdx } = this.state;
 
     return(
-      <div>
+      <>
         <div className="account-detail-header">
           <NavBar hasBackButton hasNetworkSelector title="Account Detail" fontColor="#FFFFFF" />
           <div className="header-content">
@@ -66,22 +66,23 @@ export default class AccountDetail extends Component<any, {}> {
           </div>
         </div>
 
-        <div>
-          <div className="account-detail-tabs">
-            <Tabs
-              indicatorColor="primary"
-              textColor="primary"
-              fullWidth
-              value={activeTabIdx}
-              onChange={this.handleTabChange}
-            >
-              <Tab label="TRANSACTIONS" />
-              <Tab label="TOKENS" />
-            </Tabs>
-          </div>
+        <div className="account-detail-tabs">
+          <Tabs
+            indicatorColor="primary"
+            textColor="primary"
+            fullWidth
+            value={activeTabIdx}
+            onChange={this.handleTabChange}
+          >
+            <Tab label="TRANSACTIONS" />
+            <Tab label="TOKENS" />
+          </Tabs>
+        </div>
+
+        <div className="account-detail-items">
           {this.renderTabContent()}
         </div>
-      </div>
+      </>
     );
   }
 

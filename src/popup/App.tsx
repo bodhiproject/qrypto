@@ -25,7 +25,7 @@ class App extends Component<IProps, {}> {
       <MobxProvider store={store}>
         <MuiThemeProvider theme={theme}>
           <Router>
-            <div >
+            <div className="content-container">
               {/* TODO - this will later become:
               - if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic,
               -else route to login */}
