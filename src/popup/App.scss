@@ -96,11 +96,147 @@
     padding: 0;
     margin: 0;
 
+    li {
+      padding: 16px 0;
+      cursor: pointer;
+      border-bottom: 1px #E3E3E3 solid;
+    }
+
     p {
-      word-wrap: none;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      margin: 0;
+
+      .tx-state {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 16px;
+        font-size: 12px;
+        text-transform: uppercase;
+
+        &.tx-state-pending {
+          color: #F5A623;
+        }
+      }
+
+      .tx-time {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 20px;
+        font-size: 14px;
+
+        color: rgba(0, 0, 0, 0.543846);
+      }
+    }
+
+    .tx-detail {
+      display: flex;
+      align-items: center;
+
+      address {
+        display: block;
+        word-wrap: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 24px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-right: 45px;
+        color: rgba(0, 0, 0, 0.8);
+      }
+
+      em {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 24px;
+        font-size: 16px;
+        font-weight: bold;
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      .tx-currency {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 24px;
+        font-size: 10px;
+        color: #A0A0A0;
+      }
+
+      .arrow-right {
+        font-size: 22;
+        color: '#747474';
+      }
+    }
+  }
+
+  .account-detail-tokens {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 16px 0;
+      border-bottom: 1px #E3E3E3 solid;
+      display: flex;
+      align-items: center;
+
+      .token-name {
+        flex: 1;
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 24px;
+        font-size: 16px;
+        font-weight: bold;
+
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      .token-detail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .token-amount {
+        em {
+          font-family: Montserrat;
+          font-style: normal;
+          font-weight: normal;
+          line-height: 24px;
+          font-size: 16px;
+          font-weight: bold;
+          color: rgba(0, 0, 0, 0.87);
+          margin-right: 5px;
+        }
+
+        .token-currency {
+          font-family: Montserrat;
+          font-style: normal;
+          font-weight: normal;
+          line-height: 16px;
+          font-size: 10px;
+
+          color: #A0A0A0;
+        }
+      }
+
+      .token-qtum-amount {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 16px;
+        font-size: 10px;
+
+        color: rgba(0, 0, 0, 0.543846);
+      }
     }
   }
 

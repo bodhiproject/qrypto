@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import { KeyboardArrowRight } from '@material-ui/icons';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import { NavBar } from '../../components/NavBar';
@@ -97,7 +98,9 @@ export default class AccountDetail extends Component<any, {}> {
       );
     } else {
       return (
-        <div>Item Two</div>
+        <ul className="account-detail-tokens">
+          {this.renderTokens()}
+        </ul>
       );
     }
   }
@@ -105,11 +108,67 @@ export default class AccountDetail extends Component<any, {}> {
   public renderTransactions() {
     const { walletStore: { transactions: { items } } } = this.props.store;
 
-    return items.map(({ id }: Transaction) => (
+    return items.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
       <li key={id}>
-        <p>{id}</p>
+        <p>{this.renderTxState(pending, confirmations)}</p>
+        <div className="tx-detail">
+          <address>{id}</address>
+          <span>
+            <em>{amount}</em> <span className="tx-currency">QTUM</span>
+          </span>
+          <KeyboardArrowRight className="arrow-right" />
+        </div>
+        <p className="tx-time">{this.renderTxTime(timestamp)}</p>
       </li>
     ));
+  }
+
+  public renderTxState(pending: boolean, confirmations: number) {
+    if (pending) {
+      return (
+        <span className="tx-state tx-state-pending">pending</span>
+      );
+    } else {
+      return (
+        <span className="tx-state">{confirmations} confirmations</span>
+      );
+    }
+  }
+
+  public renderTxTime(at?: string) {
+    return at ? at : 'Unknow timestamp';
+  }
+
+  public renderTokens() {
+    return (
+      <>
+        <li>
+          <span className="token-name">Token Name</span>
+          <div className="token-detail">
+            <div className="token-amount">
+              <em>5.99</em>
+              <span className="tx-currency">OOXX</span>
+            </div>
+            <div className="token-qtum-amount">
+              = 19 QTUM
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <span className="token-name">Token Name</span>
+          <div className="token-detail">
+            <div className="token-amount">
+              <em>5.99</em>
+              <span className="token-currency">OOXX</span>
+            </div>
+            <div className="token-qtum-amount">
+              = 19 QTUM
+            </div>
+          </div>
+        </li>
+      </>
+    );
   }
 
 }

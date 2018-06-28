@@ -9,10 +9,8 @@ import theme from '../../../config/theme';
 
 const styles = {
   root: {
-    width: '100%',
+    display: 'flex',
     margin: theme.spacing.xs,
-    flexDirection: 'row',
-    display: 'inline-flex',
   },
   leftButtonsContainer: {
     marginRight: theme.spacing.unit,
