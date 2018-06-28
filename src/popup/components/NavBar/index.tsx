@@ -1,69 +1,106 @@
-import * as React from 'react';
-import { Typography } from '@material-ui/core';
-// import styled from 'styled-components'
+import React, { Component, Fragment } from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { inject, observer } from 'mobx-react';
+import { Typography, Menu, MenuItem, Button, IconButton, withStyles } from '@material-ui/core';
+import { ArrowBack, Settings, ArrowDropDown } from '@material-ui/icons';
 
-import BackButton from './BackButton';
-import SettingsButton from './SettingsButton';
-import NetworkSelector from './NetworkSelector';
-import theme from '../../../config/theme';
+import styles from './styles';
 
-const styles = {
-  root: {
-    width: '100%',
-    margin: theme.spacing.xs,
-    flexDirection: 'row',
-    display: 'inline-flex',
-  },
-  leftButtonsContainer: {
-    marginRight: theme.spacing.unit,
-    cursor: 'pointer',
-  },
-  locationContainer: {
-    height: theme.icon.size,
-    display: 'flex',
-    alignItems: 'center',
-    flex: 1,
-  },
-  locationText: {
-    fontSize: theme.font.md,
-    fontWeight: 'bold',
-  },
-};
 
-export const NavBar = ({ hasBackButton = false, hasSettingsButton = false, hasNetworkSelector = false, title = '' }) => (
-  <div style={styles.root}>
-    <div style={styles.leftButtonsContainer}>
-      {hasBackButton && <BackButton />}
-      {hasSettingsButton && <SettingsButton />}
-    </div>
-    <div style={styles.locationContainer}>
-      <Typography style={styles.locationText}>{title}</Typography>
-    </div>
-    {hasNetworkSelector && <NetworkSelector />}
-  </div>
+@withStyles(styles, { withTheme: true })
+@withRouter
+@inject('store')
+@observer
+export default class NavBar extends Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    hasBackButton: PropTypes.boolean,
+    hasSettingsButton: PropTypes.boolean,
+    hasNetworkSelector: PropTypes.boolean,
+  };
+
+  static defaultProps = {
+    hasBackButton: false,
+    hasSettingsButton: false,
+    hasNetworkSelector: false,
+    title: '',
+  };
+
+  public onLogoutButtonClick = () => {
+    this.props.store.walletStore.clearMnemonic();
+    this.props.history.push('/import-mnemonic');
+  }
+
+  public onNetworkSelectionClick = () => {
+    // TODO: implement
+  }
+
+  public render() {
+    const { classes, history, hasBackButton, hasSettingsButton, hasNetworkSelector, title } = this.props;
+    const { settingsMenuAnchor } = this.props.store.ui;
+
+    return (
+      <div className={classes.root}>
+        <div className={classes.leftButtonsContainer}>
+          {hasBackButton && <BackButton classes={classes} store={store} history={history} />}
+          {hasSettingsButton && (
+            <SettingsButton
+              classes={classes}
+              store={store}
+              settingsMenuAnchor={settingsMenuAnchor}
+              onLogoutButtonClick={this.onLogoutButtonClick}
+            />
+          )}
+        </div>
+        <div className={classes.locationContainer}>
+          <Typography className={classes.locationText}>{title}</Typography>
+        </div>
+        {hasNetworkSelector && (
+          <NetworkSelector classes={classes} onNetworkSelectionClick={this.onNetworkSelectionClick} />
+        )}
+      </div>
+    );
+  }
+}
+
+const BackButton = ({ classes, store, history }) => (
+  <IconButton onClick={() => history.push(store.ui.prevLocation)} className={classes.backIconButton}>
+    <ArrowBack className={classes.backButton} />
+  </IconButton>
 );
 
-// const Col = () => (
-//   <div style={{
-//     display: 'flex',
-//     flexDirection: 'column'
-//   }} />
-// )
+const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClick }) => (
+  <Fragment>
+    <IconButton
+      aria-owns={settingsMenuAnchor ? 'settingsMenu' : null}
+      aria-haspopup="true"
+      color="primary"
+      onClick={(e) => store.ui.settingsMenuAnchor = e.currentTarget}
+      className={classes.settingsIconButton}
+    >
+      <Settings className={classes.settingsButton} />
+    </IconButton>
+    <Menu
+      id="settingsMenu"
+      anchorEl={settingsMenuAnchor}
+      open={Boolean(settingsMenuAnchor)}
+      onClose={() => store.ui.settingsMenuAnchor = null}
+    >
+      <MenuItem onClick={onLogoutButtonClick}>Logout</MenuItem>
+    </Menu>
+  </Fragment>
+);
 
-// const Col = styled.div`
-//   display: flex;
-//   flex-direction: column;
-// `
-
-// const Row = styled.div`
-//   display: flex;
-//   flex-direction: row;
-// `
-
-// const TopBar = Row.extend`
-//   height: 30px;
-// `
-
-// const BottomBar = Row.extend`
-//   height: 40px;
-// `
+const NetworkSelector = ({ classes, onNetworkSelectionClick }) => (
+  <Button
+    color="secondary"
+    variant="contained"
+    size="small"
+    className={classes.networkButton}
+    onClick={onNetworkSelectionClick}
+  >
+    Testnet
+    <ArrowDropDown /> 
+  </Button>
+);

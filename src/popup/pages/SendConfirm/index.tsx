@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { NavBar } from '../../components/NavBar';
+import NavBar from '../../components/NavBar';
 
 @withRouter
 @inject('store')

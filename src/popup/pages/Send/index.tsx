@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
-import { NavBar } from '../../components/NavBar';
+import NavBar from '../../components/NavBar';
 
 @withStyles(styles, { withTheme: true })
 @inject('store')
