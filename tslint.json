@@ -25,7 +25,8 @@
       "allow-pascal-case"
     ],
     "no-empty-interface": false,
-    "no-unused-variable": true
+    "no-unused-variable": true,
+    "max-line-length": [true, {"ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |//"}]
   },
   "rulesDirectory": []
 }

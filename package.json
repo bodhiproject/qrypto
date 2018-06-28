@@ -7,6 +7,7 @@
     "clean": "rm -rf dist",
     "css-types": "tcm src",
     "postinstall": "yarn css-types",
+    "linter": "tslint --project .",
     "linter-fix": "tslint --fix --project .",
     "precommit": "lint-staged",
     "prepush": "npm run linter-fix"
