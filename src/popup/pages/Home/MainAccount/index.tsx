@@ -11,6 +11,9 @@ import styles from './styles';
 @inject('store')
 @observer
 export default class MainAccount extends Component<any, {}> {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  };
 
   public handleClick = (id, event) => {
     event.stopPropagation();

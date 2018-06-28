@@ -1,27 +1,33 @@
 import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core';
 
+import styles from './styles';
 import { NavBar } from '../../components/NavBar';
 import MainAccount from './MainAccount';
 
-class Home extends Component<any, {}> {
-
+@withStyles(styles, { withTheme: true })
+export default class Home extends Component<any, {}> {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  };
+  
   public goToDetail = () => {
     this.props.history.push('/account-detail');
   }
 
   public render() {
+    const { classes } = this.props;
+
     return (
       <div>
         <NavBar hasSettingsButton hasNetworkSelector title="Home" />
-        <div style={{ margin: 16 }}>
+        <div className={classes.content}>
           <MainAccount />
         </div>
       </div>
     );
   }
-}
-
-export default Home;
+};
 // TODO ??why doesn't this work, why do I have to put the click on the component itself
 {/* <MainAccount onClick={this.goToDetail}/> */}
 // export default withRouter(Home)

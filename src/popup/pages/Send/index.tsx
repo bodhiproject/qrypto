@@ -11,7 +11,7 @@ import { NavBar } from '../../components/NavBar';
 @withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class Send extends Component {
+export default class Send extends Component<any, {}> {
   static propTypes = {
     classes: PropTypes.object.isRequired,
   };
