@@ -12,6 +12,12 @@
     "precommit": "lint-staged",
     "prepush": "npm run linter-fix"
   },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "npm run linter-fix",
+      "git add"
+    ]
+  },
   "devDependencies": {
     "@ceoimon/typed-css-modules": "^0.0.1",
     "@material-ui/core": "^1.2.2",
@@ -50,12 +56,6 @@
     "qtumjs-wallet": "^0.0.6",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "npm run linter-fix",
-      "git add"
-    ]
   },
   "private": true
 }
