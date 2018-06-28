@@ -8,7 +8,7 @@ const styles = (theme) => ({
     background: theme.palette.primary.main,
   },
   acctName: {
-    fontSize: theme.font.md,
+    fontSize: theme.font.lg,
     fontWeight: 'bold',
     color: theme.palette.text.light,
     marginBottom: theme.spacing.unit,
@@ -25,7 +25,7 @@ const styles = (theme) => ({
     display: 'inline-flex',
   },
   tokenAmount: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     color: theme.palette.text.light,
     marginRight: theme.spacing.xs,

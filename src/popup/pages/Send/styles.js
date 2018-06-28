@@ -6,7 +6,7 @@ const styles = (theme) => ({
   contentContainer: {
     margin: theme.spacing.sm,
   },
-  heading: {
+  fieldHeading: {
     marginBottom: theme.spacing.unit,
     fontSize: theme.font.sm,
     fontWeight: 'bold'

@@ -46,7 +46,7 @@ export default class Send extends Component<any, {}> {
 }
 
 const Heading = withStyles(styles, { withTheme: true })(({ classes, name }) => (
-  <Typography className={classes.heading}>{name}</Typography>
+  <Typography className={classes.fieldHeading}>{name}</Typography>
 ));
 
 const FromField = withStyles(styles, { withTheme: true })(({ classes, info, walletStore }) => (
