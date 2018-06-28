@@ -17,7 +17,8 @@
       "allow-pascal-case"
     ],
     "no-empty-interface": false,
-    "no-unused-variable": true
+    "no-unused-variable": true,
+    "experimentalDecorators": true
   },
   "rulesDirectory": []
 }
