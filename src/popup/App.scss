@@ -3,23 +3,22 @@
 // p {
 //   color: $primary-color;
 // }
-body {
-  width: 350px;
-  min-height: 550px;
-  display: flex;
-}
 
 :global {
   #root {
-    flex: 1;
+    width: 350px;
+    height: 550px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
   .content-container {
     display: flex;
     flex: 1;
     flex-direction: column;
+    align-self: stretch;
+    align-items: stretch;
   }
   .account-detail-header {
     color: white;
@@ -88,7 +87,21 @@ body {
 
   .account-detail-items {
     flex: 1;
+    padding: 0 16px;
     overflow-y: auto;
+  }
+
+  .account-detail-txs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    p {
+      word-wrap: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
 }

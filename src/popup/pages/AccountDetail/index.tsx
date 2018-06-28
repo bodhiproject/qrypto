@@ -5,6 +5,7 @@ import Tab from '@material-ui/core/Tab';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import { NavBar } from '../../components/NavBar';
+import Transaction from '../../../stores/Transaction';
 
 @withRouter
 @inject('store')
@@ -90,7 +91,9 @@ export default class AccountDetail extends Component<any, {}> {
     const { activeTabIdx } = this.state;
     if (activeTabIdx === 0) {
       return (
-        <div>Item One</div>
+        <ul className="account-detail-txs">
+          {this.renderTransactions()}
+        </ul>
       );
     } else {
       return (
@@ -98,4 +101,15 @@ export default class AccountDetail extends Component<any, {}> {
       );
     }
   }
+
+  public renderTransactions() {
+    const { walletStore: { transactions: { items } } } = this.props.store;
+
+    return items.map(({ id }: Transaction) => (
+      <li key={id}>
+        <p>{id}</p>
+      </li>
+    ));
+  }
+
 }
