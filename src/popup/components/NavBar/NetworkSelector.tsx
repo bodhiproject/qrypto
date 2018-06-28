@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, withStyles } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
@@ -30,18 +30,16 @@ export default class NetworkSelector extends Component {
 
   public render() {
     return (
-      <Fragment>
-        <Button
-          color="secondary"
-          variant="contained"
-          size="small"
-          className={this.props.classes.networkButton}
-          onClick={this.onNetworkSelectionClick}
-         >
-           Testnet
-           <ArrowDropDown /> 
-         </Button>
-      </Fragment>
+      <Button
+        color="secondary"
+        variant="contained"
+        size="small"
+        className={this.props.classes.networkButton}
+        onClick={this.onNetworkSelectionClick}
+      >
+        Testnet
+        <ArrowDropDown /> 
+      </Button>
     );
   }
 }

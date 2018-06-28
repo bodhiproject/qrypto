@@ -9,9 +9,9 @@ const fontSizeLg = 16;
 const fontSizeXl = 18;
 
 /* Colors */
-const primaryColor = '#5246d9';
-const primaryColorDark = '#4e44d7';
-const primaryColorLight = '#735ef6';
+const primaryColor = '#5539DF';
+const primaryColorDark = '#5539DF';
+const primaryColorLight = '#8E6BF1';
 
 const secondaryColor = '#ffffff';
 const secondaryColorLight = '#ffffff';
@@ -37,7 +37,7 @@ const spacingXl = spacingUnit * 6; // 24
 /* Border */
 const borderColor = '#cccccc';
 const borderSize = 1;
-const borderRadius = 4;
+const borderRadius = 8;
 
 /* Button */
 const buttonRadius = 16;
