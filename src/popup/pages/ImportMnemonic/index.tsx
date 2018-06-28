@@ -28,7 +28,6 @@ export default class ImportMnemonic extends Component<{}, IState> {
           autoFocus
           fullWidth
           required
-          label="Mnemonic"
           style={{ marginBottom: 16 }}
           onChange={(e) => walletStore.enteredMnemonic = e.target.value}
           error={_.isEmpty(walletStore.enteredMnemonic)}

@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { Typography, Card, CardContent, Button } from '@material-ui/core';
+import { Typography, Card, CardContent, Button, withStyles } from '@material-ui/core';
+import { KeyboardArrowRight } from '@material-ui/icons';
 
+import styles from './styles';
+
+@withStyles(styles, { withTheme: true })
 @withRouter
 @inject('store')
 @observer
 export default class MainAccount extends Component<any, {}> {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  };
 
   public handleClick = (id, event) => {
     event.stopPropagation();
@@ -39,44 +47,49 @@ export default class MainAccount extends Component<any, {}> {
   }
 
   public render() {
+    const { classes } = this.props;
     const { info } = this.props.store.walletStore;
 
-    return(
+    if (!info) {
+      return null;
+    }
+
+    return info && (
       <div>
-        {info && <MainAccountCard address={info.addrStr} balance={info.balance} handleClick={this.handleClick} />}
+        <Card raised id="mainCard" onClick={(e) => this.handleClick('mainCard', e)} className={classes.card}>
+          <CardContent className={classes.cardContent}>
+            <Typography className={classes.acctName}>{'Default Account'}</Typography>
+            <Typography className={classes.address}>{info.addrStr}</Typography>
+            <div className={classes.amountContainer}>
+              <Typography className={classes.tokenAmount}>{info.balance}</Typography>
+              <Typography className={classes.token}>QTUM</Typography>
+              <KeyboardArrowRight className={classes.rightArrow} />
+            </div>
+            <div className={classes.actionButtonsContainer}>
+              <Button
+                id="sendButton"
+                color="secondary"
+                variant="contained"
+                size="small"
+                className={classes.actionButton}
+                onClick={(e) => this.handleClick('sendButton', e)}
+               >
+                 Send
+               </Button>
+              <Button
+                id="receiveButton"
+                color="secondary"
+                variant="contained"
+                size="small"
+                className={classes.actionButton}
+                onClick={(e) => this.handleClick('receiveButton', e)}
+               >
+                 Receive
+               </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 }
-
-const MainAccountCard = ({ address, balance, handleClick }) => (
-  <Card id="mainCard" onClick={(e) => handleClick('mainCard', e)} style={{ cursor: 'pointer' }}>
-    <CardContent>
-      <Typography variant="title" style={{ marginBottom: 8 }}>Account Name</Typography>
-      <Typography variant="caption">{address}</Typography>
-      <Typography variant="caption" style={{ marginBottom: 8 }}>{balance} QTUM</Typography>
-      <div style={{ textAlign: 'right' }}>
-        <Button
-          id="sendButton"
-          color="primary"
-          variant="raised"
-          size="small"
-          onClick={(e) => handleClick('sendButton', e)}
-          style={{ marginRight: 8, minWidth: 0, minHeight: 0, fontSize: 11 }}
-         >
-           Send
-         </Button>
-        <Button
-          id="receiveButton"
-          color="primary"
-          variant="raised"
-          size="small"
-          onClick={(e) => handleClick('receiveButton', e)}
-          style={{ minWidth: 0, minHeight: 0, fontSize: 11 }}
-         >
-           Receive
-         </Button>
-      </div>
-    </CardContent>
-  </Card>
-);

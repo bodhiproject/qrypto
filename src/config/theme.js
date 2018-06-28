@@ -6,11 +6,12 @@ const fontLato = 'Lato, Helvetica, Arial, sans-serif';
 const fontSizeSm = 12;
 const fontSizeMd = 14;
 const fontSizeLg = 16;
+const fontSizeXl = 18;
 
 /* Colors */
-const primaryColor = '#5246d9';
-const primaryColorDark = '#4e44d7';
-const primaryColorLight = '#735ef6';
+const primaryColor = '#5539DF';
+const primaryColorDark = '#5539DF';
+const primaryColorLight = '#8E6BF1';
 
 const secondaryColor = '#ffffff';
 const secondaryColorLight = '#ffffff';
@@ -36,7 +37,7 @@ const spacingXl = spacingUnit * 6; // 24
 /* Border */
 const borderColor = '#cccccc';
 const borderSize = 1;
-const borderRadius = 4;
+const borderRadius = 8;
 
 /* Button */
 const buttonRadius = 16;
@@ -59,7 +60,7 @@ export default createMuiTheme({
       light: secondaryColorLight,
       main: secondaryColor,
       dark: secondaryColorDark,
-      contrastText: white,
+      contrastText: primaryColor,
     },
     background: {
       default: white,
@@ -67,7 +68,8 @@ export default createMuiTheme({
     text: {
       primary: textColorPrimary,
       secondary: textColorSecondary,
-      hint: textColorLight,
+      hint: textColorSecondary,
+      light: textColorLight,
     },
     divider: borderColor,
   },
@@ -205,6 +207,7 @@ export default createMuiTheme({
     sm: px(fontSizeSm),
     md: px(fontSizeMd),
     lg: px(fontSizeLg),
+    xl: px(fontSizeXl),
   },
 
   icon: {

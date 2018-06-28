@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
-import { Typography, Select, MenuItem, TextField, Button } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { Typography, Select, MenuItem, TextField, Button, withStyles } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 
-import { NavBar } from '../../components/NavBar';
-import Theme from '../../../config/theme';
+import styles from './styles';
+import NavBar from '../../components/NavBar';
 
+@withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class Send extends Component {
+export default class Send extends Component<any, {}> {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  };
+
   public componentDidMount() {
     const { store } = this.props;
 
@@ -20,19 +26,18 @@ export default class Send extends Component {
   }
 
   public render() {
+    const { classes } = this.props;
     const { walletStore } = this.props.store;
     const { info, token, amount } = walletStore;
 
     return (
-      <div style={{ width: '100%', height: '100%' }}>
+      <div className={classes.root}>
         <NavBar hasBackButton={true} title="Send" />
-        <div style={{ margin: Theme.spacing.sm }}>
-          <div style={{ flex: 1 }}>
-            <FromField info={info} walletStore={walletStore} />
-            <ToField info={info} walletStore={walletStore} />
-            <TokenField token={token} walletStore={walletStore} />
-            <AmountField amount={amount} token={token} walletStore={walletStore} />
-          </div>
+        <div className={classes.contentContainer}>
+          <FromField info={info} walletStore={walletStore} />
+          <ToField info={info} walletStore={walletStore} />
+          <TokenField token={token} walletStore={walletStore} />
+          <AmountField amount={amount} token={token} walletStore={walletStore} />
           <SendButton />
         </div>
       </div>
@@ -40,38 +45,34 @@ export default class Send extends Component {
   }
 }
 
-const Heading = ({ name }) => (
-  <Typography
-    style={{ marginBottom: Theme.spacing.unit, fontSize: Theme.font.sm, fontWeight: 'bold' }}
-  >
-    {name}
-  </Typography>
-);
+const Heading = withStyles(styles, { withTheme: true })(({ classes, name }) => (
+  <Typography className={classes.fieldHeading}>{name}</Typography>
+));
 
-const FromField = ({ info, walletStore }) => (
-  <div style={{ marginBottom: Theme.spacing.lg }}>
+const FromField = withStyles(styles, { withTheme: true })(({ classes, info, walletStore }) => (
+  <div className={classes.fieldContainer}>
     <Heading name="From" />
-    <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
+    <div className={classes.fieldContentContainer}>
       <Select
         disableUnderline
         value={info.addrStr}
         onChange={(event) => walletStore.senderAddress = event.target.value}
         inputProps={{ name: 'from', id: 'from' }}
-        style={{ width: '100%' }}
+        className={classes.fromSelect}
       >
         <MenuItem value={info.addrStr}>
-          <Typography style={{ fontSize: Theme.font.md, fontWeight: 'bold' }}>{'Default Account'}</Typography>
+          <Typography className={classes.fromAddress}>{'Default Account'}</Typography>
         </MenuItem>
       </Select>
-      <Typography style={{ fontSize: Theme.font.md, color: '#333333' }}>{info.balance} QTUM</Typography>
+      <Typography className={classes.fromBalance}>{info.balance} QTUM</Typography>
     </div>
   </div>
-);
+));
 
-const ToField = ({ info, walletStore }) => (
-  <div style={{ marginBottom: Theme.spacing.lg }}>
+const ToField = withStyles(styles, { withTheme: true })(({ classes, info, walletStore }) => (
+  <div className={classes.fieldContainer}>
     <Heading name="To" />
-    <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
+    <div className={classes.fieldContentContainer}>
       <TextField
         fullWidth
         type="text"
@@ -82,42 +83,42 @@ const ToField = ({ info, walletStore }) => (
       />
     </div>
   </div>
-);
+));
 
-const TokenField = ({ token, walletStore }) => (
-  <div style={{ marginBottom: Theme.spacing.lg }}>
+const TokenField = withStyles(styles, { withTheme: true })(({ classes, token, walletStore }) => (
+  <div className={classes.fieldContainer}>
     <Heading name="Token" />
-    <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
+    <div className={classes.fieldContentContainer}>
       <Select
         disableUnderline
         value={token}
         inputProps={{ name: 'from', id: 'from' }}
-        style={{ width: '100%' }}
+        className={classes.tokenSelect}
         onChange={(event) => walletStore.token = event.target.value}
       >
         <MenuItem value="QTUM">
-          <Typography style={{ fontSize: Theme.font.md, fontWeight: 'bold' }}>QTUM</Typography>
+          <Typography className={classes.tokenText}>QTUM</Typography>
         </MenuItem>
       </Select>
     </div>
   </div>
-);
+));
 
-const AmountField = ({ amount, token, walletStore }) => (
-  <div style={{ marginBottom: Theme.spacing.custom(26) }}>
-    <div style={{ width: '100%', flexDirection: 'row', display: 'inline-flex' }}>
-      <div style={{ flex: 1 }}>
+const AmountField = withStyles(styles, { withTheme: true })(({ classes, amount, token, walletStore }) => (
+  <div className={classes.amountContainer}>
+    <div className={classes.amountHeadingContainer}>
+      <div className={classes.amountHeadingTextContainer}>
         <Heading name="Amount" />
       </div>
       <Button
         color="primary"
-        style={{ minWidth: 0, minHeight: 0, padding: '0 4px' }}
+        className={classes.maxButton}
         onClick={() => walletStore.amount = walletStore.info.balance}
       >
         Max
       </Button>
     </div>
-    <div style={{ padding: Theme.spacing.sm, border: Theme.border.root, borderRadius: Theme.border.radius }}>
+    <div className={classes.fieldContentContainer}>
       <TextField
         fullWidth
         type="number"
@@ -125,29 +126,15 @@ const AmountField = ({ amount, token, walletStore }) => (
         placeholder="0.00"
         value={amount}
         InputProps={{
-          endAdornment: (
-            <Typography
-              style={{
-                fontSize: Theme.font.md,
-                fontWeight: 'bold',
-                marginLeft: Theme.spacing.sm,
-                display: 'flex',
-                alignItems: 'center'
-              }}
-             >
-              {token}
-            </Typography>
-          ),
+          endAdornment: <Typography className={classes.amountTokenAdornment}>{token}</Typography>,
           disableUnderline: true,
         }}
         onChange={(event) => walletStore.amount = event.target.value}
       />
     </div>
   </div>
-);
+));
 
 const SendButton = withRouter(({ history }) => (
-  <Button fullWidth variant="contained" color="primary" onClick={() => history.push('/send-confirm')}>
-    Send
-  </Button>
+  <Button fullWidth variant="contained" color="primary" onClick={() => history.push('/send-confirm')}>Send</Button>
 ));
