@@ -6,7 +6,8 @@ class WalletStore {
   @observable public tip = '';
 
   @observable private mnemonic: string = '';
-  @observable private enteredMnemonic: string = '';
+  // TODO - specific mnemonic is temporary, and is in place as a convenience for development, remove before production release
+  @observable private enteredMnemonic: string = 'hold struggle ready lonely august napkin enforce retire pipe where avoid drip';
   // TODO: remove when var is used
   // tslint:disable-next-line
   @observable private senderAddress: string = '';
