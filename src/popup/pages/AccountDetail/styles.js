@@ -7,50 +7,116 @@ const styles = (theme) => ({
   headerContent: {
     padding: '16px',
   },
-  acctName: {
-    fontSize: theme.font.lg,
+  accountDetailTabs: {
+    boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)',
+  },
+  AccountDetailItems: {
+    flex: 1,
+    padding: '0 16px',
+    overflowY: 'auto'
+  },
+  accountDetailTxs: {
+    listStyle: 'none',
+    padding: 0,
+    margin: 0,
+  },
+  accountDetailTx: {
+    padding: '16px 0',
+    cursor: 'pointer',
+    borderBottom: '1px #E3E3E3 solid',
+  },
+  txState: {
+    lineHeight: '16px',
+    fontSize: '12px',
+    textTransform: 'uppercase',
+  },
+  txStatePending: {
+    lineHeight: '16px',
+    fontSize: '12px',
+    textTransform: 'uppercase',
+    color: '#F5A623',
+  },
+  txDetail: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  txAddress: {
+    display: 'block',
+    wordWrap: 'none',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    flex: 1,
+    lineHeight: '24px',
+    fontSize: '16px',
     fontWeight: 'bold',
-    color: theme.palette.text.light,
-    marginBottom: theme.spacing.unit,
+    fontStyle: 'normal',
+    marginRight: '45px',
+    color: 'rgba(0, 0, 0, 0.8)',
   },
-  address: {
-    fontSize: theme.font.sm,
-    color: theme.palette.text.light,
-    marginBottom: theme.spacing.md,
-  },
-  amountContainer: {
-    width: '100%',
-    marginBottom: theme.spacing.sm,
-    flexDirection: 'row',
-    display: 'inline-flex',
-  },
-  tokenAmount: {
-    fontSize: 32,
+  txAmount: {
+    lineHeight: '24px',
+    fontSize: '16px',
     fontWeight: 'bold',
-    color: theme.palette.text.light,
-    marginRight: theme.spacing.xs,
+    fontStyle: 'normal',
+    marginRight: 5,
+    color: 'rgba(0, 0, 0, 0.87)',
+  },
+  txCurrency: {
+    lineHeight: '24px',
+    fontSize: '10px',
+    color: '#A0A0A0',
+  },
+  arrowRight: {
+    fontSize: 22,
+    color: '#747474',
+  },
+  txTime: {
+    lineHeight: '20px',
+    fontSize: '14px',
+    color: 'rgba(0, 0, 0, 0.543846)',
+  },
+  tokens: {
+    listStyle: 'none',
+    padding: 0,
+    margin: 0,
   },
   token: {
-    fontSize: theme.font.sm,
-    color: theme.palette.text.light,
-    flex: 1,
-    alignSelf: 'flex-end',
-    marginBottom: 6,
-  },
-  rightArrow: {
-    fontSize: 22,
-    color: theme.palette.text.light,
-    alignSelf: 'center',
-  },
-  actionButtonsContainer: {
+    padding: '16px 0',
+    borderBottom: '1px #E3E3E3 solid',
     display: 'flex',
-    justifyContent: 'flex-end',
+    alignItems: 'center',
+
   },
-  actionButton: {
-    padding: `${theme.spacing.unit} ${theme.spacing.sm}`,
-    marginRight: theme.spacing.xs,
-    fontSize: theme.font.sm,
+  tokenName: {
+    flex: 1,
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+    lineHeight: '24px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    color: 'rgba(0, 0, 0, 0.87)',
+
   },
+  tokenDetail: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  tokenAmount: {
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+    lineHeight: '24px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    color: 'rgba(0, 0, 0, 0.87)',
+    marginRight: '5px',
+  },
+  tokenQtumAmount: {
+    lineHeight: '16px',
+    fontSize: '10px',
+    color: '#A0A0A0',
+  }
 });
 
 export default styles;

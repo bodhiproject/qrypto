@@ -51,6 +51,10 @@ const styles = (theme) => ({
     marginRight: theme.spacing.xs,
     fontSize: theme.font.sm,
   },
+  arrowRight: {
+    fontSize: '22',
+    color: '#747474',
+  },
 });
 
 export default styles;

@@ -15,7 +15,7 @@ import AccountInfo from '../../components/AccountInfo';
 export default class AccountDetail extends Component<any, {}> {
 
   public handleTabChange = (_, idx) => {
-    this.props.state.accountDetailStore.activeTabIdx = idx;
+    this.props.store.accountDetailStore.activeTabIdx = idx;
   }
 
   public componentDidMount() {
@@ -24,7 +24,7 @@ export default class AccountDetail extends Component<any, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { accountDetailStore: { activeTabIdx } } = this.props.store;
+    const { accountDetailStore: { activeTabIdx }, transactionStore: { items } } = this.props.store;
 
     return(
       <Fragment>
@@ -35,7 +35,7 @@ export default class AccountDetail extends Component<any, {}> {
           </div>
         </div>
 
-        <div className="account-detail-tabs">
+        <div className={classes.accountDetailTabs}>
           <Tabs
             indicatorColor="primary"
             textColor="primary"
@@ -48,95 +48,71 @@ export default class AccountDetail extends Component<any, {}> {
           </Tabs>
         </div>
 
-        <div className="account-detail-items">
-          {this.renderTabContent()}
+        <div className={classes.AccountDetailItems}>
+          {
+            activeTabIdx === 0 ?
+              <TransactionList transactions={items} classes={classes} /> :
+              <TokenList classes={classes} />
+          }
         </div>
       </Fragment>
     );
   }
 
-  public renderTabContent() {
-    const { activeTabIdx } = this.props.store.accountDetailStore;
+}
 
-    if (activeTabIdx === 0) {
-      return (
-        <ul className="account-detail-txs">
-          {this.renderTransactions()}
-        </ul>
-      );
-    } else {
-      return (
-        <ul className="account-detail-tokens">
-          {this.renderTokens()}
-        </ul>
-      );
-    }
-  }
+const TransactionList = ({ transactions, classes }) => {
+  const items = transactions.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
+    <li key={id} className={classes.accountDetailTx}>
+      <div>
+        <TxState pending={pending} confirmations={confirmations} classes={classes} />
+      </div>
+      <div className={classes.txDetail}>
+        <address className={classes.txAddress}>{id}</address>
+        <span>
+          <em className={classes.txAmount}>{amount}</em>
+          <span className={classes.txCurrency}>QTUM</span>
+        </span>
+        <KeyboardArrowRight className={classes.arrowRight} />
+      </div>
+      <time className={classes.txTime}>{timestamp || 'Unknow timestamp'}</time>
+    </li>
+  ));
 
-  public renderTransactions() {
-    const { transactionStore: { items } } = this.props.store;
+  return (
+    <ul className={classes.accountDetailTxs}>
+      {items}
+    </ul>
+  );
+};
 
-    return items.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
-      <li key={id}>
-        <p>{this.renderTxState(pending, confirmations)}</p>
-        <div className="tx-detail">
-          <address>{id}</address>
-          <span>
-            <em>{amount}</em> <span className="tx-currency">QTUM</span>
-          </span>
-          <KeyboardArrowRight className="arrow-right" />
-        </div>
-        <p className="tx-time">{this.renderTxTime(timestamp)}</p>
-      </li>
-    ));
-  }
-
-  public renderTxState(pending: boolean, confirmations: number) {
-    if (pending) {
-      return (
-        <span className="tx-state tx-state-pending">pending</span>
-      );
-    } else {
-      return (
-        <span className="tx-state">{confirmations} confirmations</span>
-      );
-    }
-  }
-
-  public renderTxTime(at?: string) {
-    return at ? at : 'Unknow timestamp';
-  }
-
-  public renderTokens() {
+const TxState = ({pending, confirmations, classes}) => {
+  if (pending) {
     return (
-      <>
-        <li>
-          <span className="token-name">Token Name</span>
-          <div className="token-detail">
-            <div className="token-amount">
-              <em>5.99</em>
-              <span className="tx-currency">OOXX</span>
-            </div>
-            <div className="token-qtum-amount">
-              = 19 QTUM
-            </div>
-          </div>
-        </li>
-
-        <li>
-          <span className="token-name">Token Name</span>
-          <div className="token-detail">
-            <div className="token-amount">
-              <em>5.99</em>
-              <span className="token-currency">OOXX</span>
-            </div>
-            <div className="token-qtum-amount">
-              = 19 QTUM
-            </div>
-          </div>
-        </li>
-      </>
+      <span className={classes.txStatePending}>pending</span>
+    );
+  } else {
+    return (
+      <span className={classes.txState}>{confirmations} confirmations</span>
     );
   }
+};
 
-}
+const TokenList = ({ classes }) => {
+  return (
+    <ul className={classes.tokens}>
+      <li className={classes.token}>
+        <span className={classes.tokenName}>Token Name</span>
+        <div className={classes.tokenDetail}>
+          <div>
+            <em className={classes.tokenAmount}>5.99</em>
+            <span className={classes.txCurrency}>OOXX</span>
+          </div>
+          <div className={classes.tokenQtumAmount}>
+            = 19 QTUM
+          </div>
+        </div>
+      </li>
+    </ul>
+  );
+};
