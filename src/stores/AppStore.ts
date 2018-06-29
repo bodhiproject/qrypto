@@ -1,7 +1,7 @@
 console.log("starting AppStore file")
 import { action, observable } from 'mobx';
 
-// import { WalletStore } from './WalletStore';
+import { WalletStore } from './WalletStore';
 import walletStore from './WalletStore';
 import uiStore from './UiStore';
 import accountDetailStore from './AccountDetailStore';
@@ -10,27 +10,18 @@ import transactionStore from './TransactionStore';
 
 // export class AppStore {
 class AppStore {
-  // @observable loading = true
   public location = '/import-mnemonic';
   public ui = {};
   public accountDetailStore = {};
-  public walletStore = {};
   public transactionStore = {};
+  public walletStore: WalletStore = {};
 
   constructor() {
     console.log("constructor AppStore")
-    // var x = this.init()
-    // console.log("x", x)
-    // console.log("5")
-    this.initChildStores()
-  }
-
-  public initChildStores(){
     this.ui = uiStore;
     this.accountDetailStore = accountDetailStore;
     this.transactionStore = transactionStore;
     this.walletStore = walletStore;
-
   }
 
   // @action 

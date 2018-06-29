@@ -31,6 +31,10 @@ class WalletStore {
 
   constructor() {
     console.log("constructor walletStore")
+    setTimeout(this.init.bind(this), 100)
+  }
+
+  init(){
     chrome.storage.local.get('mnemonic', async ({ mnemonic }) => {
       if (mnemonic == null) {
         console.log("NOT load mnemonic from chrome store")
@@ -51,7 +55,6 @@ class WalletStore {
     chrome.storage.local.set({ mnemonic: this.enteredMnemonic });
     this.getWalletInfo(); //getInfo once prior to setInterval so there is no delay
     this.loading = false;
-    console.log("import mnemonic, loading false")
   }
 
   @action

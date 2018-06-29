@@ -51,10 +51,20 @@ class App extends Component<IProps, {}> {
     //   var x = store 
     // }
     // this.store = new AppStore();
-    // console.log("app render, wS loading", this.store.walletStore.loading)
-    if (store == null || store.walletStore.loading) {
+    if (store.walletStore.loading) {
       console.log("app store=null || loading=true ")
-      return (<Loading/>)
+      return (
+        <MobxProvider store={store}>
+          <MuiThemeProvider theme={theme}>
+            <Router>
+              <div >
+                <Redirect to="/loading" />
+                <Route exact path="/loading" component={Loading} />
+              </div>
+            </Router>
+          </MuiThemeProvider>
+        </MobxProvider>
+      )
     }  
     console.log("!(app store=null || loading=true)")
     return (
