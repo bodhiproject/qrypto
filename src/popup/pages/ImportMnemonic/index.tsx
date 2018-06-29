@@ -9,7 +9,7 @@ import _ from 'lodash';
 @observer
 export default class ImportMnemonic extends Component<{}, IState> {
 
-  public componentWillMount() {
+  public componentDidMount() {
     this.props.store.walletStore.stopGetInfoPolling();
   }
 
@@ -46,7 +46,8 @@ export default class ImportMnemonic extends Component<{}, IState> {
 
   public recoverAndGoToHomePage = () => {
     const { store: { walletStore }, history } = this.props;
-
+    console.log("recoverAccount, loading true")
+    walletStore.loading = true;
     walletStore.onImportNewMnemonic();
     history.push('/');
   }

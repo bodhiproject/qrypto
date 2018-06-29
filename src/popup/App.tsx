@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 import React, { Component, Fragment } from 'react';
+=======
+console.log("starting app tsx")
+import React, { Component } from 'react';
+>>>>>>> loading screen incomplete implementation
 import { Provider as MobxProvider } from 'mobx-react';
+import { observer } from 'mobx-react';
+// import { AppStore } from '../stores/AppStore';
+// import './App.scss';
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 
@@ -10,17 +18,45 @@ import AccountDetail from './pages/AccountDetail';
 import Send from './pages/Send';
 import Receive from './pages/Receive';
 import SendConfirm from './pages/SendConfirm';
+import Loading from './components/Loading';
 import store from '../stores/AppStore';
 import theme from '../config/theme';
 
+@observer
 class App extends Component<IProps, {}> {
 
+  // public store:any;
+  // constructor(props:any) {
+  //   super(props)
+  //   this.state = {loadingFlag:true}
+  // }
+
   public componentWillUnmount() {
-    this.props.store.walletStore.stopGetInfoPolling();
+    store.walletStore.stopGetInfoPolling();
   }
 
-  public render() {
+  // public componentDidMount(){ 
+  //   // this.store = new AppStore();
+  //   this.store.walletStore.loading = false
+  //   //HACK
+  //   //For some reason, even though we are changing walletStore.loading to false, mobx is not causing a re-render(even though loading property is an observable, and it was previously set to true), so I forced a re-render by changing state locally in this AppComponent
+  //   this.setState({loadingFlag: this.store.walletStore.loading})
+  // }
 
+  public render() {
+    console.log("AppComponent render")
+    // return (<Loading/>)
+    // const { store } = this.props
+    // if (false){
+    //   var x = store 
+    // }
+    // this.store = new AppStore();
+    // console.log("app render, wS loading", this.store.walletStore.loading)
+    if (store == null || store.walletStore.loading) {
+      console.log("app store=null || loading=true ")
+      return (<Loading/>)
+    }  
+    console.log("!(app store=null || loading=true)")
     return (
       <MobxProvider store={store}>
         <MuiThemeProvider theme={theme}>
@@ -149,6 +185,7 @@ class App extends Component<IProps, {}> {
 
 interface IProps {
   port: chrome.runtime.Port;
+  // store: AppStore;
 }
 
 // interface IState {
