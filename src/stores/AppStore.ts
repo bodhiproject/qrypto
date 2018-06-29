@@ -1,16 +1,19 @@
 
 import walletStore from './WalletStore';
 import uiStore from './UiStore';
+import accountDetailStore from './AccountDetailStore';
 import transactionStore from './TransactionStore';
 
 class AppStore {
   public location = '/import-mnemonic';
   public ui = {};
+  public accountDetailStore = {};
   public walletStore = {};
   public transactionStore = {};
 
   constructor() {
     this.ui = uiStore;
+    this.accountDetailStore = accountDetailStore;
     this.transactionStore = transactionStore;
     this.walletStore = walletStore;
   }

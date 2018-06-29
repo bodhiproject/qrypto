@@ -24,6 +24,7 @@ export default class NavBar extends Component {
     hasBackButton: false,
     hasSettingsButton: false,
     hasNetworkSelector: false,
+    isDarkTheme: false,
     title: '',
   };
 
@@ -43,7 +44,7 @@ export default class NavBar extends Component {
     return (
       <div className={classes.root}>
         <div className={classes.leftButtonsContainer}>
-          {hasBackButton && <BackButton classes={classes} store={store} history={history} />}
+          {hasBackButton && <BackButton classes={classes} store={store} history={history} isDarkTheme={isDarkTheme} />}
           {hasSettingsButton && (
             <SettingsButton
               isDarkTheme={isDarkTheme}
