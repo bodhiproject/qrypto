@@ -17,6 +17,7 @@ export default class NavBar extends Component {
     hasBackButton: PropTypes.boolean,
     hasSettingsButton: PropTypes.boolean,
     hasNetworkSelector: PropTypes.boolean,
+    isDarkTheme: PropTypes.boolean,
   };
 
   public static defaultProps = {
@@ -36,7 +37,7 @@ export default class NavBar extends Component {
   }
 
   public render() {
-    const { classes, history, hasBackButton, hasSettingsButton, hasNetworkSelector, title } = this.props;
+    const { classes, history, hasBackButton, hasSettingsButton, hasNetworkSelector, title, isDarkTheme } = this.props;
     const { settingsMenuAnchor } = this.props.store.ui;
 
     return (
@@ -45,6 +46,7 @@ export default class NavBar extends Component {
           {hasBackButton && <BackButton classes={classes} store={store} history={history} />}
           {hasSettingsButton && (
             <SettingsButton
+              isDarkTheme={isDarkTheme}
               classes={classes}
               store={store}
               settingsMenuAnchor={settingsMenuAnchor}
@@ -53,7 +55,7 @@ export default class NavBar extends Component {
           )}
         </div>
         <div className={classes.locationContainer}>
-          <Typography className={classes.locationText}>{title}</Typography>
+          <Typography className={classes[`locationText${isDarkTheme ? 'White' : ''}`]}>{title}</Typography>
         </div>
         {hasNetworkSelector && (
           <NetworkSelector classes={classes} onNetworkSelectionClick={this.onNetworkSelectionClick} />
@@ -63,13 +65,13 @@ export default class NavBar extends Component {
   }
 }
 
-const BackButton = ({ classes, store, history }) => (
+const BackButton = ({ classes, store, history, isDarkTheme }) => (
   <IconButton onClick={() => history.push(store.ui.prevLocation)} className={classes.backIconButton}>
-    <ArrowBack className={classes.backButton} />
+    <ArrowBack className={classes[`backButton${isDarkTheme ? 'White' : ''}`]} />
   </IconButton>
 );
 
-const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClick }) => (
+const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClick, isDarkTheme }) => (
   <Fragment>
     <IconButton
       aria-owns={settingsMenuAnchor ? 'settingsMenu' : null}
@@ -78,7 +80,7 @@ const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClic
       onClick={(e) => store.ui.settingsMenuAnchor = e.currentTarget}
       className={classes.settingsIconButton}
     >
-      <Settings className={classes.settingsButton} />
+      <Settings className={classes[`settingsButton${isDarkTheme ? 'White' : ''}`]} />
     </IconButton>
     <Menu
       id="settingsMenu"

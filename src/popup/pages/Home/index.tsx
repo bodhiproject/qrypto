@@ -21,7 +21,7 @@ export default class Home extends Component<any, {}> {
 
     return (
       <div>
-        <NavBar hasSettingsButton={true} hasNetworkSelector={true} title="Home" />
+        <NavBar hasSettingsButton hasNetworkSelector title="Home" />
         <div className={classes.content}>
           <MainAccount />
         </div>

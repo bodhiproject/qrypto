@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Provider as MobxProvider } from 'mobx-react';
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import { MuiThemeProvider } from '@material-ui/core/styles';
@@ -25,7 +25,7 @@ class App extends Component<IProps, {}> {
       <MobxProvider store={store}>
         <MuiThemeProvider theme={theme}>
           <Router>
-            <div >
+            <Fragment>
               {/* TODO - this will later become:
               - if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic,
               -else route to login */}
@@ -37,7 +37,7 @@ class App extends Component<IProps, {}> {
               <Route exact path="/send" component={Send} />
               <Route exact path="/send-confirm" component={SendConfirm} />
               <Route exact path="/receive" component={Receive} />
-            </div>
+            </Fragment>
           </Router>
         </MuiThemeProvider>
       </MobxProvider>
