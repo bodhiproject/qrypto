@@ -1,5 +1,6 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
 import { observable, action, runInAction } from 'mobx';
+import transactionStore from './TransactionStore';
 
 class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
@@ -27,7 +28,7 @@ class WalletStore {
 
       this.mnemonic = mnemonic;
       this.qjsWallet = this.recoverWallet(mnemonic);
-      this.info = await this.getWalletInfo();
+      this.getWalletInfo();
     });
   }
 
@@ -55,8 +56,8 @@ class WalletStore {
 
   @action
   public startGetInfoPolling() {
-    this.getInfoInterval = setInterval(async () => {
-      this.info = await this.qjsWallet!.getInfo();
+    this.getInfoInterval = setInterval(() => {
+      this.getWalletInfo();
     }, 5000);
   }
 
@@ -76,6 +77,8 @@ class WalletStore {
   @action
   private async getWalletInfo() {
     this.info = await this.qjsWallet!.getInfo();
+    transactionStore.loadFromIDs(this.info.transactions);
+
     return this.info;
   }
 
