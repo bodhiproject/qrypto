@@ -75,7 +75,7 @@ const TransactionList = ({ transactions, classes }) => {
         </span>
         <KeyboardArrowRight className={classes.arrowRight} />
       </div>
-      <time className={classes.txTime}>{timestamp || 'Unknow timestamp'}</time>
+      <time className={classes.txTime}>{timestamp}</time>
     </li>
   ));
 
