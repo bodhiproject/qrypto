@@ -77,7 +77,7 @@ class WalletStore {
   @action
   private async getWalletInfo() {
     this.info = await this.qjsWallet!.getInfo();
-    transactionStore.loadFromIDs(this.info.transactions);
+    transactionStore.loadFromIds(this.info.transactions);
 
     return this.info;
   }

@@ -4,7 +4,8 @@ import Transaction from './models/Transaction';
 class TransactionStore {
   @observable.shallow public items: Transaction[] = [];
 
-  @action public loadFromIDs(items: string[]) {
+  @action public loadFromIds(items: string[]) {
+    // TODO: Get transaction informations (The qtum-walletjs not yet implemented)
     this.items = items.map((id) => new Transaction({ id }));
   }
 }

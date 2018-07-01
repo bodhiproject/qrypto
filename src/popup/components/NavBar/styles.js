@@ -17,7 +17,7 @@ const styles = (theme) => ({
   },
   backButtonWhite: {
     fontSize: theme.font.md,
-    color: '#FFF',
+    color: theme.palette.text.light,
   },
   settingsIconButton: {
     width: theme.icon.size,
@@ -39,7 +39,7 @@ const styles = (theme) => ({
   locationTextWhite: {
     fontSize: theme.font.md,
     fontWeight: 'bold',
-    color: '#FFF'
+    color: theme.palette.text.light
   },
   networkButton: {
     minWidth: 0,

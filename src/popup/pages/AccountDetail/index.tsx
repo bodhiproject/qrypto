@@ -88,13 +88,9 @@ const TransactionList = ({ transactions, classes }) => {
 
 const TxState = ({pending, confirmations, classes}) => {
   if (pending) {
-    return (
-      <span className={classes.txStatePending}>pending</span>
-    );
+    return <span className={classes.txStatePending}>pending</span>;
   } else {
-    return (
-      <span className={classes.txState}>{confirmations} confirmations</span>
-    );
+    return <span className={classes.txState}>{confirmations} confirmations</span>;
   }
 };
 
