@@ -14,10 +14,9 @@ const styles = (theme) => ({
   },
   backButton: {
     fontSize: theme.font.md,
-  },
-  backButtonWhite: {
-    fontSize: theme.font.md,
-    color: theme.palette.text.light,
+    '&.white': {
+      color: theme.palette.text.light,
+    },
   },
   settingsIconButton: {
     width: theme.icon.size,
@@ -25,6 +24,9 @@ const styles = (theme) => ({
   },
   settingsButton: {
     fontSize: 18,
+    '&.white': {
+      color: theme.palette.text.light,
+    }
   },
   locationContainer: {
     height: theme.icon.size,
@@ -35,11 +37,9 @@ const styles = (theme) => ({
   locationText: {
     fontSize: theme.font.md,
     fontWeight: 'bold',
-  },
-  locationTextWhite: {
-    fontSize: theme.font.md,
-    fontWeight: 'bold',
-    color: theme.palette.text.light
+    '&.white': {
+      color: theme.palette.text.light,
+    },
   },
   networkButton: {
     minWidth: 0,

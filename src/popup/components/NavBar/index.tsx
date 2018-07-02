@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import { Typography, Menu, MenuItem, Button, IconButton, withStyles } from '@material-ui/core';
 import { ArrowBack, Settings, ArrowDropDown } from '@material-ui/icons';
+import cx from 'classnames';
 
 import styles from './styles';
 
@@ -56,7 +57,7 @@ export default class NavBar extends Component {
           )}
         </div>
         <div className={classes.locationContainer}>
-          <Typography className={classes[`locationText${isDarkTheme ? 'White' : ''}`]}>{title}</Typography>
+          <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
         </div>
         {hasNetworkSelector && (
           <NetworkSelector classes={classes} onNetworkSelectionClick={this.onNetworkSelectionClick} />
@@ -68,7 +69,7 @@ export default class NavBar extends Component {
 
 const BackButton = ({ classes, store, history, isDarkTheme }) => (
   <IconButton onClick={() => history.push(store.ui.prevLocation)} className={classes.backIconButton}>
-    <ArrowBack className={classes[`backButton${isDarkTheme ? 'White' : ''}`]} />
+    <ArrowBack className={cx(classes.backButton, isDarkTheme ? 'white' : '')} />
   </IconButton>
 );
 
@@ -81,7 +82,7 @@ const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClic
       onClick={(e) => store.ui.settingsMenuAnchor = e.currentTarget}
       className={classes.settingsIconButton}
     >
-      <Settings className={classes[`settingsButton${isDarkTheme ? 'White' : ''}`]} />
+      <Settings className={cx(classes.settingsButton, isDarkTheme ? 'white' : '')} />
     </IconButton>
     <Menu
       id="settingsMenu"
