@@ -2,7 +2,7 @@
 import { createMuiTheme } from '@material-ui/core';
 
 /* Fonts */
-const fontLato = 'Lato, Helvetica, Arial, sans-serif';
+const fontMontserrat = 'Montserrat, sans-serif';
 const fontSizeSm = 12;
 const fontSizeMd = 14;
 const fontSizeLg = 16;
@@ -75,8 +75,8 @@ export default createMuiTheme({
     divider: borderColor,
   },
 
-  // typography: {
-  //   fontFamily: fontLato,
+  typography: {
+    fontFamily: fontMontserrat,
   //   fontSize: fontSizeTextSm,
   //   fontWeightLight: 300,
   //   fontWeightRegular: 400,
@@ -120,7 +120,7 @@ export default createMuiTheme({
   //     fontSize: px(fontSizeMeta),
   //     color: textColorLight,
   //   },
-  // },
+  },
 
   // Overrides Material components globally
   overrides: {
