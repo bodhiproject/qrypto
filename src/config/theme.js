@@ -64,6 +64,7 @@ export default createMuiTheme({
     },
     background: {
       default: white,
+      gradient: `linear-gradient(300.29deg, ${primaryColorLight} -9.7%, ${primaryColor} 85.28%)`,
     },
     text: {
       primary: textColorPrimary,

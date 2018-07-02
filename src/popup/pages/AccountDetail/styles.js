@@ -2,7 +2,7 @@ const styles = (theme) => ({
   accountDetailHeader: {
     color: 'white',
     boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.2)',
-    background: 'linear-gradient(300.29deg, #8E6BF1 -9.7%, #5539DF 85.28%)',
+    background: theme.palette.background.gradient,
   },
   headerContent: {
     padding: '16px',
