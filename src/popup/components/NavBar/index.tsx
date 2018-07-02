@@ -32,8 +32,7 @@ export default class NavBar extends Component {
   public onLogoutButtonClick = () => {
     this.props.store.walletStore.clearMnemonic();
     this.props.history.push('/import-mnemonic');
-    // TODO - line below is temporary, and is in place as a convenience for development, remove before production release
-    this.props.store.walletStore.enteredMnemonic = 'hold struggle ready lonely august napkin enforce retire pipe where avoid drip';
+    this.props.store.walletStore.enteredMnemonic = process.env.TESTNET_DEFAULT_MNEMONIC || '';
   }
 
   public onNetworkSelectionClick = () => {
