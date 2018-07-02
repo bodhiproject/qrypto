@@ -1,12 +1,4 @@
 const styles = (theme) => ({
-  card: {
-    cursor: 'pointer',
-    borderRadius: theme.border.radius,
-  },
-  cardContent: {
-    padding: theme.spacing.md,
-    background: theme.palette.primary.main,
-  },
   acctName: {
     fontSize: theme.font.lg,
     fontWeight: 'bold',
@@ -50,10 +42,6 @@ const styles = (theme) => ({
     padding: `${theme.spacing.unit} ${theme.spacing.sm}`,
     marginRight: theme.spacing.xs,
     fontSize: theme.font.sm,
-  },
-  arrowRight: {
-    fontSize: '22',
-    color: '#747474',
   },
 });
 

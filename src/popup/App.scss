@@ -1,9 +1,8 @@
-// $primary-color: blue;
-
-// p {
-//   color: $primary-color;
-// }
-body {
+:global #root {
   width: 350px;
-  min-height: 550px;
+  height: 550px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 }

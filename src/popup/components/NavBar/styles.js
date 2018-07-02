@@ -1,9 +1,8 @@
 const styles = (theme) => ({
   root: {
-    width: '100%',
     margin: theme.spacing.xs,
     flexDirection: 'row',
-    display: 'inline-flex',
+    display: 'flex',
   },
   leftButtonsContainer: {
     marginRight: theme.spacing.unit,
@@ -15,6 +14,9 @@ const styles = (theme) => ({
   },
   backButton: {
     fontSize: theme.font.md,
+    '&.white': {
+      color: theme.palette.text.light,
+    },
   },
   settingsIconButton: {
     width: theme.icon.size,
@@ -22,6 +24,9 @@ const styles = (theme) => ({
   },
   settingsButton: {
     fontSize: 18,
+    '&.white': {
+      color: theme.palette.text.light,
+    }
   },
   locationContainer: {
     height: theme.icon.size,
@@ -32,6 +37,9 @@ const styles = (theme) => ({
   locationText: {
     fontSize: theme.font.md,
     fontWeight: 'bold',
+    '&.white': {
+      color: theme.palette.text.light,
+    },
   },
   networkButton: {
     minWidth: 0,

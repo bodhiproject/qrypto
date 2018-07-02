@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import { Typography, Menu, MenuItem, Button, IconButton, withStyles } from '@material-ui/core';
 import { ArrowBack, Settings, ArrowDropDown } from '@material-ui/icons';
+import cx from 'classnames';
 
 import styles from './styles';
 
@@ -17,12 +18,14 @@ export default class NavBar extends Component {
     hasBackButton: PropTypes.boolean,
     hasSettingsButton: PropTypes.boolean,
     hasNetworkSelector: PropTypes.boolean,
+    isDarkTheme: PropTypes.boolean,
   };
 
   public static defaultProps = {
     hasBackButton: false,
     hasSettingsButton: false,
     hasNetworkSelector: false,
+    isDarkTheme: false,
     title: '',
   };
 
@@ -36,15 +39,16 @@ export default class NavBar extends Component {
   }
 
   public render() {
-    const { classes, history, hasBackButton, hasSettingsButton, hasNetworkSelector, title } = this.props;
+    const { classes, history, hasBackButton, hasSettingsButton, hasNetworkSelector, title, isDarkTheme } = this.props;
     const { settingsMenuAnchor } = this.props.store.ui;
 
     return (
       <div className={classes.root}>
         <div className={classes.leftButtonsContainer}>
-          {hasBackButton && <BackButton classes={classes} store={store} history={history} />}
+          {hasBackButton && <BackButton classes={classes} store={store} history={history} isDarkTheme={isDarkTheme} />}
           {hasSettingsButton && (
             <SettingsButton
+              isDarkTheme={isDarkTheme}
               classes={classes}
               store={store}
               settingsMenuAnchor={settingsMenuAnchor}
@@ -53,7 +57,7 @@ export default class NavBar extends Component {
           )}
         </div>
         <div className={classes.locationContainer}>
-          <Typography className={classes.locationText}>{title}</Typography>
+          <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
         </div>
         {hasNetworkSelector && (
           <NetworkSelector classes={classes} onNetworkSelectionClick={this.onNetworkSelectionClick} />
@@ -63,13 +67,13 @@ export default class NavBar extends Component {
   }
 }
 
-const BackButton = ({ classes, store, history }) => (
+const BackButton = ({ classes, store, history, isDarkTheme }) => (
   <IconButton onClick={() => history.push(store.ui.prevLocation)} className={classes.backIconButton}>
-    <ArrowBack className={classes.backButton} />
+    <ArrowBack className={cx(classes.backButton, isDarkTheme ? 'white' : '')} />
   </IconButton>
 );
 
-const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClick }) => (
+const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClick, isDarkTheme }) => (
   <Fragment>
     <IconButton
       aria-owns={settingsMenuAnchor ? 'settingsMenu' : null}
@@ -78,7 +82,7 @@ const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClic
       onClick={(e) => store.ui.settingsMenuAnchor = e.currentTarget}
       className={classes.settingsIconButton}
     >
-      <Settings className={classes.settingsButton} />
+      <Settings className={cx(classes.settingsButton, isDarkTheme ? 'white' : '')} />
     </IconButton>
     <Menu
       id="settingsMenu"
