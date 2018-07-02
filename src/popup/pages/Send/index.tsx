@@ -19,8 +19,6 @@ export default class Send extends Component<any, {}> {
   public componentDidMount() {
     const { store } = this.props;
 
-    store.ui.prevLocation = '/account-detail';
-
     // Set default sender address
     store.walletStore.senderAddress = store.walletStore.info.addrStr;
   }

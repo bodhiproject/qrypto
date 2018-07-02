@@ -67,8 +67,11 @@ export default class NavBar extends Component {
   }
 }
 
-const BackButton = ({ classes, store, history, isDarkTheme }) => (
-  <IconButton onClick={() => history.push(store.ui.prevLocation)} className={classes.backIconButton}>
+// Routing With The NavBar Back Button:
+  // Forward - use history.push to navigate to the new page based on the button clicked by  (this will also add the new page to the history stack)
+  // Back - use history.back to navigate the previous location (this will also pop the current page from the history stack)
+const BackButton = ({ classes, history, isDarkTheme }) => (
+  <IconButton onClick={() => history.goBack()} className={classes.backIconButton}>
     <ArrowBack className={cx(classes.backButton, isDarkTheme ? 'white' : '')} />
   </IconButton>
 );

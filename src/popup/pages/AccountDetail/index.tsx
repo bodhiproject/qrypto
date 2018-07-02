@@ -18,10 +18,6 @@ export default class AccountDetail extends Component<any, {}> {
     this.props.store.accountDetailStore.activeTabIdx = idx;
   }
 
-  public componentDidMount() {
-    this.props.store.ui.prevLocation = '/';
-  }
-
   public render() {
     const { classes } = this.props;
     const { accountDetailStore: { activeTabIdx }, transactionStore: { items } } = this.props.store;

@@ -9,17 +9,13 @@ import NavBar from '../../components/NavBar';
 @observer
 export default class Send extends Component<any, {}> {
   public handleCancel = () => {
-    this.props.history.push('/send');
+    this.props.history.goBack();
   }
 
   public handleConfirm = () => {
     this.props.store.walletStore.send();
     // TODO? UI decision - do we want to stay on the page after the transaction has been confirmed?
     // this.props.history.push('/account-detail')
-  }
-
-  public componentDidMount() {
-    this.props.store.ui.prevLocation = '/send';
   }
 
   public render() {

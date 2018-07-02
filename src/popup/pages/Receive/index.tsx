@@ -15,10 +15,6 @@ export default class Receive extends Component<any, {}> {
     classes: PropTypes.object.isRequired,
   };
 
-  public componentDidMount() {
-    this.props.store.ui.prevLocation = '/account-detail';
-  }
-
   public render() {
     const { classes } = this.props;
     const { info } = this.props.store.walletStore;
