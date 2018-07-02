@@ -7,6 +7,7 @@ class WalletStore {
   @observable public tip = '';
 
   @observable private mnemonic: string = '';
+  // This environment var will be included in your bundle and is not secure. Do not use for production. Also make your environment var in your .env an empty string when uploading to the chrome store so that the production version does not have a default mnemonic.
   @observable private enteredMnemonic: string = process.env.TESTNET_DEFAULT_MNEMONIC || '';
   // TODO: remove when var is used
   // tslint:disable-next-line
