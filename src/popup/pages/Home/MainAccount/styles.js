@@ -5,7 +5,7 @@ const styles = (theme) => ({
   },
   cardContent: {
     padding: theme.spacing.md,
-    background: theme.palette.primary.main,
+    background: theme.palette.background.gradient,
   },
   acctName: {
     fontSize: theme.font.lg,

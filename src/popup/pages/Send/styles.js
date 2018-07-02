@@ -4,7 +4,7 @@ const styles = (theme) => ({
     height: '100%',
   },
   contentContainer: {
-    margin: theme.spacing.sm,
+    margin: theme.spacing.md,
   },
   fieldHeading: {
     marginBottom: theme.spacing.unit,
