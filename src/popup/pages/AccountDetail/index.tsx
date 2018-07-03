@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Paper, Tabs, Tab, List, ListItem, Typography, withStyles } from '@material-ui/core/';
 import { KeyboardArrowRight } from '@material-ui/icons';
-import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
 
@@ -10,7 +9,6 @@ import NavBar from '../../components/NavBar';
 import Transaction from '../../../stores/models/Transaction';
 import AccountInfo from '../../components/AccountInfo';
 
-@withRouter
 @withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
