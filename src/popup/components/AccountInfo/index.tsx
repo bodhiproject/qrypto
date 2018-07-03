@@ -18,19 +18,21 @@ export default class AccountInfo extends Component<any, {}> {
   };
 
   public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {
+    const { history } = this.props;
+
     event.stopPropagation();
 
     switch (id) {
       case 'mainCard': {
-        this.props.history.push('/account-detail');
+        history.push('/account-detail');
         break;
       }
       case 'sendButton': {
-        this.props.history.push('/send');
+        history.push('/send');
         break;
       }
       case 'receiveButton': {
-        this.props.history.push('/receive');
+        history.push('/receive');
         break;
       }
       default: {

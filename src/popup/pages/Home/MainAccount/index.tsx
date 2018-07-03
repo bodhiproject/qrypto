@@ -16,7 +16,7 @@ export default class MainAccount extends Component<any, {}> {
     classes: PropTypes.object.isRequired,
   };
 
-  public handleClick = (id, event) => {
+  public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
 
     switch (id) {
