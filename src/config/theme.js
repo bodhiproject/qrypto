@@ -83,7 +83,7 @@ export default createMuiTheme({
 
   typography: {
     fontFamily: fontMontserrat,
-    fontSize: fontSizeSm,
+    fontSize: fontSizeMd,
   },
 
   /* Material component overrides */
