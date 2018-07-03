@@ -30,10 +30,6 @@ export default class MainAccount extends Component<any, {}> {
     }
   }
 
-  public componentWillMount() {
-    this.props.store.walletStore.startGetInfoPolling();
-  }
-
   public render() {
     const { classes } = this.props;
     const { info } = this.props.store.walletStore;
