@@ -28,8 +28,6 @@ const textColorPrimary = '#333333';
 const textColorSecondary = gray;
 const textColorLight = white;
 
-const backgroundColor = white;
-
 /* Spacing */
 const spacingUnit = 4;
 const spacingXs = spacingUnit * 2; // 8
@@ -52,7 +50,7 @@ const iconSize = 24;
 const px = (value) => value.toString().concat('px');
 
 export default createMuiTheme({
-  /* Material Themes */
+  /* Material color overrides */
   palette: {
     primary: {
       light: primaryColorLight,
@@ -85,52 +83,10 @@ export default createMuiTheme({
 
   typography: {
     fontFamily: fontMontserrat,
-  //   fontSize: fontSizeTextSm,
-  //   fontWeightLight: 300,
-  //   fontWeightRegular: 400,
-  //   fontWeightMedium: 700,
-  //   fontWeightBold: 700, // additional var
-  //   // large headline (i.e. title on prediction title)
-  //   display1: {
-  //     fontSize: px(fontSizeTitleLg),
-  //     fontWeight: 400,
-  //     lineHeight: lineHeightLg,
-  //     marginLeft: '0',
-  //     color: textColorPrimary,
-  //   },
-  //   headline: {
-  //     fontSize: px(fontSizeTitleSm),
-  //     fontWeight: 400,
-  //     lineHeight: lineHeightLg,
-  //     marginLeft: '0',
-  //     color: textColorPrimary,
-  //   },
-  //   // large text (i.e. title on prediction title)
-  //   title: {
-  //     fontSize: px(fontSizeTextMd),
-  //     fontWeight: 700,
-  //     lineHeight: lineHeightLg,
-  //     color: textColorPrimary,
-  //   },
-  //   body1: {
-  //     fontSize: px(fontSizeMeta),
-  //     fontWeight: 400,
-  //     lineHeight: lineHeightLg,
-  //     color: textColorSecondary,
-  //   },
-  //   body2: {
-  //     fontSize: px(fontSizeTextSm),
-  //     fontWeight: 400,
-  //     lineHeight: lineHeightLg,
-  //     color: textColorSecondary,
-  //   },
-  //   caption: {
-  //     fontSize: px(fontSizeMeta),
-  //     color: textColorLight,
-  //   },
+    fontSize: fontSizeSm,
   },
 
-  // Overrides Material components globally
+  /* Material component overrides */
   overrides: {
     MuiButton: {
       root: {
@@ -144,61 +100,15 @@ export default createMuiTheme({
         fontSize: fontSizeMd,
       },
     },
-  //   MuiSelect: {
-  //     select: {
-  //       '&:focus': {
-  //         backgroundColor: 'transparent',
-  //       },
-  //     },
-  //   },
-  //   MuiDialogContentText: {
-  //     root: {
-  //       wordWrap: 'break-word',
-  //     },
-  //   },
-  //   MuiTabs: {
-  //     root: {
-  //       zIndex: 999,
-  //     },
-  //   },
-  //   MuiTab: {
-  //     root: {
-  //       marginTop: px(spacingUnit),
-  //       marginBottom: px(spacingUnit),
-  //     },
-  //     label: {
-  //       fontSize: fontSizeTextSm,
-  //       textTransform: 'none !important',
-  //     },
-  //   },
-  //   MuiTable: {
-  //     root: {
-  //       background: white,
-  //       border: 'solid 1px '.concat(borderColor),
-  //     },
-  //   },
-  //   MuiTableRow: {
-  //     head: {
-  //       height: tableHeaderHeight,
-  //       background: borderColor,
-  //     },
-  //   },
-  //   MuiTableCell: {
-  //     body: {
-  //       color: textColorSecondary,
-  //       fontSize: 13,
-  //     },
-  //     head: {
-  //       fontWeight: 700,
-  //       fontSize: px(fontSizeMeta),
-  //     },
-  //   },
-  //   MuiExpansionPanelSummary: {
-  //     expandIcon: {
-  //       top: px(spacingSm),
-  //       right: 0,
-  //     },
-  //   },
+    MuiTab: {
+      root: {
+        padding: `${spacingMd} 0`,
+      },
+      label: {
+        fontSize: fontSizeSm,
+        fontWeight: fontWeightBold,
+      },
+    },
   },
 
   /* User-defined variables */
