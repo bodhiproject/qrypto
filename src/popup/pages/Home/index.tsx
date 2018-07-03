@@ -12,10 +12,6 @@ export default class Home extends Component<any, {}> {
     classes: PropTypes.object.isRequired,
   };
 
-  public goToDetail = () => {
-    this.props.history.push('/account-detail');
-  }
-
   public render() {
     const { classes } = this.props;
 
@@ -29,6 +25,3 @@ export default class Home extends Component<any, {}> {
     );
   }
 }
-// TODO ??why doesn't this work, why do I have to put the click on the component itself
-{/* <MainAccount onClick={this.goToDetail}/> */}
-// export default withRouter(Home)
