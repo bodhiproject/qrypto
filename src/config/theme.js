@@ -81,6 +81,7 @@ export default createMuiTheme({
     divider: borderColor,
   },
 
+  /* Material font overrides */
   typography: {
     fontFamily: fontMontserrat,
     fontSize: fontSizeMd,
