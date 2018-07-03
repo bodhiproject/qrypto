@@ -1,11 +1,9 @@
 import * as React from 'react';
 
-const Loading = () => {
-  console.log("loading Loading component")
-  return (
+const Loading = () => (
   <div>
     Loading...
   </div>
 );
-}
+
 export default Loading;
