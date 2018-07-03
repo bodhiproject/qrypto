@@ -11,7 +11,7 @@ const styles = (theme) => ({
     padding: `0 ${theme.spacing.md}`,
     overflowY: 'auto'
   },
-  txItem: {
+  listItem: {
     width: '100%',
     padding: `${theme.spacing.md} 0`,
     cursor: 'pointer',
@@ -30,76 +30,45 @@ const styles = (theme) => ({
   },
   txId: {
     fontSize: theme.font.lg,
-    fontWeight: theme.font.weight.bold,
     color: theme.palette.text.primary,
   },
   txTime: {
     fontSize: theme.font.md,
     color: theme.palette.text.secondary,
   },
-  txAmountContainer: {
-    display: 'inline-flex',
-    marginRight: theme.spacing.xs,
+  arrowRight: {
+    fontSize: theme.icon.size,
+    color: theme.palette.extra.gray,
+    marginLeft: theme.spacing.xs,
   },
-  txAmount: {
-    fontSize: theme.font.lg,
-    fontWeight: theme.font.weight.bold,
-    color: theme.palette.text.primary,
-    marginRight: 2,
-  },
-  txTokenContainer: {
+  tokenInfoContainer: {
+    width: '100%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  txToken: {
+  tokenName: {
+    flex: 1,
+    fontSize: theme.font.lg,
+    color: theme.palette.text.primary,
+  },
+  tokenContainer: {
+    display: 'inline-flex',
+  },
+  tokenAmount: {
+    fontSize: theme.font.lg,
+    color: theme.palette.text.primary,
+    marginRight: theme.spacing.unit,
+  },
+  tokenTypeContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tokenType: {
     fontSize: theme.font.xs,
     color: theme.palette.text.secondary,
   },
-  arrowRight: {
-    fontSize: theme.icon.size,
-    color: theme.palette.extra.gray,
-  },
-  tokens: {
-    listStyle: 'none',
-    padding: 0,
-    margin: 0,
-  },
-  token: {
-    padding: '16px 0',
-    borderBottom: '1px #E3E3E3 solid',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  tokenName: {
-    flex: 1,
-    fontStyle: 'normal',
-    fontWeight: 'normal',
-    lineHeight: '24px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: 'rgba(0, 0, 0, 0.87)',
-
-  },
-  tokenDetail: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  tokenAmount: {
-    fontStyle: 'normal',
-    fontWeight: 'normal',
-    lineHeight: '24px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: 'rgba(0, 0, 0, 0.87)',
-    marginRight: '5px',
-  },
-  tokenQtumAmount: {
-    lineHeight: '16px',
-    fontSize: '10px',
-    color: '#A0A0A0',
-  }
 });
 
 export default styles;

@@ -24,6 +24,10 @@ export default class AccountDetail extends Component<any, {}> {
     const { classes } = this.props;
     const { accountDetailStore: { activeTabIdx }, transactionStore: { items } } = this.props.store;
 
+    const tokens = [
+      { name: 'Bodhi', token: 'BOT', amount: 123 },
+    ];
+
     return (
       <Fragment>
         <Paper elevation={2} className={classes.accountDetailHeader}>
@@ -44,9 +48,9 @@ export default class AccountDetail extends Component<any, {}> {
         </Paper>
         <List className={classes.list}>
           {activeTabIdx === 0 ? (
-            <TransactionList transactions={items} classes={classes} />
+            <TransactionList classes={classes} transactions={items} />
           ) : (
-            <TokenList classes={classes} />
+            <TokenList classes={classes} tokens={tokens} />
           )}
         </List>
       </Fragment>
@@ -61,10 +65,9 @@ const shortenTxid = (txid?: string) => {
   return `${txid.substr(0, 6)}...${txid.substr(txid.length - 6, txid.length)}`;
 };
 
-const TransactionList = ({ transactions, classes }: any) => {
-  console.log(transactions);
-  return transactions.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
-    <ListItem divider key={id} className={classes.txItem}>
+const TransactionList = ({ classes, transactions }: any) =>
+  transactions.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
+    <ListItem divider key={id} className={classes.listItem}>
       <div className={classes.txInfoContainer}>
         {pending ? (
           <Typography className={cx(classes.txState, 'pending')}>pending</Typography>
@@ -74,34 +77,35 @@ const TransactionList = ({ transactions, classes }: any) => {
         <Typography className={classes.txId}>{`txid: ${shortenTxid(id)}`}</Typography>
         <Typography className={classes.txTime}>{timestamp || '01-01-2018 00:00'}</Typography>
       </div>
-      <div className={classes.txAmountContainer}>
-          <Typography className={classes.txAmount}>{amount}</Typography>
-          <div className={classes.txTokenContainer}>
-            <Typography className={classes.txToken}>QTUM</Typography>
-          </div>
-      </div>
+      <AmountInfo classes={classes} amount={amount} token="QTUM" />
       <div>
         <KeyboardArrowRight className={classes.arrowRight} />
       </div>
     </ListItem>
   ));
-};
 
-const TokenList = ({ classes }: any) => {
-  return (
-    <ul className={classes.tokens}>
-      <li className={classes.token}>
-        <span className={classes.tokenName}>Token Name</span>
-        <div className={classes.tokenDetail}>
-          <div>
-            <em className={classes.tokenAmount}>5.99</em>
-            <span className={classes.txCurrency}>OOXX</span>
-          </div>
-          <div className={classes.tokenQtumAmount}>
-            = 19 QTUM
-          </div>
-        </div>
-      </li>
-    </ul>
-  );
-};
+const TokenList = ({ classes, tokens }: any) =>
+  tokens.map(({ name, token, amount }: any) => (
+    <ListItem divider key={token} className={classes.listItem}>
+      <div className={classes.tokenInfoContainer}>
+        <Typography className={classes.tokenName}>{name}</Typography>
+      </div>
+      <AmountInfo classes={classes} amount={amount} token={token} convertedValue={1} />
+    </ListItem>
+  ));
+
+const AmountInfo = ({ classes, amount, token, convertedValue }: any) => (
+  <div>
+    <div className={classes.tokenContainer}>
+      <Typography className={classes.tokenAmount}>{amount}</Typography>
+      <div className={classes.tokenTypeContainer}>
+        <Typography className={classes.tokenType}>{token}</Typography>
+      </div>
+    </div>
+    {convertedValue && (
+      <div className={classes.conversionContainer}>
+        <Typography className={classes.tokenType}>{`= ${convertedValue} QTUM`}</Typography>
+      </div>
+    )}
+  </div>
+);
