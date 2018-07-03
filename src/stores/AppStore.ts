@@ -1,4 +1,3 @@
-
 import walletStore from './WalletStore';
 import uiStore from './UiStore';
 import accountDetailStore from './AccountDetailStore';
@@ -8,8 +7,8 @@ class AppStore {
   public location = '/import-mnemonic';
   public ui = {};
   public accountDetailStore = {};
-  public walletStore = {};
   public transactionStore = {};
+  public walletStore = {};
 
   constructor() {
     this.ui = uiStore;

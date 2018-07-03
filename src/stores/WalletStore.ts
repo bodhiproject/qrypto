@@ -6,11 +6,18 @@ class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public tip = '';
 
+  // Loading screen flow for app first load and import mnemonic
+  // 1 Default -> loading true
+  // 2 chrome.storage loading mnemonic
+  //   if mnemonic does not exist -> loading false
+  //     -(redirects to importMnemonic page)
+  //     -importMnemonic pressed -> loading true (go to 3)
+  //   if mnemonic exists -> loading still true (go to 3)
+  // 3 on wallet load/info loaded -> loading false
+  @observable public loading = true;
+
   @observable private mnemonic: string = '';
   @observable private enteredMnemonic: string = '';
-  // TODO: remove when var is used
-  // tslint:disable-next-line
-  @observable private senderAddress: string = '';
   @observable private receiverAddress: string = '';
   // TODO: remove when var is used
   // tslint:disable-next-line
@@ -21,14 +28,22 @@ class WalletStore {
   private getInfoInterval?: NodeJS.Timer = undefined;
 
   constructor() {
+    console.log('constructor walletStore');
+    setTimeout(this.init.bind(this), 100);
+  }
+
+  public init() {
     chrome.storage.local.get('mnemonic', async ({ mnemonic }) => {
       if (mnemonic == null) {
+        console.log('NOT load mnemonic from chrome store');
+        this.loading = false;
         return;
       }
-
+      console.log('YES load mnemonic from chrome store');
       this.mnemonic = mnemonic;
       this.qjsWallet = this.recoverWallet(mnemonic);
       this.getWalletInfo();
+      this.loading = false;
     });
   }
 
@@ -36,6 +51,8 @@ class WalletStore {
   public onImportNewMnemonic() {
     this.qjsWallet = this.recoverWallet(this.enteredMnemonic);
     chrome.storage.local.set({ mnemonic: this.enteredMnemonic });
+    this.getWalletInfo(); // getInfo once prior to setInterval so there is no delay
+    this.loading = false;
   }
 
   @action
