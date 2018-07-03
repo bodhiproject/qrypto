@@ -8,6 +8,8 @@ const fontSizeMd = 14;
 const fontSizeLg = 16;
 const fontSizeXl = 18;
 
+const fontWeightBold = 'bold';
+
 /* Colors */
 const primaryColor = '#5539DF';
 const primaryColorDark = '#5539DF';
@@ -128,7 +130,7 @@ export default createMuiTheme({
       root: {
         padding: spacingXs,
         borderRadius: buttonRadius,
-        fontWeight: 'bold',
+        fontWeight: fontWeightBold,
       },
     },
     MuiInput: {
@@ -209,6 +211,9 @@ export default createMuiTheme({
     md: px(fontSizeMd),
     lg: px(fontSizeLg),
     xl: px(fontSizeXl),
+    weight: {
+      bold: fontWeightBold,      
+    }
   },
 
   icon: {

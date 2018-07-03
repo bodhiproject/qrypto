@@ -17,7 +17,7 @@ export default class AccountInfo extends Component<any, {}> {
     hasRightArrow: PropTypes.boolean,
   };
 
-  public handleClick = (id, event) => {
+  public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
 
     switch (id) {
@@ -43,18 +43,14 @@ export default class AccountInfo extends Component<any, {}> {
     const { classes, hasRightArrow } = this.props;
     const { info } = this.props.store.walletStore;
 
-    if (!info) {
-      return null;
-    }
-
     return info && (
-      <div className={classes.cardContent}>
+      <div className={classes.root}>
         <Typography className={classes.acctName}>{'Default Account'}</Typography>
         <Typography className={classes.address}>{info.addrStr}</Typography>
         <div className={classes.amountContainer}>
           <Typography className={classes.tokenAmount}>{info.balance}</Typography>
           <Typography className={classes.token}>QTUM</Typography>
-          { hasRightArrow && <KeyboardArrowRight className={classes.rightArrow} /> }
+          {hasRightArrow && <KeyboardArrowRight className={classes.rightArrow} />}
         </div>
         <div className={classes.actionButtonsContainer}>
           <Button

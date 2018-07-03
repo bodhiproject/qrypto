@@ -1,7 +1,10 @@
 const styles = (theme) => ({
+  root: {
+    padding: theme.spacing.md,
+  },
   acctName: {
     fontSize: theme.font.lg,
-    fontWeight: 'bold',
+    fontWeight: theme.font.weight.bold,
     color: theme.palette.text.light,
     marginBottom: theme.spacing.unit,
   },
@@ -18,7 +21,7 @@ const styles = (theme) => ({
   },
   tokenAmount: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: theme.font.weight.bold,
     color: theme.palette.text.light,
     marginRight: theme.spacing.xs,
   },
