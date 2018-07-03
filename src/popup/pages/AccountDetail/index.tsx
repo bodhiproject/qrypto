@@ -54,7 +54,10 @@ export default class AccountDetail extends Component<any, {}> {
   }
 }
 
-const shortenTxid = (txid) => {
+const shortenTxid = (txid?: string) => {
+  if (!txid) {
+    return '';
+  }
   return `${txid.substr(0, 6)}...${txid.substr(txid.length - 6, txid.length)}`;
 };
 
@@ -63,7 +66,11 @@ const TransactionList = ({ transactions, classes }: any) => {
   return transactions.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
     <ListItem divider key={id} className={classes.txItem}>
       <div className={classes.txInfoContainer}>
-        <TxState pending={pending} confirmations={confirmations} classes={classes} />
+        {pending ? (
+          <Typography className={cx(classes.txState, 'pending')}>pending</Typography>
+        ) : (
+          <Typography className={classes.txState}>{`${confirmations} confirmations`}</Typography>
+        )}
         <Typography className={classes.txId}>{`txid: ${shortenTxid(id)}`}</Typography>
         <Typography className={classes.txTime}>{timestamp || '01-01-2018 00:00'}</Typography>
       </div>
@@ -78,14 +85,6 @@ const TransactionList = ({ transactions, classes }: any) => {
       </div>
     </ListItem>
   ));
-};
-
-const TxState = ({ pending, confirmations, classes }: any) => {
-  if (pending) {
-    return <Typography className={cx(classes.txState, 'pending')}>pending</Typography>;
-  } else {
-    return <Typography className={classes.txState}>{`${confirmations} confirmations`}</Typography>;
-  }
 };
 
 const TokenList = ({ classes }: any) => {
