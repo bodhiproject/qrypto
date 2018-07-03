@@ -3,6 +3,7 @@ const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const autoprefixer = require('autoprefixer')
+const Dotenv = require('dotenv-webpack');
 
 const styleLoaders = {
   fallback: {
@@ -188,5 +189,7 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: 'static' },
     ]),
+
+    new Dotenv(), 
   ]
 }

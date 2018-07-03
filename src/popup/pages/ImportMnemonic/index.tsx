@@ -21,6 +21,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
       history.push('/');
     }
 
+    // TODO - value = enterMnemonic is temporary, and is in place as a convenience for development, remove before production release
     return(
       <div style={{ margin: 16 }}>
         <Typography variant="title" style={{ marginBottom: 16 }}>Enter Your Wallet Mnemonic</Typography>
@@ -29,6 +30,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
           fullWidth
           required
           style={{ marginBottom: 16 }}
+          value={walletStore.enteredMnemonic}
           onChange={(e) => walletStore.enteredMnemonic = e.target.value}
           error={_.isEmpty(walletStore.enteredMnemonic)}
         />
