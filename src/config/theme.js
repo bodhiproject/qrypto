@@ -3,6 +3,7 @@ import { createMuiTheme } from '@material-ui/core';
 
 /* Fonts */
 const fontMontserrat = 'Montserrat, sans-serif';
+const fontSizeXs = 10;
 const fontSizeSm = 12;
 const fontSizeMd = 14;
 const fontSizeLg = 16;
@@ -20,10 +21,11 @@ const secondaryColorLight = '#ffffff';
 const secondaryColorDark = '#ffffff';
 
 const white = '#ffffff';
-const orange = '#eaa844';
+const gray = '#747474';
+const orange = '#F5A623';
 
 const textColorPrimary = '#333333';
-const textColorSecondary = '#747474';
+const textColorSecondary = gray;
 const textColorLight = white;
 
 const backgroundColor = white;
@@ -73,6 +75,10 @@ export default createMuiTheme({
       secondary: textColorSecondary,
       hint: textColorSecondary,
       light: textColorLight,
+    },
+    extra: {
+      gray,
+      orange,
     },
     divider: borderColor,
   },
@@ -207,6 +213,7 @@ export default createMuiTheme({
   },
 
   font: {
+    xs: px(fontSizeXs),
     sm: px(fontSizeSm),
     md: px(fontSizeMd),
     lg: px(fontSizeLg),

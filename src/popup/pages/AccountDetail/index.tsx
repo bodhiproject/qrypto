@@ -1,20 +1,22 @@
 import React, { Component, Fragment } from 'react';
-import { Tabs, Tab, withStyles } from '@material-ui/core/';
+import { Paper, Tabs, Tab, List, ListItem, Typography, withStyles } from '@material-ui/core/';
 import { KeyboardArrowRight } from '@material-ui/icons';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
+import cx from 'classnames';
+
+import styles from './styles';
 import NavBar from '../../components/NavBar';
 import Transaction from '../../../stores/models/Transaction';
-import styles from './styles';
 import AccountInfo from '../../components/AccountInfo';
 
 @withRouter
-@inject('store')
 @withStyles(styles, { withTheme: true })
+@inject('store')
 @observer
 export default class AccountDetail extends Component<any, {}> {
 
-  public handleTabChange = (_, idx) => {
+  public handleTabChange = (_: object, idx: number) => {
     this.props.store.accountDetailStore.activeTabIdx = idx;
   }
 
@@ -22,75 +24,71 @@ export default class AccountDetail extends Component<any, {}> {
     const { classes } = this.props;
     const { accountDetailStore: { activeTabIdx }, transactionStore: { items } } = this.props.store;
 
-    return(
+    return (
       <Fragment>
-        <div className={classes.accountDetailHeader}>
+        <Paper elevation={2} className={classes.accountDetailHeader}>
           <NavBar hasBackButton hasNetworkSelector isDarkTheme title="Account Detail" />
-          <div className={classes.headerContent}>
-            <AccountInfo />
-          </div>
-        </div>
-
-        <div className={classes.accountDetailTabs}>
+          <AccountInfo />
+        </Paper>
+        <Paper elevation={1}>
           <Tabs
+            fullWidth
             indicatorColor="primary"
             textColor="primary"
-            fullWidth
             value={activeTabIdx}
             onChange={this.handleTabChange}
           >
-            <Tab label="TRANSACTIONS" />
-            <Tab label="TOKENS" />
+            <Tab label="TRANSACTIONS" className={classes.tab} />
+            <Tab label="TOKENS" className={classes.tab} />
           </Tabs>
-        </div>
-
-        <div className={classes.AccountDetailItems}>
-          {
-            activeTabIdx === 0 ?
-              <TransactionList transactions={items} classes={classes} /> :
-              <TokenList classes={classes} />
-          }
-        </div>
+        </Paper>
+        <List className={classes.list}>
+          {activeTabIdx === 0 ? (
+            <TransactionList transactions={items} classes={classes} />
+          ) : (
+            <TokenList classes={classes} />
+          )}
+        </List>
       </Fragment>
     );
   }
-
 }
 
-const TransactionList = ({ transactions, classes }) => {
-  const items = transactions.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
-    <li key={id} className={classes.accountDetailTx}>
-      <div>
-        <TxState pending={pending} confirmations={confirmations} classes={classes} />
-      </div>
-      <div className={classes.txDetail}>
-        <address className={classes.txAddress}>{id}</address>
-        <span>
-          <em className={classes.txAmount}>{amount}</em>
-          <span className={classes.txCurrency}>QTUM</span>
-        </span>
-        <KeyboardArrowRight className={classes.arrowRight} />
-      </div>
-      <time className={classes.txTime}>{timestamp}</time>
-    </li>
-  ));
-
-  return (
-    <ul className={classes.accountDetailTxs}>
-      {items}
-    </ul>
-  );
+const shortenTxid = (txid) => {
+  return `${txid.substr(0, 6)}...${txid.substr(txid.length - 6, txid.length)}`;
 };
 
-const TxState = ({pending, confirmations, classes}) => {
+const TransactionList = ({ transactions, classes }: any) => {
+  console.log(transactions);
+  return transactions.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
+    <ListItem divider key={id} className={classes.txItem}>
+      <div className={classes.txInfoContainer}>
+        <TxState pending={pending} confirmations={confirmations} classes={classes} />
+        <Typography className={classes.txId}>{`txid: ${shortenTxid(id)}`}</Typography>
+        <Typography className={classes.txTime}>{timestamp || '01-01-2018 00:00'}</Typography>
+      </div>
+      <div className={classes.txAmountContainer}>
+          <Typography className={classes.txAmount}>{amount}</Typography>
+          <div className={classes.txTokenContainer}>
+            <Typography className={classes.txToken}>QTUM</Typography>
+          </div>
+      </div>
+      <div>
+        <KeyboardArrowRight className={classes.arrowRight} />
+      </div>
+    </ListItem>
+  ));
+};
+
+const TxState = ({ pending, confirmations, classes }: any) => {
   if (pending) {
-    return <span className={classes.txStatePending}>pending</span>;
+    return <Typography className={cx(classes.txState, 'pending')}>pending</Typography>;
   } else {
-    return <span className={classes.txState}>{confirmations} confirmations</span>;
+    return <Typography className={classes.txState}>{`${confirmations} confirmations`}</Typography>;
   }
 };
 
-const TokenList = ({ classes }) => {
+const TokenList = ({ classes }: any) => {
   return (
     <ul className={classes.tokens}>
       <li className={classes.token}>
