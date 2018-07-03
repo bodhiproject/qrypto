@@ -25,7 +25,7 @@ export default class AccountDetail extends Component<any, {}> {
     const { accountDetailStore: { activeTabIdx }, transactionStore: { items } } = this.props.store;
 
     const tokens = [
-      { name: 'Bodhi', token: 'BOT', amount: 123 },
+      { name: 'Bodhi', token: 'BOT', amount: 123, url: 'https://coinmarketcap.com/currencies/bodhi/' },
     ];
 
     return (
@@ -85,8 +85,8 @@ const TransactionList = ({ classes, transactions }: any) =>
   ));
 
 const TokenList = ({ classes, tokens }: any) =>
-  tokens.map(({ name, token, amount }: any) => (
-    <ListItem divider key={token} className={classes.listItem}>
+  tokens.map(({ name, token, amount, url }: any) => (
+    <ListItem divider key={token} className={classes.listItem} onClick={() => window.open(url, '_blank')}>
       <div className={classes.tokenInfoContainer}>
         <Typography className={classes.tokenName}>{name}</Typography>
       </div>
