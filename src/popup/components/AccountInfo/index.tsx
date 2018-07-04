@@ -17,44 +17,31 @@ export default class AccountInfo extends Component<any, {}> {
     hasRightArrow: PropTypes.boolean,
   };
 
-  public handleClick = (id, event) => {
+  public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {
+    const { history } = this.props;
+
     event.stopPropagation();
 
-    switch (id) {
-      case 'mainCard': {
-        this.props.history.push('/account-detail');
-        break;
-      }
-      case 'sendButton': {
-        this.props.history.push('/send');
-        break;
-      }
-      case 'receiveButton': {
-        this.props.history.push('/receive');
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+    const location = {
+      mainCard: '/account-detail',
+      sendButton: '/send',
+      receiveButton: '/receive',
+    }[id];
+    history.push(location);
   }
 
   public render() {
     const { classes, hasRightArrow } = this.props;
     const { info } = this.props.store.walletStore;
 
-    if (!info) {
-      return null;
-    }
-
     return info && (
-      <div className={classes.cardContent}>
+      <div className={classes.root}>
         <Typography className={classes.acctName}>{'Default Account'}</Typography>
         <Typography className={classes.address}>{info.addrStr}</Typography>
         <div className={classes.amountContainer}>
           <Typography className={classes.tokenAmount}>{info.balance}</Typography>
           <Typography className={classes.token}>QTUM</Typography>
-          { hasRightArrow && <KeyboardArrowRight className={classes.rightArrow} /> }
+          {hasRightArrow && <KeyboardArrowRight className={classes.rightArrow} />}
         </div>
         <div className={classes.actionButtonsContainer}>
           <Button

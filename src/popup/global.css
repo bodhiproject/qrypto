@@ -7,7 +7,7 @@ body {
 
 @font-face {
   font-family: 'Montserrat', sans-serif;
-  src: local('Montserrat'), url(../fonts/Montserrat/Montserrat-Light.ttf) format('ttf');
+  src: local('Montserrat'), url(../fonts/Montserrat/Montserrat-Regular.ttf) format('ttf');
 }
 
 :global .container {

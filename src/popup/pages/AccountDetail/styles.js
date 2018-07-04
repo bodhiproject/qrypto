@@ -1,122 +1,74 @@
 const styles = (theme) => ({
   accountDetailHeader: {
-    color: 'white',
-    boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.2)',
     background: theme.palette.background.gradient,
+    borderRadius: 0,
   },
-  headerContent: {
-    padding: '16px',
-  },
-  accountDetailTabs: {
-    boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)',
-  },
-  AccountDetailItems: {
+  tab: {
     flex: 1,
-    padding: '0 16px',
+  },
+  list: {
+    flex: 1,
+    padding: `0 ${theme.spacing.md}`,
     overflowY: 'auto'
   },
-  accountDetailTxs: {
-    listStyle: 'none',
-    padding: 0,
-    margin: 0,
-  },
-  accountDetailTx: {
-    padding: '16px 0',
+  listItem: {
+    width: '100%',
+    padding: `${theme.spacing.md} 0`,
     cursor: 'pointer',
-    borderBottom: '1px #E3E3E3 solid',
+    display: 'inline-flex',
+  },
+  txInfoContainer: {
+    flex: 1,
   },
   txState: {
-    lineHeight: '16px',
-    fontSize: '12px',
+    fontSize: theme.font.sm,
     textTransform: 'uppercase',
+    marginBottom: theme.spacing.unit,
+    '&.pending': {
+      color: theme.palette.extra.orange,
+    },
   },
-  txStatePending: {
-    lineHeight: '16px',
-    fontSize: '12px',
-    textTransform: 'uppercase',
-    color: '#F5A623',
-  },
-  txDetail: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  txAddress: {
-    display: 'block',
-    wordWrap: 'none',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    flex: 1,
-    lineHeight: '24px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    fontStyle: 'normal',
-    marginRight: '45px',
-    color: 'rgba(0, 0, 0, 0.8)',
-  },
-  txAmount: {
-    lineHeight: '24px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    fontStyle: 'normal',
-    marginRight: 5,
-    color: 'rgba(0, 0, 0, 0.87)',
-  },
-  txCurrency: {
-    lineHeight: '24px',
-    fontSize: '10px',
-    color: '#A0A0A0',
-  },
-  arrowRight: {
-    fontSize: 22,
-    color: '#747474',
+  txId: {
+    fontSize: theme.font.lg,
+    color: theme.palette.text.primary,
   },
   txTime: {
-    lineHeight: '20px',
-    fontSize: '14px',
-    color: 'rgba(0, 0, 0, 0.543846)',
+    fontSize: theme.font.md,
+    color: theme.palette.text.secondary,
   },
-  tokens: {
-    listStyle: 'none',
-    padding: 0,
-    margin: 0,
+  arrowRight: {
+    fontSize: theme.icon.size,
+    color: theme.palette.extra.gray,
+    marginLeft: theme.spacing.xs,
   },
-  token: {
-    padding: '16px 0',
-    borderBottom: '1px #E3E3E3 solid',
+  tokenInfoContainer: {
+    width: '100%',
     display: 'flex',
+    justifyContent: 'center',
     alignItems: 'center',
-
   },
   tokenName: {
     flex: 1,
-    fontStyle: 'normal',
-    fontWeight: 'normal',
-    lineHeight: '24px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: 'rgba(0, 0, 0, 0.87)',
-
+    fontSize: theme.font.lg,
+    color: theme.palette.text.primary,
   },
-  tokenDetail: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+  tokenContainer: {
+    display: 'inline-flex',
   },
   tokenAmount: {
-    fontStyle: 'normal',
-    fontWeight: 'normal',
-    lineHeight: '24px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: 'rgba(0, 0, 0, 0.87)',
-    marginRight: '5px',
+    fontSize: theme.font.lg,
+    color: theme.palette.text.primary,
+    marginRight: theme.spacing.unit,
   },
-  tokenQtumAmount: {
-    lineHeight: '16px',
-    fontSize: '10px',
-    color: '#A0A0A0',
-  }
+  tokenTypeContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tokenType: {
+    fontSize: theme.font.xs,
+    color: theme.palette.text.secondary,
+  },
 });
 
 export default styles;
