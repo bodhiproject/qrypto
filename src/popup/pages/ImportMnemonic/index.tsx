@@ -42,47 +42,49 @@ export default class ImportMnemonic extends Component<{}, IState> {
         <div className={classes.inputContainer}>
           <Typography className={classes.importHeading}>Import Mnemonic</Typography>
           <TextField
+            className={classes.mnemonicTextField}
             autoFocus
             required
             fullWidth
             multiline
             rows={4}
+            type="text"
             placeholder="Enter your seed phrase here to import."
             onChange={(e) => walletStore.enteredMnemonic = e.target.value}
             error={_.isEmpty(walletStore.enteredMnemonic)}
-            className={classes.mnemonicTextField}
             InputProps={{ disableUnderline: true }}
           />
-          <PasswordTextField classes={classes} placeholder="Password" />
-          <PasswordTextField classes={classes} placeholder="Confirm password" />
+          <PasswordTextField placeholder="Password" />
+          <PasswordTextField placeholder="Confirm password" />
         </div>
         <div>
           <Button
+            className={classes.importButton}
             fullWidth
             variant="contained"
             color="primary"
             onClick={this.recoverAndGoToHomePage}
             disabled={_.isEmpty(walletStore.enteredMnemonic)}
-            className={classes.importButton}
           >
             Import
           </Button>
-          <Button fullWidth color="primary">Cancel</Button>
+          <Button className={classes.cancelButton} fullWidth color="primary">Cancel</Button>
         </div>
       </div>
     );
   }
 }
 
-const PasswordTextField = ({ classes, placeholder }: any) => (
+const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, placeholder }: any) => (
   <TextField
+    className={classes.passwordTextField}
     required
     fullWidth
+    type="text"
     placeholder={placeholder}
-    className={classes.passwordTextField}
     InputProps={{ disableUnderline: true }}
   />
-);
+));
 
 interface IState {
   walletStore: any;

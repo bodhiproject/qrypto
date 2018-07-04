@@ -15,6 +15,7 @@ const styles = (theme) => ({
     marginBottom: theme.spacing.sm,
   },
   mnemonicTextField: {
+    width: '100%',
     fontSize: theme.font.lg,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.xl,
@@ -22,6 +23,7 @@ const styles = (theme) => ({
     borderRadius: theme.border.radius,
   },
   passwordTextField: {
+    width: '100%',
     fontSize: theme.font.sm,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.xl,
