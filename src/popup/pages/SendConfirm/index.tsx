@@ -42,11 +42,11 @@ export default class Send extends Component<any, {}> {
           </div>
           <div className={classes.fieldContainer}>
             <Typography className={classes.fieldLabel}>Gas Limit</Typography>
-            <Typography className={classes.fieldValue}>{`<Gas Limit>`} <span className={classes.fieldUnit}>GAS</span></Typography>
+            <Typography className={classes.fieldValue}>{`Gas Limit`} <span className={classes.fieldUnit}>GAS</span></Typography>
           </div>
           <div className={classes.fieldContainer}>
             <Typography className={classes.fieldLabel}>Gas Price</Typography>
-            <Typography className={classes.fieldValue}>{`<Gas Price>`} <span className={classes.fieldUnit}>QTUM</span></Typography>
+            <Typography className={classes.fieldValue}>{`Gas Price`} <span className={classes.fieldUnit}>QTUM</span></Typography>
           </div>
           <div className={cx(classes.fieldContainer, 'last')}>
             <Typography className={classes.fieldLabel}>Max Transaction Fee</Typography>
