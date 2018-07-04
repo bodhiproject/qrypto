@@ -10,6 +10,12 @@ const styles = (theme) => ({
     flexDirection: 'column',
     margin: theme.spacing.md,
   },
+  headerText: {
+    fontSize: 20,
+    fontWeight: theme.font.weight.bold,
+    color: theme.palette.text.primary,
+    marginBottom: theme.spacing.sm,
+  },
   inputContainer: {
     flex: 1,
   },

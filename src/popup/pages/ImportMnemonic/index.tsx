@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { TextField, Button, withStyles } from '@material-ui/core';
+import { Typography, TextField, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import _ from 'lodash';
 
@@ -32,8 +32,9 @@ export default class ImportMnemonic extends Component<{}, IState> {
 
     return (
       <div className={classes.root}>
-        <NavBar hasNetworkSelector title="Import Mnemonic" />
+        <NavBar hasNetworkSelector title="" />
         <div className={classes.contentContainer}>
+          <Typography className={classes.headerText}>Import Mnemonic</Typography>
           <div className={classes.inputContainer}>
             <div className={classes.fieldContainer}>
               <TextField
