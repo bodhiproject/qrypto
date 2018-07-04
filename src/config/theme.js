@@ -42,7 +42,11 @@ const borderSize = 1;
 const borderRadius = 8;
 
 /* Button */
-const buttonRadius = 16;
+const buttonRadiusSm = 16;
+const buttonRadiusLg = 24;
+
+const buttonHeightSm = 32;
+const buttonHeightLg = 48;
 
 /* Icons */
 const iconSize = 24;
@@ -92,8 +96,8 @@ export default createMuiTheme({
     MuiButton: {
       root: {
         padding: spacingXs,
-        borderRadius: buttonRadius,
         fontWeight: fontWeightBold,
+        borderRadius: buttonRadiusSm,
       },
     },
     MuiInput: {
@@ -141,5 +145,16 @@ export default createMuiTheme({
   border: {
     root: `${borderColor} solid ${px(borderSize)}`,
     radius: px(borderRadius),
+  },
+
+  button: {
+    sm: {
+      height: buttonHeightSm,
+      radius: buttonRadiusSm,
+    },
+    lg: {
+      height: buttonHeightLg,
+      radius: buttonRadiusLg,
+    },
   },
 });

@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { Typography, TextField, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import _ from 'lodash';
+import cx from 'classnames';
 
 import styles from './styles';
 
@@ -62,7 +63,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
         </div>
         <div>
           <Button
-            className={classes.importButton}
+            className={cx(classes.button, 'marginBottom')}
             fullWidth
             variant="contained"
             color="primary"
@@ -71,7 +72,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
           >
             Import
           </Button>
-          <Button className={classes.cancelButton} fullWidth color="primary">Cancel</Button>
+          <Button className={classes.button} fullWidth color="primary">Cancel</Button>
         </div>
       </div>
     );

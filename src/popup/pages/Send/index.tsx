@@ -9,6 +9,7 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 
 @withStyles(styles, { withTheme: true })
+@withRouter
 @inject('store')
 @observer
 export default class Send extends Component<any, {}> {
@@ -36,7 +37,7 @@ export default class Send extends Component<any, {}> {
           <ToField info={info} walletStore={walletStore} />
           <TokenField token={token} walletStore={walletStore} />
           <AmountField amount={amount} token={token} walletStore={walletStore} />
-          <SendButton />
+          <SendButton {...this.props} />
         </div>
       </div>
     );
@@ -133,6 +134,14 @@ const AmountField = withStyles(styles, { withTheme: true })(({ classes, amount, 
   </div>
 ));
 
-const SendButton = withRouter(({ history }) => (
-  <Button fullWidth variant="contained" color="primary" onClick={() => history.push('/send-confirm')}>Send</Button>
-));
+const SendButton = ({ classes, history }: any) => (
+  <Button
+    className={classes.sendButton}
+    fullWidth
+    variant="contained"
+    color="primary"
+    onClick={() => history.push('/send-confirm')}
+  >
+    Send
+  </Button>
+);

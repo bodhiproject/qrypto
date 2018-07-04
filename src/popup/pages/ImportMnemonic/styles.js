@@ -37,12 +37,13 @@ const styles = (theme) => ({
     fontSize: theme.font.sm,
     fontWeight: theme.font.weight.bold,
   },
-  importButton: {
+  button: {
+    height: theme.button.lg.height,
+    borderRadius: theme.button.lg.radius,
     display: 'flex',
-    marginBottom: theme.spacing.sm,
-  },
-  cancelButton: {
-    display: 'flex',
+    '&.marginBottom': {
+      marginBottom: theme.spacing.sm,
+    },
   },
 });
 
