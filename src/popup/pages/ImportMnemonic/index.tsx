@@ -19,15 +19,6 @@ export default class ImportMnemonic extends Component<{}, IState> {
     classes: PropTypes.object.isRequired,
   };
 
-  public recoverAndGoToHomePage = () => {
-    const { store: { walletStore }, history } = this.props;
-    walletStore.loading = true;
-    setTimeout(() => {
-      walletStore.onImportNewMnemonic();
-      history.push('/');
-    }, 100);
-  }
-
   public componentDidMount() {
     this.props.store.walletStore.stopGetInfoPolling();
   }
@@ -61,8 +52,8 @@ export default class ImportMnemonic extends Component<{}, IState> {
                   classes: { input: classes.mnemonicFieldInput },
                 }}
               />
-              <PasswordInput placeholder="Password" />
-              <PasswordInput placeholder="Confirm password" />
+              <PasswordInput classNames={classes.passwordField} placeholder="Password" />
+              <PasswordInput classNames={classes.passwordField} placeholder="Confirm password" />
             </div>
           </div>
           <div>
@@ -76,12 +67,23 @@ export default class ImportMnemonic extends Component<{}, IState> {
             >
               Import
             </Button>
-            <Button className={classes.button} fullWidth color="primary">Cancel</Button>
+            <Button className={classes.button} fullWidth color="primary" onClick={this.onCancelClick}>Cancel</Button>
           </div>
         </div>
       </div>
     );
   }
+
+  private recoverAndGoToHomePage = () => {
+    const { store: { walletStore }, history } = this.props;
+    walletStore.loading = true;
+    setTimeout(() => {
+      walletStore.onImportNewMnemonic();
+      history.push('/');
+    }, 100);
+  }
+
+  private onCancelClick = () => this.props.history.goBack();
 }
 
 interface IState {
