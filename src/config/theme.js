@@ -102,6 +102,7 @@ export default createMuiTheme({
     },
     MuiInput: {
       root: {
+        fontFamily: fontMontserrat,
         fontSize: fontSizeMd,
       },
     },
@@ -110,6 +111,7 @@ export default createMuiTheme({
         padding: `${spacingMd} 0`,
       },
       label: {
+        fontFamily: fontMontserrat,
         fontSize: fontSizeSm,
         fontWeight: fontWeightBold,
       },
