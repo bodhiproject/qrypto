@@ -4,7 +4,7 @@ import cx from 'classnames';
 
 import styles from './styles';
 
-const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, classNames, placeholder, onChange, error }: any) => (
+const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, classNames, placeholder, onChange }: any) => (
   <TextField
     className={cx(classes.passwordTextField, classNames)}
     required
@@ -15,7 +15,6 @@ const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, cl
       classes: { input: classes.passwordFieldInput },
     }}
     onChange={onChange}
-    error={error}
   />
 ));
 

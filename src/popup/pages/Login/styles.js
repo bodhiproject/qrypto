@@ -21,7 +21,7 @@ const styles = (theme) => ({
     fontSize: 52,
     fontWeight: theme.font.weight.bold,
     color: theme.palette.primary.main,
-    marginBottom: theme.spacing.xl,
+    marginBottom: theme.spacing.lg,
     alignSelf: 'center',
   },
   logoDesc: {
