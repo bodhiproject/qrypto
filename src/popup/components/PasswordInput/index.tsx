@@ -4,12 +4,14 @@ import cx from 'classnames';
 
 import styles from './styles';
 
-const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, classNames, placeholder, onChange }: any) => (
+const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, classNames, placeholder, helperText, error, onChange }: any) => (
   <TextField
     className={cx(classes.passwordTextField, classNames)}
     required
     type="password"
     placeholder={placeholder}
+    helperText={helperText}
+    error={error}
     InputProps={{
       disableUnderline: true,
       classes: { input: classes.passwordFieldInput },

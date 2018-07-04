@@ -20,7 +20,7 @@ export default class Login extends Component<any, {}> {
 
   public render() {
     const { classes, store: { loginStore } } = this.props;
-    const { password, confirmPassword } = loginStore;
+    const error = this.getPasswordMatchError();
 
     return (
       <div className={classes.root}>
@@ -39,6 +39,8 @@ export default class Login extends Component<any, {}> {
             <PasswordInput
               classNames={classes.confirmPasswordField}
               placeholder="Confirm password"
+              helperText={error}
+              error={error}
               onChange={(e: any) => loginStore.confirmPassword = e.target.value}
             />
           </div>
@@ -47,7 +49,7 @@ export default class Login extends Component<any, {}> {
             fullWidth
             variant="contained"
             color="primary"
-            disabled={_.isEmpty(password) || _.isEmpty(confirmPassword)}
+            disabled={_.isEmpty(loginStore.password) || _.isEmpty(loginStore.confirmPassword) || error}
           >
             Login
           </Button>
@@ -63,6 +65,16 @@ export default class Login extends Component<any, {}> {
         </div>
       </div>
     );
+  }
+
+  private getPasswordMatchError = () => {
+    const { password, confirmPassword } = this.props.store.loginStore;
+
+    let error;
+    if (!_.isEmpty(password) && !_.isEmpty(confirmPassword) && password !== confirmPassword) {
+      error = 'Passwords do not match.';
+    }
+    return error;
   }
 
   private onImportWalletClick = () => {
