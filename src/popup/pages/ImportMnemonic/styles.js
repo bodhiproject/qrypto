@@ -27,6 +27,7 @@ const styles = (theme) => ({
   },
   mnemonicFieldInput: {
     fontSize: theme.font.lg,
+    lineHeight: '20px',
   },
   passwordTextField: {
     flex: 1,
