@@ -30,6 +30,8 @@ export default class ImportMnemonic extends Component<{}, IState> {
       history.push('/');
     }
 
+    const error = this.getPasswordMatchError();
+
     return (
       <div className={classes.root}>
         <NavBar hasNetworkSelector title="" />
@@ -52,8 +54,18 @@ export default class ImportMnemonic extends Component<{}, IState> {
                   classes: { input: classes.mnemonicFieldInput },
                 }}
               />
-              <PasswordInput classNames={classes.passwordField} placeholder="Password" />
-              <PasswordInput classNames={classes.passwordField} placeholder="Confirm password" />
+              <PasswordInput
+                classNames={classes.passwordField}
+                placeholder="Password"
+                onChange={(e: any) => walletStore.password = e.target.value}
+              />
+              <PasswordInput
+                classNames={classes.passwordField}
+                placeholder="Confirm password"
+                helperText={error}
+                error={error}
+                onChange={(e: any) => walletStore.confirmPassword = e.target.value}
+              />
             </div>
           </div>
           <div>
@@ -63,7 +75,12 @@ export default class ImportMnemonic extends Component<{}, IState> {
               variant="contained"
               color="primary"
               onClick={this.recoverAndGoToHomePage}
-              disabled={_.isEmpty(walletStore.enteredMnemonic)}
+              disabled={
+                _.isEmpty(walletStore.enteredMnemonic)
+                  || _.isEmpty(walletStore.password)
+                  || _.isEmpty(walletStore.confirmPassword)
+                  || error
+              }
             >
               Import
             </Button>
@@ -81,6 +98,16 @@ export default class ImportMnemonic extends Component<{}, IState> {
     );
   }
 
+  private getPasswordMatchError = () => {
+    const { password, confirmPassword } = this.props.store.walletStore;
+
+    let error;
+    if (!_.isEmpty(password) && !_.isEmpty(confirmPassword) && password !== confirmPassword) {
+      error = 'Passwords do not match.';
+    }
+    return error;
+  }
+
   private recoverAndGoToHomePage = () => {
     const { store: { walletStore }, history } = this.props;
     
@@ -95,6 +122,8 @@ export default class ImportMnemonic extends Component<{}, IState> {
     const { store: { walletStore }, history } = this.props;
 
     walletStore.enteredMnemonic = '';
+    walletStore.password = '';
+    walletStore.confirmPassword = '';
     history.goBack();
   }
 }

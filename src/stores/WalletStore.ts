@@ -4,7 +4,10 @@ import transactionStore from './TransactionStore';
 
 class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
-  @observable public tip = '';
+  @observable public enteredMnemonic: string = '';
+  @observable public password: string = '';
+  @observable public confirmPassword: string = '';
+  @observable public tip: string = '';
 
   // Loading screen flow for app first load and import mnemonic
   // 1 Default -> loading true
@@ -17,11 +20,7 @@ class WalletStore {
   @observable public loading = true;
 
   @observable private mnemonic: string = '';
-  @observable private enteredMnemonic: string = '';
   @observable private receiverAddress: string = '';
-  // TODO: remove when var is used
-  // tslint:disable-next-line
-  @observable private token: string = 'QTUM';
   @observable private amount: string = '0';
 
   private qjsWallet?: Wallet = undefined;
@@ -51,8 +50,14 @@ class WalletStore {
   public onImportNewMnemonic() {
     this.qjsWallet = this.recoverWallet(this.enteredMnemonic);
     chrome.storage.local.set({ mnemonic: this.enteredMnemonic });
+
+    // Reset values
     this.enteredMnemonic = '';
-    this.getWalletInfo(); // getInfo once prior to setInterval so there is no delay
+    this.password = '';
+    this.confirmPassword = '';
+
+    // getInfo once prior to setInterval so there is no delay
+    this.getWalletInfo();
     this.loading = false;
   }
 
