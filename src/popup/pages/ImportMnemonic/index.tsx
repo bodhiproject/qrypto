@@ -39,42 +39,50 @@ export default class ImportMnemonic extends Component<{}, IState> {
 
     return (
       <div className={classes.root}>
-        <Typography className={classes.importHeading}>Import Mnemonic</Typography>
-        <TextField
-          autoFocus
-          required
-          fullWidth
-          multiline
-          rows={4}
-          placeholder="Enter your seed phrase here to import."
-          onChange={(e) => walletStore.enteredMnemonic = e.target.value}
-          error={_.isEmpty(walletStore.enteredMnemonic)}
-          className={classes.mnemonicTextField}
-        />
-        <TextField
-          required
-          fullWidth
-          placeholder="Password"
-          className={classes.passwordTextField}
-        />
-       <TextField
-          required
-          fullWidth
-          placeholder="Confirm password"
-          className={classes.passwordTextField}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={this.recoverAndGoToHomePage}
-          disabled={_.isEmpty(walletStore.enteredMnemonic)}
-        >
-          Import Wallet
-        </Button>
+        <div className={classes.inputContainer}>
+          <Typography className={classes.importHeading}>Import Mnemonic</Typography>
+          <TextField
+            autoFocus
+            required
+            fullWidth
+            multiline
+            rows={4}
+            placeholder="Enter your seed phrase here to import."
+            onChange={(e) => walletStore.enteredMnemonic = e.target.value}
+            error={_.isEmpty(walletStore.enteredMnemonic)}
+            className={classes.mnemonicTextField}
+            InputProps={{ disableUnderline: true }}
+          />
+          <PasswordTextField classes={classes} placeholder="Password" />
+          <PasswordTextField classes={classes} placeholder="Confirm password" />
+        </div>
+        <div>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={this.recoverAndGoToHomePage}
+            disabled={_.isEmpty(walletStore.enteredMnemonic)}
+            className={classes.importButton}
+          >
+            Import
+          </Button>
+          <Button fullWidth color="primary">Cancel</Button>
+        </div>
       </div>
     );
   }
 }
+
+const PasswordTextField = ({ classes, placeholder }: any) => (
+  <TextField
+    required
+    fullWidth
+    placeholder={placeholder}
+    className={classes.passwordTextField}
+    InputProps={{ disableUnderline: true }}
+  />
+);
 
 interface IState {
   walletStore: any;

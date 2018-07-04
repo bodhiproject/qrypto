@@ -1,7 +1,13 @@
 const styles = (theme) => ({
   root: {
-    width: 'auto',
+    width: '100%',
+    height: '100%',
     margin: theme.spacing.md,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  inputContainer: {
+    flex: 1,
   },
   importHeading: {
     fontSize: 20,
@@ -21,6 +27,13 @@ const styles = (theme) => ({
     marginBottom: theme.spacing.xl,
     border: theme.border.root,
     borderRadius: theme.border.radius,
+  },
+  importButton: {
+    display: 'flex',
+    marginBottom: theme.spacing.sm,
+  },
+  cancelButton: {
+    display: 'flex',
   },
 });
 
