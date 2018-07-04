@@ -22,23 +22,12 @@ export default class AccountInfo extends Component<any, {}> {
 
     event.stopPropagation();
 
-    switch (id) {
-      case 'mainCard': {
-        history.push('/account-detail');
-        break;
-      }
-      case 'sendButton': {
-        history.push('/send');
-        break;
-      }
-      case 'receiveButton': {
-        history.push('/receive');
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+    const location = {
+      mainCard: '/account-detail',
+      sendButton: '/send',
+      receiveButton: '/receive',
+    }[id];
+    history.push(location);
   }
 
   public render() {
