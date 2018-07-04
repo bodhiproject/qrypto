@@ -46,13 +46,11 @@ export default class ImportMnemonic extends Component<{}, IState> {
 
   public recoverAndGoToHomePage = () => {
     const { store: { walletStore }, history } = this.props;
-    console.log("recoverAccount, loading true")
     walletStore.loading = true;
     setTimeout(() => {
-      walletStore.onImportNewMnemonic()
-      console.log("onImportMnemonic setTimeout")
+      walletStore.onImportNewMnemonic();
       history.push('/');
-    }, 100)
+    }, 100);
   }
 }
 

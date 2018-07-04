@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import NavBar from '../../components/NavBar';
+import { Typography, withStyles, Button } from '@material-ui/core';
 
+import styles from './styles';
+import NavBar from '../../components/NavBar';
+import cx from 'classnames';
+
+@withStyles(styles, { withTheme: true })
 @withRouter
 @inject('store')
 @observer
 export default class Send extends Component<any, {}> {
-  public handleCancel = () => {
-    this.props.history.goBack();
-  }
 
   public handleConfirm = () => {
     this.props.store.walletStore.send();
@@ -21,24 +22,43 @@ export default class Send extends Component<any, {}> {
   public render() {
     const { walletStore } = this.props.store;
     const { info, receiverAddress, amount, tip } = walletStore;
+    const { classes } = this.props;
 
     return(
-      <div>
-        <NavBar hasBackButton={true} title={'Send Confirm Page'} />
-        <h6>Sub-address 01</h6>
-        <p>From: {info.addrStr}</p>
-        <p>To: {receiverAddress}</p>
-        <p>Amount: {amount} QTUM</p>
-        <p>Gas Limit {`<GAS LIMIT>`} UNITS</p>
-        <p>Gas Price {`<GAS PRICE>`} GWEI</p>
-        <p>Max Transaction Fee {`<MAX TRX FEE 0.000489>`} QTUM</p>
-        <Button variant="contained" color="primary" onClick={this.handleCancel}>
-          CANCEL
-        </Button>
-        <Button variant="contained" color="primary" onClick={this.handleConfirm}>
-          CONFIRM
-        </Button>
-        {tip}
+      <div className={classes.sendConfirmRoot}>
+        <NavBar hasBackButton={true} title={'Send Confirm'} />
+        <div className={classes.contentContainer}>
+          <div className={classes.inputContainer}>
+            <div className={classes.fieldContainer}>
+              <Typography className={classes.fieldLabel}>From</Typography>
+              <Typography className={classes.fieldValue}>{info.addrStr}</Typography>
+            </div>
+            <div className={classes.fieldContainer}>
+              <Typography className={classes.fieldLabel}>To</Typography>
+              <Typography className={classes.fieldValue}>{receiverAddress}</Typography>
+            </div>
+            <div className={classes.fieldContainer}>
+              <Typography className={classes.fieldLabel}>Amount</Typography>
+              <Typography className={classes.fieldValue}>{amount} <span className={classes.fieldUnit}>QTUM</span></Typography>
+            </div>
+            <div className={classes.fieldContainer}>
+              <Typography className={classes.fieldLabel}>Gas Limit</Typography>
+              <Typography className={classes.fieldValue}>{`Gas Limit`} <span className={classes.fieldUnit}>GAS</span></Typography>
+            </div>
+            <div className={classes.fieldContainer}>
+              <Typography className={classes.fieldLabel}>Gas Price</Typography>
+              <Typography className={classes.fieldValue}>{`Gas Price`} <span className={classes.fieldUnit}>QTUM</span></Typography>
+            </div>
+            <div className={cx(classes.fieldContainer, 'last')}>
+              <Typography className={classes.fieldLabel}>Max Transaction Fee</Typography>
+              <Typography className={classes.fieldValue}>{`<0.000489>`} <span className={classes.fieldUnit}>QTUM</span></Typography>
+            </div>
+          </div>
+          <Button fullWidth variant="contained" color="primary" onClick={this.handleConfirm}>
+            CONFIRM
+          </Button>
+          {tip}
+        </div>
       </div>
     );
   }
