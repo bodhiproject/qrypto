@@ -18,6 +18,10 @@ export default class Login extends Component<any, {}> {
     classes: PropTypes.object.isRequired,
   };
 
+  public componentWillUnmount() {
+    this.props.store.loginStore.reset();
+  }
+
   public render() {
     const { classes, store: { loginStore } } = this.props;
     const error = this.getPasswordMatchError();
