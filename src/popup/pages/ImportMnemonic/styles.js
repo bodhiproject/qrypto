@@ -1,6 +1,5 @@
 const styles = (theme) => ({
   root: {
-    width: '100%',
     height: '100%',
     margin: theme.spacing.md,
     display: 'flex',
@@ -14,19 +13,23 @@ const styles = (theme) => ({
     fontWeight: theme.font.weight.bold,
     marginBottom: theme.spacing.sm,
   },
-  mnemonicTextField: {
+  fieldContainer: {
     width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  mnemonicTextField: {
+    flex: 1,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.xl,
     border: theme.border.root,
     borderRadius: theme.border.radius,
-    fontSize: 30,
   },
   mnemonicFieldInput: {
     fontSize: theme.font.lg,
   },
   passwordTextField: {
-    width: '100%',
+    flex: 1,
     fontSize: theme.font.sm,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.xl,

@@ -42,24 +42,25 @@ export default class ImportMnemonic extends Component<{}, IState> {
       <div className={classes.root}>
         <div className={classes.inputContainer}>
           <Typography className={classes.importHeading}>Import Mnemonic</Typography>
-          <TextField
-            className={classes.mnemonicTextField}
-            autoFocus
-            required
-            fullWidth
-            multiline
-            rows={4}
-            type="text"
-            placeholder="Enter your seed phrase here to import."
-            onChange={(e) => walletStore.enteredMnemonic = e.target.value}
-            error={_.isEmpty(walletStore.enteredMnemonic)}
-            InputProps={{
-              disableUnderline: true,
-              classes: { input: classes.mnemonicFieldInput },
-            }}
-          />
-          <PasswordTextField placeholder="Password" />
-          <PasswordTextField placeholder="Confirm password" />
+          <div className={classes.fieldContainer}>
+            <TextField
+              className={classes.mnemonicTextField}
+              autoFocus
+              required
+              multiline
+              rows={5}
+              type="text"
+              placeholder="Enter your seed phrase here to import."
+              onChange={(e) => walletStore.enteredMnemonic = e.target.value}
+              error={_.isEmpty(walletStore.enteredMnemonic)}
+              InputProps={{
+                disableUnderline: true,
+                classes: { input: classes.mnemonicFieldInput },
+              }}
+            />
+            <PasswordTextField placeholder="Password" />
+            <PasswordTextField placeholder="Confirm password" />
+          </div>
         </div>
         <div>
           <Button
@@ -83,7 +84,6 @@ const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, pl
   <TextField
     className={classes.passwordTextField}
     required
-    fullWidth
     type="password"
     placeholder={placeholder}
     InputProps={{
