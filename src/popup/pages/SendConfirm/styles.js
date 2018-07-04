@@ -5,29 +5,29 @@ const styles = (theme) => ({
   fieldLabel: {
     color: theme.palette.text.primary,
     fontSize: theme.font.sm,
-    fontWeight: 'bold',
+    fontWeight: theme.font.weight.bold,
   },
   fieldValue: {
     color: theme.palette.text.primary,
     fontSize: theme.font.sm,
   },
   fieldUnit: {
-    color: 'gray',
-    marginLeft: 4,
+    color: theme.palette.text.secondary,
+    marginLeft: theme.spacing.unit,
   },
   fieldContainer: {
     width: '100%',
     flexDirection: 'row',
     display: 'flex',
     justifyContent: 'space-between', 
-    borderBottom: '1px #E3E3E3 solid',
+    borderBottom: theme.border.root,
     alignItems: 'center', 
     height: 45,
+    '&.last': {
+      borderBottom: 'none',
+      marginBottom: 200,
+    }
   },
-  fieldContainerLast: {
-    borderBottom: 'none',    
-    marginBottom: 200
-  }
 });
 
 export default styles;

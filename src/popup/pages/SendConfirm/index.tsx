@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { withStyles } from '@material-ui/core';
+import { Typography, withStyles, Button } from '@material-ui/core';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
+import cx from 'classnames';
 
 @withStyles(styles, { withTheme: true })
 @withRouter
@@ -29,28 +29,28 @@ export default class Send extends Component<any, {}> {
         <NavBar hasBackButton={true} title={'Send Confirm'} />
         <div className={classes.contentContainer}>
           <div className={classes.fieldContainer}>
-            <div className={classes.fieldLabel}>From</div>
-            <div className={classes.fieldValue}>{info.addrStr}</div>
+            <Typography className={classes.fieldLabel}>From</Typography>
+            <Typography className={classes.fieldValue}>{info.addrStr}</Typography>
           </div>
           <div className={classes.fieldContainer}>
-            <div className={classes.fieldLabel}>To</div>
-            <div className={classes.fieldValue}>{receiverAddress}</div>
+            <Typography className={classes.fieldLabel}>To</Typography>
+            <Typography className={classes.fieldValue}>{receiverAddress}</Typography>
           </div>
           <div className={classes.fieldContainer}>
-            <div className={classes.fieldLabel}>Amount</div>
-            <div className={classes.fieldValue}>{amount} <span className={classes.fieldUnit}>QTUM</span></div>
+            <Typography className={classes.fieldLabel}>Amount</Typography>
+            <Typography className={classes.fieldValue}>{amount} <span className={classes.fieldUnit}>QTUM</span></Typography>
           </div>
           <div className={classes.fieldContainer}>
-            <div className={classes.fieldLabel}>Gas Limit</div>
-            <div className={classes.fieldValue}>{`<GAS LIMIT>`} <span className={classes.fieldUnit}>UNITS</span></div>
+            <Typography className={classes.fieldLabel}>Gas Limit</Typography>
+            <Typography className={classes.fieldValue}>{`<Gas Limit>`} <span className={classes.fieldUnit}>GAS</span></Typography>
           </div>
           <div className={classes.fieldContainer}>
-            <div className={classes.fieldLabel}>Gas Price</div>
-            <div className={classes.fieldValue}>{`<GAS PRICE>`} <span className={classes.fieldUnit}>GWEI</span></div>
+            <Typography className={classes.fieldLabel}>Gas Price</Typography>
+            <Typography className={classes.fieldValue}>{`<Gas Price>`} <span className={classes.fieldUnit}>QTUM</span></Typography>
           </div>
-          <div className={classes.fieldContainer + ' ' + classes.fieldContainerLast}>
-            <div className={classes.fieldLabel}>Max Transaction Fee</div>
-            <div className={classes.fieldValue}>{`<0.000489>`} <span className={classes.fieldUnit}>QTUM</span></div>
+          <div className={cx(classes.fieldContainer, 'last')}>
+            <Typography className={classes.fieldLabel}>Max Transaction Fee</Typography>
+            <Typography className={classes.fieldValue}>{`<0.000489>`} <span className={classes.fieldUnit}>QTUM</span></Typography>
           </div>
           <Button fullWidth variant="contained" color="primary" onClick={this.handleConfirm}>
             CONFIRM
