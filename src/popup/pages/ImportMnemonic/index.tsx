@@ -25,6 +25,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
   public render() {
     const { classes, history, store: { walletStore } } = this.props;
 
+    console.log(walletStore.mnemonic);
     // Route to home page if mnemonic is found in storage
     if (!_.isEmpty(walletStore.mnemonic)) {
       history.push('/');

@@ -92,7 +92,8 @@ class WalletStore {
   }
 
   @action
-  public clearMnemonic = () => {
+  public onLogout = () => {
+    chrome.storage.local.set({ mnemonic: '' });
     this.mnemonic = '';
     this.enteredMnemonic = '';
   }

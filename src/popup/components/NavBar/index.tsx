@@ -30,7 +30,7 @@ export default class NavBar extends Component {
   };
 
   public onLogoutButtonClick = () => {
-    this.props.store.walletStore.clearMnemonic();
+    this.props.store.walletStore.onLogout();
     this.props.history.push('/login');
   }
 
