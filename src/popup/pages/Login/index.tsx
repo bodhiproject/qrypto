@@ -18,6 +18,15 @@ export default class Login extends Component<any, {}> {
     classes: PropTypes.object.isRequired,
   };
 
+  public componentDidMount() {
+    const { history, store: { walletStore } } = this.props;
+
+    // Route to home page if mnemonic is found in storage
+    if (!_.isEmpty(walletStore.mnemonic)) {
+      history.push('/');
+    }
+  }
+
   public componentWillUnmount() {
     this.props.store.loginStore.reset();
   }
