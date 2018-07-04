@@ -1,36 +1,67 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { Typography, TextField, Button } from '@material-ui/core';
+import { Typography, TextField, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import _ from 'lodash';
 
+import styles from './styles';
+
+@withStyles(styles, { withTheme: true })
 @withRouter
 @inject('store')
 @observer
 export default class ImportMnemonic extends Component<{}, IState> {
+  public static propTypes = {
+    classes: PropTypes.object.isRequired,
+  };
+
+  public recoverAndGoToHomePage = () => {
+    const { store: { walletStore }, history } = this.props;
+    walletStore.loading = true;
+    setTimeout(() => {
+      walletStore.onImportNewMnemonic();
+      history.push('/');
+    }, 100);
+  }
 
   public componentDidMount() {
     this.props.store.walletStore.stopGetInfoPolling();
   }
 
   public render() {
-    const { history, store: { walletStore } } = this.props;
+    const { classes, history, store: { walletStore } } = this.props;
 
     // Route to home page if mnemonic is found in storage
     if (!_.isEmpty(walletStore.mnemonic)) {
       history.push('/');
     }
 
-    return(
-      <div style={{ margin: 16 }}>
-        <Typography variant="title" style={{ marginBottom: 16 }}>Enter Your Wallet Mnemonic</Typography>
+    return (
+      <div className={classes.root}>
+        <Typography className={classes.importHeading}>Import Mnemonic</Typography>
         <TextField
           autoFocus
-          fullWidth
           required
-          style={{ marginBottom: 16 }}
+          fullWidth
+          multiline
+          rows={4}
+          placeholder="Enter your seed phrase here to import."
           onChange={(e) => walletStore.enteredMnemonic = e.target.value}
           error={_.isEmpty(walletStore.enteredMnemonic)}
+          className={classes.mnemonicTextField}
+        />
+        <TextField
+          required
+          fullWidth
+          placeholder="Password"
+          className={classes.passwordTextField}
+        />
+       <TextField
+          required
+          fullWidth
+          placeholder="Confirm password"
+          className={classes.passwordTextField}
         />
         <Button
           variant="contained"
@@ -42,15 +73,6 @@ export default class ImportMnemonic extends Component<{}, IState> {
         </Button>
       </div>
     );
-  }
-
-  public recoverAndGoToHomePage = () => {
-    const { store: { walletStore }, history } = this.props;
-    walletStore.loading = true;
-    setTimeout(() => {
-      walletStore.onImportNewMnemonic();
-      history.push('/');
-    }, 100);
   }
 }
 
