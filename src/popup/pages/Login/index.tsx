@@ -18,6 +18,10 @@ export default class Login extends Component<any, {}> {
     classes: PropTypes.object.isRequired,
   };
 
+  public onImportWalletClick = () => {
+    this.props.history.push('/import-mnemonic');
+  }
+
   public render() {
     const { classes } = this.props;
 
@@ -41,7 +45,14 @@ export default class Login extends Component<any, {}> {
           >
             Login
           </Button>
-          <Button className={classes.button} fullWidth color="primary">Import Existing Wallet</Button>
+          <Button
+            className={classes.button}
+            fullWidth
+            color="primary"
+            onClick={this.onImportWalletClick}
+          >
+            Import Existing Wallet
+          </Button>
         </div>
       </div>
     );
