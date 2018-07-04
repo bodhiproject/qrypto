@@ -1,6 +1,14 @@
 const styles = (theme) => ({
+  sendConfirmRoot: {
+    height: '100%',
+    display: 'flex', 
+    flexDirection: 'column'
+  },
   contentContainer: {
     margin: theme.spacing.md,
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
   },
   fieldLabel: {
     color: theme.palette.text.primary,
@@ -25,8 +33,10 @@ const styles = (theme) => ({
     height: 45,
     '&.last': {
       borderBottom: 'none',
-      marginBottom: 200,
     }
+  },
+  inputContainer: {
+    flex: 1,
   },
 });
 
