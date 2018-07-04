@@ -52,7 +52,10 @@ export default class ImportMnemonic extends Component<{}, IState> {
             placeholder="Enter your seed phrase here to import."
             onChange={(e) => walletStore.enteredMnemonic = e.target.value}
             error={_.isEmpty(walletStore.enteredMnemonic)}
-            InputProps={{ disableUnderline: true }}
+            InputProps={{
+              disableUnderline: true,
+              classes: { input: classes.mnemonicFieldInput },
+            }}
           />
           <PasswordTextField placeholder="Password" />
           <PasswordTextField placeholder="Confirm password" />
@@ -80,9 +83,12 @@ const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, pl
     className={classes.passwordTextField}
     required
     fullWidth
-    type="text"
+    type="password"
     placeholder={placeholder}
-    InputProps={{ disableUnderline: true }}
+    InputProps={{
+      disableUnderline: true,
+      classes: { input: classes.passwordFieldInput },
+    }}
   />
 ));
 

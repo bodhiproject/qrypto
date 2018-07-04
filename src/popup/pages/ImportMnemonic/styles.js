@@ -16,11 +16,14 @@ const styles = (theme) => ({
   },
   mnemonicTextField: {
     width: '100%',
-    fontSize: theme.font.lg,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.xl,
     border: theme.border.root,
     borderRadius: theme.border.radius,
+    fontSize: 30,
+  },
+  mnemonicFieldInput: {
+    fontSize: theme.font.lg,
   },
   passwordTextField: {
     width: '100%',
@@ -29,6 +32,10 @@ const styles = (theme) => ({
     marginBottom: theme.spacing.xl,
     border: theme.border.root,
     borderRadius: theme.border.radius,
+  },
+  passwordFieldInput: {
+    fontSize: theme.font.sm,
+    fontWeight: theme.font.weight.bold,
   },
   importButton: {
     display: 'flex',
