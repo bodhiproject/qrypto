@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { Typography, TextField, Button, withStyles } from '@material-ui/core';
+import { TextField, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import _ from 'lodash';
 import cx from 'classnames';
 
 import styles from './styles';
+import NavBar from '../../components/NavBar';
 
 @withStyles(styles, { withTheme: true })
 @withRouter
@@ -40,40 +41,42 @@ export default class ImportMnemonic extends Component<{}, IState> {
 
     return (
       <div className={classes.root}>
-        <div className={classes.inputContainer}>
-          <Typography className={classes.importHeading}>Import Mnemonic</Typography>
-          <div className={classes.fieldContainer}>
-            <TextField
-              className={classes.mnemonicTextField}
-              autoFocus
-              required
-              multiline
-              rows={5}
-              type="text"
-              placeholder="Enter your seed phrase here to import."
-              onChange={(e) => walletStore.enteredMnemonic = e.target.value}
-              error={_.isEmpty(walletStore.enteredMnemonic)}
-              InputProps={{
-                disableUnderline: true,
-                classes: { input: classes.mnemonicFieldInput },
-              }}
-            />
-            <PasswordTextField placeholder="Password" />
-            <PasswordTextField placeholder="Confirm password" />
+        <NavBar hasNetworkSelector title="Import Mnemonic" />
+        <div className={classes.contentContainer}>
+          <div className={classes.inputContainer}>
+            <div className={classes.fieldContainer}>
+              <TextField
+                className={classes.mnemonicTextField}
+                autoFocus
+                required
+                multiline
+                rows={5}
+                type="text"
+                placeholder="Enter your seed phrase here to import."
+                onChange={(e) => walletStore.enteredMnemonic = e.target.value}
+                error={_.isEmpty(walletStore.enteredMnemonic)}
+                InputProps={{
+                  disableUnderline: true,
+                  classes: { input: classes.mnemonicFieldInput },
+                }}
+              />
+              <PasswordTextField placeholder="Password" />
+              <PasswordTextField placeholder="Confirm password" />
+            </div>
           </div>
-        </div>
-        <div>
-          <Button
-            className={cx(classes.button, 'marginBottom')}
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={this.recoverAndGoToHomePage}
-            disabled={_.isEmpty(walletStore.enteredMnemonic)}
-          >
-            Import
-          </Button>
-          <Button className={classes.button} fullWidth color="primary">Cancel</Button>
+          <div>
+            <Button
+              className={cx(classes.button, 'marginBottom')}
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={this.recoverAndGoToHomePage}
+              disabled={_.isEmpty(walletStore.enteredMnemonic)}
+            >
+              Import
+            </Button>
+            <Button className={classes.button} fullWidth color="primary">Cancel</Button>
+          </div>
         </div>
       </div>
     );

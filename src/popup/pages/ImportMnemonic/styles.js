@@ -1,9 +1,14 @@
 const styles = (theme) => ({
   root: {
     height: '100%',
-    margin: theme.spacing.md,
     display: 'flex',
     flexDirection: 'column',
+  },
+  contentContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    margin: theme.spacing.md,
   },
   inputContainer: {
     flex: 1,
