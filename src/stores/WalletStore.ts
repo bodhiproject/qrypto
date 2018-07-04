@@ -49,6 +49,7 @@ class WalletStore {
   @action
   public onImportNewMnemonic() {
     this.qjsWallet = this.recoverWallet(this.enteredMnemonic);
+    this.mnemonic = this.enteredMnemonic;
     chrome.storage.local.set({ mnemonic: this.enteredMnemonic });
 
     // Reset values
