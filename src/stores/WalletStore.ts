@@ -51,6 +51,7 @@ class WalletStore {
   public onImportNewMnemonic() {
     this.qjsWallet = this.recoverWallet(this.enteredMnemonic);
     chrome.storage.local.set({ mnemonic: this.enteredMnemonic });
+    this.enteredMnemonic = '';
     this.getWalletInfo(); // getInfo once prior to setInterval so there is no delay
     this.loading = false;
   }

@@ -83,6 +83,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
 
   private recoverAndGoToHomePage = () => {
     const { store: { walletStore }, history } = this.props;
+    
     walletStore.loading = true;
     setTimeout(() => {
       walletStore.onImportNewMnemonic();
@@ -90,7 +91,12 @@ export default class ImportMnemonic extends Component<{}, IState> {
     }, 100);
   }
 
-  private onCancelClick = () => this.props.history.goBack();
+  private onCancelClick = () => {
+    const { store: { walletStore }, history } = this.props;
+
+    walletStore.enteredMnemonic = '';
+    history.goBack();
+  }
 }
 
 interface IState {
