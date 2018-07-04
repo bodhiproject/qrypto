@@ -39,13 +39,15 @@ const styles = (theme) => ({
   confirmPasswordField: {
     marginBottom: theme.spacing.custom(8),
   },
-  button: {
+  loginButton: {
     height: theme.button.lg.height,
+    marginBottom: theme.spacing.sm,
     borderRadius: theme.button.lg.radius,
     display: 'flex',
-    '&.marginBottom': {
-      marginBottom: theme.spacing.sm,
-    },
+  },
+  importButton: {
+    minHeight: 0,
+    padding: 0,
   },
 });
 

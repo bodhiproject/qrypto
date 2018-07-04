@@ -37,13 +37,15 @@ const styles = (theme) => ({
   passwordField: {
     marginBottom: theme.spacing.xl,
   },
-  button: {
+  importButton: {
     height: theme.button.lg.height,
+    marginBottom: theme.spacing.sm,
     borderRadius: theme.button.lg.radius,
     display: 'flex',
-    '&.marginBottom': {
-      marginBottom: theme.spacing.sm,
-    },
+  },
+  cancelButton: {
+    minHeight: 0,
+    padding: 0,
   },
 });
 

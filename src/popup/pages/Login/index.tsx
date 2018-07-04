@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { Typography, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-import cx from 'classnames';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
@@ -38,7 +37,7 @@ export default class Login extends Component<any, {}> {
             <PasswordInput classNames={classes.confirmPasswordField} placeholder="Confirm password" />
           </div>
           <Button
-            className={cx(classes.button, 'marginBottom')}
+            className={classes.loginButton}
             fullWidth
             variant="contained"
             color="primary"
@@ -46,8 +45,9 @@ export default class Login extends Component<any, {}> {
             Login
           </Button>
           <Button
-            className={classes.button}
+            className={classes.importButton}
             fullWidth
+            disableRipple
             color="primary"
             onClick={this.onImportWalletClick}
           >
