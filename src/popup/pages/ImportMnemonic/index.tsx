@@ -8,6 +8,7 @@ import cx from 'classnames';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
+import PasswordInput from '../../components/PasswordInput';
 
 @withStyles(styles, { withTheme: true })
 @withRouter
@@ -60,8 +61,8 @@ export default class ImportMnemonic extends Component<{}, IState> {
                   classes: { input: classes.mnemonicFieldInput },
                 }}
               />
-              <PasswordTextField placeholder="Password" />
-              <PasswordTextField placeholder="Confirm password" />
+              <PasswordInput placeholder="Password" />
+              <PasswordInput placeholder="Confirm password" />
             </div>
           </div>
           <div>
@@ -82,19 +83,6 @@ export default class ImportMnemonic extends Component<{}, IState> {
     );
   }
 }
-
-const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, placeholder }: any) => (
-  <TextField
-    className={classes.passwordTextField}
-    required
-    type="password"
-    placeholder={placeholder}
-    InputProps={{
-      disableUnderline: true,
-      classes: { input: classes.passwordFieldInput },
-    }}
-  />
-));
 
 interface IState {
   walletStore: any;

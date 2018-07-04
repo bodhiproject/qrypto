@@ -34,18 +34,6 @@ const styles = (theme) => ({
     fontSize: theme.font.lg,
     lineHeight: '20px',
   },
-  passwordTextField: {
-    flex: 1,
-    fontSize: theme.font.sm,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.xl,
-    border: theme.border.root,
-    borderRadius: theme.border.radius,
-  },
-  passwordFieldInput: {
-    fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
-  },
   button: {
     height: theme.button.lg.height,
     borderRadius: theme.button.lg.radius,
