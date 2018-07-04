@@ -63,13 +63,13 @@ class WalletStore {
 
   @action
   public async send() {
-    this.tip = 'sending...';
+    this.tip = 'Sending...';
     try {
       await this.qjsWallet!.send(this.receiverAddress, this.amount * 1e8, {
         feeRate: 4000,
       });
       runInAction(() => {
-        this.tip = 'done';
+        this.tip = 'Sent!';
       });
     } catch (err) {
       console.log(err);
@@ -102,8 +102,6 @@ class WalletStore {
   private async getWalletInfo() {
     this.info = await this.qjsWallet!.getInfo();
     transactionStore.loadFromIds(this.info.transactions);
-
-    return this.info;
   }
 
   private recoverWallet(mnemonic: string = this.mnemonic): Wallet {
