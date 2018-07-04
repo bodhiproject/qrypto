@@ -3,7 +3,6 @@ const styles = (theme) => ({
     flex: 1,
     fontSize: theme.font.sm,
     padding: theme.spacing.md,
-    marginBottom: theme.spacing.xl,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },

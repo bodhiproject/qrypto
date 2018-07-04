@@ -4,7 +4,7 @@ import accountDetailStore from './AccountDetailStore';
 import transactionStore from './TransactionStore';
 
 class AppStore {
-  public location = '/import-mnemonic';
+  public location = '/login';
   public ui = {};
   public accountDetailStore = {};
   public transactionStore = {};
