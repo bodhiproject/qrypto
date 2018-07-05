@@ -1,6 +1,10 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
 import { observable, action, runInAction } from 'mobx';
+import _ from 'lodash';
+
 import transactionStore from './TransactionStore';
+import { STORAGE } from '../constants';
+import Account from '../models/Account';
 
 class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
@@ -23,7 +27,7 @@ class WalletStore {
   @observable private receiverAddress: string = '';
   @observable private amount: string = '0';
 
-  private qjsWallet?: Wallet = undefined;
+  private wallet?: Wallet = undefined;
   private getInfoInterval?: NodeJS.Timer = undefined;
 
   constructor() {
@@ -32,16 +36,16 @@ class WalletStore {
   }
 
   public init() {
-    chrome.storage.local.get('mnemonic', async ({ mnemonic }) => {
-      if (mnemonic == null) {
-        console.log('NOT load mnemonic from chrome store');
+    chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, async ({ testnetAccounts }) => {
+      // Account not found, show Signup page
+      if (_.isEmpty(testnetAccounts)) {
         this.loading = false;
         return;
       }
-      console.log('YES load mnemonic from chrome store');
-      this.mnemonic = mnemonic;
-      this.qjsWallet = this.recoverWallet(mnemonic);
-      this.getWalletInfo();
+
+      // Account found, recover wallet
+      this.mnemonic = testnetAccounts[0].mnemonic;
+      this.recoverWallet(testnetAccounts[0].mnemonic);
       this.loading = false;
     });
   }
@@ -53,17 +57,23 @@ class WalletStore {
 
   @action
   public onImportNewMnemonic() {
-    this.qjsWallet = this.recoverWallet(this.enteredMnemonic);
-    this.mnemonic = this.enteredMnemonic;
-    chrome.storage.local.set({ mnemonic: this.enteredMnemonic });
+    // Create and store Account in local storage
+    // TODO: implement BIP38 encryption on the mnemonic here
+    const account = new Account('Default Account', this.enteredMnemonic);
+
+    // Initialize QtumJS wallet instance and getInfo to avoid delay
+    this.recoverWallet(account.mnemonic);
 
     // Reset values
     this.enteredMnemonic = '';
     this.password = '';
     this.confirmPassword = '';
 
-    // getInfo once prior to setInterval so there is no delay
-    this.getWalletInfo();
+    chrome.storage.local.set({
+      [STORAGE.TESTNET_ACCOUNTS]: [account],
+    }, () => console.log('Account saved'));
+
+    // Toggle loading screen
     this.loading = false;
   }
 
@@ -71,7 +81,7 @@ class WalletStore {
   public async send() {
     this.tip = 'Sending...';
     try {
-      await this.qjsWallet!.send(this.receiverAddress, this.amount * 1e8, {
+      await this.wallet!.send(this.receiverAddress, this.amount * 1e8, {
         feeRate: 4000,
       });
       runInAction(() => {
@@ -106,14 +116,16 @@ class WalletStore {
 
   @action
   private async getWalletInfo() {
-    this.info = await this.qjsWallet!.getInfo();
+    this.info = await this.wallet!.getInfo();
     transactionStore.loadFromIds(this.info.transactions);
   }
 
+  @action
   private recoverWallet(mnemonic: string = this.mnemonic): Wallet {
     console.log('wallet store recoverWallet, mnemonic:', mnemonic);
     const network = networks.testnet;
-    return network.fromMnemonic(mnemonic);
+    this.wallet = network.fromMnemonic(mnemonic);
+    this.getWalletInfo();
   }
 }
 
