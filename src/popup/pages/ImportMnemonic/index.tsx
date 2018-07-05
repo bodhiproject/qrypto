@@ -48,6 +48,17 @@ export default class ImportMnemonic extends Component<{}, IState> {
                   classes: { input: classes.mnemonicFieldInput },
                 }}
               />
+              <TextField
+                className={classes.accountNameField}
+                required
+                type="text"
+                placeholder="Account name"
+                onChange={(e: any) => importStore.accountName = e.target.value}
+                InputProps={{
+                  disableUnderline: true,
+                  classes: { input: classes.accountNameFieldInput },
+                }}
+              />
               <PasswordInput
                 classNames={classes.passwordField}
                 placeholder="Password"
@@ -71,6 +82,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
               onClick={this.recoverAndGoToHomePage}
               disabled={
                 _.isEmpty(importStore.enteredMnemonic)
+                  || _.isEmpty(importStore.accountName)
                   || _.isEmpty(importStore.password)
                   || _.isEmpty(importStore.confirmPassword)
                   || error
@@ -104,11 +116,11 @@ export default class ImportMnemonic extends Component<{}, IState> {
 
   private recoverAndGoToHomePage = () => {
     const { store: { walletStore, importStore }, history }: any = this.props;
-    const { enteredMnemonic } = importStore;
+    const { enteredMnemonic, accountName } = importStore;
 
     walletStore.loading = true;
     setTimeout(() => {
-      importStore.onImportNewMnemonic(enteredMnemonic);
+      importStore.onImportNewMnemonic(enteredMnemonic, accountName);
       history.push('/home');
     }, 100);
   }
