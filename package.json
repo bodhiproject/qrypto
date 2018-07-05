@@ -23,6 +23,7 @@
     "@material-ui/core": "^1.2.2",
     "@types/chrome": "^0.0.63",
     "@types/classnames": "^2.2.4",
+    "@types/prop-types": "^15.5.3",
     "@types/react": "^16.0.41",
     "@types/react-dom": "^16.0.4",
     "@types/react-router-dom": "^4.2.7",

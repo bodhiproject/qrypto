@@ -29,24 +29,30 @@ export default class Login extends Component<any, {}> {
       <div className={classes.root}>
         <Paper className={classes.headerContainer}>
           <NavBar hasNetworkSelector isDarkTheme title="Login" />
-          <AccountSection accounts={walletStore.accounts} />
+          <AccountSection accounts={walletStore.accounts} onCreateAccountClick={this.onCreateAccountClick} />
         </Paper>
         <PermissionSection />
         <LoginSection history={history} loginStore={loginStore} password={loginStore.password} />
       </div>
     );
   }
+
+  private onCreateAccountClick() {
+    const { history } = this.props;
+
+    history.push('/signup');
+  }
 }
 
-const AccountSection = withStyles(styles, { withTheme: true })(({ classes, accounts }: any) => (
+const AccountSection = withStyles(styles, { withTheme: true })(({ classes, accounts, onCreateAccountClick }: any) => (
   <div className={classes.accountContainer}>
     <Typography className={classes.selectAcctText}>Select account</Typography>
     <Select disableUnderline className={classes.accountSelect} name="accounts" value={accounts[0].name}>
-      {accounts.map((acct: Account) => <MenuItem value={acct.name}>{acct.name}</MenuItem>)}
+      {accounts.map((acct: Account, index: number) => <MenuItem key={index} value={acct.name}>{acct.name}</MenuItem>)}
     </Select>
     <div className={classes.createAccountContainer}>
       <Typography className={classes.orText}>or</Typography>
-      <Button className={classes.createAccountButton} color="secondary">
+      <Button className={classes.createAccountButton} color="secondary" onClick={onCreateAccountClick}>
         Create New Account
       </Button>
     </div>
