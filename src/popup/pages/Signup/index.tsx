@@ -13,7 +13,7 @@ import PasswordInput from '../../components/PasswordInput';
 @withRouter
 @inject('store')
 @observer
-export default class Login extends Component<any, {}> {
+export default class Signup extends Component<any, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
@@ -64,7 +64,7 @@ export default class Login extends Component<any, {}> {
             color="primary"
             disabled={_.isEmpty(loginStore.password) || _.isEmpty(loginStore.confirmPassword) || error}
           >
-            Login
+            Create Wallet
           </Button>
           <Button
             className={classes.importButton}

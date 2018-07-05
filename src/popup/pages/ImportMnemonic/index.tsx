@@ -30,7 +30,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
       <div className={classes.root}>
         <NavBar hasNetworkSelector title="" />
         <div className={classes.contentContainer}>
-          <Typography className={classes.headerText}>Import Mnemonic</Typography>
+          <Typography className={classes.headerText}>Import Wallet</Typography>
           <div className={classes.inputContainer}>
             <div className={classes.fieldContainer}>
               <TextField
@@ -40,7 +40,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
                 multiline
                 rows={5}
                 type="text"
-                placeholder="Enter your seed phrase here to import."
+                placeholder="Enter your seed phrase here to import your wallet."
                 onChange={(e) => walletStore.enteredMnemonic = e.target.value}
                 error={_.isEmpty(walletStore.enteredMnemonic)}
                 InputProps={{
