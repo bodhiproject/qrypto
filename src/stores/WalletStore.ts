@@ -2,7 +2,7 @@ import { networks, Wallet, Insight } from 'qtumjs-wallet';
 import { observable, action, runInAction } from 'mobx';
 import _ from 'lodash';
 
-import transactionStore from './TransactionStore';
+import accountDetailStore from './AccountDetailStore';
 import { STORAGE } from '../constants';
 import Account from '../models/Account';
 
@@ -123,7 +123,7 @@ class WalletStore {
   @action
   private async getWalletInfo() {
     this.info = await this.wallet!.getInfo();
-    transactionStore.loadFromIds(this.info.transactions);
+    accountDetailStore.loadFromIds(this.info.transactions);
   }
 
   @action

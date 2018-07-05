@@ -3,7 +3,6 @@ import uiStore from './UiStore';
 import signupStore from './SignupStore';
 import loginStore from './LoginStore';
 import accountDetailStore from './AccountDetailStore';
-import transactionStore from './TransactionStore';
 
 class AppStore {
   public location = '/login';
@@ -11,7 +10,6 @@ class AppStore {
   public signupStore = {};
   public loginStore = {};
   public accountDetailStore = {};
-  public transactionStore = {};
   public walletStore = {};
 
   constructor() {
@@ -19,7 +17,6 @@ class AppStore {
     this.signupStore = signupStore;
     this.loginStore = loginStore;
     this.accountDetailStore = accountDetailStore;
-    this.transactionStore = transactionStore;
     this.walletStore = walletStore;
   }
 }

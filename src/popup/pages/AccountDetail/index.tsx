@@ -20,7 +20,7 @@ export default class AccountDetail extends Component<any, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { accountDetailStore: { activeTabIdx }, transactionStore: { items } } = this.props.store;
+    const { accountDetailStore: { activeTabIdx, items } } = this.props.store;
 
     const tokens = [
       { name: 'Bodhi', token: 'BOT', amount: 123, url: 'https://coinmarketcap.com/currencies/bodhi/' },
