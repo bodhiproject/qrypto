@@ -23,7 +23,7 @@ export default class Login extends Component<any, {}> {
   }
 
   public render() {
-    const { classes, store: { walletStore, loginStore } } = this.props;
+    const { classes, history, store: { walletStore, loginStore } } = this.props;
 
     return (
       <div className={classes.root}>
@@ -32,7 +32,7 @@ export default class Login extends Component<any, {}> {
           <AccountSection accounts={walletStore.accounts} />
         </Paper>
         <PermissionSection />
-        <LoginSection loginStore={loginStore} password={loginStore.password} />
+        <LoginSection history={history} loginStore={loginStore} password={loginStore.password} />
       </div>
     );
   }
@@ -59,7 +59,7 @@ const PermissionSection = withStyles(styles, { withTheme: true })(({ classes }: 
   </div>
 ));
 
-const LoginSection = withStyles(styles, { withTheme: true })(({ classes, loginStore, password }: any) => (
+const LoginSection = withStyles(styles, { withTheme: true })(({ classes, history, loginStore, password }: any) => (
   <div className={classes.loginContainer}>
     <PasswordInput
       classNames={classes.passwordField}
@@ -72,6 +72,7 @@ const LoginSection = withStyles(styles, { withTheme: true })(({ classes, loginSt
       variant="contained"
       color="primary"
       disabled={_.isEmpty(password)}
+      onClick={() => history.push('/')}
     >
       Login
     </Button>
