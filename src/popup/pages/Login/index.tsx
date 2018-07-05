@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { Paper, Select, MenuItem, Typography, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
+import _ from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
+import PasswordInput from '../../components/PasswordInput';
 
 @withStyles(styles, { withTheme: true })
 @withRouter
@@ -21,7 +23,7 @@ export default class Login extends Component<any, {}> {
   }
 
   public render() {
-    const { classes, store: { walletStore } } = this.props;
+    const { classes, store: { walletStore, loginStore } } = this.props;
 
     return (
       <div className={classes.root}>
@@ -30,6 +32,7 @@ export default class Login extends Component<any, {}> {
           <AccountSection accounts={walletStore.accounts} />
         </Paper>
         <PermissionSection />
+        <LoginSection loginStore={loginStore} password={loginStore.password} />
       </div>
     );
   }
@@ -50,10 +53,27 @@ const AccountSection = withStyles(styles, { withTheme: true })(({ classes, accou
   </div>
 ));
 
-const PermissionSection = withStyles(styles, { withTheme: true })(({ classes }) => (
+const PermissionSection = withStyles(styles, { withTheme: true })(({ classes }: any) => (
   <div className={classes.permissionContainer}>
     <Typography className={classes.permissionsHeader}>Permissions</Typography>
   </div>
 ));
 
-const 
+const LoginSection = withStyles(styles, { withTheme: true })(({ classes, loginStore, password }: any) => (
+  <div className={classes.loginContainer}>
+    <PasswordInput
+      classNames={classes.passwordField}
+      placeholder="Password"
+      onChange={(e: any) => loginStore.password = e.target.value}
+    />
+    <Button
+      className={classes.loginButton}
+      fullWidth
+      variant="contained"
+      color="primary"
+      disabled={_.isEmpty(password)}
+    >
+      Login
+    </Button>
+  </div>
+));

@@ -1,5 +1,6 @@
 import walletStore from './WalletStore';
 import uiStore from './UiStore';
+import signupStore from './SignupStore';
 import loginStore from './LoginStore';
 import accountDetailStore from './AccountDetailStore';
 import transactionStore from './TransactionStore';
@@ -7,6 +8,7 @@ import transactionStore from './TransactionStore';
 class AppStore {
   public location = '/login';
   public ui = {};
+  public signupStore = {};
   public loginStore = {};
   public accountDetailStore = {};
   public transactionStore = {};
@@ -14,6 +16,7 @@ class AppStore {
 
   constructor() {
     this.ui = uiStore;
+    this.signupStore = signupStore;
     this.loginStore = loginStore;
     this.accountDetailStore = accountDetailStore;
     this.transactionStore = transactionStore;

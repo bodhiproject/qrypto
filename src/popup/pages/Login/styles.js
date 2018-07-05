@@ -55,6 +55,19 @@ const styles = (theme) => ({
     color: theme.palette.text.primary,
     marginBottom: theme.spacing.md,
   },
+  loginContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: theme.spacing.md,
+  },
+  passwordField: {
+    flex: 1,
+    marginBottom: theme.spacing.md,
+  },
+  loginButton: {
+    height: theme.button.lg.height,
+    borderRadius: theme.button.lg.radius,
+  },
 });
 
 export default styles;

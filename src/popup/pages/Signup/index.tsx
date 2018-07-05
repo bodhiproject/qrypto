@@ -28,11 +28,11 @@ export default class Signup extends Component<any, {}> {
   }
 
   public componentWillUnmount() {
-    this.props.store.loginStore.reset();
+    this.props.store.signupStore.reset();
   }
 
   public render() {
-    const { classes, store: { loginStore } } = this.props;
+    const { classes, store: { signupStore } } = this.props;
     const error = this.getPasswordMatchError();
 
     return (
@@ -47,14 +47,14 @@ export default class Signup extends Component<any, {}> {
             <PasswordInput
               classNames={classes.passwordField}
               placeholder="Password"
-              onChange={(e: any) => loginStore.password = e.target.value}
+              onChange={(e: any) => signupStore.password = e.target.value}
             />
             <PasswordInput
               classNames={classes.confirmPasswordField}
               placeholder="Confirm password"
               helperText={error}
               error={error}
-              onChange={(e: any) => loginStore.confirmPassword = e.target.value}
+              onChange={(e: any) => signupStore.confirmPassword = e.target.value}
             />
           </div>
           <Button
@@ -62,7 +62,7 @@ export default class Signup extends Component<any, {}> {
             fullWidth
             variant="contained"
             color="primary"
-            disabled={_.isEmpty(loginStore.password) || _.isEmpty(loginStore.confirmPassword) || error}
+            disabled={_.isEmpty(signupStore.password) || _.isEmpty(signupStore.confirmPassword) || error}
           >
             Create Wallet
           </Button>
@@ -81,7 +81,7 @@ export default class Signup extends Component<any, {}> {
   }
 
   private getPasswordMatchError = () => {
-    const { password, confirmPassword } = this.props.store.loginStore;
+    const { password, confirmPassword } = this.props.store.signupStore;
 
     let error;
     if (!_.isEmpty(password) && !_.isEmpty(confirmPassword) && password !== confirmPassword) {
