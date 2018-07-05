@@ -17,13 +17,13 @@ export default class Receive extends Component<any, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { info } = this.props.store.walletStore;
+    const { loggedInAccount, info } = this.props.store.walletStore;
 
     return(
       <div>
         <NavBar hasBackButton={true} title="Receive" />
         <div className={classes.contentContainer}>
-          <Typography className={classes.accountName}>{'Default Account'}</Typography>
+          <Typography className={classes.accountName}>{loggedInAccount.name}</Typography>
           <Typography className={classes.accountAddress}>{info.addrStr}</Typography>
           <div className={classes.amountContainer}>
             <Typography className={classes.tokenAmount}>{info.balance}</Typography>

@@ -19,6 +19,7 @@ class WalletStore {
   @observable public loading = true;
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public accounts: Account[] = [];
+  @observable public loggedInAccount?: Account = undefined;
 
   private wallet?: Wallet = undefined;
   private getInfoInterval?: NodeJS.Timer = undefined;
@@ -37,6 +38,7 @@ class WalletStore {
 
       // Account found, recover wallet
       this.accounts = testnetAccounts;
+      this.loggedInAccount = this.accounts[0];
       this.recoverWallet(this.accounts[0].mnemonic!);
       this.loading = false;
     });
@@ -52,6 +54,7 @@ class WalletStore {
         [STORAGE.TESTNET_ACCOUNTS]: accounts,
       }, () => console.log('Account added', account));
       this.accounts = accounts;
+      this.loggedInAccount = account;
     }
   }
 

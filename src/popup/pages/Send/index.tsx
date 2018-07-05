@@ -27,13 +27,13 @@ export default class Send extends Component<any, {}> {
   public render() {
     const { classes, store: { sendStore, walletStore } } = this.props;
     const { token, amount } = sendStore;
-    const { info } = walletStore;
+    const { loggedInAccount, info } = walletStore;
 
     return (
       <div className={classes.root}>
         <NavBar hasBackButton={true} title="Send" />
         <div className={classes.contentContainer}>
-          <FromField info={info} sendStore={sendStore} />
+          <FromField loggedInAccount={loggedInAccount} info={info} sendStore={sendStore} />
           <ToField info={info} sendStore={sendStore} />
           <TokenField token={token} sendStore={sendStore} />
           <AmountField info={info} amount={amount} token={token} sendStore={sendStore} />
@@ -48,7 +48,7 @@ const Heading = withStyles(styles, { withTheme: true })(({ classes, name }) => (
   <Typography className={classes.fieldHeading}>{name}</Typography>
 ));
 
-const FromField = withStyles(styles, { withTheme: true })(({ classes, info, sendStore }) => (
+const FromField = withStyles(styles, { withTheme: true })(({ classes, loggedInAccount, info, sendStore }) => (
   <div className={classes.fieldContainer}>
     <Heading name="From" />
     <div className={classes.fieldContentContainer}>
@@ -60,7 +60,7 @@ const FromField = withStyles(styles, { withTheme: true })(({ classes, info, send
         className={classes.fromSelect}
       >
         <MenuItem value={info.addrStr}>
-          <Typography className={classes.fromAddress}>{'Default Account'}</Typography>
+          <Typography className={classes.fromAddress}>{loggedInAccount.name}</Typography>
         </MenuItem>
       </Select>
       <Typography className={classes.fromBalance}>{info.balance} QTUM</Typography>
