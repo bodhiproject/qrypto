@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { Typography, Button, withStyles } from '@material-ui/core';
+import { Paper, Select, MenuItem, Typography, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-import _ from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
-import PasswordInput from '../../components/PasswordInput';
 
 @withStyles(styles, { withTheme: true })
 @withRouter
@@ -23,65 +21,32 @@ export default class Login extends Component<any, {}> {
   }
 
   public render() {
-    const { classes, store: { loginStore } } = this.props;
-    const error = this.getPasswordMatchError();
+    const { classes, store: { walletStore } } = this.props;
 
     return (
       <div className={classes.root}>
-        <NavBar hasNetworkSelector title="" />
-        <div className={classes.contentContainer}>
-          <div className={classes.logoContainerOuter}>
-            <Typography className={classes.logoText}>Qrypto</Typography>
-            <Typography className={classes.logoDesc}>Create your Qrypto wallet</Typography>
+        <NavBar hasNetworkSelector isDarkTheme title="Login" />
+        <Paper className={classes.accountContainer}>
+          <Typography className={classes.selectAcctText}>Select account</Typography>
+          <AccountSelect accounts={walletStore.accounts} />
+          <div className={classes.createAccountContainer}>
+            <Typography className={classes.orText}>or</Typography>
+            <Button
+              className={classes.createAccountButton}
+              disableRipple
+              color="secondary"
+            >
+              Create New Account
+            </Button>
           </div>
-          <div className={classes.fieldContainer}>
-            <PasswordInput
-              classNames={classes.passwordField}
-              placeholder="Password"
-              onChange={(e: any) => loginStore.password = e.target.value}
-            />
-            <PasswordInput
-              classNames={classes.confirmPasswordField}
-              placeholder="Confirm password"
-              helperText={error}
-              error={error}
-              onChange={(e: any) => loginStore.confirmPassword = e.target.value}
-            />
-          </div>
-          <Button
-            className={classes.loginButton}
-            fullWidth
-            variant="contained"
-            color="primary"
-            disabled={_.isEmpty(loginStore.password) || _.isEmpty(loginStore.confirmPassword) || error}
-          >
-            Create Wallet
-          </Button>
-          <Button
-            className={classes.importButton}
-            fullWidth
-            disableRipple
-            color="primary"
-            onClick={this.onImportWalletClick}
-          >
-            Import Existing Wallet
-          </Button>
-        </div>
+        </Paper>
       </div>
     );
   }
-
-  private getPasswordMatchError = () => {
-    const { password, confirmPassword } = this.props.store.loginStore;
-
-    let error;
-    if (!_.isEmpty(password) && !_.isEmpty(confirmPassword) && password !== confirmPassword) {
-      error = 'Passwords do not match.';
-    }
-    return error;
-  }
-
-  private onImportWalletClick = () => {
-    this.props.history.push('/import-mnemonic');
-  }
 }
+
+const AccountSelect = withStyles(styles, { withTheme: true })(({ classes, accounts }: any) => (
+  <Select className={classes.selectEmpty} name="accounts">
+    {accounts.map((acct: Account) => <MenuItem value={acct.name}>{acct.name}</MenuItem>)}
+  </Select>
+));

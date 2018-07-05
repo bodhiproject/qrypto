@@ -8,6 +8,7 @@ import Account from '../models/Account';
 
 class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
+  @observable public accounts: Account[] = [];
   @observable public enteredMnemonic: string = '';
   @observable public password: string = '';
   @observable public confirmPassword: string = '';
@@ -44,8 +45,9 @@ class WalletStore {
       }
 
       // Account found, recover wallet
-      this.mnemonic = testnetAccounts[0].mnemonic;
-      this.recoverWallet(testnetAccounts[0].mnemonic);
+      this.accounts = testnetAccounts;
+      this.mnemonic = this.accounts[0].mnemonic!;
+      this.recoverWallet(this.accounts[0].mnemonic);
       this.loading = false;
     });
   }
@@ -60,8 +62,10 @@ class WalletStore {
     // Create and store Account in local storage
     // TODO: implement BIP38 encryption on the mnemonic here
     const account = new Account('Default Account', this.enteredMnemonic);
+    const accounts = [account];
+    this.accounts = accounts;
     chrome.storage.local.set({
-      [STORAGE.TESTNET_ACCOUNTS]: [account],
+      [STORAGE.TESTNET_ACCOUNTS]: accounts,
     }, () => console.log('Account saved'));
 
     // Initialize QtumJS wallet instance and getInfo to avoid delay
