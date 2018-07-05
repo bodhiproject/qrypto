@@ -29,7 +29,7 @@ export default class Login extends Component<any, {}> {
       <div className={classes.root}>
         <Paper className={classes.headerContainer}>
           <NavBar hasNetworkSelector isDarkTheme title="Login" />
-          <AccountSection accounts={walletStore.accounts} onCreateAccountClick={this.onCreateAccountClick} />
+          <AccountSection accounts={walletStore.accounts} onImportWalletClick={this.onImportWalletClick} />
         </Paper>
         <PermissionSection />
         <LoginSection history={history} loginStore={loginStore} password={loginStore.password} />
@@ -37,14 +37,10 @@ export default class Login extends Component<any, {}> {
     );
   }
 
-  private onCreateAccountClick() {
-    const { history } = this.props;
-
-    history.push('/signup');
-  }
+  private onImportWalletClick = () => this.props.history.push('/import');
 }
 
-const AccountSection = withStyles(styles, { withTheme: true })(({ classes, accounts, onCreateAccountClick }: any) => (
+const AccountSection = withStyles(styles, { withTheme: true })(({ classes, accounts, onImportWalletClick }: any) => (
   <div className={classes.accountContainer}>
     <Typography className={classes.selectAcctText}>Select account</Typography>
     <Select disableUnderline className={classes.accountSelect} name="accounts" value={accounts[0].name}>
@@ -52,8 +48,8 @@ const AccountSection = withStyles(styles, { withTheme: true })(({ classes, accou
     </Select>
     <div className={classes.createAccountContainer}>
       <Typography className={classes.orText}>or</Typography>
-      <Button className={classes.createAccountButton} color="secondary" onClick={onCreateAccountClick}>
-        Create New Account
+      <Button className={classes.createAccountButton} color="secondary" onClick={onImportWalletClick}>
+        Import Wallet
       </Button>
     </div>
   </div>

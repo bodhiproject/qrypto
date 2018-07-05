@@ -91,6 +91,6 @@ export default class Signup extends Component<any, {}> {
   }
 
   private onImportWalletClick = () => {
-    this.props.history.push('/import-mnemonic');
+    this.props.history.push('/import');
   }
 }

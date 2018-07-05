@@ -42,7 +42,7 @@ class App extends Component<IProps, IState> {
 
               <Route exact path="/loading" component={Loading} />
               <Route exact path="/signup" component={Signup} />
-              <Route exact path="/import-mnemonic" component={ImportMnemonic} />
+              <Route exact path="/import" component={ImportMnemonic} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/home" component={Home} />
               <Route exact path="/account-detail" component={AccountDetail} />
