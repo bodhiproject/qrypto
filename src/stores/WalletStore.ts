@@ -47,6 +47,11 @@ class WalletStore {
   }
 
   @action
+  public onCreateNewWallet() {
+    // TODO: implement
+  }
+
+  @action
   public onImportNewMnemonic() {
     this.qjsWallet = this.recoverWallet(this.enteredMnemonic);
     this.mnemonic = this.enteredMnemonic;
