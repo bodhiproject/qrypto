@@ -1,5 +1,5 @@
 import { observable, action } from 'mobx';
-import Transaction from './models/Transaction';
+import Transaction from '../models/Transaction';
 
 class TransactionStore {
   @observable.shallow public items: Transaction[] = [];

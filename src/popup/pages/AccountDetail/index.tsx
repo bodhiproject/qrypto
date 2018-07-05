@@ -6,7 +6,7 @@ import cx from 'classnames';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
-import Transaction from '../../../stores/models/Transaction';
+import Transaction from '../../../models/Transaction';
 import AccountInfo from '../../components/AccountInfo';
 
 @withStyles(styles, { withTheme: true })
