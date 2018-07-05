@@ -72,7 +72,7 @@ const LoginSection = withStyles(styles, { withTheme: true })(({ classes, history
       variant="contained"
       color="primary"
       disabled={_.isEmpty(password)}
-      onClick={() => history.push('/')}
+      onClick={() => history.push('/home')}
     >
       Login
     </Button>

@@ -108,7 +108,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
     walletStore.loading = true;
     setTimeout(() => {
       walletStore.onImportNewMnemonic();
-      history.push('/');
+      history.push('/home');
     }, 100);
   }
 
