@@ -29,6 +29,7 @@ export default class Login extends Component<any, {}> {
           <NavBar hasNetworkSelector isDarkTheme title="Login" />
           <AccountSection accounts={walletStore.accounts} />
         </Paper>
+        <PermissionSection />
       </div>
     );
   }
@@ -48,3 +49,11 @@ const AccountSection = withStyles(styles, { withTheme: true })(({ classes, accou
     </div>
   </div>
 ));
+
+const PermissionSection = withStyles(styles, { withTheme: true })(({ classes }) => (
+  <div className={classes.permissionContainer}>
+    <Typography className={classes.permissionsHeader}>Permissions</Typography>
+  </div>
+));
+
+const 

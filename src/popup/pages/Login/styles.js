@@ -45,6 +45,16 @@ const styles = (theme) => ({
     fontWeight: theme.font.weight.bold,
     color: theme.palette.text.light,
   },
+  permissionContainer: {
+    flex: 1,
+    padding: theme.spacing.md,
+  },
+  permissionsHeader: {
+    fontSize: theme.font.sm,
+    fontWeight: theme.font.weight.bold,
+    color: theme.palette.text.primary,
+    marginBottom: theme.spacing.md,
+  },
 });
 
 export default styles;
