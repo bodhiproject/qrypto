@@ -65,7 +65,6 @@ class WalletStore {
 
   @action
   public recoverWallet(mnemonic: string): Wallet {
-    console.log('recoverWallet:', mnemonic);
     const network = networks.testnet;
     this.wallet = network.fromMnemonic(mnemonic);
     this.loading = false;
