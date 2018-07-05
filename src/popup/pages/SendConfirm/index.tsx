@@ -25,7 +25,7 @@ export default class SendConfirm extends Component<any, {}> {
 
     return(
       <div className={classes.sendConfirmRoot}>
-        <NavBar hasBackButton={true} title={'Send Confirm'} />
+        <NavBar hasBackButton={true} title="Confirm" />
         <div className={classes.contentContainer}>
           <div className={classes.inputContainer}>
             <div className={classes.fieldContainer}>
