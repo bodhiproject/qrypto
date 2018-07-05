@@ -18,25 +18,25 @@ export default class Send extends Component<any, {}> {
   };
 
   public componentDidMount() {
-    const { store } = this.props;
+    const { store: { sendStore, walletStore } } = this.props;
 
     // Set default sender address
-    store.walletStore.senderAddress = store.walletStore.info.addrStr;
+    sendStore.senderAddress = walletStore.info.addrStr;
   }
 
   public render() {
-    const { classes } = this.props;
-    const { walletStore } = this.props.store;
-    const { info, token, amount } = walletStore;
+    const { classes, store: { sendStore, walletStore } } = this.props;
+    const { token, amount } = sendStore;
+    const { info } = walletStore;
 
     return (
       <div className={classes.root}>
         <NavBar hasBackButton={true} title="Send" />
         <div className={classes.contentContainer}>
-          <FromField info={info} walletStore={walletStore} />
-          <ToField info={info} walletStore={walletStore} />
-          <TokenField token={token} walletStore={walletStore} />
-          <AmountField amount={amount} token={token} walletStore={walletStore} />
+          <FromField info={info} sendStore={sendStore} />
+          <ToField info={info} sendStore={sendStore} />
+          <TokenField token={token} sendStore={sendStore} />
+          <AmountField info={info} amount={amount} token={token} sendStore={sendStore} />
           <SendButton {...this.props} />
         </div>
       </div>
@@ -48,14 +48,14 @@ const Heading = withStyles(styles, { withTheme: true })(({ classes, name }) => (
   <Typography className={classes.fieldHeading}>{name}</Typography>
 ));
 
-const FromField = withStyles(styles, { withTheme: true })(({ classes, info, walletStore }) => (
+const FromField = withStyles(styles, { withTheme: true })(({ classes, info, sendStore }) => (
   <div className={classes.fieldContainer}>
     <Heading name="From" />
     <div className={classes.fieldContentContainer}>
       <Select
         disableUnderline
         value={info.addrStr}
-        onChange={(event) => walletStore.senderAddress = event.target.value}
+        onChange={(event) => sendStore.senderAddress = event.target.value}
         inputProps={{ name: 'from', id: 'from' }}
         className={classes.fromSelect}
       >
@@ -68,7 +68,7 @@ const FromField = withStyles(styles, { withTheme: true })(({ classes, info, wall
   </div>
 ));
 
-const ToField = withStyles(styles, { withTheme: true })(({ classes, info, walletStore }) => (
+const ToField = withStyles(styles, { withTheme: true })(({ classes, info, sendStore }) => (
   <div className={classes.fieldContainer}>
     <Heading name="To" />
     <div className={classes.fieldContentContainer}>
@@ -78,13 +78,13 @@ const ToField = withStyles(styles, { withTheme: true })(({ classes, info, wallet
         multiline={false}
         placeholder={info.addrStr}
         InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
-        onChange={(event) => walletStore.receiverAddress = event.target.value}
+        onChange={(event) => sendStore.receiverAddress = event.target.value}
       />
     </div>
   </div>
 ));
 
-const TokenField = withStyles(styles, { withTheme: true })(({ classes, token, walletStore }) => (
+const TokenField = withStyles(styles, { withTheme: true })(({ classes, token, sendStore }) => (
   <div className={classes.fieldContainer}>
     <Heading name="Token" />
     <div className={classes.fieldContentContainer}>
@@ -93,7 +93,7 @@ const TokenField = withStyles(styles, { withTheme: true })(({ classes, token, wa
         value={token}
         inputProps={{ name: 'from', id: 'from' }}
         className={classes.tokenSelect}
-        onChange={(event) => walletStore.token = event.target.value}
+        onChange={(event) => sendStore.token = event.target.value}
       >
         <MenuItem value="QTUM">
           <Typography className={classes.tokenText}>QTUM</Typography>
@@ -103,7 +103,7 @@ const TokenField = withStyles(styles, { withTheme: true })(({ classes, token, wa
   </div>
 ));
 
-const AmountField = withStyles(styles, { withTheme: true })(({ classes, amount, token, walletStore }) => (
+const AmountField = withStyles(styles, { withTheme: true })(({ classes, info, amount, token, sendStore }) => (
   <div className={classes.amountContainer}>
     <div className={classes.amountHeadingContainer}>
       <div className={classes.amountHeadingTextContainer}>
@@ -112,7 +112,7 @@ const AmountField = withStyles(styles, { withTheme: true })(({ classes, amount, 
       <Button
         color="primary"
         className={classes.maxButton}
-        onClick={() => walletStore.amount = walletStore.info.balance}
+        onClick={() => sendStore.amount = info.balance}
       >
         Max
       </Button>
@@ -128,7 +128,7 @@ const AmountField = withStyles(styles, { withTheme: true })(({ classes, amount, 
           endAdornment: <Typography className={classes.amountTokenAdornment}>{token}</Typography>,
           disableUnderline: true,
         }}
-        onChange={(event) => walletStore.amount = event.target.value}
+        onChange={(event) => sendStore.amount = event.target.value}
       />
     </div>
   </div>

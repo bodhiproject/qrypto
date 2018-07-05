@@ -1,5 +1,5 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
-import { observable, action, runInAction, toJS } from 'mobx';
+import { observable, action, toJS } from 'mobx';
 import _ from 'lodash';
 
 import walletStore from './WalletStore';
@@ -17,13 +17,8 @@ class WalletStore {
   //   if mnemonic exists -> loading still true (go to 3)
   // 3 on wallet load/info loaded -> loading false
   @observable public loading = true;
-
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public accounts: Account[] = [];
-  @observable public tip: string = '';
-
-  @observable private receiverAddress: string = '';
-  @observable private amount: string = '0';
 
   private wallet?: Wallet = undefined;
   private getInfoInterval?: NodeJS.Timer = undefined;
@@ -71,22 +66,6 @@ class WalletStore {
     const network = networks.testnet;
     this.wallet = network.fromMnemonic(mnemonic);
     this.loading = false;
-  }
-
-  @action
-  public async send() {
-    this.tip = 'Sending...';
-    try {
-      await this.wallet!.send(this.receiverAddress, this.amount * 1e8, {
-        feeRate: 4000,
-      });
-      runInAction(() => {
-        this.tip = 'Sent!';
-      });
-    } catch (err) {
-      console.log(err);
-      this.tip = err.message;
-    }
   }
 
   @action
