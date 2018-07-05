@@ -60,6 +60,9 @@ class WalletStore {
     // Create and store Account in local storage
     // TODO: implement BIP38 encryption on the mnemonic here
     const account = new Account('Default Account', this.enteredMnemonic);
+    chrome.storage.local.set({
+      [STORAGE.TESTNET_ACCOUNTS]: [account],
+    }, () => console.log('Account saved'));
 
     // Initialize QtumJS wallet instance and getInfo to avoid delay
     this.recoverWallet(account.mnemonic);
@@ -68,10 +71,6 @@ class WalletStore {
     this.enteredMnemonic = '';
     this.password = '';
     this.confirmPassword = '';
-
-    chrome.storage.local.set({
-      [STORAGE.TESTNET_ACCOUNTS]: [account],
-    }, () => console.log('Account saved'));
 
     // Toggle loading screen
     this.loading = false;
@@ -109,7 +108,10 @@ class WalletStore {
 
   @action
   public onLogout = () => {
-    chrome.storage.local.set({ mnemonic: '' });
+    chrome.storage.local.set({
+      [STORAGE.TESTNET_ACCOUNTS]: [],
+    }, () => console.log('Logged out'));
+
     this.mnemonic = '';
     this.enteredMnemonic = '';
   }
