@@ -29,7 +29,7 @@ export default class AccountDetail extends Component<any, {}> {
     return (
       <Fragment>
         <Paper elevation={2} className={classes.accountDetailHeader}>
-          <NavBar hasBackButton hasNetworkSelector isDarkTheme title="Account Detail" />
+          <NavBar hasBackButton isDarkTheme title="Account Detail" />
           <AccountInfo />
         </Paper>
         <Paper elevation={1}>
