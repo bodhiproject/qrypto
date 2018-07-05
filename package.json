@@ -51,9 +51,9 @@
   },
   "dependencies": {
     "@material-ui/icons": "^1.1.0",
+    "@types/lodash": "^4.14.110",
     "chrome-call": "^3.0.0",
     "classnames": "^2.2.6",
-    "lodash": "^4.17.10",
     "mobx": "^5.0.3",
     "mobx-react": "^5.2.3",
     "qrcode.react": "^0.8.0",
