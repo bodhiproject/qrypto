@@ -22,7 +22,7 @@ export default class Signup extends Component<any, {}> {
     const { history, store: { walletStore } } = this.props;
 
     // Route to home page if mnemonic is found in storage
-    if (!_.isEmpty(walletStore.mnemonic)) {
+    if (!_.isEmpty(walletStore.accounts)) {
       history.push('/login');
     }
   }

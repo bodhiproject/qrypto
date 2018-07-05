@@ -49,7 +49,6 @@ class App extends Component<IProps, IState> {
               <Route exact path="/send" component={Send} />
               <Route exact path="/send-confirm" component={SendConfirm} />
               <Route exact path="/receive" component={Receive} />
-
             </Fragment>
           </Router>
         </MuiThemeProvider>

@@ -1,19 +1,13 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
-import { observable, action, runInAction } from 'mobx';
+import { observable, action, runInAction, toJS } from 'mobx';
 import _ from 'lodash';
 
+import walletStore from './WalletStore';
 import accountDetailStore from './AccountDetailStore';
 import { STORAGE } from '../constants';
 import Account from '../models/Account';
 
 class WalletStore {
-  @observable public info?: Insight.IGetInfo = undefined;
-  @observable public accounts: Account[] = [];
-  @observable public enteredMnemonic: string = '';
-  @observable public password: string = '';
-  @observable public confirmPassword: string = '';
-  @observable public tip: string = '';
-
   // Loading screen flow for app first load and import mnemonic
   // 1 Default -> loading true
   // 2 chrome.storage loading mnemonic
@@ -24,7 +18,10 @@ class WalletStore {
   // 3 on wallet load/info loaded -> loading false
   @observable public loading = true;
 
-  @observable private mnemonic: string = '';
+  @observable public info?: Insight.IGetInfo = undefined;
+  @observable public accounts: Account[] = [];
+  @observable public tip: string = '';
+
   @observable private receiverAddress: string = '';
   @observable private amount: string = '0';
 
@@ -32,7 +29,6 @@ class WalletStore {
   private getInfoInterval?: NodeJS.Timer = undefined;
 
   constructor() {
-    console.log('constructor walletStore');
     setTimeout(this.init.bind(this), 100);
   }
 
@@ -46,10 +42,22 @@ class WalletStore {
 
       // Account found, recover wallet
       this.accounts = testnetAccounts;
-      this.mnemonic = this.accounts[0].mnemonic!;
-      this.recoverWallet(this.accounts[0].mnemonic);
+      this.recoverWallet(this.accounts[0].mnemonic!);
       this.loading = false;
     });
+  }
+
+  @action
+  public addAccount(account: Account) {
+    const accounts = toJS(this.accounts);
+    if (!_.find(accounts, { mnemonic: account.mnemonic })) {
+      accounts.push(account);
+
+      chrome.storage.local.set({
+        [STORAGE.TESTNET_ACCOUNTS]: accounts,
+      }, () => console.log('Account added', account));
+      this.accounts = accounts;
+    }
   }
 
   @action
@@ -58,25 +66,10 @@ class WalletStore {
   }
 
   @action
-  public onImportNewMnemonic() {
-    // Create and store Account in local storage
-    // TODO: implement BIP38 encryption on the mnemonic here
-    const account = new Account('Default Account', this.enteredMnemonic);
-    const accounts = [account];
-    this.accounts = accounts;
-    chrome.storage.local.set({
-      [STORAGE.TESTNET_ACCOUNTS]: accounts,
-    }, () => console.log('Account saved'));
-
-    // Initialize QtumJS wallet instance and getInfo to avoid delay
-    this.recoverWallet(account.mnemonic);
-
-    // Reset values
-    this.enteredMnemonic = '';
-    this.password = '';
-    this.confirmPassword = '';
-
-    // Toggle loading screen
+  public recoverWallet(mnemonic: string): Wallet {
+    console.log('recoverWallet:', mnemonic);
+    const network = networks.testnet;
+    this.wallet = network.fromMnemonic(mnemonic);
     this.loading = false;
   }
 
@@ -98,6 +91,8 @@ class WalletStore {
 
   @action
   public startGetInfoPolling() {
+    this.getWalletInfo();
+
     this.getInfoInterval = setInterval(() => {
       this.getWalletInfo();
     }, 5000);
@@ -112,26 +107,13 @@ class WalletStore {
 
   @action
   public onLogout = () => {
-    chrome.storage.local.set({
-      [STORAGE.TESTNET_ACCOUNTS]: [],
-    }, () => console.log('Logged out'));
-
-    this.mnemonic = '';
-    this.enteredMnemonic = '';
+    walletStore.stopGetInfoPolling();
   }
 
   @action
   private async getWalletInfo() {
     this.info = await this.wallet!.getInfo();
     accountDetailStore.loadFromIds(this.info.transactions);
-  }
-
-  @action
-  private recoverWallet(mnemonic: string = this.mnemonic): Wallet {
-    console.log('wallet store recoverWallet, mnemonic:', mnemonic);
-    const network = networks.testnet;
-    this.wallet = network.fromMnemonic(mnemonic);
-    this.getWalletInfo();
   }
 }
 

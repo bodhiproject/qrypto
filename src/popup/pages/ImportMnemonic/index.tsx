@@ -18,12 +18,12 @@ export default class ImportMnemonic extends Component<{}, IState> {
     classes: PropTypes.object.isRequired,
   };
 
-  public componentDidMount() {
-    this.props.store.walletStore.stopGetInfoPolling();
+  public componentWillUnmount() {
+    this.props.store.importStore.reset();
   }
 
   public render() {
-    const { classes, store: { walletStore } } = this.props;
+    const { classes, store: { importStore } }: any = this.props;
     const error = this.getPasswordMatchError();
 
     return (
@@ -41,8 +41,8 @@ export default class ImportMnemonic extends Component<{}, IState> {
                 rows={5}
                 type="text"
                 placeholder="Enter your seed phrase here to import your wallet."
-                onChange={(e) => walletStore.enteredMnemonic = e.target.value}
-                error={_.isEmpty(walletStore.enteredMnemonic)}
+                onChange={(e) => importStore.enteredMnemonic = e.target.value}
+                error={_.isEmpty(importStore.enteredMnemonic)}
                 InputProps={{
                   disableUnderline: true,
                   classes: { input: classes.mnemonicFieldInput },
@@ -51,14 +51,14 @@ export default class ImportMnemonic extends Component<{}, IState> {
               <PasswordInput
                 classNames={classes.passwordField}
                 placeholder="Password"
-                onChange={(e: any) => walletStore.password = e.target.value}
+                onChange={(e: any) => importStore.password = e.target.value}
               />
               <PasswordInput
                 classNames={classes.passwordField}
                 placeholder="Confirm password"
                 helperText={error}
                 error={error}
-                onChange={(e: any) => walletStore.confirmPassword = e.target.value}
+                onChange={(e: any) => importStore.confirmPassword = e.target.value}
               />
             </div>
           </div>
@@ -70,9 +70,9 @@ export default class ImportMnemonic extends Component<{}, IState> {
               color="primary"
               onClick={this.recoverAndGoToHomePage}
               disabled={
-                _.isEmpty(walletStore.enteredMnemonic)
-                  || _.isEmpty(walletStore.password)
-                  || _.isEmpty(walletStore.confirmPassword)
+                _.isEmpty(importStore.enteredMnemonic)
+                  || _.isEmpty(importStore.password)
+                  || _.isEmpty(importStore.confirmPassword)
                   || error
               }
             >
@@ -93,7 +93,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
   }
 
   private getPasswordMatchError = () => {
-    const { password, confirmPassword } = this.props.store.walletStore;
+    const { password, confirmPassword } = this.props.store.importStore;
 
     let error;
     if (!_.isEmpty(password) && !_.isEmpty(confirmPassword) && password !== confirmPassword) {
@@ -103,26 +103,26 @@ export default class ImportMnemonic extends Component<{}, IState> {
   }
 
   private recoverAndGoToHomePage = () => {
-    const { store: { walletStore }, history } = this.props;
+    const { store: { walletStore, importStore }, history }: any = this.props;
+    const { enteredMnemonic } = importStore;
 
     walletStore.loading = true;
     setTimeout(() => {
-      walletStore.onImportNewMnemonic();
+      importStore.onImportNewMnemonic(enteredMnemonic);
       history.push('/home');
     }, 100);
   }
 
   private onCancelClick = () => {
-    const { store: { walletStore }, history } = this.props;
+    const { store: { importStore }, history }: any = this.props;
 
-    walletStore.enteredMnemonic = '';
-    walletStore.password = '';
-    walletStore.confirmPassword = '';
+    importStore.reset();
     history.goBack();
   }
 }
 
 interface IState {
+  importStore: any;
   walletStore: any;
   history: any;
 }

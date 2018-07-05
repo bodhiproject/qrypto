@@ -30,8 +30,10 @@ export default class NavBar extends Component {
   };
 
   public onLogoutButtonClick = () => {
-    this.props.store.walletStore.onLogout();
-    this.props.history.push('/login');
+    const { history, store: { walletStore} } = this.props;
+
+    walletStore.onLogout();
+    history.push('/signup');
   }
 
   public onNetworkSelectionClick = () => {

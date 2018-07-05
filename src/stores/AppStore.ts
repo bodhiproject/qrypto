@@ -2,6 +2,7 @@ import walletStore from './WalletStore';
 import uiStore from './UiStore';
 import signupStore from './SignupStore';
 import loginStore from './LoginStore';
+import importStore from './ImportStore';
 import accountDetailStore from './AccountDetailStore';
 
 class AppStore {
@@ -9,6 +10,7 @@ class AppStore {
   public ui = {};
   public signupStore = {};
   public loginStore = {};
+  public importStore = {};
   public accountDetailStore = {};
   public walletStore = {};
 
@@ -16,6 +18,7 @@ class AppStore {
     this.ui = uiStore;
     this.signupStore = signupStore;
     this.loginStore = loginStore;
+    this.importStore = importStore;
     this.accountDetailStore = accountDetailStore;
     this.walletStore = walletStore;
   }
