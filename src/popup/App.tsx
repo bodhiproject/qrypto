@@ -7,6 +7,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import './App.scss';
 import Signup from './pages/Signup';
 import ImportMnemonic from './pages/ImportMnemonic';
+import Login from './pages/Login';
 import Home from './pages/Home';
 import AccountDetail from './pages/AccountDetail';
 import Send from './pages/Send';
@@ -43,6 +44,7 @@ class App extends Component<IProps, IState> {
               <Route exact path="/" component={Home} />
               <Route exact path="/signup" component={Signup} />
               <Route exact path="/import-mnemonic" component={ImportMnemonic} />
+              <Route exact path="/login" component={Login} />
               <Route exact path="/account-detail" component={AccountDetail} />
               <Route exact path="/send" component={Send} />
               <Route exact path="/send-confirm" component={SendConfirm} />

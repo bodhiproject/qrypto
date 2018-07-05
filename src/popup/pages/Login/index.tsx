@@ -25,19 +25,17 @@ export default class Login extends Component<any, {}> {
 
     return (
       <div className={classes.root}>
-        <NavBar hasNetworkSelector isDarkTheme title="Login" />
-        <Paper className={classes.accountContainer}>
-          <Typography className={classes.selectAcctText}>Select account</Typography>
-          <AccountSelect accounts={walletStore.accounts} />
-          <div className={classes.createAccountContainer}>
-            <Typography className={classes.orText}>or</Typography>
-            <Button
-              className={classes.createAccountButton}
-              disableRipple
-              color="secondary"
-            >
-              Create New Account
-            </Button>
+        <Paper className={classes.headerContainer}>
+          <NavBar hasNetworkSelector isDarkTheme title="Login" />
+          <div className={classes.accountContainer}>
+            <Typography className={classes.selectAcctText}>Select account</Typography>
+            <AccountSelect accounts={walletStore.accounts} />
+            <div className={classes.createAccountContainer}>
+              <Typography className={classes.orText}>or</Typography>
+              <Button className={classes.createAccountButton} color="secondary">
+                Create New Account
+              </Button>
+            </div>
           </div>
         </Paper>
       </div>
@@ -46,7 +44,7 @@ export default class Login extends Component<any, {}> {
 }
 
 const AccountSelect = withStyles(styles, { withTheme: true })(({ classes, accounts }: any) => (
-  <Select className={classes.selectEmpty} name="accounts">
+  <Select disableUnderline className={classes.accountSelect} name="accounts">
     {accounts.map((acct: Account) => <MenuItem value={acct.name}>{acct.name}</MenuItem>)}
   </Select>
 ));
