@@ -32,7 +32,7 @@ export default class AccountInfo extends Component<any, {}> {
 
   public render() {
     const { classes, hasRightArrow } = this.props;
-    const { loggedInAccount, info } = this.props.store.walletStore;
+    const { loggedInAccount, info, qtumPriceUSD } = this.props.store.walletStore;
 
     return info && (
       <div className={classes.root}>
@@ -43,6 +43,7 @@ export default class AccountInfo extends Component<any, {}> {
           <Typography className={classes.token}>QTUM</Typography>
           {hasRightArrow && <KeyboardArrowRight className={classes.rightArrow} />}
         </div>
+        <Typography className={classes.qtumPriceUSD}>${qtumPriceUSD} USD</Typography>
         <div className={classes.actionButtonsContainer}>
           <Button
             id="sendButton"

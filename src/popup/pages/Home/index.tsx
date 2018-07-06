@@ -16,7 +16,7 @@ export default class Home extends Component<any, {}> {
   };
 
   public componentDidMount() {
-    this.props.store.walletStore.startGetInfoPolling();
+    this.props.store.walletStore.startPolling();
   }
 
   public render() {

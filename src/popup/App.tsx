@@ -21,7 +21,7 @@ import theme from '../config/theme';
 class App extends Component<IProps, IState> {
 
   public componentWillUnmount() {
-    store.walletStore.stopGetInfoPolling();
+    store.walletStore.stopPolling();
   }
 
   public render() {

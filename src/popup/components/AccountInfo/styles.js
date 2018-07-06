@@ -15,7 +15,6 @@ const styles = (theme) => ({
   },
   amountContainer: {
     width: '100%',
-    marginBottom: theme.spacing.sm,
     flexDirection: 'row',
     display: 'inline-flex',
   },
@@ -37,6 +36,11 @@ const styles = (theme) => ({
     color: theme.palette.text.light,
     alignSelf: 'center',
   },
+  qtumPriceUSD: {
+    fontSize: theme.font.sm,
+    color: theme.palette.text.light,
+    marginBottom: theme.spacing.sm,
+  }, 
   actionButtonsContainer: {
     display: 'flex',
     justifyContent: 'flex-end',
