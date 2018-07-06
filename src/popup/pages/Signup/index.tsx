@@ -33,7 +33,7 @@ export default class Signup extends Component<any, {}> {
 
   public render() {
     const { classes, store: { signupStore } } = this.props;
-    const error = this.getPasswordMatchError();
+    const matchError = signupStore.matchError;
 
     return (
       <div className={classes.root}>
@@ -52,8 +52,8 @@ export default class Signup extends Component<any, {}> {
             <PasswordInput
               classNames={classes.confirmPasswordField}
               placeholder="Confirm password"
-              helperText={error}
-              error={error}
+              helperText={matchError}
+              error={matchError}
               onChange={(e: any) => signupStore.confirmPassword = e.target.value}
             />
           </div>
@@ -62,7 +62,7 @@ export default class Signup extends Component<any, {}> {
             fullWidth
             variant="contained"
             color="primary"
-            disabled={_.isEmpty(signupStore.password) || _.isEmpty(signupStore.confirmPassword) || error}
+            disabled={signupStore.error}
           >
             Create Wallet
           </Button>
@@ -71,26 +71,12 @@ export default class Signup extends Component<any, {}> {
             fullWidth
             disableRipple
             color="primary"
-            onClick={this.onImportWalletClick}
+            onClick={() => this.props.history.push('/import')}
           >
             Import Existing Wallet
           </Button>
         </div>
       </div>
     );
-  }
-
-  private getPasswordMatchError = () => {
-    const { password, confirmPassword } = this.props.store.signupStore;
-
-    let error;
-    if (!_.isEmpty(password) && !_.isEmpty(confirmPassword) && password !== confirmPassword) {
-      error = 'Passwords do not match.';
-    }
-    return error;
-  }
-
-  private onImportWalletClick = () => {
-    this.props.history.push('/import');
   }
 }
