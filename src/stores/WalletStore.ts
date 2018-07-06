@@ -118,7 +118,6 @@ export default class WalletStore {
     try {
       const jsonObj = await axios.get('https://api.coinmarketcap.com/v2/ticker/1684/');
       this.qtumPriceUSD = jsonObj.data.data.quotes.USD.price;
-      return this.qtumPriceUSD;
     } catch (err) {
       console.log(err);
     }
