@@ -113,14 +113,6 @@ export default class WalletStore {
     this.app.walletStore.stopPolling();
   }
 
-  // public balanceUSD = () => {
-  //   if (this.qtumPriceUSD && this.info){
-  //     return (this.qtumPriceUSD * this.info.balance).toFixed(2)
-  //   } else {
-  //     return "Loading"
-  //   }
-  // }
-
   @action
   private async getQtumPrice() {
     try {
