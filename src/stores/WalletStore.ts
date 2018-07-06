@@ -1,5 +1,6 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
-import { observable, action, toJS, runInAction } from 'mobx';
+
+import { observable, action, toJS, runInAction, computed } from 'mobx';
 import { isEmpty } from 'lodash';
 import axios from 'axios';
 
@@ -7,6 +8,7 @@ import AppStore from './AppStore';
 import { STORAGE } from '../constants';
 import Account from '../models/Account';
 import transactionStore from './TransactionStore';
+
 
 export default class WalletStore {
   // Loading screen flow for app first load and import mnemonic
@@ -22,9 +24,18 @@ export default class WalletStore {
   @observable public accounts: Account[] = [];
   @observable public loggedInAccount?: Account = undefined;
   @observable public qtumPriceUSD = '';
+  @computed get balanceUSD() {
+    if (this.qtumPriceUSD && this.info) {
+      return (this.qtumPriceUSD * this.info.balance).toFixed(2);
+    } else {
+      return 'Loading';
+    }
+  }
+  
   public wallet?: Wallet = undefined;
 
   private app: AppStore;
+
   private getInfoInterval?: NodeJS.Timer = undefined;
   private getPriceInterval?: NodeJS.Timer = undefined;
 
@@ -102,11 +113,19 @@ export default class WalletStore {
     this.app.walletStore.stopPolling();
   }
 
+  // public balanceUSD = () => {
+  //   if (this.qtumPriceUSD && this.info){
+  //     return (this.qtumPriceUSD * this.info.balance).toFixed(2)
+  //   } else {
+  //     return "Loading"
+  //   }
+  // }
+
   @action
   private async getQtumPrice() {
     try {
       const jsonObj = await axios.get('https://api.coinmarketcap.com/v2/ticker/1684/');
-      this.qtumPriceUSD = jsonObj.data.data.quotes.USD.price.toFixed(2);
+      this.qtumPriceUSD = jsonObj.data.data.quotes.USD.price;
       return this.qtumPriceUSD;
     } catch (err) {
       console.log(err);

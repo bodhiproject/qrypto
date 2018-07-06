@@ -36,7 +36,7 @@ const styles = (theme) => ({
     color: theme.palette.text.light,
     alignSelf: 'center',
   },
-  qtumPriceUSD: {
+  balanceUSD: {
     fontSize: theme.font.sm,
     color: theme.palette.text.light,
     marginBottom: theme.spacing.sm,
