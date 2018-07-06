@@ -119,6 +119,7 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
         type="number"
         multiline={false}
         placeholder="0.00"
+        value={sendStore.amount}
         InputProps={{
           endAdornment: <Typography className={classes.amountTokenAdornment}>{sendStore.token}</Typography>,
           disableUnderline: true,
