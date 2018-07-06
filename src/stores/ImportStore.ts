@@ -44,7 +44,7 @@ export default class ImportStore {
     this.reset();
 
     this.app.walletStore.addAccount(account);
-    this.app.walletStore.recoverWallet(account.mnemonic!);
+    this.app.walletStore.recoverWalletAndGetData(account.mnemonic!);
   }
 
   private getMatchError = (): string | undefined => {
