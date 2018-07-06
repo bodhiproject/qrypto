@@ -1,6 +1,7 @@
 import * as React from 'react';
-import styles from './styles';
 import { Typography, withStyles } from '@material-ui/core';
+
+import styles from './styles';
 
 const Loading = (props: any) => (
   <div className={props.classes.root}>
