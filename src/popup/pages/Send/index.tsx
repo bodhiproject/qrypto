@@ -9,6 +9,7 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 
 @withStyles(styles, { withTheme: true })
+@withRouter
 @inject('store')
 @observer
 export default class Send extends Component<any, {}> {
@@ -17,49 +18,47 @@ export default class Send extends Component<any, {}> {
   };
 
   public componentDidMount() {
-    const { store } = this.props;
+    const { store: { sendStore, walletStore } } = this.props;
 
     // Set default sender address
-    store.walletStore.senderAddress = store.walletStore.info.addrStr;
+    sendStore.senderAddress = walletStore.info.addrStr;
   }
 
   public render() {
     const { classes } = this.props;
-    const { walletStore } = this.props.store;
-    const { info, token, amount } = walletStore;
 
     return (
       <div className={classes.root}>
-        <NavBar hasBackButton={true} title="Send" />
+        <NavBar hasBackButton title="Send" />
         <div className={classes.contentContainer}>
-          <FromField info={info} walletStore={walletStore} />
-          <ToField info={info} walletStore={walletStore} />
-          <TokenField token={token} walletStore={walletStore} />
-          <AmountField amount={amount} token={token} walletStore={walletStore} />
-          <SendButton />
+          <FromField {...this.props} />
+          <ToField {...this.props} />
+          <TokenField {...this.props} />
+          <AmountField {...this.props} />
+          <SendButton {...this.props} />
         </div>
       </div>
     );
   }
 }
 
-const Heading = withStyles(styles, { withTheme: true })(({ classes, name }) => (
+const Heading = withStyles(styles, { withTheme: true })(({ classes, name }: any) => (
   <Typography className={classes.fieldHeading}>{name}</Typography>
 ));
 
-const FromField = withStyles(styles, { withTheme: true })(({ classes, info, walletStore }) => (
+const FromField = observer(({ classes, store: { sendStore, walletStore: { loggedInAccount, info } } }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="From" />
     <div className={classes.fieldContentContainer}>
       <Select
         disableUnderline
         value={info.addrStr}
-        onChange={(event) => walletStore.senderAddress = event.target.value}
+        onChange={(event) => sendStore.senderAddress = event.target.value}
         inputProps={{ name: 'from', id: 'from' }}
         className={classes.fromSelect}
       >
         <MenuItem value={info.addrStr}>
-          <Typography className={classes.fromAddress}>{'Default Account'}</Typography>
+          <Typography className={classes.fromAddress}>{loggedInAccount.name}</Typography>
         </MenuItem>
       </Select>
       <Typography className={classes.fromBalance}>{info.balance} QTUM</Typography>
@@ -67,7 +66,7 @@ const FromField = withStyles(styles, { withTheme: true })(({ classes, info, wall
   </div>
 ));
 
-const ToField = withStyles(styles, { withTheme: true })(({ classes, info, walletStore }) => (
+const ToField = observer(({ classes, store: { sendStore, walletStore: { info } } }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="To" />
     <div className={classes.fieldContentContainer}>
@@ -77,32 +76,30 @@ const ToField = withStyles(styles, { withTheme: true })(({ classes, info, wallet
         multiline={false}
         placeholder={info.addrStr}
         InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
-        onChange={(event) => walletStore.receiverAddress = event.target.value}
+        onChange={(event) => sendStore.receiverAddress = event.target.value}
       />
     </div>
   </div>
 ));
 
-const TokenField = withStyles(styles, { withTheme: true })(({ classes, token, walletStore }) => (
+const TokenField = observer(({ classes, store: { sendStore } }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="Token" />
     <div className={classes.fieldContentContainer}>
       <Select
         disableUnderline
-        value={token}
+        value={sendStore.token}
         inputProps={{ name: 'from', id: 'from' }}
         className={classes.tokenSelect}
-        onChange={(event) => walletStore.token = event.target.value}
+        onChange={(event) => sendStore.token = event.target.value}
       >
-        <MenuItem value="QTUM">
-          <Typography className={classes.tokenText}>QTUM</Typography>
-        </MenuItem>
+        <MenuItem value="QTUM"><Typography className={classes.tokenText}>QTUM</Typography></MenuItem>
       </Select>
     </div>
   </div>
 ));
 
-const AmountField = withStyles(styles, { withTheme: true })(({ classes, amount, token, walletStore }) => (
+const AmountField = observer(({ classes, store: { walletStore: { info }, sendStore } }: any) => (
   <div className={classes.amountContainer}>
     <div className={classes.amountHeadingContainer}>
       <div className={classes.amountHeadingTextContainer}>
@@ -111,7 +108,7 @@ const AmountField = withStyles(styles, { withTheme: true })(({ classes, amount, 
       <Button
         color="primary"
         className={classes.maxButton}
-        onClick={() => walletStore.amount = walletStore.info.balance}
+        onClick={() => sendStore.amount = info.balance}
       >
         Max
       </Button>
@@ -122,17 +119,25 @@ const AmountField = withStyles(styles, { withTheme: true })(({ classes, amount, 
         type="number"
         multiline={false}
         placeholder="0.00"
-        value={amount}
+        value={sendStore.amount}
         InputProps={{
-          endAdornment: <Typography className={classes.amountTokenAdornment}>{token}</Typography>,
+          endAdornment: <Typography className={classes.amountTokenAdornment}>{sendStore.token}</Typography>,
           disableUnderline: true,
         }}
-        onChange={(event) => walletStore.amount = event.target.value}
+        onChange={(event) => sendStore.amount = event.target.value}
       />
     </div>
   </div>
 ));
 
-const SendButton = withRouter(({ history }) => (
-  <Button fullWidth variant="contained" color="primary" onClick={() => history.push('/send-confirm')}>Send</Button>
-));
+const SendButton = ({ classes, history }: any) => (
+  <Button
+    className={classes.sendButton}
+    fullWidth
+    variant="contained"
+    color="primary"
+    onClick={() => history.push('/send-confirm')}
+  >
+    Send
+  </Button>
+);

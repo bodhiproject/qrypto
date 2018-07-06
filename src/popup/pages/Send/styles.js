@@ -60,6 +60,10 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
+  sendButton: {
+    height: theme.button.lg.height,
+    borderRadius: theme.button.lg.radius,
+  }
 });
 
 export default styles;

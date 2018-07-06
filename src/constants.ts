@@ -12,3 +12,7 @@ export enum API_TYPE {
   SEND_QTUM_REQUEST,
   SEND_QTUM_RESPONSE,
 }
+
+export enum STORAGE {
+  TESTNET_ACCOUNTS = 'testnetAccounts',
+}

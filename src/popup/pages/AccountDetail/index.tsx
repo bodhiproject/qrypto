@@ -6,7 +6,7 @@ import cx from 'classnames';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
-import Transaction from '../../../stores/models/Transaction';
+import Transaction from '../../../models/Transaction';
 import AccountInfo from '../../components/AccountInfo';
 
 @withStyles(styles, { withTheme: true })
@@ -20,7 +20,7 @@ export default class AccountDetail extends Component<any, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { accountDetailStore: { activeTabIdx }, transactionStore: { items } } = this.props.store;
+    const { accountDetailStore: { activeTabIdx, items } } = this.props.store;
 
     const tokens = [
       { name: 'Bodhi', token: 'BOT', amount: 123, url: 'https://coinmarketcap.com/currencies/bodhi/' },
@@ -29,7 +29,7 @@ export default class AccountDetail extends Component<any, {}> {
     return (
       <Fragment>
         <Paper elevation={2} className={classes.accountDetailHeader}>
-          <NavBar hasBackButton hasNetworkSelector isDarkTheme title="Account Detail" />
+          <NavBar hasBackButton isDarkTheme title="Account Detail" />
           <AccountInfo />
         </Paper>
         <Paper elevation={1}>

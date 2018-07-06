@@ -1,11 +1,12 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
-import { observable, action, runInAction } from 'mobx';
-import transactionStore from './TransactionStore';
+import { observable, action, toJS } from 'mobx';
+import { isEmpty } from 'lodash';
 
-class WalletStore {
-  @observable public info?: Insight.IGetInfo = undefined;
-  @observable public tip = '';
+import AppStore from './AppStore';
+import { STORAGE } from '../constants';
+import Account from '../models/Account';
 
+export default class WalletStore {
   // Loading screen flow for app first load and import mnemonic
   // 1 Default -> loading true
   // 2 chrome.storage loading mnemonic
@@ -15,64 +16,65 @@ class WalletStore {
   //   if mnemonic exists -> loading still true (go to 3)
   // 3 on wallet load/info loaded -> loading false
   @observable public loading = true;
+  @observable public info?: Insight.IGetInfo = undefined;
+  @observable public accounts: Account[] = [];
+  @observable public loggedInAccount?: Account = undefined;
+  public wallet?: Wallet = undefined;
 
-  @observable private mnemonic: string = '';
-  @observable private enteredMnemonic: string = '';
-  @observable private receiverAddress: string = '';
-  // TODO: remove when var is used
-  // tslint:disable-next-line
-  @observable private token: string = 'QTUM';
-  @observable private amount: string = '0';
-
-  private qjsWallet?: Wallet = undefined;
+  private app: AppStore;
   private getInfoInterval?: NodeJS.Timer = undefined;
 
-  constructor() {
-    console.log('constructor walletStore');
+  constructor(app: AppStore) {
+    this.app = app;
     setTimeout(this.init.bind(this), 100);
   }
 
   public init() {
-    chrome.storage.local.get('mnemonic', async ({ mnemonic }) => {
-      if (mnemonic == null) {
-        console.log('NOT load mnemonic from chrome store');
+    chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, async ({ testnetAccounts }) => {
+      // Account not found, show Signup page
+      if (isEmpty(testnetAccounts)) {
         this.loading = false;
         return;
       }
-      console.log('YES load mnemonic from chrome store');
-      this.mnemonic = mnemonic;
-      this.qjsWallet = this.recoverWallet(mnemonic);
-      this.getWalletInfo();
+
+      // Account found, recover wallet
+      this.accounts = testnetAccounts;
+      this.loggedInAccount = this.accounts[0];
+      this.recoverWallet(this.accounts[0].mnemonic!);
       this.loading = false;
     });
   }
 
   @action
-  public onImportNewMnemonic() {
-    this.qjsWallet = this.recoverWallet(this.enteredMnemonic);
-    chrome.storage.local.set({ mnemonic: this.enteredMnemonic });
-    this.getWalletInfo(); // getInfo once prior to setInterval so there is no delay
-    this.loading = false;
-  }
+  public addAccount(account: Account) {
+    const accounts = toJS(this.accounts);
+    if (!_.find(accounts, { mnemonic: account.mnemonic })) {
+      accounts.push(account);
 
-  @action
-  public async send() {
-    this.tip = 'sending...';
-    try {
-      await this.qjsWallet!.send(this.receiverAddress, this.amount * 1e8, {
-        feeRate: 4000,
-      });
-      runInAction(() => {
-        this.tip = 'done';
-      });
-    } catch (err) {
-      console.log(err);
-      this.tip = err.message;
+      chrome.storage.local.set({
+        [STORAGE.TESTNET_ACCOUNTS]: accounts,
+      }, () => console.log('Account added', account));
+      this.accounts = accounts;
+      this.loggedInAccount = account;
     }
   }
 
   @action
+  public onCreateNewWallet() {
+    // TODO: implement
+  }
+
+  @action
+  public recoverWallet(mnemonic: string): Wallet {
+    const network = networks.testnet;
+    this.wallet = network.fromMnemonic(mnemonic);
+    this.loading = false;
+  }
+
+  @action
   public startGetInfoPolling() {
+    this.getWalletInfo();
+
     this.getInfoInterval = setInterval(() => {
       this.getWalletInfo();
     }, 5000);
@@ -86,24 +88,13 @@ class WalletStore {
   }
 
   @action
-  public clearMnemonic = () => {
-    this.mnemonic = '';
-    this.enteredMnemonic = '';
+  public logout = () => {
+    this.app.walletStore.stopGetInfoPolling();
   }
 
   @action
   private async getWalletInfo() {
-    this.info = await this.qjsWallet!.getInfo();
-    transactionStore.loadFromIds(this.info.transactions);
-
-    return this.info;
-  }
-
-  private recoverWallet(mnemonic: string = this.mnemonic): Wallet {
-    console.log('wallet store recoverWallet, mnemonic:', mnemonic);
-    const network = networks.testnet;
-    return network.fromMnemonic(mnemonic);
+    this.info = await this.wallet!.getInfo();
+    this.app.accountDetailStore.loadFromIds(this.info.transactions);
   }
 }
-
-export default new WalletStore();

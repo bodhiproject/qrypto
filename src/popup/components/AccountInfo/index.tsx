@@ -32,11 +32,11 @@ export default class AccountInfo extends Component<any, {}> {
 
   public render() {
     const { classes, hasRightArrow } = this.props;
-    const { info } = this.props.store.walletStore;
+    const { loggedInAccount, info } = this.props.store.walletStore;
 
     return info && (
       <div className={classes.root}>
-        <Typography className={classes.acctName}>{'Default Account'}</Typography>
+        <Typography className={classes.acctName}>{loggedInAccount.name}</Typography>
         <Typography className={classes.address}>{info.addrStr}</Typography>
         <div className={classes.amountContainer}>
           <Typography className={classes.tokenAmount}>{info.balance}</Typography>

@@ -30,8 +30,10 @@ export default class NavBar extends Component {
   };
 
   public onLogoutButtonClick = () => {
-    this.props.store.walletStore.clearMnemonic();
-    this.props.history.push('/import-mnemonic');
+    const { history, store: { walletStore } }: any = this.props;
+
+    walletStore.logout();
+    history.push('/signup');
   }
 
   public onNetworkSelectionClick = () => {
@@ -39,8 +41,8 @@ export default class NavBar extends Component {
   }
 
   public render() {
-    const { classes, history, hasBackButton, hasSettingsButton, hasNetworkSelector, title, isDarkTheme } = this.props;
-    const { settingsMenuAnchor } = this.props.store.ui;
+    const { classes, history, hasBackButton, hasSettingsButton, hasNetworkSelector, title, isDarkTheme }: any = this.props;
+    const { settingsMenuAnchor }: any = this.props.store.ui;
 
     return (
       <div className={classes.root}>
@@ -71,13 +73,13 @@ export default class NavBar extends Component {
   Forward - use history.push to navigate to the new page based on the button clicked (this will also add the new page to the history stack)
   Back - use history.goBack to navigate the previous location (this will also pop the current page from the history stack)
 */
-const BackButton = ({ classes, history, isDarkTheme }) => (
+const BackButton = ({ classes, history, isDarkTheme }: any) => (
   <IconButton onClick={() => history.goBack()} className={classes.backIconButton}>
     <ArrowBack className={cx(classes.backButton, isDarkTheme ? 'white' : '')} />
   </IconButton>
 );
 
-const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClick, isDarkTheme }) => (
+const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClick, isDarkTheme }: any) => (
   <Fragment>
     <IconButton
       aria-owns={settingsMenuAnchor ? 'settingsMenu' : null}
@@ -99,7 +101,7 @@ const SettingsButton = ({ classes, store, settingsMenuAnchor, onLogoutButtonClic
   </Fragment>
 );
 
-const NetworkSelector = ({ classes, onNetworkSelectionClick }) => (
+const NetworkSelector = ({ classes, onNetworkSelectionClick }: any) => (
   <Button
     color="secondary"
     variant="contained"
