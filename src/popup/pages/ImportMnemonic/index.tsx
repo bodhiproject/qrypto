@@ -41,7 +41,6 @@ export default class ImportMnemonic extends Component<{}, IState> {
                 type="text"
                 placeholder="Enter your seed phrase here to import your wallet."
                 onChange={(e) => importStore.mnemonic = e.target.value}
-                error={_.isEmpty(importStore.mnemonic)}
                 InputProps={{
                   disableUnderline: true,
                   classes: { input: classes.mnemonicFieldInput },

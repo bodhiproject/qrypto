@@ -1,6 +1,6 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
 import { observable, action, toJS } from 'mobx';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 
 import walletStore from './WalletStore';
 import accountDetailStore from './AccountDetailStore';
@@ -31,7 +31,7 @@ class WalletStore {
   public init() {
     chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, async ({ testnetAccounts }) => {
       // Account not found, show Signup page
-      if (_.isEmpty(testnetAccounts)) {
+      if (isEmpty(testnetAccounts)) {
         this.loading = false;
         return;
       }
