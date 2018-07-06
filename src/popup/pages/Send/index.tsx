@@ -25,18 +25,16 @@ export default class Send extends Component<any, {}> {
   }
 
   public render() {
-    const { classes, store: { sendStore, walletStore } } = this.props;
-    const { token, amount } = sendStore;
-    const { loggedInAccount, info } = walletStore;
+    const { classes } = this.props;
 
     return (
       <div className={classes.root}>
-        <NavBar hasBackButton={true} title="Send" />
+        <NavBar hasBackButton title="Send" />
         <div className={classes.contentContainer}>
-          <FromField loggedInAccount={loggedInAccount} info={info} sendStore={sendStore} />
-          <ToField info={info} sendStore={sendStore} />
-          <TokenField token={token} sendStore={sendStore} />
-          <AmountField info={info} amount={amount} token={token} sendStore={sendStore} />
+          <FromField {...this.props} />
+          <ToField {...this.props} />
+          <TokenField {...this.props} />
+          <AmountField {...this.props} />
           <SendButton {...this.props} />
         </div>
       </div>
@@ -44,11 +42,11 @@ export default class Send extends Component<any, {}> {
   }
 }
 
-const Heading = withStyles(styles, { withTheme: true })(({ classes, name }) => (
+const Heading = withStyles(styles, { withTheme: true })(({ classes, name }: any) => (
   <Typography className={classes.fieldHeading}>{name}</Typography>
 ));
 
-const FromField = withStyles(styles, { withTheme: true })(({ classes, loggedInAccount, info, sendStore }) => (
+const FromField = observer(({ classes, store: { sendStore, walletStore: { loggedInAccount, info } } }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="From" />
     <div className={classes.fieldContentContainer}>
@@ -68,7 +66,7 @@ const FromField = withStyles(styles, { withTheme: true })(({ classes, loggedInAc
   </div>
 ));
 
-const ToField = withStyles(styles, { withTheme: true })(({ classes, info, sendStore }) => (
+const ToField = observer(({ classes, store: { sendStore, walletStore: { info } } }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="To" />
     <div className={classes.fieldContentContainer}>
@@ -84,26 +82,24 @@ const ToField = withStyles(styles, { withTheme: true })(({ classes, info, sendSt
   </div>
 ));
 
-const TokenField = withStyles(styles, { withTheme: true })(({ classes, token, sendStore }) => (
+const TokenField = observer(({ classes, store: { sendStore } }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="Token" />
     <div className={classes.fieldContentContainer}>
       <Select
         disableUnderline
-        value={token}
+        value={sendStore.token}
         inputProps={{ name: 'from', id: 'from' }}
         className={classes.tokenSelect}
         onChange={(event) => sendStore.token = event.target.value}
       >
-        <MenuItem value="QTUM">
-          <Typography className={classes.tokenText}>QTUM</Typography>
-        </MenuItem>
+        <MenuItem value="QTUM"><Typography className={classes.tokenText}>QTUM</Typography></MenuItem>
       </Select>
     </div>
   </div>
 ));
 
-const AmountField = withStyles(styles, { withTheme: true })(({ classes, info, amount, token, sendStore }) => (
+const AmountField = observer(({ classes, store: { walletStore: { info }, sendStore } }: any) => (
   <div className={classes.amountContainer}>
     <div className={classes.amountHeadingContainer}>
       <div className={classes.amountHeadingTextContainer}>
@@ -123,9 +119,8 @@ const AmountField = withStyles(styles, { withTheme: true })(({ classes, info, am
         type="number"
         multiline={false}
         placeholder="0.00"
-        value={amount}
         InputProps={{
-          endAdornment: <Typography className={classes.amountTokenAdornment}>{token}</Typography>,
+          endAdornment: <Typography className={classes.amountTokenAdornment}>{sendStore.token}</Typography>,
           disableUnderline: true,
         }}
         onChange={(event) => sendStore.amount = event.target.value}
