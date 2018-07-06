@@ -23,24 +23,22 @@ export default class Login extends Component<any, {}> {
   }
 
   public render() {
-    const { classes, history, store: { walletStore, loginStore } } = this.props;
+    const { classes } = this.props;
 
     return (
       <div className={classes.root}>
         <Paper className={classes.headerContainer}>
           <NavBar hasNetworkSelector isDarkTheme title="Login" />
-          <AccountSection accounts={walletStore.accounts} onImportWalletClick={this.onImportWalletClick} />
+          <AccountSection {...this.props} />
         </Paper>
-        <PermissionSection />
-        <LoginSection history={history} loginStore={loginStore} password={loginStore.password} />
+        <PermissionSection {...this.props} />
+        <LoginSection {...this.props} />
       </div>
     );
   }
-
-  private onImportWalletClick = () => this.props.history.push('/import');
 }
 
-const AccountSection = withStyles(styles, { withTheme: true })(({ classes, accounts, onImportWalletClick }: any) => (
+const AccountSection = ({ classes, history, store: { walletStore: { accounts } } }: any) => (
   <div className={classes.accountContainer}>
     <Typography className={classes.selectAcctText}>Select account</Typography>
     <Select disableUnderline className={classes.accountSelect} name="accounts" value={accounts[0].name}>
@@ -48,20 +46,20 @@ const AccountSection = withStyles(styles, { withTheme: true })(({ classes, accou
     </Select>
     <div className={classes.createAccountContainer}>
       <Typography className={classes.orText}>or</Typography>
-      <Button className={classes.createAccountButton} color="secondary" onClick={onImportWalletClick}>
+      <Button className={classes.createAccountButton} color="secondary" onClick={() => history.push('/import')}>
         Import Wallet
       </Button>
     </div>
   </div>
-));
+);
 
-const PermissionSection = withStyles(styles, { withTheme: true })(({ classes }: any) => (
+const PermissionSection = ({ classes }: any) => (
   <div className={classes.permissionContainer}>
     <Typography className={classes.permissionsHeader}>Permissions</Typography>
   </div>
-));
+);
 
-const LoginSection = withStyles(styles, { withTheme: true })(({ classes, history, loginStore, password }: any) => (
+const LoginSection = observer(({ classes, history, store: { loginStore } }: any) => (
   <div className={classes.loginContainer}>
     <PasswordInput
       classNames={classes.passwordField}
@@ -73,7 +71,7 @@ const LoginSection = withStyles(styles, { withTheme: true })(({ classes, history
       fullWidth
       variant="contained"
       color="primary"
-      disabled={_.isEmpty(password)}
+      disabled={_.isEmpty(loginStore.password)}
       onClick={() => history.push('/home')}
     >
       Login
