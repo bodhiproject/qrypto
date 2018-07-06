@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
+import { when } from 'mobx';
 import { Typography, withStyles, Button } from '@material-ui/core';
 
 import styles from './styles';
@@ -14,14 +15,21 @@ import cx from 'classnames';
 export default class SendConfirm extends Component<any, {}> {
 
   public handleConfirm = () => {
-    this.props.store.sendStore.send();
-    // TODO? UI decision - do we want to stay on the page after the transaction has been confirmed?
-    // this.props.history.push('/account-detail')
+    const { history, store: { sendStore } } = this.props;
+    sendStore.send();
+    when(
+      () => sendStore.sendState === 'Sent!',
+      () => {
+        sendStore.sendState = 'Initial';
+        history.push('/home');
+        history.push('/account-detail');
+      },
+    );
   }
 
   public render() {
     const { classes, store: { sendStore } } = this.props;
-    const { senderAddress, receiverAddress, amount, token, tip } = sendStore;
+    const { senderAddress, receiverAddress, amount, token, sendState, errorMessage } = sendStore;
 
     return(
       <div className={classes.sendConfirmRoot}>
@@ -53,10 +61,17 @@ export default class SendConfirm extends Component<any, {}> {
               <Typography className={classes.fieldValue}>0.01 <span className={classes.fieldUnit}>QTUM</span></Typography>
             </div>
           </div>
-          <Button fullWidth variant="contained" color="primary" onClick={this.handleConfirm}>
+          { errorMessage }
+          { sendState === 'Sending...' || sendState === 'Sent!' ? (
+            <Button fullWidth disabled variant="contained" color="primary" >
+            { sendState }
+            </Button>
+          ) : (
+            <Button fullWidth variant="contained" color="primary" onClick={this.handleConfirm}>
             Confirm
-          </Button>
-          {tip}
+            </Button>
+          )}
+
         </div>
       </div>
     );
