@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { Paper, Select, MenuItem, Typography, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
@@ -71,7 +71,7 @@ const LoginSection = observer(({ classes, history, store: { loginStore } }: any)
       fullWidth
       variant="contained"
       color="primary"
-      disabled={_.isEmpty(loginStore.password)}
+      disabled={isEmpty(loginStore.password)}
       onClick={() => history.push('/home')}
     >
       Login

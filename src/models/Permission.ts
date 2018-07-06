@@ -1,11 +1,25 @@
-import { observable } from 'mobx';
-
 export default class Permission {
-  @observable public name?: string;
-  @observable public allowed: boolean = false;
+  private _name: string;
+  private _allowed: boolean = false;
 
   constructor(name: string, allowed: boolean) {
-    this.name = name;
+    this._name = name;
     this.allowed = allowed;
+  }
+
+  get name(): string {
+    return this._name;
+  }
+
+  set name(name: string) {
+    this._name = name;
+  }
+
+  get allowed(): boolean {
+    return this._allowed;
+  }
+
+  set allowed(allowed: boolean) {
+    this._allowed = allowed;
   }
 }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { Typography, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
@@ -22,7 +22,7 @@ export default class Signup extends Component<any, {}> {
     const { history, store: { walletStore } } = this.props;
 
     // Route to home page if mnemonic is found in storage
-    if (!_.isEmpty(walletStore.accounts)) {
+    if (!isEmpty(walletStore.accounts)) {
       history.push('/login');
     }
   }

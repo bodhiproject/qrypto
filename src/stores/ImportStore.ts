@@ -34,6 +34,7 @@ class ImportStore {
     // Create and store Account in local storage
     // TODO: implement BIP38 encryption on the mnemonic here
     const account = new Account(accountName, mnemonic);
+    console.log('created acct');
     this.reset();
 
     walletStore.addAccount(account);
