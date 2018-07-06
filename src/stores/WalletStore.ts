@@ -87,7 +87,7 @@ class WalletStore {
   }
 
   @action
-  public onLogout = () => {
+  public logout = () => {
     walletStore.stopGetInfoPolling();
   }
 

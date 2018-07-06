@@ -1,20 +1,30 @@
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
+import { isEmpty } from 'lodash';
 
 import walletStore from './WalletStore';
 import Account from '../models/Account';
 
 const INIT_VALUES = {
-  enteredMnemonic: '',
+  mnemonic: '',
   accountName: '',
   password: '',
   confirmPassword: '',
 };
 
 class ImportStore {
-  @observable public enteredMnemonic: string = INIT_VALUES.enteredMnemonic;
+  @observable public mnemonic: string = INIT_VALUES.mnemonic;
   @observable public accountName: string = INIT_VALUES.accountName;
   @observable public password: string = INIT_VALUES.password;
   @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
+
+  @computed get matchError(): string | undefined {
+    return this.getMatchError();
+  }
+
+  @computed get error(): boolean {
+    const matchError = this.getMatchError();
+    return [this.mnemonic, this.accountName, this.password, this.confirmPassword].some(isEmpty) || !!matchError;
+  }
 
   @action
   public reset = () => Object.assign(this, INIT_VALUES)
@@ -28,6 +38,14 @@ class ImportStore {
 
     walletStore.addAccount(account);
     walletStore.recoverWallet(account.mnemonic!);
+  }
+
+  private getMatchError = (): string | undefined => {
+    let error;
+    if (!isEmpty(this.password) && !isEmpty(this.confirmPassword) && this.password !== this.confirmPassword) {
+      error = 'Passwords do not match.';
+    }
+    return error;
   }
 }
 

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { Typography, TextField, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-import _ from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
@@ -24,7 +23,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
 
   public render() {
     const { classes, store: { importStore } }: any = this.props;
-    const error = this.getPasswordMatchError();
+    const matchError = importStore.matchError;
 
     return (
       <div className={classes.root}>
@@ -41,8 +40,8 @@ export default class ImportMnemonic extends Component<{}, IState> {
                 rows={5}
                 type="text"
                 placeholder="Enter your seed phrase here to import your wallet."
-                onChange={(e) => importStore.enteredMnemonic = e.target.value}
-                error={_.isEmpty(importStore.enteredMnemonic)}
+                onChange={(e) => importStore.mnemonic = e.target.value}
+                error={_.isEmpty(importStore.mnemonic)}
                 InputProps={{
                   disableUnderline: true,
                   classes: { input: classes.mnemonicFieldInput },
@@ -67,8 +66,8 @@ export default class ImportMnemonic extends Component<{}, IState> {
               <PasswordInput
                 classNames={classes.passwordField}
                 placeholder="Confirm password"
-                helperText={error}
-                error={error}
+                helperText={matchError}
+                error={matchError}
                 onChange={(e: any) => importStore.confirmPassword = e.target.value}
               />
             </div>
@@ -80,13 +79,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
               variant="contained"
               color="primary"
               onClick={this.recoverAndGoToHomePage}
-              disabled={
-                _.isEmpty(importStore.enteredMnemonic)
-                  || _.isEmpty(importStore.accountName)
-                  || _.isEmpty(importStore.password)
-                  || _.isEmpty(importStore.confirmPassword)
-                  || error
-              }
+              disabled={importStore.error}
             >
               Import
             </Button>
@@ -104,23 +97,13 @@ export default class ImportMnemonic extends Component<{}, IState> {
     );
   }
 
-  private getPasswordMatchError = () => {
-    const { password, confirmPassword } = this.props.store.importStore;
-
-    let error;
-    if (!_.isEmpty(password) && !_.isEmpty(confirmPassword) && password !== confirmPassword) {
-      error = 'Passwords do not match.';
-    }
-    return error;
-  }
-
   private recoverAndGoToHomePage = () => {
     const { store: { walletStore, importStore }, history }: any = this.props;
-    const { enteredMnemonic, accountName } = importStore;
+    const { mnemonic, accountName } = importStore;
 
     walletStore.loading = true;
     setTimeout(() => {
-      importStore.onImportNewMnemonic(enteredMnemonic, accountName);
+      importStore.onImportNewMnemonic(mnemonic, accountName);
       history.push('/home');
     }, 100);
   }
