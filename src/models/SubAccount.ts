@@ -1,27 +1,25 @@
+import { observable, action } from 'mobx';
+import { findIndex } from 'lodash';
+
 import Permission from './Permission';
 
 export default class SubAccount {
-  private _name: string;
-  private _permissions: Permission[] = [];
+  @observable public name: string;
+  @observable public permissions: Permission[] = [];
 
   constructor(name: string, permissions: Permission[]) {
-    this._name = name;
-    this._permissions = permissions;
+    this.name = name;
+    this.permissions = permissions;
   }
 
-  get name(): string {
-    return this._name;
-  }
-
-  set name(name: string) {
-    this._name = name;
-  }
-
-  get permissions(): Permission[] {
-    return this._permissions;
-  }
-
-  set permissions(permissions: Permission[]) {
-    this._permissions = permissions;
+  @action
+  public changePermission(permissionName: string, allowed: boolean) {
+    const permission = new Permission(permissionName, allowed);
+    const index = findIndex(this.permissions, { name: permissionName });
+    if (index !== -1) {
+      this.permissions[index] = permission;
+    } else {
+      this.permissions.push(permission);
+    }
   }
 }
