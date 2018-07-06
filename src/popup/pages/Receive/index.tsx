@@ -17,7 +17,7 @@ export default class Receive extends Component<any, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { loggedInAccount, info } = this.props.store.walletStore;
+    const { loggedInAccount, info, balanceUSD } = this.props.store.walletStore;
 
     return(
       <div>
@@ -29,7 +29,7 @@ export default class Receive extends Component<any, {}> {
             <Typography className={classes.tokenAmount}>{info.balance}</Typography>
             <Typography className={classes.token}>QTUM</Typography>
           </div>
-          <Typography className={classes.currencyValue}>$12345.67</Typography>
+          <Typography className={classes.currencyValue}>${balanceUSD} USD</Typography>
           <div className={classes.qrCodeContainer}>
             <QRCode value={info.addrStr} />
           </div>

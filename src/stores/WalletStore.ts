@@ -1,6 +1,8 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
-import { observable, action, toJS } from 'mobx';
+
+import { observable, action, toJS, computed } from 'mobx';
 import { isEmpty } from 'lodash';
+import axios from 'axios';
 
 import AppStore from './AppStore';
 import { STORAGE } from '../constants';
@@ -19,10 +21,20 @@ export default class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public accounts: Account[] = [];
   @observable public loggedInAccount?: Account = undefined;
+  @observable public qtumPriceUSD = 0;
+  @computed get balanceUSD() {
+    if (this.qtumPriceUSD && this.info) {
+      return (this.qtumPriceUSD * this.info.balance).toFixed(2);
+    } else {
+      return 'Loading';
+    }
+  }
+
   public wallet?: Wallet = undefined;
 
   private app: AppStore;
   private getInfoInterval?: NodeJS.Timer = undefined;
+  private getPriceInterval?: NodeJS.Timer = undefined;
 
   constructor(app: AppStore) {
     this.app = app;
@@ -41,6 +53,8 @@ export default class WalletStore {
       this.accounts = testnetAccounts;
       this.loggedInAccount = this.accounts[0];
       this.recoverWallet(this.accounts[0].mnemonic!);
+      this.getWalletInfo();
+      this.getQtumPrice();
       this.loading = false;
     });
   }
@@ -72,24 +86,38 @@ export default class WalletStore {
   }
 
   @action
-  public startGetInfoPolling() {
-    this.getWalletInfo();
-
+  public startPolling() {
     this.getInfoInterval = setInterval(() => {
       this.getWalletInfo();
     }, 5000);
+    this.getPriceInterval = setInterval(() => {
+        this.getQtumPrice();
+    }, 60000);
   }
 
   @action
-  public stopGetInfoPolling() {
+  public stopPolling() {
     if (this.getInfoInterval) {
       clearInterval(this.getInfoInterval);
+    }
+    if (this.getPriceInterval) {
+      clearInterval(this.getPriceInterval);
     }
   }
 
   @action
   public logout = () => {
-    this.app.walletStore.stopGetInfoPolling();
+    this.app.walletStore.stopPolling();
+  }
+
+  @action
+  private async getQtumPrice() {
+    try {
+      const jsonObj = await axios.get('https://api.coinmarketcap.com/v2/ticker/1684/');
+      this.qtumPriceUSD = jsonObj.data.data.quotes.USD.price;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   @action
