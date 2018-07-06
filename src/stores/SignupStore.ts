@@ -6,7 +6,7 @@ const INIT_VALUES = {
   confirmPassword: '',
 };
 
-class SignupStore {
+export default class SignupStore {
   @observable public password: string = INIT_VALUES.password;
   @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
 
@@ -30,5 +30,3 @@ class SignupStore {
     return error;
   }
 }
-
-export default new SignupStore();

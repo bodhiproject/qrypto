@@ -14,7 +14,7 @@ import Send from './pages/Send';
 import Receive from './pages/Receive';
 import SendConfirm from './pages/SendConfirm';
 import Loading from './components/Loading';
-import store from '../stores/AppStore';
+import { store } from '../stores/AppStore';
 import theme from '../config/theme';
 
 @observer

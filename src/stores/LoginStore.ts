@@ -4,11 +4,9 @@ const INIT_VALUES = {
   password: '',
 };
 
-class LoginStore {
+export default class LoginStore {
   @observable public password: string = INIT_VALUES.password;
 
   @action
   public reset = () => Object.assign(this, INIT_VALUES)
 }
-
-export default new LoginStore();

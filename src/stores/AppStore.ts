@@ -1,32 +1,31 @@
-import uiStore from './UiStore';
-import walletStore from './WalletStore';
-import signupStore from './SignupStore';
-import loginStore from './LoginStore';
-import importStore from './ImportStore';
-import accountDetailStore from './AccountDetailStore';
-import sendStore from './SendStore';
+import UiStore from './UiStore';
+import WalletStore from './WalletStore';
+import SignupStore from './SignupStore';
+import LoginStore from './LoginStore';
+import ImportStore from './ImportStore';
+import AccountDetailStore from './AccountDetailStore';
+import SendStore from './SendStore';
 
-class AppStore {
+export default class AppStore {
   public location = '/login';
-  public ui = {};
-  public walletStore = {};
-  public signupStore = {};
-  public loginStore = {};
-  public importStore = {};
-  public accountDetailStore = {};
-  public sendStore = {};
+  public ui: UiStore;
+  public walletStore: WalletStore;
+  public signupStore: SignupStore;
+  public loginStore: LoginStore;
+  public importStore: ImportStore;
+  public accountDetailStore: AccountDetailStore;
+  public sendStore: SendStore;
 
   constructor() {
-    this.ui = uiStore;
-    this.walletStore = walletStore;
-    this.signupStore = signupStore;
-    this.loginStore = loginStore;
-    this.importStore = importStore;
-    this.accountDetailStore = accountDetailStore;
-    this.sendStore = sendStore;
+    this.ui = new UiStore();
+    this.walletStore = new WalletStore(this);
+    this.signupStore = new SignupStore();
+    this.loginStore = new LoginStore();
+    this.importStore = new ImportStore(this);
+    this.accountDetailStore = new AccountDetailStore();
+    this.sendStore = new SendStore(this);
   }
 }
 
-const store = new AppStore();
+export const store = new AppStore();
 window.store = store; // allows us to see store in browser console for debugging
-export default store;

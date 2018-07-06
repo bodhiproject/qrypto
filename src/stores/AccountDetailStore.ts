@@ -2,7 +2,7 @@ import { observable, action } from 'mobx';
 
 import Transaction from '../models/Transaction';
 
-class AccountDetailStore {
+export default class AccountDetailStore {
   @observable public activeTabIdx: number = 0;
   @observable.shallow public items: Transaction[] = [];
 
@@ -12,5 +12,3 @@ class AccountDetailStore {
     this.items = items.map((id) => new Transaction({ id }));
   }
 }
-
-export default new AccountDetailStore();

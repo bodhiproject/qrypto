@@ -2,12 +2,11 @@ import { networks, Wallet, Insight } from 'qtumjs-wallet';
 import { observable, action, toJS } from 'mobx';
 import { isEmpty } from 'lodash';
 
-import walletStore from './WalletStore';
-import accountDetailStore from './AccountDetailStore';
+import AppStore from './AppStore';
 import { STORAGE } from '../constants';
 import Account from '../models/Account';
 
-class WalletStore {
+export default class WalletStore {
   // Loading screen flow for app first load and import mnemonic
   // 1 Default -> loading true
   // 2 chrome.storage loading mnemonic
@@ -20,11 +19,13 @@ class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public accounts: Account[] = [];
   @observable public loggedInAccount?: Account = undefined;
+  public wallet?: Wallet = undefined;
 
-  private wallet?: Wallet = undefined;
+  private app: AppStore;
   private getInfoInterval?: NodeJS.Timer = undefined;
 
-  constructor() {
+  constructor(app: AppStore) {
+    this.app = app;
     setTimeout(this.init.bind(this), 100);
   }
 
@@ -88,14 +89,12 @@ class WalletStore {
 
   @action
   public logout = () => {
-    walletStore.stopGetInfoPolling();
+    this.app.walletStore.stopGetInfoPolling();
   }
 
   @action
   private async getWalletInfo() {
     this.info = await this.wallet!.getInfo();
-    accountDetailStore.loadFromIds(this.info.transactions);
+    this.app.accountDetailStore.loadFromIds(this.info.transactions);
   }
 }
-
-export default new WalletStore();

@@ -1,7 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import { isEmpty } from 'lodash';
 
-import walletStore from './WalletStore';
+import AppStore from './AppStore';
 import Account from '../models/Account';
 
 const INIT_VALUES = {
@@ -11,11 +11,17 @@ const INIT_VALUES = {
   confirmPassword: '',
 };
 
-class ImportStore {
+export default class ImportStore {
   @observable public mnemonic: string = INIT_VALUES.mnemonic;
   @observable public accountName: string = INIT_VALUES.accountName;
   @observable public password: string = INIT_VALUES.password;
   @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
+
+  private app: AppStore;
+
+  constructor(app: AppStore) {
+    this.app = app;
+  }
 
   @computed get matchError(): string | undefined {
     return this.getMatchError();
@@ -37,8 +43,8 @@ class ImportStore {
     console.log('created acct');
     this.reset();
 
-    walletStore.addAccount(account);
-    walletStore.recoverWallet(account.mnemonic!);
+    this.app.walletStore.addAccount(account);
+    this.app.walletStore.recoverWallet(account.mnemonic!);
   }
 
   private getMatchError = (): string | undefined => {
@@ -49,5 +55,3 @@ class ImportStore {
     return error;
   }
 }
-
-export default new ImportStore();
