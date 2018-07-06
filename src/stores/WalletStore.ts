@@ -1,14 +1,12 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
 
-import { observable, action, toJS, runInAction, computed } from 'mobx';
+import { observable, action, toJS, computed } from 'mobx';
 import { isEmpty } from 'lodash';
 import axios from 'axios';
 
 import AppStore from './AppStore';
 import { STORAGE } from '../constants';
 import Account from '../models/Account';
-import transactionStore from './TransactionStore';
-
 
 export default class WalletStore {
   // Loading screen flow for app first load and import mnemonic
@@ -23,7 +21,7 @@ export default class WalletStore {
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public accounts: Account[] = [];
   @observable public loggedInAccount?: Account = undefined;
-  @observable public qtumPriceUSD = '';
+  @observable public qtumPriceUSD = 0;
   @computed get balanceUSD() {
     if (this.qtumPriceUSD && this.info) {
       return (this.qtumPriceUSD * this.info.balance).toFixed(2);
@@ -31,11 +29,10 @@ export default class WalletStore {
       return 'Loading';
     }
   }
-  
+
   public wallet?: Wallet = undefined;
 
   private app: AppStore;
-
   private getInfoInterval?: NodeJS.Timer = undefined;
   private getPriceInterval?: NodeJS.Timer = undefined;
 
