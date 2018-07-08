@@ -19,10 +19,10 @@ export default class CreateWallet extends Component<any, {}> {
   };
 
   public componentDidMount() {
-    const { history, store: { walletStore } } = this.props;
+    const { history, store: { createWalletStore, walletStore } } = this.props;
 
     // Route to home page if mnemonic is found in storage
-    if (!isEmpty(walletStore.accounts)) {
+    if (createWalletStore.rerouteToLogin && !isEmpty(walletStore.accounts)) {
       history.push('/login');
     }
   }

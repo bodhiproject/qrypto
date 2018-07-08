@@ -20,7 +20,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
   public componentWillUnmount() {
     this.props.store.importStore.reset();
   }
-    
+
   public componentDidMount() {
     this.props.store.walletStore.stopPolling();
   }
