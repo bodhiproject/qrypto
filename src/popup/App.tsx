@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 
 import './App.scss';
-import Signup from './pages/Signup';
+import CreateWallet from './pages/CreateWallet';
 import ImportMnemonic from './pages/ImportMnemonic';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -37,11 +37,11 @@ class App extends Component<IProps, IState> {
               {store.walletStore.loading ? (
                 <Redirect to="/loading" />
               ) : (
-                <Redirect to="/signup" />
+                <Redirect to="/create-wallet" />
               )}
 
               <Route exact path="/loading" component={Loading} />
-              <Route exact path="/signup" component={Signup} />
+              <Route exact path="/create-wallet" component={CreateWallet} />
               <Route exact path="/import" component={ImportMnemonic} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/home" component={Home} />

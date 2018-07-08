@@ -6,7 +6,7 @@ const INIT_VALUES = {
   confirmPassword: '',
 };
 
-export default class SignupStore {
+export default class CreateWalletStore {
   @observable public password: string = INIT_VALUES.password;
   @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
 
