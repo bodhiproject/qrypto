@@ -32,7 +32,7 @@ export default class Login extends Component<any, {}> {
           <AccountSection onCreateWalletClick={this.onCreateWalletClick} {...this.props} />
         </Paper>
         <PermissionSection {...this.props} />
-        <LoginSection {...this.props} />
+        <LoginSection onLoginClick={this.onLoginClick} {...this.props} />
       </div>
     );
   }
@@ -41,16 +41,21 @@ export default class Login extends Component<any, {}> {
     this.props.history.push('/create-wallet');
     this.props.store.createWalletStore.rerouteToLogin = false;
   }
+
+  private onLoginClick = () => {
+    this.props.history.push('/home');
+  }
 }
 
-const AccountSection = ({ classes, store: { walletStore: { accounts } }, onCreateWalletClick }: any) => (
+const AccountSection = observer(({ classes, store: { walletStore: { accounts }, loginStore }, onCreateWalletClick }: any) => (
   <div className={classes.accountContainer}>
     <Typography className={classes.selectAcctText}>Select account</Typography>
     <Select
       disableUnderline
       className={classes.accountSelect}
       name="accounts"
-      value={accounts[0].name}
+      value={loginStore.selectedWalletName}
+      onChange={(e) => loginStore.selectedWalletName = e.target.value}
     >
       {accounts.map((acct: Account, index: number) => <MenuItem key={index} value={acct.name}>{acct.name}</MenuItem>)}
     </Select>
@@ -69,7 +74,7 @@ const PermissionSection = ({ classes }: any) => (
   </div>
 );
 
-const LoginSection = observer(({ classes, history, store: { loginStore } }: any) => (
+const LoginSection = observer(({ classes, store: { loginStore }, onLoginClick }: any) => (
   <div className={classes.loginContainer}>
     <PasswordInput
       classNames={classes.passwordField}
@@ -82,7 +87,7 @@ const LoginSection = observer(({ classes, history, store: { loginStore } }: any)
       variant="contained"
       color="primary"
       disabled={isEmpty(loginStore.password)}
-      onClick={() => history.push('/home')}
+      onClick={onLoginClick}
     >
       Login
     </Button>

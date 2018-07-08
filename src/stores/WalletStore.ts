@@ -52,6 +52,7 @@ export default class WalletStore {
       // Account found, recover wallet
       this.accounts = testnetAccounts;
       this.loggedInAccount = this.accounts[0];
+      this.app.loginStore.selectedWalletName = this.accounts[0].name;
       this.recoverWallet(this.accounts[0].mnemonic!);
       this.getWalletInfo();
       this.getQtumPrice();
