@@ -22,7 +22,7 @@ export default class SaveMnemonic extends Component<any, {}> {
   }
 
   public render() {
-    const { classes, store: { saveMnemonicStore: { mnemonic } } } = this.props;
+    const { classes, store: { saveMnemonicStore: { mnemonic, saveToFile } } } = this.props;
 
     return (
       <div className={classes.root}>
@@ -44,7 +44,7 @@ export default class SaveMnemonic extends Component<any, {}> {
               fullWidth
               variant="contained"
               color="secondary"
-              onClick={this.onSaveToFileClick}
+              onClick={saveToFile}
             >
               Save To File
             </Button>
@@ -61,9 +61,5 @@ export default class SaveMnemonic extends Component<any, {}> {
       saveMnemonicStore.createWallet();
       history.push('/home');
     }, 100);
-  }
-
-  private onSaveToFileClick = () => {
-    // TODO: implement save as txt file
   }
 }

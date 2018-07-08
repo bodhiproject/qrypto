@@ -38,6 +38,14 @@ export default class SaveMnemonicStore {
     walletStore.recoverWallet(account.mnemonic!);
   }
 
+  public saveToFile = () => {
+    const file = new Blob([this.mnemonic], {type: 'text/plain'});
+    const element = document.createElement('a');
+    element.href = URL.createObjectURL(file);
+    element.download = `${this.walletName}_backup.txt`;
+    element.click();
+  }
+
   @action
   public reset = () => Object.assign(this, INIT_VALUES)
 }
