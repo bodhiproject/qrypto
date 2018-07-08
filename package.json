@@ -13,7 +13,7 @@
     "prepush": "npm run linter-fix"
   },
   "lint-staged": {
-    "*.{ts,tsx,js}": [
+    "*.{ts,tsx}": [
       "npm run linter-fix",
       "git add"
     ]
