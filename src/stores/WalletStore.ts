@@ -74,11 +74,6 @@ export default class WalletStore {
   }
 
   @action
-  public onCreateNewWallet() {
-    // TODO: implement
-  }
-
-  @action
   public recoverWallet(mnemonic: string): Wallet {
     const network = networks.testnet;
     this.wallet = network.fromMnemonic(mnemonic);

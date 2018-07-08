@@ -46,7 +46,12 @@ export default class Login extends Component<any, {}> {
 const AccountSection = ({ classes, store: { walletStore: { accounts } }, onCreateWalletClick }: any) => (
   <div className={classes.accountContainer}>
     <Typography className={classes.selectAcctText}>Select account</Typography>
-    <Select disableUnderline className={classes.accountSelect} name="accounts" value={accounts[0].name}>
+    <Select
+      disableUnderline
+      className={classes.accountSelect}
+      name="accounts"
+      value={accounts[0].name}
+    >
       {accounts.map((acct: Account, index: number) => <MenuItem key={index} value={acct.name}>{acct.name}</MenuItem>)}
     </Select>
     <div className={classes.createAccountContainer}>
