@@ -43,7 +43,7 @@ export default class WalletStore {
 
   public init() {
     chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, async ({ testnetAccounts }) => {
-      // Account not found, show Signup page
+      // Account not found, show CreateWallet page
       if (isEmpty(testnetAccounts)) {
         this.loading = false;
         return;

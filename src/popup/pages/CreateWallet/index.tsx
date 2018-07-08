@@ -13,7 +13,7 @@ import PasswordInput from '../../components/PasswordInput';
 @withRouter
 @inject('store')
 @observer
-export default class Signup extends Component<any, {}> {
+export default class CreateWallet extends Component<any, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
@@ -28,12 +28,12 @@ export default class Signup extends Component<any, {}> {
   }
 
   public componentWillUnmount() {
-    this.props.store.signupStore.reset();
+    this.props.store.createWalletStore.reset();
   }
 
   public render() {
-    const { classes, store: { signupStore } } = this.props;
-    const matchError = signupStore.matchError;
+    const { classes, store: { createWalletStore } } = this.props;
+    const matchError = createWalletStore.matchError;
 
     return (
       <div className={classes.root}>
@@ -47,14 +47,14 @@ export default class Signup extends Component<any, {}> {
             <PasswordInput
               classNames={classes.passwordField}
               placeholder="Password"
-              onChange={(e: any) => signupStore.password = e.target.value}
+              onChange={(e: any) => createWalletStore.password = e.target.value}
             />
             <PasswordInput
               classNames={classes.confirmPasswordField}
               placeholder="Confirm password"
               helperText={matchError}
               error={matchError}
-              onChange={(e: any) => signupStore.confirmPassword = e.target.value}
+              onChange={(e: any) => createWalletStore.confirmPassword = e.target.value}
             />
           </div>
           <Button
@@ -62,7 +62,7 @@ export default class Signup extends Component<any, {}> {
             fullWidth
             variant="contained"
             color="primary"
-            disabled={signupStore.error}
+            disabled={createWalletStore.error}
           >
             Create Wallet
           </Button>
