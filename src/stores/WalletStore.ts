@@ -1,7 +1,7 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
 
 import { observable, action, toJS, computed } from 'mobx';
-import { isEmpty } from 'lodash';
+import { isEmpty, find } from 'lodash';
 import axios from 'axios';
 
 import AppStore from './AppStore';
@@ -98,6 +98,18 @@ export default class WalletStore {
     }
     if (this.getPriceInterval) {
       clearInterval(this.getPriceInterval);
+    }
+  }
+
+  @action
+  public login(accountName: string) {
+    const foundAccount = find(this.accounts, { name: accountName });
+    if (foundAccount) {
+      this.loggedInAccount = foundAccount;
+      this.recoverWallet(this.loggedInAccount!.mnemonic!);
+      this.getWalletInfo();
+      this.getQtumPrice();
+      this.loading = false;
     }
   }
 

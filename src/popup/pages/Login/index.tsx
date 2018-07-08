@@ -43,7 +43,13 @@ export default class Login extends Component<any, {}> {
   }
 
   private onLoginClick = () => {
-    this.props.history.push('/home');
+    const { history, store: { walletStore, loginStore } } = this.props;
+
+    walletStore.loading = true;
+    setTimeout(() => {
+      walletStore.login(loginStore.selectedWalletName);
+      history.push('/home');
+    }, 100);
   }
 }
 
