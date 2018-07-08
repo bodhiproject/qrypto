@@ -9,7 +9,7 @@ const INIT_VALUES = {
 export default class SaveMnemonicStore {
   @observable public mnemonic: string = INIT_VALUES.mnemonic;
 
-  private password: string = INIT_VALUES.password; /* tslint-disable-line */
+  private password: string = INIT_VALUES.password;
 
   @action
   public generateMnemonic = () => {
