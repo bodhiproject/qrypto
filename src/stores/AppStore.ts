@@ -1,7 +1,7 @@
 import UiStore from './UiStore';
 import WalletStore from './WalletStore';
 import CreateWalletStore from './CreateWalletStore';
-import SaveSeedStore from './SaveSeedStore';
+import SaveMnemonicStore from './SaveMnemonicStore';
 import LoginStore from './LoginStore';
 import ImportStore from './ImportStore';
 import AccountDetailStore from './AccountDetailStore';
@@ -12,7 +12,7 @@ export default class AppStore {
   public ui: UiStore;
   public walletStore: WalletStore;
   public createWalletStore: CreateWalletStore;
-  public saveSeedStore: SaveSeedStore;
+  public saveMnemonicStore: SaveMnemonicStore;
   public loginStore: LoginStore;
   public importStore: ImportStore;
   public accountDetailStore: AccountDetailStore;
@@ -22,7 +22,7 @@ export default class AppStore {
     this.ui = new UiStore();
     this.walletStore = new WalletStore(this);
     this.createWalletStore = new CreateWalletStore();
-    this.saveSeedStore = new SaveSeedStore();
+    this.saveMnemonicStore = new SaveMnemonicStore();
     this.loginStore = new LoginStore();
     this.importStore = new ImportStore(this);
     this.accountDetailStore = new AccountDetailStore();

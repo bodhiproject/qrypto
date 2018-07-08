@@ -6,6 +6,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 
 import './App.scss';
 import CreateWallet from './pages/CreateWallet';
+import SaveMnemonic from './pages/SaveMnemonic';
 import ImportMnemonic from './pages/ImportMnemonic';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -42,6 +43,7 @@ class App extends Component<IProps, IState> {
 
               <Route exact path="/loading" component={Loading} />
               <Route exact path="/create-wallet" component={CreateWallet} />
+              <Route exact path="/save-mnemonic" component={SaveMnemonic} />
               <Route exact path="/import" component={ImportMnemonic} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/home" component={Home} />

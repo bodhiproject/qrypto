@@ -11,7 +11,7 @@ import NavBar from '../../components/NavBar';
 @withRouter
 @inject('store')
 @observer
-export default class SaveSeed extends Component<any, {}> {
+export default class SaveMnemonic extends Component<any, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
