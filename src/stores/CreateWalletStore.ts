@@ -4,11 +4,13 @@ import { isEmpty } from 'lodash';
 const INIT_VALUES = {
   password: '',
   confirmPassword: '',
+  rerouteToLogin: true,
 };
 
-export default class SignupStore {
+export default class CreateWalletStore {
   @observable public password: string = INIT_VALUES.password;
   @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
+  public rerouteToLogin: boolean = INIT_VALUES.rerouteToLogin;
 
   @computed get matchError(): string | undefined {
     return this.getMatchError();

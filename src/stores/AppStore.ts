@@ -1,6 +1,6 @@
 import UiStore from './UiStore';
 import WalletStore from './WalletStore';
-import SignupStore from './SignupStore';
+import CreateWalletStore from './CreateWalletStore';
 import LoginStore from './LoginStore';
 import ImportStore from './ImportStore';
 import AccountDetailStore from './AccountDetailStore';
@@ -10,7 +10,7 @@ export default class AppStore {
   public location = '/login';
   public ui: UiStore;
   public walletStore: WalletStore;
-  public signupStore: SignupStore;
+  public createWalletStore: CreateWalletStore;
   public loginStore: LoginStore;
   public importStore: ImportStore;
   public accountDetailStore: AccountDetailStore;
@@ -19,7 +19,7 @@ export default class AppStore {
   constructor() {
     this.ui = new UiStore();
     this.walletStore = new WalletStore(this);
-    this.signupStore = new SignupStore();
+    this.createWalletStore = new CreateWalletStore();
     this.loginStore = new LoginStore();
     this.importStore = new ImportStore(this);
     this.accountDetailStore = new AccountDetailStore();

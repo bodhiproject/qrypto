@@ -29,16 +29,21 @@ export default class Login extends Component<any, {}> {
       <div className={classes.root}>
         <Paper className={classes.headerContainer}>
           <NavBar hasNetworkSelector isDarkTheme title="Login" />
-          <AccountSection {...this.props} />
+          <AccountSection onCreateWalletClick={this.onCreateWalletClick} {...this.props} />
         </Paper>
         <PermissionSection {...this.props} />
         <LoginSection {...this.props} />
       </div>
     );
   }
+
+  private onCreateWalletClick = () => {
+    this.props.history.push('/create-wallet');
+    this.props.store.createWalletStore.rerouteToLogin = false;
+  }
 }
 
-const AccountSection = ({ classes, history, store: { walletStore: { accounts } } }: any) => (
+const AccountSection = ({ classes, store: { walletStore: { accounts } }, onCreateWalletClick }: any) => (
   <div className={classes.accountContainer}>
     <Typography className={classes.selectAcctText}>Select account</Typography>
     <Select disableUnderline className={classes.accountSelect} name="accounts" value={accounts[0].name}>
@@ -46,8 +51,8 @@ const AccountSection = ({ classes, history, store: { walletStore: { accounts } }
     </Select>
     <div className={classes.createAccountContainer}>
       <Typography className={classes.orText}>or</Typography>
-      <Button className={classes.createAccountButton} color="secondary" onClick={() => history.push('/import')}>
-        Import Wallet
+      <Button className={classes.createAccountButton} color="secondary" onClick={onCreateWalletClick}>
+        Create New Wallet
       </Button>
     </div>
   </div>
