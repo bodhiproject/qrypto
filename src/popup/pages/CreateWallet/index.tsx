@@ -47,7 +47,7 @@ export default class CreateWallet extends Component<any, {}> {
             <PasswordInput
               classNames={classes.passwordField}
               placeholder="Password"
-              onChange={(e: any) => createWalletStore.password = e.target.value}
+              onChange={this.onPasswordChange}
             />
             <PasswordInput
               classNames={classes.confirmPasswordField}
@@ -63,6 +63,7 @@ export default class CreateWallet extends Component<any, {}> {
             variant="contained"
             color="primary"
             disabled={createWalletStore.error}
+            onClick={() => this.props.history.push('/save-mnemonic')}
           >
             Create Wallet
           </Button>
@@ -78,5 +79,11 @@ export default class CreateWallet extends Component<any, {}> {
         </div>
       </div>
     );
+  }
+
+  private onPasswordChange = (event: any) => {
+    const { createWalletStore, saveMnemonicStore } = this.props.store;
+    createWalletStore.password = event.target.value;
+    saveMnemonicStore.password = event.target.value;
   }
 }
