@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { Typography, withStyles } from '@material-ui/core';
+import { Typography, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
 
@@ -45,7 +45,6 @@ export default class SaveMnemonic extends Component<any, {}> {
               variant="contained"
               color="secondary"
               onClick={this.onSaveAsFileClick}
-              disabled={importStore.error}
             >
               Save Mnemonic As File
             </Button>

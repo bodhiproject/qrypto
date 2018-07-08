@@ -14,16 +14,17 @@ const styles = (theme) =>({
     fontSize: theme.font.md,
     fontWeight: theme.font.weight.bold,
     color: theme.palette.text.primary,
-    marginBottom: theme.spacing.xs,
+    marginBottom: theme.spacing.md,
   },
   mnemonicText: {
     flex: 1,
-    fontSize: theme.font.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    fontSize: theme.font.xl,
     fontWeight: theme.font.weight.bold,
     color: theme.palette.primary.main,
     border: theme.border.root,
     borderRadius: theme.border.radius,
-    marginBottom: theme.spacing.md,
   },
   actionButton: {
     height: theme.button.lg.height,
@@ -31,7 +32,7 @@ const styles = (theme) =>({
     '&.marginBottom': {
       marginBottom: theme.spacing.md,
     },
-  }
+  },
 });
 
 export default styles;
