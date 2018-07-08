@@ -37,16 +37,16 @@ export default class SaveMnemonic extends Component<any, {}> {
               color="primary"
               onClick={this.onICopiedClick}
             >
-              I Have Copied It Somewhere Safe
+              I Copied It Somewhere Safe
             </Button>
             <Button
               className={classes.actionButton}
               fullWidth
               variant="contained"
               color="secondary"
-              onClick={this.onSaveAsFileClick}
+              onClick={this.onSaveToFileClick}
             >
-              Save Mnemonic As File
+              Save To File
             </Button>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default class SaveMnemonic extends Component<any, {}> {
     }, 100);
   }
 
-  private onSaveAsFileClick = () => {
+  private onSaveToFileClick = () => {
     // TODO: implement save as txt file
   }
 }
