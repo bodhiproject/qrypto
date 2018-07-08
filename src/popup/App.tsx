@@ -26,7 +26,6 @@ class App extends Component<IProps, IState> {
   }
 
   public render() {
-
     return (
       <MobxProvider store={store}>
         <MuiThemeProvider theme={theme}>

@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
+import BorderTextField from '../../components/BorderTextField';
 import PasswordInput from '../../components/PasswordInput';
 
 @withStyles(styles, { withTheme: true })
@@ -44,6 +45,11 @@ export default class CreateWallet extends Component<any, {}> {
             <Typography className={classes.logoDesc}>Create your Qrypto wallet</Typography>
           </div>
           <div className={classes.fieldContainer}>
+            <BorderTextField
+              classNames={classes.walletNameField}
+              placeholder="Wallet name"
+              onChange={this.onWalletNameChange}
+            />
             <PasswordInput
               classNames={classes.passwordField}
               placeholder="Password"
@@ -79,6 +85,12 @@ export default class CreateWallet extends Component<any, {}> {
         </div>
       </div>
     );
+  }
+
+  private onWalletNameChange = (event: any) => {
+    const { createWalletStore, saveMnemonicStore } = this.props.store;
+    createWalletStore.walletName = event.target.value;
+    saveMnemonicStore.walletName = event.target.value;
   }
 
   private onPasswordChange = (event: any) => {

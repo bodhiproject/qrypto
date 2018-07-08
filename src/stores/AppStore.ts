@@ -22,7 +22,7 @@ export default class AppStore {
     this.ui = new UiStore();
     this.walletStore = new WalletStore(this);
     this.createWalletStore = new CreateWalletStore();
-    this.saveMnemonicStore = new SaveMnemonicStore();
+    this.saveMnemonicStore = new SaveMnemonicStore(this);
     this.loginStore = new LoginStore();
     this.importStore = new ImportStore(this);
     this.accountDetailStore = new AccountDetailStore();

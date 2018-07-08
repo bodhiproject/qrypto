@@ -22,7 +22,7 @@ export default class SaveMnemonic extends Component<any, {}> {
   }
 
   public render() {
-    const { classes, history, store: { saveMnemonicStore: { mnemonic } } } = this.props;
+    const { classes, store: { saveMnemonicStore: { mnemonic } } } = this.props;
 
     return (
       <div className={classes.root}>
@@ -35,7 +35,7 @@ export default class SaveMnemonic extends Component<any, {}> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={() => history.push('/home')}
+              onClick={this.onICopiedClick}
             >
               I Have Copied It Somewhere Safe
             </Button>
@@ -51,6 +51,16 @@ export default class SaveMnemonic extends Component<any, {}> {
         </div>
       </div>
     );
+  }
+
+  private onICopiedClick = () => {
+    const { history, store: { walletStore, saveMnemonicStore } } = this.props;
+
+    walletStore.loading = true;
+    setTimeout(() => {
+      saveMnemonicStore.createWallet();
+      history.push('/home');
+    }, 100);
   }
 
   private onSaveAsFileClick = () => {

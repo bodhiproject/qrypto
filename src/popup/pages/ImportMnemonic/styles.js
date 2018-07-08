@@ -41,15 +41,7 @@ const styles = (theme) => ({
     lineHeight: '20px',
   },
   accountNameField: {
-    flex: 1,
-    padding: theme.spacing.md,
     marginBottom: theme.spacing.md,
-    border: theme.border.root,
-    borderRadius: theme.border.radius,
-  },
-  accountNameFieldInput: {
-    fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
   },
   passwordField: {
     marginBottom: theme.spacing.md,

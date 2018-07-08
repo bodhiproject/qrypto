@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
+import BorderTextField from '../../components/BorderTextField';
 import PasswordInput from '../../components/PasswordInput';
 
 @withStyles(styles, { withTheme: true })
@@ -50,16 +51,10 @@ export default class ImportMnemonic extends Component<{}, IState> {
                   classes: { input: classes.mnemonicFieldInput },
                 }}
               />
-              <TextField
-                className={classes.accountNameField}
-                required
-                type="text"
-                placeholder="Account name"
+              <BorderTextField
+                classNames={classes.accountNameField}
+                placeholder="Wallet name"
                 onChange={(e: any) => importStore.accountName = e.target.value}
-                InputProps={{
-                  disableUnderline: true,
-                  classes: { input: classes.accountNameFieldInput },
-                }}
               />
               <PasswordInput
                 classNames={classes.passwordField}
