@@ -37,7 +37,7 @@ export default class CreateWallet extends Component<any, {}> {
 
     return (
       <div className={classes.root}>
-        <NavBar hasNetworkSelector title="" />
+        <NavBar hasBackButton={!createWalletStore.rerouteToLogin} hasNetworkSelector title="" />
         <div className={classes.contentContainer}>
           <div className={classes.logoContainerOuter}>
             <Typography className={classes.logoText}>Qrypto</Typography>

@@ -52,7 +52,7 @@ const AccountSection = ({ classes, store: { walletStore: { accounts } }, onCreat
     <div className={classes.createAccountContainer}>
       <Typography className={classes.orText}>or</Typography>
       <Button className={classes.createAccountButton} color="secondary" onClick={onCreateWalletClick}>
-        Import Wallet
+        Create New Wallet
       </Button>
     </div>
   </div>
