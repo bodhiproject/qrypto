@@ -24,8 +24,16 @@ export default class LoginStore {
 
   @action
   public login = () => {
+    this.app.walletStore.loading = true;
+
     this.app.walletStore.login(this.selectedWalletName);
     this.reset();
+  }
+
+  @action
+  public routeToCreateWallet = () => {
+    this.app.createWalletStore.showBackButton = true;
+    this.app.routerStore.push('/create-wallet');
   }
 
   @action

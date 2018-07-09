@@ -1,30 +1,48 @@
 import { observable, action, computed } from 'mobx';
 import { isEmpty } from 'lodash';
 
+import AppStore from './AppStore';
+
 const INIT_VALUES = {
   walletName: '',
   password: '',
   confirmPassword: '',
-  rerouteToLogin: true,
+  showBackButton: false,
 };
 
 export default class CreateWalletStore {
   @observable public walletName: string = INIT_VALUES.walletName;
   @observable public password: string = INIT_VALUES.password;
   @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
-  public rerouteToLogin: boolean = INIT_VALUES.rerouteToLogin;
+  public showBackButton: boolean = INIT_VALUES.showBackButton;
 
-  @computed get matchError(): string | undefined {
+  @computed public get matchError(): string | undefined {
     return this.getMatchError();
   }
 
-  @computed get error(): boolean {
+  @computed public get error(): boolean {
     const matchError = this.getMatchError();
     return [this.walletName, this.password, this.confirmPassword].some(isEmpty) || !!matchError;
   }
 
+  private app: AppStore;
+
+  constructor(app: AppStore) {
+    this.app = app;
+  }
+
   @action
   public reset = () => Object.assign(this, INIT_VALUES)
+
+  @action
+  public routeToSaveMnemonic = () => {
+    this.app.routerStore.push('/save-mnemonic');
+  }
+
+  @action
+  public routeToImportWallet = () => {
+    this.app.routerStore.push('/import');
+  }
 
   private getMatchError = (): string | undefined => {
     let error;

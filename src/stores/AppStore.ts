@@ -25,7 +25,7 @@ export default class AppStore {
     this.routerStore = new RouterStore();
     this.ui = new UiStore();
     this.walletStore = new WalletStore(this);
-    this.createWalletStore = new CreateWalletStore();
+    this.createWalletStore = new CreateWalletStore(this);
     this.saveMnemonicStore = new SaveMnemonicStore(this);
     this.loginStore = new LoginStore(this);
     this.importStore = new ImportStore(this);
