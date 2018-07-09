@@ -9,20 +9,13 @@ import { STORAGE } from '../constants';
 import Account from '../models/Account';
 
 export default class WalletStore {
-  // Loading screen flow for app first load and import mnemonic
-  // 1 Default -> loading true
-  // 2 chrome.storage loading mnemonic
-  //   if mnemonic does not exist -> loading false
-  //     -(redirects to importMnemonic page)
-  //     -importMnemonic pressed -> loading true (go to 3)
-  //   if mnemonic exists -> loading still true (go to 3)
-  // 3 on wallet load/info loaded -> loading false
   @observable public loading = true;
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public accounts: Account[] = [];
   @observable public loggedInAccount?: Account = undefined;
   @observable public qtumPriceUSD = 0;
-  @computed get balanceUSD() {
+
+  @computed public get balanceUSD() {
     if (this.qtumPriceUSD && this.info) {
       return (this.qtumPriceUSD * this.info.balance).toFixed(2);
     } else {
@@ -39,15 +32,12 @@ export default class WalletStore {
   constructor(app: AppStore) {
     this.app = app;
 
-    console.log('walletStore constructor');
     // Set the existing accounts from Chrome storage
     chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, ({ testnetAccounts }) => {
-      console.log(testnetAccounts);
-
       // Account not found, route to Create Wallet page
       if (isEmpty(testnetAccounts)) {
-        this.loading = false;
         this.app.routerStore.push('/create-wallet');
+        this.loading = false;
         return;
       }
 
@@ -113,6 +103,7 @@ export default class WalletStore {
   @action
   public logout = () => {
     this.app.walletStore.stopPolling();
+    this.app.routerStore.push('/login');
   }
 
   @action
