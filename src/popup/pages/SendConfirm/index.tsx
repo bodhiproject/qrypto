@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import { when } from 'mobx';
 import { Typography, withStyles, Button } from '@material-ui/core';
+import { SEND_STATE } from '../../../stores/SendStore';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
@@ -30,6 +31,7 @@ export default class SendConfirm extends Component<any, {}> {
   public render() {
     const { classes, store: { sendStore } } = this.props;
     const { senderAddress, receiverAddress, amount, token, sendState, errorMessage } = sendStore;
+    const { SENDING, SENT } = SEND_STATE;
 
     return(
       <div className={classes.sendConfirmRoot}>
@@ -62,16 +64,9 @@ export default class SendConfirm extends Component<any, {}> {
             </div>
           </div>
           { errorMessage }
-          { sendState === 'Sending...' || sendState === 'Sent!' ? (
-            <Button fullWidth disabled variant="contained" color="primary" >
+            <Button fullWidth disabled={[SENDING, SENT].includes(sendState)} variant="contained" color="primary" onClick={this.handleConfirm}>
             { sendState }
             </Button>
-          ) : (
-            <Button fullWidth variant="contained" color="primary" onClick={this.handleConfirm}>
-            Confirm
-            </Button>
-          )}
-
         </div>
       </div>
     );
