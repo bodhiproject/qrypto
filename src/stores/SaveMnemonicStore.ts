@@ -38,10 +38,19 @@ export default class SaveMnemonicStore {
   }
 
   public saveToFile = () => {
+    const timestamp = new Date().toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
     const file = new Blob([this.mnemonic], {type: 'text/plain'});
     const element = document.createElement('a');
     element.href = URL.createObjectURL(file);
-    element.download = `${this.walletName}_backup.txt`;
+    element.download = `qrypto_${this.walletName}_${timestamp}.bak`;
     element.click();
   }
 
