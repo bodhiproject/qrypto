@@ -18,8 +18,8 @@ export default class Login extends Component<any, {}> {
     classes: PropTypes.object.isRequired,
   };
 
-  public componentWillUnmount() {
-    this.props.store.loginStore.reset();
+  public componentDidMount() {
+    this.props.store.loginStore.init();
   }
 
   public render() {
@@ -47,7 +47,7 @@ export default class Login extends Component<any, {}> {
 
     walletStore.loading = true;
     setTimeout(() => {
-      walletStore.login(loginStore.selectedWalletName);
+      loginStore.login();
       history.push('/home');
     }, 100);
   }
