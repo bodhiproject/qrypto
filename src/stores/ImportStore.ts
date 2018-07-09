@@ -36,7 +36,7 @@ export default class ImportStore {
   public reset = () => Object.assign(this, INIT_VALUES)
 
   @action
-  public importNewMnemonic() {
+  public importNewMnemonic = () => {
     this.app.walletStore.loading = true;
 
     // Create and store Account in local storage
@@ -46,6 +46,12 @@ export default class ImportStore {
 
     this.app.walletStore.addAccount(account);
     this.app.walletStore.login(account.name);
+  }
+
+  @action
+  public cancelImport = () => {
+    this.reset();
+    this.app.routerStore.goBack();
   }
 
   private getMatchError = (): string | undefined => {

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { Typography, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
@@ -9,7 +8,6 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 
 @withStyles(styles, { withTheme: true })
-@withRouter
 @inject('store')
 @observer
 export default class SaveMnemonic extends Component<any, {}> {
@@ -35,7 +33,7 @@ export default class SaveMnemonic extends Component<any, {}> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={() => saveMnemonicStore.createWallet()}
+              onClick={saveMnemonicStore.createWallet}
             >
               I Copied It Somewhere Safe
             </Button>
@@ -44,7 +42,7 @@ export default class SaveMnemonic extends Component<any, {}> {
               fullWidth
               variant="contained"
               color="secondary"
-              onClick={() => saveMnemonicStore.saveToFile()}
+              onClick={saveMnemonicStore.saveToFile}
             >
               Save To File
             </Button>
