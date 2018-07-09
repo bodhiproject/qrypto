@@ -38,20 +38,23 @@ export default class WalletStore {
 
   constructor(app: AppStore) {
     this.app = app;
-    setTimeout(this.init.bind(this), 100);
-  }
 
-  public init() {
-    chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, async ({ testnetAccounts }) => {
-      // Account not found
+    console.log('walletStore constructor');
+    // Set the existing accounts from Chrome storage
+    chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, ({ testnetAccounts }) => {
+      console.log(testnetAccounts);
+
+      // Account not found, route to Create Wallet page
       if (isEmpty(testnetAccounts)) {
         this.loading = false;
+        this.app.routerStore.push('/create-wallet');
         return;
       }
 
-      // Accounts found
+      // Accounts found, route to Login page
       this.accounts = testnetAccounts;
-      this.login(this.accounts[0].name);
+      this.app.routerStore.push('/login');
+      this.loading = false;
     });
   }
 
@@ -103,7 +106,6 @@ export default class WalletStore {
       runInAction(() => {
         this.loading = false;
         this.app.routerStore.push('/home');
-        console.log(this.app.routerStore.location.pathname);
       });
     }
   }
