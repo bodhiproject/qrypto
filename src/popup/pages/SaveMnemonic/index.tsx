@@ -57,6 +57,8 @@ export default class SaveMnemonic extends Component<any, {}> {
     const { history, store: { walletStore, saveMnemonicStore } } = this.props;
 
     walletStore.loading = true;
+    // history.push('/loading');
+
     setTimeout(() => {
       saveMnemonicStore.createWallet();
       history.push('/home');

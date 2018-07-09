@@ -18,31 +18,33 @@ import Loading from './components/Loading';
 export default class MainContainer extends Component<IProps, IState> {
   public render() {
     const { loading } = this.props.store.walletStore;
+    console.log('loading', loading);
 
     return (
-      <Router>
-        <Fragment>
-          {/* TODO - this will later become:
-          - if wallet does not exist in storage(which we will store in a state), route to the import/create mnemonic,
-          -else route to login */}
-          {loading ? (
-            <Redirect to="/loading" />
-          ) : (
+      <Fragment>
+        <Loading loading={loading} />
+        <Router>
+          <Fragment>
+            {/* {loading ? (
+              <Redirect to="/loading" />
+            ) : (
+              <Redirect to="/create-wallet" />
+            )} */}
             <Redirect to="/create-wallet" />
-          )}
 
-          <Route exact path="/loading" component={Loading} />
-          <Route exact path="/create-wallet" component={CreateWallet} />
-          <Route exact path="/save-mnemonic" component={SaveMnemonic} />
-          <Route exact path="/import" component={ImportMnemonic} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/home" component={Home} />
-          <Route exact path="/account-detail" component={AccountDetail} />
-          <Route exact path="/send" component={Send} />
-          <Route exact path="/send-confirm" component={SendConfirm} />
-          <Route exact path="/receive" component={Receive} />
-        </Fragment>
-      </Router>
+            <Route exact path="/loading" component={Loading} />
+            <Route exact path="/create-wallet" component={CreateWallet} />
+            <Route exact path="/save-mnemonic" component={SaveMnemonic} />
+            <Route exact path="/import" component={ImportMnemonic} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/home" component={Home} />
+            <Route exact path="/account-detail" component={AccountDetail} />
+            <Route exact path="/send" component={Send} />
+            <Route exact path="/send-confirm" component={SendConfirm} />
+            <Route exact path="/receive" component={Receive} />
+          </Fragment>
+        </Router>
+      </Fragment>
     );
   }
 }
