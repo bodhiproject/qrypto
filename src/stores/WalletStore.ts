@@ -52,10 +52,7 @@ export default class WalletStore {
       // Account found, recover wallet
       this.accounts = testnetAccounts;
       this.loggedInAccount = this.accounts[0];
-      this.recoverWallet(this.accounts[0].mnemonic!);
-      this.getWalletInfo();
-      this.getQtumPrice();
-      this.loading = false;
+      this.recoverWalletAndGetData(this.accounts[0].mnemonic!);
     });
   }
 
@@ -79,9 +76,11 @@ export default class WalletStore {
   }
 
   @action
-  public recoverWallet(mnemonic: string): Wallet {
+  public recoverWalletAndGetData(mnemonic: string): Wallet {
     const network = networks.testnet;
     this.wallet = network.fromMnemonic(mnemonic);
+    this.getWalletInfo();
+    this.getQtumPrice();
     this.loading = false;
   }
 
