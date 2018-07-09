@@ -33,9 +33,8 @@ export default class SaveMnemonicStore {
     const account = new Account(this.walletName, this.mnemonic);
     this.reset();
 
-    const { walletStore } = this.app;
-    walletStore.addAccount(account);
-    walletStore.recoverWallet(account.mnemonic!);
+    this.app.walletStore.addAccount(account);
+    this.app.walletStore.login(account.name);
   }
 
   public saveToFile = () => {

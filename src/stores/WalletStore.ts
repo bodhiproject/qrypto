@@ -43,45 +43,23 @@ export default class WalletStore {
 
   public init() {
     chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, async ({ testnetAccounts }) => {
-      // Account not found, show CreateWallet page
+      // Account not found
       if (isEmpty(testnetAccounts)) {
         this.loading = false;
         return;
       }
 
-      // Account found, recover wallet
+      // Accounts found
       this.accounts = testnetAccounts;
-      this.loggedInAccount = this.accounts[0];
-      this.recoverWallet(this.accounts[0].mnemonic!);
-      this.getWalletInfo();
-      this.getQtumPrice();
-      this.loading = false;
+      this.login(this.accounts[0].name);
     });
   }
 
   @action
-  public addAccount(account: Account) {
-    const accounts = toJS(this.accounts);
-    if (!_.find(accounts, { mnemonic: account.mnemonic })) {
-      accounts.push(account);
+  public async startPolling() {
+    await this.getWalletInfo();
+    await this.getQtumPrice();
 
-      chrome.storage.local.set({
-        [STORAGE.TESTNET_ACCOUNTS]: accounts,
-      }, () => console.log('Account added', account));
-      this.accounts = accounts;
-      this.loggedInAccount = account;
-    }
-  }
-
-  @action
-  public recoverWallet(mnemonic: string): Wallet {
-    const network = networks.testnet;
-    this.wallet = network.fromMnemonic(mnemonic);
-    this.loading = false;
-  }
-
-  @action
-  public startPolling() {
     this.getInfoInterval = setInterval(() => {
       this.getWalletInfo();
     }, 5000);
@@ -101,13 +79,26 @@ export default class WalletStore {
   }
 
   @action
-  public login(accountName: string) {
+  public addAccount(account: Account) {
+    const accounts = toJS(this.accounts);
+    if (!find(accounts, { mnemonic: account.mnemonic })) {
+      accounts.push(account);
+
+      chrome.storage.local.set({
+        [STORAGE.TESTNET_ACCOUNTS]: accounts,
+      }, () => console.log('Account added', account));
+      this.accounts = accounts;
+      this.loggedInAccount = account;
+    }
+  }
+
+  @action
+  public async login(accountName: string) {
     const foundAccount = find(this.accounts, { name: accountName });
     if (foundAccount) {
       this.loggedInAccount = foundAccount;
       this.recoverWallet(this.loggedInAccount!.mnemonic!);
-      this.getWalletInfo();
-      this.getQtumPrice();
+      await this.startPolling();
       this.loading = false;
     }
   }
@@ -115,6 +106,13 @@ export default class WalletStore {
   @action
   public logout = () => {
     this.app.walletStore.stopPolling();
+  }
+
+  @action
+  private recoverWallet(mnemonic: string): Wallet {
+    const network = networks.testnet;
+    this.wallet = network.fromMnemonic(mnemonic);
+    this.loading = false;
   }
 
   @action
