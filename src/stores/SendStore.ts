@@ -24,6 +24,11 @@ export default class SendStore {
   }
 
   @action
+  public routeToSendConfirm = () => {
+    this.app.routerStore.push('/send-confirm');
+  }
+
+  @action
   public async send() {
     try {
       this.tip = 'Sending...';

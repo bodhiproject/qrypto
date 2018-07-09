@@ -2,14 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Select, MenuItem, TextField, Button, withStyles } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
-import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 
 @withStyles(styles, { withTheme: true })
-@withRouter
 @inject('store')
 @observer
 export default class Send extends Component<any, {}> {
@@ -130,13 +128,13 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
   </div>
 ));
 
-const SendButton = ({ classes, history }: any) => (
+const SendButton = ({ classes, store: { sendStore } }: any) => (
   <Button
     className={classes.sendButton}
     fullWidth
     variant="contained"
     color="primary"
-    onClick={() => history.push('/send-confirm')}
+    onClick={sendStore.routeToSendConfirm}
   >
     Send
   </Button>

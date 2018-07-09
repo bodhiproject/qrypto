@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import { Typography, Button, withStyles } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
@@ -8,7 +7,6 @@ import { KeyboardArrowRight } from '@material-ui/icons';
 import styles from './styles';
 
 @withStyles(styles, { withTheme: true })
-@withRouter
 @inject('store')
 @observer
 export default class AccountInfo extends Component<any, {}> {
@@ -18,8 +16,6 @@ export default class AccountInfo extends Component<any, {}> {
   };
 
   public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {
-    const { history } = this.props;
-
     event.stopPropagation();
 
     const location = {
@@ -27,7 +23,7 @@ export default class AccountInfo extends Component<any, {}> {
       sendButton: '/send',
       receiveButton: '/receive',
     }[id];
-    history.push(location);
+    this.props.store.routerStore.push(location);
   }
 
   public render() {
