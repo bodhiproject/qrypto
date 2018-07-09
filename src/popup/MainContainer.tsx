@@ -29,7 +29,6 @@ export default class MainContainer extends Component<IProps, IState> {
           <Fragment>
             <Redirect to={location} />
 
-            <Route exact path="/loading" component={Loading} />
             <Route exact path="/create-wallet" component={CreateWallet} />
             <Route exact path="/save-mnemonic" component={SaveMnemonic} />
             <Route exact path="/import" component={ImportMnemonic} />
