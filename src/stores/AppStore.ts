@@ -22,6 +22,7 @@ export default class AppStore {
   public sendStore: SendStore;
 
   constructor() {
+    this.routerStore = new RouterStore();
     this.ui = new UiStore();
     this.walletStore = new WalletStore(this);
     this.createWalletStore = new CreateWalletStore();

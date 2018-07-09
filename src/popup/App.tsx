@@ -2,20 +2,18 @@ import React, { Component } from 'react';
 import { Provider as MobxProvider } from 'mobx-react';
 import { observer } from 'mobx-react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
+import { syncHistoryWithStore } from 'mobx-react-router';
 import { createBrowserHistory } from 'history';
-import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
 
 import './App.scss';
 import { store } from '../stores/AppStore';
 import theme from '../config/theme';
 import MainContainer from './MainContainer';
 
+// Sync history with MobX router
 const browserHistory = createBrowserHistory();
-const routerStore = new RouterStore();
-store.routerStore = routerStore;
-const history = syncHistoryWithStore(browserHistory, routerStore);
+const history = syncHistoryWithStore(browserHistory, store.routerStore);
 history.push('/create-wallet');
-const stores = { store, routerStore };
 
 @observer
 class App extends Component<IProps, IState> {
@@ -26,7 +24,7 @@ class App extends Component<IProps, IState> {
 
   public render() {
     return (
-      <MobxProvider {...stores}>
+      <MobxProvider store={store} >
         <MuiThemeProvider theme={theme}>
           <MainContainer history={history} />
         </MuiThemeProvider>
