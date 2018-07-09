@@ -76,7 +76,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={this.recoverAndGoToHomePage}
+              onClick={() => importStore.importNewMnemonic()}
               disabled={importStore.error}
             >
               Import
@@ -93,17 +93,6 @@ export default class ImportMnemonic extends Component<{}, IState> {
         </div>
       </div>
     );
-  }
-
-  private recoverAndGoToHomePage = () => {
-    const { store: { walletStore, importStore }, history }: any = this.props;
-    const { mnemonic, accountName } = importStore;
-
-    walletStore.loading = true;
-    setTimeout(() => {
-      importStore.onImportNewMnemonic(mnemonic, accountName);
-      history.push('/home');
-    }, 100);
   }
 
   private onCancelClick = () => {

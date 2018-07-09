@@ -36,10 +36,12 @@ export default class ImportStore {
   public reset = () => Object.assign(this, INIT_VALUES)
 
   @action
-  public onImportNewMnemonic(mnemonic: string, accountName: string) {
+  public importNewMnemonic() {
+    this.app.walletStore.loading = true;
+
     // Create and store Account in local storage
     // TODO: implement BIP38 encryption on the mnemonic here
-    const account = new Account(accountName, mnemonic);
+    const account = new Account(this.accountName, this.mnemonic);
     this.reset();
 
     this.app.walletStore.addAccount(account);

@@ -35,7 +35,7 @@ export default class SaveMnemonic extends Component<any, {}> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={saveMnemonicStore.createWallet}
+              onClick={() => saveMnemonicStore.createWallet()}
             >
               I Copied It Somewhere Safe
             </Button>
@@ -44,7 +44,7 @@ export default class SaveMnemonic extends Component<any, {}> {
               fullWidth
               variant="contained"
               color="secondary"
-              onClick={saveMnemonicStore.saveToFile}
+              onClick={() => saveMnemonicStore.saveToFile()}
             >
               Save To File
             </Button>

@@ -19,9 +19,6 @@ import SendConfirm from './pages/SendConfirm';
 export default class MainContainer extends Component<IProps, IState> {
   public render() {
     const { walletStore, routerStore } = this.props.store;
-    console.log(walletStore.loading);
-    console.log(this.props.history);
-    console.log(routerStore.location);
 
     return (
       <div style={{ width: '100%', height: '100%' }}>
