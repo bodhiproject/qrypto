@@ -22,20 +22,20 @@ export default class SaveMnemonic extends Component<any, {}> {
   }
 
   public render() {
-    const { classes, store: { saveMnemonicStore: { mnemonic } } } = this.props;
+    const { classes, store: { saveMnemonicStore } } = this.props;
 
     return (
       <div className={classes.root}>
         <NavBar hasBackButton title="Wallet Created" />
         <div className={classes.contentContainer}>
           <Typography className={classes.warningText}>These words in this specific order are the only way to restore your wallet. Save them somewhere safe and don't share them with anyone!</Typography>
-          <Typography className={classes.mnemonicText}>{mnemonic}</Typography>
+          <Typography className={classes.mnemonicText}>{saveMnemonicStore.mnemonic}</Typography>
           <Button
               className={cx(classes.actionButton, 'marginBottom')}
               fullWidth
               variant="contained"
               color="primary"
-              onClick={this.onICopiedClick}
+              onClick={saveMnemonicStore.createWallet}
             >
               I Copied It Somewhere Safe
             </Button>
@@ -44,33 +44,12 @@ export default class SaveMnemonic extends Component<any, {}> {
               fullWidth
               variant="contained"
               color="secondary"
-              onClick={this.onSaveToFileClick}
+              onClick={saveMnemonicStore.saveToFile}
             >
               Save To File
             </Button>
         </div>
       </div>
     );
-  }
-
-  private onICopiedClick = () => {
-    const { history, store: { walletStore, saveMnemonicStore } } = this.props;
-
-    walletStore.loading = true;
-    setTimeout(() => {
-      saveMnemonicStore.createWallet();
-      history.push('/home');
-    }, 100);
-  }
-
-  private onSaveToFileClick = () => {
-    const { history, store: { walletStore, saveMnemonicStore } } = this.props;
-
-    walletStore.loading = true;
-    setTimeout(() => {
-      saveMnemonicStore.saveToFile();
-      saveMnemonicStore.createWallet();
-      history.push('/home');
-    }, 100);
   }
 }

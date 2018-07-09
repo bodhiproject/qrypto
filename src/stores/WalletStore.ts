@@ -1,6 +1,6 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
 
-import { observable, action, toJS, computed } from 'mobx';
+import { observable, action, toJS, computed, runInAction } from 'mobx';
 import { isEmpty, find } from 'lodash';
 import axios from 'axios';
 
@@ -99,7 +99,12 @@ export default class WalletStore {
       this.loggedInAccount = foundAccount;
       this.recoverWallet(this.loggedInAccount!.mnemonic!);
       await this.startPolling();
-      this.loading = false;
+
+      runInAction(() => {
+        this.loading = false;
+        this.app.routerStore.push('/home');
+        console.log(this.app.routerStore.location.pathname);
+      });
     }
   }
 
@@ -109,10 +114,9 @@ export default class WalletStore {
   }
 
   @action
-  private recoverWallet(mnemonic: string): Wallet {
+  private recoverWallet(mnemonic: string) {
     const network = networks.testnet;
     this.wallet = network.fromMnemonic(mnemonic);
-    this.loading = false;
   }
 
   @action

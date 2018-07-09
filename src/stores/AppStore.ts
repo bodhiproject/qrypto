@@ -1,3 +1,4 @@
+import { RouterStore } from 'mobx-react-router';
 import UiStore from './UiStore';
 import WalletStore from './WalletStore';
 import CreateWalletStore from './CreateWalletStore';
@@ -9,6 +10,7 @@ import SendStore from './SendStore';
 
 export default class AppStore {
   public location = '/login';
+  public routerStore: RouterStore;
   public ui: UiStore;
   public walletStore: WalletStore;
   public createWalletStore: CreateWalletStore;

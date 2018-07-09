@@ -30,13 +30,15 @@ export default class SaveMnemonicStore {
     // TODO: use this.password to encrypt wallet
     console.log(this.password);
 
-    const account = new Account(this.walletName, this.mnemonic);
-    this.reset();
+    this.app.walletStore.loading = true;
 
+    const account = new Account(this.walletName, this.mnemonic);
     this.app.walletStore.addAccount(account);
     this.app.walletStore.login(account.name);
+    this.reset();
   }
 
+  @action
   public saveToFile = () => {
     const timestamp = new Date().toLocaleDateString(undefined, {
       year: 'numeric',
@@ -52,6 +54,8 @@ export default class SaveMnemonicStore {
     element.href = URL.createObjectURL(file);
     element.download = `qrypto_${this.walletName}_${timestamp}.bak`;
     element.click();
+
+    this.createWallet();
   }
 
   @action
