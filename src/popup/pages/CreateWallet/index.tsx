@@ -7,54 +7,60 @@ import { isEmpty } from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
+import BorderTextField from '../../components/BorderTextField';
 import PasswordInput from '../../components/PasswordInput';
 
 @withStyles(styles, { withTheme: true })
 @withRouter
 @inject('store')
 @observer
-export default class Signup extends Component<any, {}> {
+export default class CreateWallet extends Component<any, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
 
   public componentDidMount() {
-    const { history, store: { walletStore } } = this.props;
+    const { history, store: { createWalletStore, walletStore } } = this.props;
 
     // Route to home page if mnemonic is found in storage
-    if (!isEmpty(walletStore.accounts)) {
+    if (createWalletStore.rerouteToLogin && !isEmpty(walletStore.accounts)) {
       history.push('/login');
     }
   }
 
   public componentWillUnmount() {
-    this.props.store.signupStore.reset();
+    this.props.store.createWalletStore.reset();
   }
 
   public render() {
-    const { classes, store: { signupStore } } = this.props;
-    const matchError = signupStore.matchError;
+    const { classes, store: { createWalletStore } } = this.props;
+    const matchError = createWalletStore.matchError;
 
     return (
       <div className={classes.root}>
-        <NavBar hasNetworkSelector title="" />
+        <NavBar hasBackButton={!createWalletStore.rerouteToLogin} hasNetworkSelector title="" />
         <div className={classes.contentContainer}>
           <div className={classes.logoContainerOuter}>
             <Typography className={classes.logoText}>Qrypto</Typography>
             <Typography className={classes.logoDesc}>Create your Qrypto wallet</Typography>
           </div>
           <div className={classes.fieldContainer}>
+            <BorderTextField
+              classNames={classes.walletNameField}
+              placeholder="Wallet name"
+              onChange={this.onWalletNameChange}
+            />
             <PasswordInput
               classNames={classes.passwordField}
               placeholder="Password"
-              onChange={(e: any) => signupStore.password = e.target.value}
+              onChange={this.onPasswordChange}
             />
             <PasswordInput
               classNames={classes.confirmPasswordField}
               placeholder="Confirm password"
               helperText={matchError}
               error={matchError}
-              onChange={(e: any) => signupStore.confirmPassword = e.target.value}
+              onChange={(e: any) => createWalletStore.confirmPassword = e.target.value}
             />
           </div>
           <Button
@@ -62,7 +68,8 @@ export default class Signup extends Component<any, {}> {
             fullWidth
             variant="contained"
             color="primary"
-            disabled={signupStore.error}
+            disabled={createWalletStore.error}
+            onClick={() => this.props.history.push('/save-mnemonic')}
           >
             Create Wallet
           </Button>
@@ -78,5 +85,17 @@ export default class Signup extends Component<any, {}> {
         </div>
       </div>
     );
+  }
+
+  private onWalletNameChange = (event: any) => {
+    const { createWalletStore, saveMnemonicStore } = this.props.store;
+    createWalletStore.walletName = event.target.value;
+    saveMnemonicStore.walletName = event.target.value;
+  }
+
+  private onPasswordChange = (event: any) => {
+    const { createWalletStore, saveMnemonicStore } = this.props.store;
+    createWalletStore.password = event.target.value;
+    saveMnemonicStore.password = event.target.value;
   }
 }

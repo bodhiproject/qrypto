@@ -33,8 +33,11 @@ const styles = (theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  walletNameField: {
+    marginBottom: theme.spacing.md,
+  },
   passwordField: {
-    marginBottom: theme.spacing.xl,
+    marginBottom: theme.spacing.md,
   },
   confirmPasswordField: {
     marginBottom: theme.spacing.custom(8),

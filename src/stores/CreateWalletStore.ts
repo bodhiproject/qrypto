@@ -2,13 +2,17 @@ import { observable, action, computed } from 'mobx';
 import { isEmpty } from 'lodash';
 
 const INIT_VALUES = {
+  walletName: '',
   password: '',
   confirmPassword: '',
+  rerouteToLogin: true,
 };
 
-export default class SignupStore {
+export default class CreateWalletStore {
+  @observable public walletName: string = INIT_VALUES.walletName;
   @observable public password: string = INIT_VALUES.password;
   @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
+  public rerouteToLogin: boolean = INIT_VALUES.rerouteToLogin;
 
   @computed get matchError(): string | undefined {
     return this.getMatchError();
@@ -16,7 +20,7 @@ export default class SignupStore {
 
   @computed get error(): boolean {
     const matchError = this.getMatchError();
-    return [this.password, this.confirmPassword].some(isEmpty) || !!matchError;
+    return [this.walletName, this.password, this.confirmPassword].some(isEmpty) || !!matchError;
   }
 
   @action

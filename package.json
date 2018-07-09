@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@material-ui/icons": "^1.1.0",
+    "@types/bip39": "^2.4.0",
     "@types/lodash": "^4.14.110",
     "axios": "^0.18.0",
     "chrome-call": "^3.0.0",

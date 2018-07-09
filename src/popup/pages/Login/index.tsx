@@ -18,8 +18,8 @@ export default class Login extends Component<any, {}> {
     classes: PropTypes.object.isRequired,
   };
 
-  public componentWillUnmount() {
-    this.props.store.loginStore.reset();
+  public componentDidMount() {
+    this.props.store.loginStore.init();
   }
 
   public render() {
@@ -29,25 +29,46 @@ export default class Login extends Component<any, {}> {
       <div className={classes.root}>
         <Paper className={classes.headerContainer}>
           <NavBar hasNetworkSelector isDarkTheme title="Login" />
-          <AccountSection {...this.props} />
+          <AccountSection onCreateWalletClick={this.onCreateWalletClick} {...this.props} />
         </Paper>
         <PermissionSection {...this.props} />
-        <LoginSection {...this.props} />
+        <LoginSection onLoginClick={this.onLoginClick} {...this.props} />
       </div>
     );
   }
+
+  private onCreateWalletClick = () => {
+    this.props.history.push('/create-wallet');
+    this.props.store.createWalletStore.rerouteToLogin = false;
+  }
+
+  private onLoginClick = () => {
+    const { history, store: { walletStore, loginStore } } = this.props;
+
+    walletStore.loading = true;
+    setTimeout(() => {
+      loginStore.login();
+      history.push('/home');
+    }, 100);
+  }
 }
 
-const AccountSection = ({ classes, history, store: { walletStore: { accounts } } }: any) => (
+const AccountSection = observer(({ classes, store: { walletStore: { accounts }, loginStore }, onCreateWalletClick }: any) => (
   <div className={classes.accountContainer}>
     <Typography className={classes.selectAcctText}>Select account</Typography>
-    <Select disableUnderline className={classes.accountSelect} name="accounts" value={accounts[0].name}>
+    <Select
+      disableUnderline
+      className={classes.accountSelect}
+      name="accounts"
+      value={loginStore.selectedWalletName}
+      onChange={(e) => loginStore.selectedWalletName = e.target.value}
+    >
       {accounts.map((acct: Account, index: number) => <MenuItem key={index} value={acct.name}>{acct.name}</MenuItem>)}
     </Select>
     <div className={classes.createAccountContainer}>
       <Typography className={classes.orText}>or</Typography>
-      <Button className={classes.createAccountButton} color="secondary" onClick={() => history.push('/import')}>
-        Import Wallet
+      <Button className={classes.createAccountButton} color="secondary" onClick={onCreateWalletClick}>
+        Create New Wallet
       </Button>
     </div>
   </div>
@@ -59,7 +80,7 @@ const PermissionSection = ({ classes }: any) => (
   </div>
 );
 
-const LoginSection = observer(({ classes, history, store: { loginStore } }: any) => (
+const LoginSection = observer(({ classes, store: { loginStore }, onLoginClick }: any) => (
   <div className={classes.loginContainer}>
     <PasswordInput
       classNames={classes.passwordField}
@@ -72,7 +93,7 @@ const LoginSection = observer(({ classes, history, store: { loginStore } }: any)
       variant="contained"
       color="primary"
       disabled={isEmpty(loginStore.password)}
-      onClick={() => history.push('/home')}
+      onClick={onLoginClick}
     >
       Login
     </Button>

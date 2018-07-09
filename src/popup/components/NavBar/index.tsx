@@ -33,7 +33,7 @@ export default class NavBar extends Component {
     const { history, store: { walletStore } }: any = this.props;
 
     walletStore.logout();
-    history.push('/signup');
+    history.push('/create-wallet');
   }
 
   public onNetworkSelectionClick = () => {

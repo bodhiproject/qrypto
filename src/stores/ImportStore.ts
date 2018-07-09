@@ -40,11 +40,10 @@ export default class ImportStore {
     // Create and store Account in local storage
     // TODO: implement BIP38 encryption on the mnemonic here
     const account = new Account(accountName, mnemonic);
-    console.log('created acct');
     this.reset();
 
     this.app.walletStore.addAccount(account);
-    this.app.walletStore.recoverWallet(account.mnemonic!);
+    this.app.walletStore.login(account.name);
   }
 
   private getMatchError = (): string | undefined => {
