@@ -14,10 +14,10 @@ import styles from './styles';
 export default class NavBar extends Component {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
-    hasBackButton: PropTypes.boolean,
-    hasSettingsButton: PropTypes.boolean,
-    hasNetworkSelector: PropTypes.boolean,
-    isDarkTheme: PropTypes.boolean,
+    hasBackButton: PropTypes.bool,
+    hasSettingsButton: PropTypes.bool,
+    hasNetworkSelector: PropTypes.bool,
+    isDarkTheme: PropTypes.bool,
   };
 
   public static defaultProps = {
