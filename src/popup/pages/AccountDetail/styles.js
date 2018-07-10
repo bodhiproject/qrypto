@@ -82,6 +82,10 @@ const styles = (theme) => ({
     fontSize: theme.font.xs,
     color: theme.palette.text.secondary,
   },
+  loadingButtonWrap: {
+    textAlign: 'center',
+    padding: '10px',
+  }
 });
 
 export default styles;

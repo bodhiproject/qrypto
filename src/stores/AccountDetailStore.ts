@@ -8,12 +8,30 @@ import Transaction from '../models/Transaction';
 export default class AccountDetailStore {
   @observable public activeTabIdx: number = 0;
   @observable.shallow public items: Transaction[] = [];
+  @observable public pageNum: number = 0;
+  @observable public pagesTotal?: number;
 
-  @action
-  public async loadFromWallet(wallet: Wallet) {
-    const { txs } =  await wallet.getTransactions();
+  private wallet?: Wallet;
 
-    this.items = txs.map((tx: Insight.IRawTransactionInfo) => {
+  @action public async loadFromWallet(wallet: Wallet) {
+    this.items = await this.load(wallet);
+  }
+
+  @action public async loadMore() {
+    const txs = await this.load(this.wallet!, this.pageNum + 1);
+
+    this.items = this.items.concat(txs);
+  }
+
+  @action private async load(wallet: Wallet, pageNum: number = 0): Promise<Transaction[]> {
+    this.wallet = wallet;
+
+    const { pagesTotal, txs } =  await wallet.getTransactions(pageNum);
+
+    this.pagesTotal = pagesTotal;
+    this.pageNum = pageNum;
+
+    return txs.map((tx: Insight.IRawTransactionInfo) => {
       const {
         txid,
         confirmations,
@@ -40,4 +58,5 @@ export default class AccountDetailStore {
       });
     });
   }
+
 }
