@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import { Router, Route, Switch } from 'react-router-dom';
 
-import './App.scss';
 import Loading from './components/Loading';
 import CreateWallet from './pages/CreateWallet';
 import SaveMnemonic from './pages/SaveMnemonic';

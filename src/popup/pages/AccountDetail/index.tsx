@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Paper, Tabs, Tab, List, ListItem, Typography, withStyles } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
@@ -27,7 +27,7 @@ export default class AccountDetail extends Component<any, {}> {
     ];
 
     return (
-      <Fragment>
+      <div>
         <Paper elevation={2} className={classes.accountDetailHeader}>
           <NavBar hasBackButton isDarkTheme title="Account Detail" />
           <AccountInfo />
@@ -51,7 +51,7 @@ export default class AccountDetail extends Component<any, {}> {
             <TokenList classes={classes} tokens={tokens} />
           )}
         </List>
-      </Fragment>
+      </div>
     );
   }
 }

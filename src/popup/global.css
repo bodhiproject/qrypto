@@ -10,6 +10,15 @@ body {
   src: local('Montserrat'), url(../fonts/Montserrat/Montserrat-Regular.ttf) format('ttf');
 }
 
+:global #root {
+  width: 350px;
+  height: 550px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
 :global .container {
   background-color: #282c34;
   display: flex;
