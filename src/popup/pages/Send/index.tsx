@@ -73,6 +73,8 @@ const ToField = observer(({ classes, store: { sendStore, walletStore: { info } }
         type="text"
         multiline={false}
         placeholder={info.addrStr}
+        helperText={sendStore.receiverFieldError}
+        error={sendStore.receiverFieldError}
         InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
         onChange={(event) => sendStore.receiverAddress = event.target.value}
       />

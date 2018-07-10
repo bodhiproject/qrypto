@@ -1,6 +1,7 @@
-import { observable, action, runInAction } from 'mobx';
+import { observable, computed, action, runInAction } from 'mobx';
 
 import AppStore from './AppStore';
+import { validateAddress } from '../utils';
 
 export const SEND_STATE = {
   INITIAL: 'Confirm',
@@ -23,6 +24,11 @@ export default class SendStore {
   @observable public amount: number = INIT_VALUES.amount;
   @observable public sendState: string = INIT_VALUES.sendState;
   @observable public errorMessage: string = INIT_VALUES.errorMessage;
+
+  @computed public get receiverFieldError(): string | undefined {
+    const isTestnet = true; // TODO: set validation based on network var
+    return validateAddress(this.receiverAddress, isTestnet) ? undefined : 'Not a valid Qtum address';
+  }
 
   private app: AppStore;
 
