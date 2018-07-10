@@ -35,6 +35,10 @@ export default class SendStore {
       ? undefined : 'Not a valid amount';
   }
 
+  @computed public get buttonDisabled(): boolean {
+    return !this.senderAddress || !!this.receiverFieldError || !this.token || !!this.amountFieldError;
+  }
+
   private app: AppStore;
 
   constructor(app: AppStore) {

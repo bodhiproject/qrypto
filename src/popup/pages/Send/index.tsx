@@ -132,14 +132,15 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
   </div>
 ));
 
-const SendButton = ({ classes, store: { sendStore } }: any) => (
+const SendButton = observer(({ classes, store: { sendStore } }: any) => (
   <Button
     className={classes.sendButton}
     fullWidth
     variant="contained"
     color="primary"
+    disabled={sendStore.buttonDisabled}
     onClick={sendStore.routeToSendConfirm}
   >
     Send
   </Button>
-);
+));
