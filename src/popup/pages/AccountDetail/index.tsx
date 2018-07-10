@@ -14,6 +14,11 @@ import AccountInfo from '../../components/AccountInfo';
 @observer
 export default class AccountDetail extends Component<any, {}> {
 
+  public componentDidMount() {
+    const { walletStore, accountDetailStore } = this.props.store;
+    accountDetailStore.loadFromWallet(walletStore.wallet!, walletStore.info);
+  }
+
   public handleTabChange = (_: object, idx: number) => {
     this.props.store.accountDetailStore.activeTabIdx = idx;
   }
