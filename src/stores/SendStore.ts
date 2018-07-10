@@ -14,7 +14,7 @@ const INIT_VALUES = {
   token: 'QTUM',
   amount: 0,
   sendState: SEND_STATE.INITIAL,
-  errorMessage: '',
+  errorMessage: undefined,
 };
 
 export default class SendStore {
@@ -23,7 +23,7 @@ export default class SendStore {
   @observable public token: string = INIT_VALUES.token;
   @observable public amount: number = INIT_VALUES.amount;
   @observable public sendState: string = INIT_VALUES.sendState;
-  @observable public errorMessage: string = INIT_VALUES.errorMessage;
+  @observable public errorMessage?: string = INIT_VALUES.errorMessage;
 
   @computed public get receiverFieldError(): string | undefined {
     const isTestnet = true; // TODO: set validation based on network var

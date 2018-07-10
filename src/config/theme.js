@@ -11,6 +11,12 @@ const fontSizeXl = 18;
 
 const fontWeightBold = 'bold';
 
+const lineHeightXs = 12;
+const lineHeightSm = 16;
+const lineHeightMd = 20;
+const lineHeightLg = 24;
+const lineHeightXl = 32;
+
 /* Colors */
 const primaryColor = '#5539DF';
 const primaryColorDark = '#5539DF';
@@ -23,10 +29,12 @@ const secondaryColorDark = '#ffffff';
 const white = '#ffffff';
 const gray = '#747474';
 const orange = '#F5A623';
+const red = '#E50000';
 
 const textColorPrimary = '#333333';
 const textColorSecondary = gray;
 const textColorLight = white;
+const textColorError = red;
 
 /* Spacing */
 const spacingUnit = 4;
@@ -77,10 +85,12 @@ export default createMuiTheme({
       secondary: textColorSecondary,
       hint: textColorSecondary,
       light: textColorLight,
+      error: textColorError,
     },
     extra: {
       gray,
       orange,
+      red,
     },
     divider: borderColor,
   },
@@ -89,6 +99,7 @@ export default createMuiTheme({
   typography: {
     fontFamily: fontMontserrat,
     fontSize: fontSizeMd,
+    lintHeight: lineHeightMd,
   },
 
   /* Material component overrides */
@@ -137,7 +148,14 @@ export default createMuiTheme({
     xl: px(fontSizeXl),
     weight: {
       bold: fontWeightBold,      
-    }
+    },
+    lineHeight: {
+      xs: px(lineHeightXs),
+      sm: px(lineHeightSm),
+      md: px(lineHeightMd),
+      lg: px(lineHeightLg),
+      xl: px(lineHeightXl),
+    },
   },
 
   icon: {
