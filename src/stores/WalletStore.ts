@@ -1,6 +1,6 @@
 import { networks, Wallet, Insight } from 'qtumjs-wallet';
 
-import { observable, action, toJS, computed } from 'mobx';
+import { observable, action, toJS, computed, runInAction } from 'mobx';
 import { isEmpty, find } from 'lodash';
 import axios from 'axios';
 
@@ -9,20 +9,13 @@ import { STORAGE } from '../constants';
 import Account from '../models/Account';
 
 export default class WalletStore {
-  // Loading screen flow for app first load and import mnemonic
-  // 1 Default -> loading true
-  // 2 chrome.storage loading mnemonic
-  //   if mnemonic does not exist -> loading false
-  //     -(redirects to importMnemonic page)
-  //     -importMnemonic pressed -> loading true (go to 3)
-  //   if mnemonic exists -> loading still true (go to 3)
-  // 3 on wallet load/info loaded -> loading false
   @observable public loading = true;
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public accounts: Account[] = [];
   @observable public loggedInAccount?: Account = undefined;
   @observable public qtumPriceUSD = 0;
-  @computed get balanceUSD() {
+
+  @computed public get balanceUSD() {
     if (this.qtumPriceUSD && this.info) {
       return (this.qtumPriceUSD * this.info.balance).toFixed(2);
     } else {
@@ -38,20 +31,20 @@ export default class WalletStore {
 
   constructor(app: AppStore) {
     this.app = app;
-    setTimeout(this.init.bind(this), 100);
-  }
 
-  public init() {
-    chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, async ({ testnetAccounts }) => {
-      // Account not found
+    // Set the existing accounts from Chrome storage
+    chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, ({ testnetAccounts }) => {
+      // Account not found, route to Create Wallet page
       if (isEmpty(testnetAccounts)) {
+        this.app.routerStore.push('/create-wallet');
         this.loading = false;
         return;
       }
 
-      // Accounts found
+      // Accounts found, route to Login page
       this.accounts = testnetAccounts;
-      this.login(this.accounts[0].name);
+      this.app.routerStore.push('/login');
+      this.loading = false;
     });
   }
 
@@ -99,20 +92,24 @@ export default class WalletStore {
       this.loggedInAccount = foundAccount;
       this.recoverWallet(this.loggedInAccount!.mnemonic!);
       await this.startPolling();
-      this.loading = false;
+
+      runInAction(() => {
+        this.loading = false;
+        this.app.routerStore.push('/home');
+      });
     }
   }
 
   @action
   public logout = () => {
     this.app.walletStore.stopPolling();
+    this.app.routerStore.push('/login');
   }
 
   @action
-  private recoverWallet(mnemonic: string): Wallet {
+  private recoverWallet(mnemonic: string) {
     const network = networks.testnet;
     this.wallet = network.fromMnemonic(mnemonic);
-    this.loading = false;
   }
 
   @action

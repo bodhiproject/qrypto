@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { Typography, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-import { isEmpty } from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
@@ -11,22 +9,12 @@ import BorderTextField from '../../components/BorderTextField';
 import PasswordInput from '../../components/PasswordInput';
 
 @withStyles(styles, { withTheme: true })
-@withRouter
 @inject('store')
 @observer
 export default class CreateWallet extends Component<any, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
-
-  public componentDidMount() {
-    const { history, store: { createWalletStore, walletStore } } = this.props;
-
-    // Route to home page if mnemonic is found in storage
-    if (createWalletStore.rerouteToLogin && !isEmpty(walletStore.accounts)) {
-      history.push('/login');
-    }
-  }
 
   public componentWillUnmount() {
     this.props.store.createWalletStore.reset();
@@ -38,7 +26,7 @@ export default class CreateWallet extends Component<any, {}> {
 
     return (
       <div className={classes.root}>
-        <NavBar hasBackButton={!createWalletStore.rerouteToLogin} hasNetworkSelector title="" />
+        <NavBar hasBackButton={createWalletStore.showBackButton} hasNetworkSelector title="" />
         <div className={classes.contentContainer}>
           <div className={classes.logoContainerOuter}>
             <Typography className={classes.logoText}>Qrypto</Typography>
@@ -69,7 +57,7 @@ export default class CreateWallet extends Component<any, {}> {
             variant="contained"
             color="primary"
             disabled={createWalletStore.error}
-            onClick={() => this.props.history.push('/save-mnemonic')}
+            onClick={createWalletStore.routeToSaveMnemonic}
           >
             Create Wallet
           </Button>
@@ -78,7 +66,7 @@ export default class CreateWallet extends Component<any, {}> {
             fullWidth
             disableRipple
             color="primary"
-            onClick={() => this.props.history.push('/import')}
+            onClick={createWalletStore.routeToImportWallet}
           >
             Import Existing Wallet
           </Button>

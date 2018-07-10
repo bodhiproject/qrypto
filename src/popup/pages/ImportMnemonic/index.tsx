@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { Typography, TextField, Button, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
@@ -10,7 +9,6 @@ import BorderTextField from '../../components/BorderTextField';
 import PasswordInput from '../../components/PasswordInput';
 
 @withStyles(styles, { withTheme: true })
-@withRouter
 @inject('store')
 @observer
 export default class ImportMnemonic extends Component<{}, IState> {
@@ -76,7 +74,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={this.recoverAndGoToHomePage}
+              onClick={importStore.importNewMnemonic}
               disabled={importStore.error}
             >
               Import
@@ -85,7 +83,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
               className={classes.cancelButton}
               fullWidth
               color="primary"
-              onClick={this.onCancelClick}
+              onClick={importStore.cancelImport}
             >
               Cancel
             </Button>
@@ -94,28 +92,9 @@ export default class ImportMnemonic extends Component<{}, IState> {
       </div>
     );
   }
-
-  private recoverAndGoToHomePage = () => {
-    const { store: { walletStore, importStore }, history }: any = this.props;
-    const { mnemonic, accountName } = importStore;
-
-    walletStore.loading = true;
-    setTimeout(() => {
-      importStore.onImportNewMnemonic(mnemonic, accountName);
-      history.push('/home');
-    }, 100);
-  }
-
-  private onCancelClick = () => {
-    const { store: { importStore }, history }: any = this.props;
-
-    importStore.reset();
-    history.goBack();
-  }
 }
 
 interface IState {
   importStore: any;
   walletStore: any;
-  history: any;
 }
