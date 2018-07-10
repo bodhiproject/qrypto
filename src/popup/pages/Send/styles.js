@@ -2,9 +2,19 @@ const styles = (theme) => ({
   root: {
     width: '100%',
     height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   contentContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
     margin: theme.spacing.md,
+  },
+  fieldsContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
   },
   fieldHeading: {
     marginBottom: theme.spacing.unit,
@@ -38,7 +48,7 @@ const styles = (theme) => ({
     fontWeight: 'bold',
   },
   amountContainer: {
-    marginBottom: theme.spacing.custom(26),
+    // marginBottom: theme.spacing.custom(26),
   },
   amountHeadingContainer: {
     width: '100%',

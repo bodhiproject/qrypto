@@ -29,10 +29,12 @@ export default class Send extends Component<any, {}> {
       <div className={classes.root}>
         <NavBar hasBackButton title="Send" />
         <div className={classes.contentContainer}>
-          <FromField {...this.props} />
-          <ToField {...this.props} />
-          <TokenField {...this.props} />
-          <AmountField {...this.props} />
+          <div className={classes.fieldsContainer}>
+            <FromField {...this.props} />
+            <ToField {...this.props} />
+            <TokenField {...this.props} />
+            <AmountField {...this.props} />
+          </div>
           <SendButton {...this.props} />
         </div>
       </div>
