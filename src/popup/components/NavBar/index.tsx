@@ -1,10 +1,12 @@
 import React, { Fragment } from 'react';
 import { inject, observer } from 'mobx-react';
-import { Typography, Menu, MenuItem, Button, IconButton, withStyles } from '@material-ui/core';
-import { ArrowBack, Settings, ArrowDropDown } from '@material-ui/icons';
+
+import { Typography, Menu, MenuItem, IconButton, withStyles } from '@material-ui/core';
+import { ArrowBack, Settings } from '@material-ui/icons';
 import cx from 'classnames';
 
-import styles from './styles';
+import DropDownMenu from '../DropDownMenu';
+import { NetworkNamesArray } from '../../../stores/WalletStore';
 import AppStore from '../../../stores/AppStore';
 
 interface IProps {
@@ -18,20 +20,21 @@ interface IProps {
 }
 
 const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
-  const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, isDarkTheme, title } = props;
-  return (
-    <div className={classes.root}>
-      <div className={classes.leftButtonsContainer}>
-        {hasBackButton && <BackButton {...props} />}
-        {hasSettingsButton && <SettingsButton {...props} />}
+  const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, isDarkTheme, title, store: { walletStore } } = props;
+
+    return (
+      <div className={classes.root}>
+        <div className={classes.leftButtonsContainer}>
+          {hasBackButton && <BackButton {...props} />}
+          {hasSettingsButton && <SettingsButton {...props} />}
+        </div>
+        <div className={classes.locationContainer}>
+          <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
+        </div>
+        {hasNetworkSelector && (
+          <DropDownMenu classes={classes} onSelect={ (idx: number) => walletStore.networkIndex = idx } selections={ NetworkNamesArray } selectedIndex={walletStore.networkIndex} />
+        )}
       </div>
-      <div className={classes.locationContainer}>
-        <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
-      </div>
-      {hasNetworkSelector && (
-        <NetworkSelector {...props} />
-      )}
-    </div>
   );
 }));
 
@@ -62,17 +65,3 @@ const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, wall
     </Menu>
   </Fragment>
 ));
-
-const NetworkSelector: React.SFC<IProps> = ({ classes }: any) => (
-  <Button
-    color="secondary"
-    variant="contained"
-    size="small"
-    className={classes.networkButton}
-  >
-    Testnet
-    <ArrowDropDown />
-  </Button>
-);
-
-export default withStyles(styles)(NavBar);

@@ -8,6 +8,13 @@ import AppStore from './AppStore';
 import { STORAGE } from '../constants';
 import Account from '../models/Account';
 
+const NETWORK_NAMES = {
+  TESTNET: 'TestNet',
+  MAINNET: 'MainNet',
+};
+export const NetworkNamesArray = [NETWORK_NAMES.MAINNET, NETWORK_NAMES.TESTNET];
+// const NetworksArray = [networks.mainnet, networks.testnet];
+
 export default class WalletStore {
   private static GET_INFO_INTERVAL_MS: number = 30000;
   private static GET_PRICE_INTERVAL_MS: number = 60000;
@@ -17,6 +24,11 @@ export default class WalletStore {
   @observable public accounts: Account[] = [];
   @observable public loggedInAccount?: Account = undefined;
   @observable public qtumPriceUSD = 0;
+  @observable public networkIndex = 1;
+
+  @computed public get networkName() {
+    return NetworkNamesArray[this.networkIndex];
+  }
 
   @computed public get balanceUSD() {
     if (this.qtumPriceUSD && this.info) {
