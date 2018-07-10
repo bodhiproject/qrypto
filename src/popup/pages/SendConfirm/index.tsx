@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import { Typography, withStyles, Button } from '@material-ui/core';
-import { SEND_STATE } from '../../../stores/SendStore';
+import cx from 'classnames';
 
 import styles from './styles';
+import { SEND_STATE } from '../../../constants';
 import NavBar from '../../components/NavBar';
-import cx from 'classnames';
 
 @withStyles(styles, { withTheme: true })
 @withRouter

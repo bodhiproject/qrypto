@@ -2,12 +2,8 @@ import { observable, computed, action, runInAction, when } from 'mobx';
 
 import AppStore from './AppStore';
 import { isValidAddress, isValidAmount } from '../utils';
+import { SEND_STATE } from '../constants';
 
-export const SEND_STATE = {
-  INITIAL: 'Confirm',
-  SENDING: 'Sending...',
-  SENT: 'Sent!',
-};
 const INIT_VALUES = {
   senderAddress: '',
   receiverAddress: '',
