@@ -1,7 +1,7 @@
 import { observable, computed, action, runInAction } from 'mobx';
 
 import AppStore from './AppStore';
-import { validateAddress } from '../utils';
+import { isValidAddress, isValidAmount } from '../utils';
 
 export const SEND_STATE = {
   INITIAL: 'Confirm',
@@ -27,7 +27,12 @@ export default class SendStore {
 
   @computed public get receiverFieldError(): string | undefined {
     const isTestnet = true; // TODO: set validation based on network var
-    return validateAddress(this.receiverAddress, isTestnet) ? undefined : 'Not a valid Qtum address';
+    return isValidAddress(this.receiverAddress, isTestnet) ? undefined : 'Not a valid Qtum address';
+  }
+
+  @computed public get amountFieldError(): string | undefined {
+    return this.app.walletStore.info && isValidAmount(Number(this.amount), this.app.walletStore.info.balance)
+      ? undefined : 'Not a valid amount';
   }
 
   private app: AppStore;
