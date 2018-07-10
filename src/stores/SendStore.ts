@@ -1,4 +1,4 @@
-import { observable, computed, action, runInAction } from 'mobx';
+import { observable, computed, action, runInAction, when } from 'mobx';
 
 import AppStore from './AppStore';
 import { isValidAddress, isValidAmount } from '../utils';
@@ -43,6 +43,15 @@ export default class SendStore {
 
   constructor(app: AppStore) {
     this.app = app;
+
+    when(
+      () => this.sendState === SEND_STATE.SENT,
+      () => {
+        this.sendState = SEND_STATE.INITIAL;
+        this.app.routerStore.push('/home');
+        this.app.routerStore.push('/account-detail');
+      },
+    );
   }
 
   @action
@@ -51,7 +60,7 @@ export default class SendStore {
   }
 
   @action
-  public async send() {
+  public send = async () => {
     try {
       this.sendState = SEND_STATE.SENDING;
       await this.app.walletStore.wallet!.send(this.receiverAddress, this.amount * 1e8, {

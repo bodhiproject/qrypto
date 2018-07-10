@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { when } from 'mobx';
 import { Typography, withStyles, Button } from '@material-ui/core';
 import { SEND_STATE } from '../../../stores/SendStore';
 
@@ -40,25 +39,12 @@ export default class SendConfirm extends Component<any, {}> {
             disabled={[SENDING, SENT].includes(sendState)}
             variant="contained"
             color="primary"
-            onClick={this.handleConfirm}
+            onClick={sendStore.send}
           >
             {sendState}
           </Button>
         </div>
       </div>
-    );
-  }
-
-  private handleConfirm = () => {
-    const { history, store: { sendStore } } = this.props;
-    sendStore.send();
-    when(
-      () => sendStore.sendState === 'Sent!',
-      () => {
-        sendStore.sendState = 'Initial';
-        history.push('/home');
-        history.push('/account-detail');
-      },
     );
   }
 }
