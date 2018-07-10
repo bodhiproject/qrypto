@@ -23,7 +23,7 @@ export default class Home extends Component<any, {}> {
     const { classes } = this.props;
 
     return (
-      <div>
+      <div className={classes.root}>
         <NavBar hasSettingsButton hasNetworkSelector title="Home" />
         <div className={classes.content}>
           <MainAccount />
