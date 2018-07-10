@@ -1,6 +1,19 @@
 const styles = (theme) => ({
+  root: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  contentContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+  },
   accountDetailHeader: {
     background: theme.palette.background.gradient,
+    borderRadius: 0,
+  },
+  tabs: {
     borderRadius: 0,
   },
   tab: {

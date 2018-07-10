@@ -27,30 +27,33 @@ export default class AccountDetail extends Component<any, {}> {
     ];
 
     return (
-      <div>
-        <Paper elevation={2} className={classes.accountDetailHeader}>
-          <NavBar hasBackButton isDarkTheme title="Account Detail" />
-          <AccountInfo />
-        </Paper>
-        <Paper elevation={1}>
-          <Tabs
-            fullWidth
-            indicatorColor="primary"
-            textColor="primary"
-            value={activeTabIdx}
-            onChange={this.handleTabChange}
-          >
-            <Tab label="TRANSACTIONS" className={classes.tab} />
-            <Tab label="TOKENS" className={classes.tab} />
-          </Tabs>
-        </Paper>
-        <List className={classes.list}>
-          {activeTabIdx === 0 ? (
-            <TransactionList classes={classes} transactions={items} />
-          ) : (
-            <TokenList classes={classes} tokens={tokens} />
-          )}
-        </List>
+      <div className={classes.root}>
+        <div className={classes.contentContainer}>
+          <Paper className={classes.accountDetailHeader} elevation={2}>
+            <NavBar hasBackButton isDarkTheme title="Account Detail" />
+            <AccountInfo />
+          </Paper>
+          <Paper elevation={1}>
+            <Tabs
+              className={classes.tabs}
+              fullWidth
+              indicatorColor="primary"
+              textColor="primary"
+              value={activeTabIdx}
+              onChange={this.handleTabChange}
+            >
+              <Tab label="Transactions" className={classes.tab} />
+              <Tab label="Tokens" className={classes.tab} />
+            </Tabs>
+          </Paper>
+          <List className={classes.list}>
+            {activeTabIdx === 0 ? (
+              <TransactionList classes={classes} transactions={items} />
+            ) : (
+              <TokenList classes={classes} tokens={tokens} />
+            )}
+          </List>
+        </div>
       </div>
     );
   }
