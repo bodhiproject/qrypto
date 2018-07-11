@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     height: '100%',
     display: 'flex',
@@ -22,7 +24,7 @@ const styles = (theme) => ({
   list: {
     flex: 1,
     padding: `0 ${theme.padding.md}`,
-    overflowY: 'auto'
+    overflowY: 'auto',
   },
   listItem: {
     width: '100%',
@@ -34,11 +36,11 @@ const styles = (theme) => ({
     flex: 1,
   },
   txState: {
-    fontSize: theme.font.sm,
-    textTransform: 'uppercase',
-    marginBottom: theme.padding.unit,
+    'fontSize': theme.font.sm,
+    'textTransform': 'uppercase',
+    'marginBottom': theme.padding.unit,
     '&.pending': {
-      color: theme.palette.extra.orange,
+      color: theme.color.orange,
     },
   },
   txId: {
@@ -51,7 +53,7 @@ const styles = (theme) => ({
   },
   arrowRight: {
     fontSize: theme.icon.size,
-    color: theme.palette.extra.gray,
+    color: theme.color.gray,
     marginLeft: theme.padding.xs,
   },
   tokenInfoContainer: {

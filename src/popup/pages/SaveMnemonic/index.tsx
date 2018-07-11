@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, Button, withStyles } from '@material-ui/core';
+import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 
-@withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class SaveMnemonic extends Component<any, {}> {
+class SaveMnemonic extends Component<WithStyles, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
@@ -51,3 +50,5 @@ export default class SaveMnemonic extends Component<any, {}> {
     );
   }
 }
+
+export default withStyles(styles)(SaveMnemonic);

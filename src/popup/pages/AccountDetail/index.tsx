@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Paper, Tabs, Tab, List, ListItem, Typography, withStyles, Button } from '@material-ui/core/';
+import { Paper, Tabs, Tab, List, ListItem, Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
@@ -9,10 +9,9 @@ import NavBar from '../../components/NavBar';
 import Transaction from '../../../models/Transaction';
 import AccountInfo from '../../components/AccountInfo';
 
-@withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class AccountDetail extends Component<any, {}> {
+class AccountDetail extends Component<WithStyles, {}> {
 
   public componentDidMount() {
     const { walletStore, accountDetailStore } = this.props.store;
@@ -130,3 +129,5 @@ const AmountInfo = ({ classes, amount, token, convertedValue }: any) => (
     )}
   </div>
 );
+
+export default withStyles(styles)(AccountDetail);
