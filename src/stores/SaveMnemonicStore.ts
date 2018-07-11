@@ -2,6 +2,7 @@ import { observable, action } from 'mobx';
 import bip39 from 'bip39';
 
 import Account from '../models/Account';
+import AppStore from './AppStore';
 
 const INIT_VALUES = {
   mnemonic: '',
