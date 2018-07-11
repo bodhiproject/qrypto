@@ -1,63 +1,46 @@
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
+import React, { Fragment, Props } from 'react';
 import { inject, observer } from 'mobx-react';
 
-import { Typography, Menu, MenuItem, Button, IconButton, withStyles, WithStyles } from '@material-ui/core';
+import { Typography, Menu, MenuItem, Button, IconButton, withStyles } from '@material-ui/core';
 import { ArrowBack, Settings, ArrowDropDown } from '@material-ui/icons';
 import cx from 'classnames';
 
 import styles from './styles';
 
-@inject('store')
-@observer
-class NavBar extends Component<WithStyles, {}> {
-  public static propTypes = {
-    classes: PropTypes.object.isRequired,
-    hasBackButton: PropTypes.bool,
-    hasSettingsButton: PropTypes.bool,
-    hasNetworkSelector: PropTypes.bool,
-    isDarkTheme: PropTypes.bool,
-  };
-
-  public static defaultProps = {
-    hasBackButton: false,
-    hasSettingsButton: false,
-    hasNetworkSelector: false,
-    isDarkTheme: false,
-    title: '',
-  };
-
-  public onNetworkSelectionClick = () => {
-    // TODO: implement
-  }
-
-  public render() {
-    const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, title, isDarkTheme }: any = this.props;
-
-    return (
-      <div className={classes.root}>
-        <div className={classes.leftButtonsContainer}>
-          {hasBackButton && <BackButton {...this.props} />}
-          {hasSettingsButton && <SettingsButton {...this.props} />}
-        </div>
-        <div className={classes.locationContainer}>
-          <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
-        </div>
-        {hasNetworkSelector && (
-          <NetworkSelector classes={classes} onNetworkSelectionClick={this.onNetworkSelectionClick} />
-        )}
-      </div>
-    );
-  }
+interface IProps {
+  classes: Record<string, string>;
+  hasBackButton: boolean;
+  hasSettingsButton: boolean;
+  hasNetworkSelector: boolean;
+  isDarkTheme: boolean;
+  title: string;
 }
 
-const BackButton = ({ classes, isDarkTheme, store: { routerStore } }: any) => (
+const NavBar: React.SFC<IProps> = inject('store')(observer((props: Props) => {
+  const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, isDarkTheme, title } = props;
+  return (
+    <div className={classes.root}>
+      <div className={classes.leftButtonsContainer}>
+        {hasBackButton && <BackButton {...props} />}
+        {hasSettingsButton && <SettingsButton {...props} />}
+      </div>
+      <div className={classes.locationContainer}>
+        <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
+      </div>
+      {hasNetworkSelector && (
+        <NetworkSelector {...props} />
+      )}
+    </div>
+  );
+}));
+
+const BackButton: React.SFC<IProps> = ({ classes, isDarkTheme, store: { routerStore } }: Props) => (
   <IconButton onClick={() => routerStore.goBack()} className={classes.backIconButton}>
     <ArrowBack className={cx(classes.backButton, isDarkTheme ? 'white' : '')} />
   </IconButton>
 );
 
-const SettingsButton = observer(({ classes, store: { ui, walletStore }, isDarkTheme }: any) => (
+const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, walletStore }, isDarkTheme }: Props) => (
   <Fragment>
     <IconButton
       aria-owns={ui.settingsMenuAnchor ? 'settingsMenu' : null}
@@ -79,13 +62,12 @@ const SettingsButton = observer(({ classes, store: { ui, walletStore }, isDarkTh
   </Fragment>
 ));
 
-const NetworkSelector = ({ classes, onNetworkSelectionClick }: any) => (
+const NetworkSelector: React.SFC<IProps> = ({ classes }: Props) => (
   <Button
     color="secondary"
     variant="contained"
     size="small"
     className={classes.networkButton}
-    onClick={onNetworkSelectionClick}
   >
     Testnet
     <ArrowDropDown />
