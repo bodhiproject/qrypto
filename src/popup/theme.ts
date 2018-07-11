@@ -205,6 +205,11 @@ export default createMuiTheme({
 
   /* Material component overrides */
   overrides: {
+    MuiCardContent: {
+      root: {
+        padding: `0px !important`,
+      },
+    },
     MuiButton: {
       root: {
         padding: spacingXs,

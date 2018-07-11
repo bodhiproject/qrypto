@@ -6,7 +6,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     borderRadius: theme.border.radius,
   },
   cardContent: {
-    padding: 0,
     background: theme.color.gradientPurple,
   },
 });
