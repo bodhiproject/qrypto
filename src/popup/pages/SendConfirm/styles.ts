@@ -1,8 +1,10 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     height: '100%',
-    display: 'flex', 
-    flexDirection: 'column'
+    display: 'flex',
+    flexDirection: 'column',
   },
   contentContainer: {
     margin: theme.padding.md,
@@ -17,8 +19,8 @@ const styles = (theme) => ({
     marginBottom: theme.padding.custom(8),
   },
   fieldContainer: {
-    width: '100%',
-    borderBottom: theme.border.root,
+    'width': '100%',
+    'borderBottom': theme.border.root,
     '&.row': {
       display: 'flex',
       flexDirection: 'row',
@@ -35,9 +37,9 @@ const styles = (theme) => ({
     alignItems: 'center',
   },
   fieldLabel: {
-    color: theme.palette.text.primary,
-    fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
+    'color': theme.palette.text.primary,
+    'fontSize': theme.font.sm,
+    'fontWeight': theme.font.weight.bold,
     '&.address': {
       lineHeight: theme.font.lineHeight.sm,
       marginBottom: theme.padding.md,

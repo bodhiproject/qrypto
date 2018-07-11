@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { Typography, withStyles, Button } from '@material-ui/core';
+import { Typography, withStyles, Button, WithStyles } from '@material-ui/core';
 import cx from 'classnames';
 
 import styles from './styles';
 import { SEND_STATE } from '../../../constants';
 import NavBar from '../../components/NavBar';
 
-@withStyles(styles, { withTheme: true })
-@withRouter
 @inject('store')
 @observer
-export default class SendConfirm extends Component<any, {}> {
+class SendConfirm extends Component<WithStyles, {}> {
   public render() {
     const { classes, store: { sendStore } } = this.props;
     const { senderAddress, receiverAddress, amount, token, sendState, errorMessage } = sendStore;
@@ -69,3 +66,5 @@ const CostField = ({ classes, fieldName, amount, unit }: any) => (
     </div>
   </div>
 );
+
+export default withStyles(styles)(SendConfirm);
