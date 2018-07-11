@@ -20,4 +20,3 @@ cache:
 
 script:
   - npm run linter
- 
