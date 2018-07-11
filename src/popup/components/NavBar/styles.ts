@@ -44,6 +44,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     },
   },
   networkButton: {
+    height: 24,
     minWidth: 0,
     minHeight: 0,
     padding: `0 ${theme.padding.sm}`,
