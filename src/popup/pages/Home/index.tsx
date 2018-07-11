@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import { withStyles, WithStyles } from '@material-ui/core';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import MainAccount from './MainAccount';
+import AppStore from '../../../stores/AppStore';
+
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
 
 @inject('store')
 @observer
-class Home extends Component<WithStyles, {}> {
-  public static propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
-
+class Home extends Component<WithStyles & IProps, {}> {
   public componentDidMount() {
     this.props.store.walletStore.startPolling();
   }

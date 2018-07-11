@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Typography, TextField, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
@@ -7,14 +6,21 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 import BorderTextField from '../../components/BorderTextField';
 import PasswordInput from '../../components/PasswordInput';
+import AppStore from '../../../stores/AppStore';
+
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
+
+interface IState {
+  importStore: any;
+  walletStore: any;
+}
 
 @inject('store')
 @observer
-class ImportMnemonic extends Component<WithStyles, IState> {
-  public static propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
-
+class ImportMnemonic extends Component<WithStyles & IProps, IState> {
   public componentWillUnmount() {
     this.props.store.importStore.reset();
   }
@@ -91,11 +97,6 @@ class ImportMnemonic extends Component<WithStyles, IState> {
       </div>
     );
   }
-}
-
-interface IState {
-  importStore: any;
-  walletStore: any;
 }
 
 export default withStyles(styles)(ImportMnemonic);

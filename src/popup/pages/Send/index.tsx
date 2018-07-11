@@ -1,24 +1,25 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Typography, Select, MenuItem, TextField, Button, withStyles, WithStyles } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
+import AppStore from '../../../stores/AppStore';
+
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
 
 @inject('store')
 @observer
-class Send extends Component<WithStyles, {}> {
-  public static propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
-
+class Send extends Component<WithStyles & IProps, {}> {
   public componentDidMount() {
     const { store: { sendStore, walletStore } } = this.props;
 
     // Set default sender address
-    sendStore.senderAddress = walletStore.info.addrStr;
+    sendStore.senderAddress = walletStore.info!.addrStr;
   }
 
   public render() {

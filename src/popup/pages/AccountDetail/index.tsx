@@ -8,18 +8,24 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 import Transaction from '../../../models/Transaction';
 import AccountInfo from '../../components/AccountInfo';
+import AppStore from '../../../stores/AppStore';
+
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
 
 @inject('store')
 @observer
-class AccountDetail extends Component<WithStyles, {}> {
+
+class AccountDetail extends Component<WithStyles & IProps, {}> {
+  public handleTabChange = (_: object, idx: number) => {
+    this.props.store.accountDetailStore.activeTabIdx = idx;
+  }
 
   public componentDidMount() {
     const { walletStore, accountDetailStore } = this.props.store;
     accountDetailStore.loadFromWallet(walletStore.wallet!, walletStore.info);
-  }
-
-  public handleTabChange = (_: object, idx: number) => {
-    this.props.store.accountDetailStore.activeTabIdx = idx;
   }
 
   public render() {

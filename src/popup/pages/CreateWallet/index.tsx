@@ -7,10 +7,16 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 import BorderTextField from '../../components/BorderTextField';
 import PasswordInput from '../../components/PasswordInput';
+import AppStore from '../../../stores/AppStore';
+
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
 
 @inject('store')
 @observer
-class CreateWallet extends Component<WithStyles, {}> {
+class CreateWallet extends Component<WithStyles & IProps, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };

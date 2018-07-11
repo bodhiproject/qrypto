@@ -1,19 +1,19 @@
 import React, { Fragment } from 'react';
 import { inject, observer } from 'mobx-react';
-
 import { Typography, Menu, MenuItem, Button, IconButton, withStyles } from '@material-ui/core';
 import { ArrowBack, Settings, ArrowDropDown } from '@material-ui/icons';
 import cx from 'classnames';
 
 import styles from './styles';
+import AppStore from '../../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;
-  store: any;
-  hasBackButton: boolean;
-  hasSettingsButton: boolean;
-  hasNetworkSelector: boolean;
-  isDarkTheme: boolean;
+  store: AppStore;
+  hasBackButton?: boolean;
+  hasSettingsButton?: boolean;
+  hasNetworkSelector?: boolean;
+  isDarkTheme?: boolean;
   title: string;
 }
 

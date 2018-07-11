@@ -6,10 +6,16 @@ import cx from 'classnames';
 import styles from './styles';
 import { SEND_STATE } from '../../../constants';
 import NavBar from '../../components/NavBar';
+import AppStore from '../../../stores/AppStore';
+
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
 
 @inject('store')
 @observer
-class SendConfirm extends Component<WithStyles, {}> {
+class SendConfirm extends Component<WithStyles & IProps, {}> {
   public render() {
     const { classes, store: { sendStore } } = this.props;
     const { senderAddress, receiverAddress, amount, token, sendState, errorMessage } = sendStore;

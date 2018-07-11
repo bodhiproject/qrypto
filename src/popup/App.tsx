@@ -14,9 +14,15 @@ const browserHistory = createBrowserHistory();
 const history = syncHistoryWithStore(browserHistory, store.routerStore);
 history.push('/create-wallet');
 
+interface IProps {
+  port: chrome.runtime.Port;
+}
+
+interface IState {
+}
+
 @observer
 class App extends Component<IProps, IState> {
-
   public componentWillUnmount() {
     store.walletStore.stopPolling();
   }
@@ -30,13 +36,6 @@ class App extends Component<IProps, IState> {
       </MobxProvider>
     );
   }
-}
-
-interface IProps {
-  port: chrome.runtime.Port;
-}
-
-interface IState {
 }
 
 export default App;

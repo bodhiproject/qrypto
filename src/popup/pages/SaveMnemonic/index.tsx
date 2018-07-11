@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
+import AppStore from '../../../stores/AppStore';
+
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
 
 @inject('store')
 @observer
-class SaveMnemonic extends Component<WithStyles, {}> {
-  public static propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
-
+class SaveMnemonic extends Component<WithStyles & IProps, {}> {
   public componentDidMount() {
     this.props.store.saveMnemonicStore.generateMnemonic();
   }

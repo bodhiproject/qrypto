@@ -5,10 +5,17 @@ import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
 
 import styles from './styles';
+import AppStore from '../../../stores/AppStore';
+
+interface IProps {
+  classes: Record<string, string>;
+  hasRightArrow: boolean;
+  store: AppStore;
+}
 
 @inject('store')
 @observer
-class AccountInfo extends Component<WithStyles, {}> {
+class AccountInfo extends Component<WithStyles & IProps, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
     hasRightArrow: PropTypes.bool,
@@ -31,7 +38,7 @@ class AccountInfo extends Component<WithStyles, {}> {
 
     return info && (
       <div className={classes.root}>
-        <Typography className={classes.acctName}>{loggedInAccount.name}</Typography>
+        <Typography className={classes.acctName}>{loggedInAccount!.name}</Typography>
         <Typography className={classes.address}>{info.addrStr}</Typography>
         <div className={classes.amountContainer}>
           <Typography className={classes.tokenAmount}>{info.balance}</Typography>

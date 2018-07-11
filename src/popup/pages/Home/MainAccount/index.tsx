@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import { Card, CardContent, withStyles, WithStyles } from '@material-ui/core';
 
 import styles from './styles';
 import AccountInfo from '../../../components/AccountInfo';
+import AppStore from '../../../../stores/AppStore';
+
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
 
 @inject('store')
 @observer
-class MainAccount extends Component<WithStyles, {}> {
-  public static propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
-
+class MainAccount extends Component<WithStyles & IProps, {}> {
   public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
 
