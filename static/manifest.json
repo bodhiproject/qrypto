@@ -5,6 +5,7 @@
   "manifest_version": 2,
   "icons": {
     "16": "images/qrypto_logo_16.png",
+    "32": "images/qrypto_logo_32.png",
     "48": "images/qrypto_logo_48.png",
     "128": "images/qrypto_logo_128.png"
   },
@@ -64,5 +65,15 @@
   ],
   "externally_connectable": {
     "ids": ["*"]
-  }
+  },
+  "author": [
+    {
+      "name": "Bodhi Foundation",
+      "website": "https://www.bodhi.network/"
+    },
+    {
+      "name": "Qtum Project",
+      "website": "https://qtum.org/en"
+    }
+  ]
 }
