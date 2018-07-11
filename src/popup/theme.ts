@@ -1,116 +1,118 @@
 /* eslint-disable no-unused-vars */
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
+import { FontWeightProperty, ColorProperty, FontFamilyProperty, BorderColorProperty, BorderProperty, BorderRadiusProperty, HeightProperty, WidthProperty, FontSizeProperty, LineHeightProperty, PaddingProperty, MarginProperty } from 'csstype';
 
-const px = (value: number) => value.toString().concat('px');
-
-/* Fonts */
-const fontMontserrat = 'Montserrat, sans-serif';
-const fontSizeXs = 10;
-const fontSizeSm = 12;
-const fontSizeMd = 14;
-const fontSizeLg = 16;
-const fontSizeXl = 18;
-
-const fontWeightBold = 'bold';
-
-const lineHeightXs = 12;
-const lineHeightSm = 16;
-const lineHeightMd = 20;
-const lineHeightLg = 24;
-const lineHeightXl = 32;
+const px = (value: number): string => value.toString().concat('px');
 
 /* Colors */
-const colorWhite = '#FFFFFF';
-const colorGray = '#747474';
-const colorOrange = '#F5A623';
-const colorRed = '#E50000';
+const colorWhite: ColorProperty = '#FFFFFF';
+const colorGray: ColorProperty = '#747474';
+const colorOrange: ColorProperty = '#F5A623';
+const colorRed: ColorProperty = '#E50000';
 
-const primaryColor = '#5539DF';
-const primaryColorDark = '#5539DF';
-const primaryColorLight = '#8E6BF1';
+const primaryColor: ColorProperty = '#5539DF';
+const primaryColorDark: ColorProperty = '#5539DF';
+const primaryColorLight: ColorProperty = '#8E6BF1';
 
-const secondaryColor = colorWhite;
-const secondaryColorLight = colorWhite;
-const secondaryColorDark = colorWhite;
+const secondaryColor: ColorProperty = colorWhite;
+const secondaryColorLight: ColorProperty = colorWhite;
+const secondaryColorDark: ColorProperty = colorWhite;
 
-const textColorPrimary = '#333333';
-const textColorSecondary = colorGray;
+const textColorPrimary: ColorProperty = '#333333';
+const textColorSecondary: ColorProperty = colorGray;
 
-const gradientPurple = `linear-gradient(300.29deg, ${primaryColorLight} -9.7%, ${primaryColor} 85.28%)`;
+const gradientPurple: ColorProperty = `linear-gradient(300.29deg, ${primaryColorLight} -9.7%, ${primaryColor} 85.28%)`;
 
-/* Spacing */
-const spacingUnit = 4;
-const spacingXs = spacingUnit * 2; // 8
-const spacingSm = spacingUnit * 3; // 12
-const spacingMd = spacingUnit * 4; // 16
-const spacingLg = spacingUnit * 5; // 20
-const spacingXl = spacingUnit * 6; // 24
+/* Padding */
+const spacingMultiplier = 4;
+const spacingUnit: PaddingProperty<string> | MarginProperty<string> = px(spacingMultiplier * 1); // 4
+const spacingXs: PaddingProperty<string> | MarginProperty<string> = px(spacingMultiplier * 2); // 8
+const spacingSm: PaddingProperty<string> | MarginProperty<string> = px(spacingMultiplier * 3); // 12
+const spacingMd: PaddingProperty<string> | MarginProperty<string> = px(spacingMultiplier * 4); // 16
+const spacingLg: PaddingProperty<string> | MarginProperty<string> = px(spacingMultiplier * 5); // 20
+const spacingXl: PaddingProperty<string> | MarginProperty<string> = px(spacingMultiplier * 6); // 24
+
+/* Fonts */
+const fontMontserrat: FontFamilyProperty = 'Montserrat, sans-serif';
+const fontSizeXs: FontSizeProperty<string> = px(10);
+const fontSizeSm: FontSizeProperty<string> = px(12);
+const fontSizeMd: FontSizeProperty<string> = px(14);
+const fontSizeLg: FontSizeProperty<string> = px(16);
+const fontSizeXl: FontSizeProperty<string> = px(18);
+
+const fontWeightBold: FontWeightProperty = 'bold';
+
+const lineHeightXs: LineHeightProperty<number> = 12;
+const lineHeightSm: LineHeightProperty<number> = 16;
+const lineHeightMd: LineHeightProperty<number> = 20;
+const lineHeightLg: LineHeightProperty<number> = 24;
+const lineHeightXl: LineHeightProperty<number> = 32;
 
 /* Border */
-const borderColor = '#cccccc';
-const borderSize = 1;
-const borderRadius = 8;
-
-/* Button */
-const buttonRadiusSm = 16;
-const buttonRadiusLg = 24;
-
-const buttonHeightSm = 32;
-const buttonHeightLg = 48;
+const borderColor: BorderColorProperty = '#CCCCCC';
+const borderSize: BorderProperty<string> = px(1);
+const borderRadius: BorderRadiusProperty<string> = px(8);
 
 /* Icons */
-const iconSize = 24;
+const iconSize: WidthProperty<string> | HeightProperty<string> = px(24);
+
+/* Button */
+const buttonRadiusSm: BorderRadiusProperty<string> = px(16);
+const buttonRadiusLg: BorderRadiusProperty<string> = px(24);
+
+const buttonHeightSm: HeightProperty<string> = px(32);
+const buttonHeightLg: HeightProperty<string> = px(48);
 
 declare module '@material-ui/core/styles/createMuiTheme' {
   // tslint:disable-next-line:interface-name
   interface Theme {
     color: {
-      gray: string;
-      orange: string;
-      red: string;
-      gradientPurple: string;
+      gray: ColorProperty;
+      orange: ColorProperty;
+      red: ColorProperty;
+      gradientPurple: ColorProperty;
     };
     padding: {
-      unit: number;
-      xs: number;
-      sm: number;
-      md: number;
-      lg: number;
-      xl: number;
-      custom(multiplier: number): number;
+      unit: PaddingProperty<string> | MarginProperty<string>;
+      xs: PaddingProperty<string> | MarginProperty<string>;
+      sm: PaddingProperty<string> | MarginProperty<string>;
+      md: PaddingProperty<string> | MarginProperty<string>;
+      lg: PaddingProperty<string> | MarginProperty<string>;
+      xl: PaddingProperty<string> | MarginProperty<string>;
+      custom(multiplier: number): PaddingProperty<string> | MarginProperty<string>;
     };
     font: {
-      xs: number;
-      sm: number;
-      md: number;
-      lg: number;
-      xl: number;
+      xs: FontSizeProperty<string>;
+      sm: FontSizeProperty<string>;
+      md: FontSizeProperty<string>;
+      lg: FontSizeProperty<string>;
+      xl: FontSizeProperty<string>;
       weight: {
-        bold: string;
+        bold: FontWeightProperty;
       };
       lineHeight: {
-        xs: number;
-        sm: number;
-        md: number;
-        lg: number;
-        xl: number;
+        xs: LineHeightProperty<number>;
+        sm: LineHeightProperty<number>;
+        md: LineHeightProperty<number>;
+        lg: LineHeightProperty<number>;
+        xl: LineHeightProperty<number>;
       };
     };
     border: {
-      root: string;
-      radius: number;
+      root: BorderProperty<string>;
+      radius: BorderRadiusProperty<string>;
     };
     icon: {
-      size: number;
+      size: WidthProperty<string> | HeightProperty<string>;
     };
     button: {
       sm: {
-        height: number;
-        radius: number;
+        height: HeightProperty<string>;
+        radius: BorderRadiusProperty<string>;
       };
       lg: {
-        height: number;
-        radius: number;
+        height: HeightProperty<string>;
+        radius: BorderRadiusProperty<string>;
       };
     };
   }
@@ -118,52 +120,52 @@ declare module '@material-ui/core/styles/createMuiTheme' {
   // tslint:disable-next-line:interface-name
   interface ThemeOptions {
     color?: {
-      gray?: string;
-      orange?: string;
-      red?: string;
-      gradientPurple?: string;
+      gray?: ColorProperty;
+      orange?: ColorProperty;
+      red?: ColorProperty;
+      gradientPurple?: ColorProperty;
     };
     padding?: {
-      unit?: number;
-      xs?: number;
-      sm?: number;
-      md?: number;
-      lg?: number;
-      xl?: number;
-      custom?(multiplier: number): number;
+      unit?: PaddingProperty<string> | MarginProperty<string>;
+      xs?: PaddingProperty<string> | MarginProperty<string>;
+      sm?: PaddingProperty<string> | MarginProperty<string>;
+      md?: PaddingProperty<string> | MarginProperty<string>;
+      lg?: PaddingProperty<string> | MarginProperty<string>;
+      xl?: PaddingProperty<string> | MarginProperty<string>;
+      custom?(multiplier: number): PaddingProperty<string> | MarginProperty<string>;
     };
     font?: {
-      xs?: number;
-      sm?: number;
-      md?: number;
-      lg?: number;
-      xl?: number;
+      xs?: FontSizeProperty<string>;
+      sm?: FontSizeProperty<string>;
+      md?: FontSizeProperty<string>;
+      lg?: FontSizeProperty<string>;
+      xl?: FontSizeProperty<string>;
       weight?: {
-        bold: string;
+        bold: FontWeightProperty;
       };
       lineHeight?: {
-        xs: number;
-        sm: number;
-        md: number;
-        lg: number;
-        xl: number;
+        xs: LineHeightProperty<number>;
+        sm: LineHeightProperty<number>;
+        md: LineHeightProperty<number>;
+        lg: LineHeightProperty<number>;
+        xl: LineHeightProperty<number>;
       };
     };
     border?: {
-      root?: string;
-      radius?: number;
+      root?: BorderProperty<string>;
+      radius?: BorderRadiusProperty<string>;
     };
     icon?: {
-      size?: number;
+      size?: WidthProperty<string> | HeightProperty<string>;
     };
     button?: {
       sm?: {
-        height?: number;
-        radius?: number;
+        height?: HeightProperty<string>;
+        radius?: BorderRadiusProperty<string>;
       };
       lg?: {
-        height?: number;
-        radius?: number;
+        height?: HeightProperty<string>;
+        radius?: BorderRadiusProperty<string>;
       };
     };
   }
@@ -198,7 +200,7 @@ export default createMuiTheme({
   /* Material font overrides */
   typography: {
     fontFamily: fontMontserrat,
-    fontSize: fontSizeMd,
+    fontSize: 14,
   },
 
   /* Material component overrides */
@@ -243,7 +245,7 @@ export default createMuiTheme({
     md: spacingMd,
     lg: spacingLg,
     xl: spacingXl,
-    custom: (multiplier: number) => spacingUnit * multiplier,
+    custom: (multiplier: number) => px(spacingMultiplier * multiplier),
   },
 
   font: {
@@ -265,7 +267,7 @@ export default createMuiTheme({
   },
 
   border: {
-    root: `${borderColor} solid ${px(borderSize)}`,
+    root: `${borderColor} solid ${borderSize}`,
     radius: borderRadius,
   },
 
