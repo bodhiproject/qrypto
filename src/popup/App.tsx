@@ -5,8 +5,8 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { syncHistoryWithStore } from 'mobx-react-router';
 import { createBrowserHistory } from 'history';
 
+import theme from './theme';
 import { store } from '../stores/AppStore';
-import theme from '../config/theme';
 import MainContainer from './MainContainer';
 
 // Sync history with MobX router

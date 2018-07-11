@@ -10,7 +10,7 @@ const styles = (theme) => ({
     flexDirection: 'column',
   },
   accountDetailHeader: {
-    background: theme.palette.background.gradient,
+    background: theme.color.gradientPurple,
     borderRadius: 0,
   },
   tabs: {
@@ -21,12 +21,12 @@ const styles = (theme) => ({
   },
   list: {
     flex: 1,
-    padding: `0 ${theme.spacing.md}`,
+    padding: `0 ${theme.padding.md}`,
     overflowY: 'auto'
   },
   listItem: {
     width: '100%',
-    padding: `${theme.spacing.md} 0`,
+    padding: `${theme.padding.md} 0`,
     cursor: 'pointer',
     display: 'inline-flex',
   },
@@ -36,7 +36,7 @@ const styles = (theme) => ({
   txState: {
     fontSize: theme.font.sm,
     textTransform: 'uppercase',
-    marginBottom: theme.spacing.unit,
+    marginBottom: theme.padding.unit,
     '&.pending': {
       color: theme.palette.extra.orange,
     },
@@ -52,7 +52,7 @@ const styles = (theme) => ({
   arrowRight: {
     fontSize: theme.icon.size,
     color: theme.palette.extra.gray,
-    marginLeft: theme.spacing.xs,
+    marginLeft: theme.padding.xs,
   },
   tokenInfoContainer: {
     width: '100%',
@@ -71,7 +71,7 @@ const styles = (theme) => ({
   tokenAmount: {
     fontSize: theme.font.lg,
     color: theme.palette.text.primary,
-    marginRight: theme.spacing.unit,
+    marginRight: theme.padding.unit,
   },
   tokenTypeContainer: {
     display: 'flex',

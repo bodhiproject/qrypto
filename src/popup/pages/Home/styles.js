@@ -9,7 +9,7 @@ const styles = (theme) => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    margin: theme.spacing.md,
+    margin: theme.padding.md,
   },
 });
 

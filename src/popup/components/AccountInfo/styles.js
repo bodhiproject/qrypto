@@ -1,17 +1,17 @@
 const styles = (theme) => ({
   root: {
-    padding: theme.spacing.md,
+    padding: theme.padding.md,
   },
   acctName: {
     fontSize: theme.font.lg,
     fontWeight: theme.font.weight.bold,
-    color: theme.palette.text.light,
-    marginBottom: theme.spacing.unit,
+    color: theme.palette.secondary.main,
+    marginBottom: theme.padding.unit,
   },
   address: {
     fontSize: theme.font.sm,
-    color: theme.palette.text.light,
-    marginBottom: theme.spacing.md,
+    color: theme.palette.secondary.main,
+    marginBottom: theme.padding.md,
   },
   amountContainer: {
     width: '100%',
@@ -21,33 +21,33 @@ const styles = (theme) => ({
   tokenAmount: {
     fontSize: 32,
     fontWeight: theme.font.weight.bold,
-    color: theme.palette.text.light,
-    marginRight: theme.spacing.xs,
+    color: theme.palette.secondary.main,
+    marginRight: theme.padding.xs,
   },
   token: {
     fontSize: theme.font.sm,
-    color: theme.palette.text.light,
+    color: theme.palette.secondary.main,
     flex: 1,
     alignSelf: 'flex-end',
     marginBottom: 6,
   },
   rightArrow: {
     fontSize: 22,
-    color: theme.palette.text.light,
+    color: theme.palette.secondary.main,
     alignSelf: 'center',
   },
   balanceUSD: {
     fontSize: theme.font.sm,
-    color: theme.palette.text.light,
-    marginBottom: theme.spacing.sm,
+    color: theme.palette.secondary.main,
+    marginBottom: theme.padding.sm,
   }, 
   actionButtonsContainer: {
     display: 'flex',
     justifyContent: 'flex-end',
   },
   actionButton: {
-    padding: `${theme.spacing.unit} ${theme.spacing.sm}`,
-    marginRight: theme.spacing.xs,
+    padding: `${theme.padding.unit} ${theme.padding.sm}`,
+    marginRight: theme.padding.xs,
     fontSize: theme.font.sm,
   },
 });

@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     height: '100%',
     display: 'flex',
@@ -8,7 +10,7 @@ const styles = (theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    margin: theme.spacing.xl,
+    margin: theme.padding.xl,
   },
   logoContainerOuter: {
     flex: 1,
@@ -21,7 +23,7 @@ const styles = (theme) => ({
     fontSize: 52,
     fontWeight: theme.font.weight.bold,
     color: theme.palette.primary.main,
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.padding.lg,
     alignSelf: 'center',
   },
   logoDesc: {
@@ -34,17 +36,17 @@ const styles = (theme) => ({
     flexDirection: 'column',
   },
   walletNameField: {
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.padding.md,
   },
   passwordField: {
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.padding.md,
   },
   confirmPasswordField: {
-    marginBottom: theme.spacing.custom(8),
+    marginBottom: theme.padding.custom(8),
   },
   loginButton: {
     height: theme.button.lg.height,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.padding.sm,
     borderRadius: theme.button.lg.radius,
     display: 'flex',
   },

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, Button, withStyles } from '@material-ui/core';
+import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
@@ -8,10 +8,9 @@ import NavBar from '../../components/NavBar';
 import BorderTextField from '../../components/BorderTextField';
 import PasswordInput from '../../components/PasswordInput';
 
-@withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class CreateWallet extends Component<any, {}> {
+class CreateWallet extends Component<WithStyles, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
@@ -87,3 +86,5 @@ export default class CreateWallet extends Component<any, {}> {
     saveMnemonicStore.password = event.target.value;
   }
 }
+
+export default withStyles(styles)(CreateWallet);

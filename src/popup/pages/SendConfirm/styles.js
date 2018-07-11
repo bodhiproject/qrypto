@@ -5,7 +5,7 @@ const styles = (theme) => ({
     flexDirection: 'column'
   },
   contentContainer: {
-    margin: theme.spacing.md,
+    margin: theme.padding.md,
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
@@ -14,7 +14,7 @@ const styles = (theme) => ({
     flex: 1,
   },
   addressFieldsContainer: {
-    marginBottom: theme.spacing.custom(8),
+    marginBottom: theme.padding.custom(8),
   },
   fieldContainer: {
     width: '100%',
@@ -24,10 +24,10 @@ const styles = (theme) => ({
       flexDirection: 'row',
     },
     '&.marginSmall': {
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.padding.md,
     },
     '&.marginBig': {
-      marginBottom: theme.spacing.custom(8),
+      marginBottom: theme.padding.custom(8),
     },
   },
   labelContainer: {
@@ -40,7 +40,7 @@ const styles = (theme) => ({
     fontWeight: theme.font.weight.bold,
     '&.address': {
       lineHeight: theme.font.lineHeight.sm,
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.padding.md,
     },
     '&.cost': {
       lineHeight: theme.font.lineHeight.md,
@@ -70,14 +70,14 @@ const styles = (theme) => ({
     fontSize: theme.font.sm,
     textTransform: 'uppercase',
     color: theme.palette.text.secondary,
-    marginLeft: theme.spacing.unit,
+    marginLeft: theme.padding.unit,
   },
   errorMessage: {
     fontSize: theme.font.sm,
     fontWeight: theme.font.weight.bold,
-    color: theme.palette.text.error,
+    color: theme.color.red,
     alignSelf: 'center',
-    marginBottom: theme.spacing.unit,
+    marginBottom: theme.padding.unit,
   },
   sendButton: {
     height: theme.button.lg.height,

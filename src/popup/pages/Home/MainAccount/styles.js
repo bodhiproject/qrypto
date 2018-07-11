@@ -5,7 +5,7 @@ const styles = (theme) => ({
   },
   cardContent: {
     padding: 0,
-    background: theme.palette.background.gradient,
+    background: theme.color.gradientPurple,
   },
 });
 

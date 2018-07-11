@@ -1,7 +1,7 @@
 const styles = (theme) => ({
   textField: {
     flex: 1,
-    padding: theme.spacing.md,
+    padding: theme.padding.md,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
