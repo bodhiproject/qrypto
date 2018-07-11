@@ -20,18 +20,18 @@ const lineHeightLg = 24;
 const lineHeightXl = 32;
 
 /* Colors */
+const colorWhite = '#FFFFFF';
+const colorGray = '#747474';
+const colorOrange = '#F5A623';
+const colorRed = '#E50000';
+
 const primaryColor = '#5539DF';
 const primaryColorDark = '#5539DF';
 const primaryColorLight = '#8E6BF1';
 
-const secondaryColor = '#ffffff';
-const secondaryColorLight = '#ffffff';
-const secondaryColorDark = '#ffffff';
-
-const colorWhite = '#ffffff';
-const colorGray = '#747474';
-const colorOrange = '#F5A623';
-const colorRed = '#E50000';
+const secondaryColor = colorWhite;
+const secondaryColorLight = colorWhite;
+const secondaryColorDark = colorWhite;
 
 const textColorPrimary = '#333333';
 const textColorSecondary = colorGray;
