@@ -12,7 +12,7 @@ import styles from './styles';
 export default class AccountInfo extends Component<any, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
-    hasRightArrow: PropTypes.boolean,
+    hasRightArrow: PropTypes.bool,
   };
 
   public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {

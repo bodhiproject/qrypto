@@ -9,6 +9,9 @@ import { STORAGE } from '../constants';
 import Account from '../models/Account';
 
 export default class WalletStore {
+  private static GET_INFO_INTERVAL_MS: number = 30000;
+  private static GET_PRICE_INTERVAL_MS: number = 60000;
+
   @observable public loading = true;
   @observable public info?: Insight.IGetInfo = undefined;
   @observable public accounts: Account[] = [];
@@ -55,10 +58,10 @@ export default class WalletStore {
 
     this.getInfoInterval = setInterval(() => {
       this.getWalletInfo();
-    }, 5000);
+    }, WalletStore.GET_INFO_INTERVAL_MS);
     this.getPriceInterval = setInterval(() => {
         this.getQtumPrice();
-    }, 60000);
+    }, WalletStore.GET_PRICE_INTERVAL_MS);
   }
 
   @action

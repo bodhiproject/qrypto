@@ -1,8 +1,7 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
-import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 
-import './App.scss';
 import Loading from './components/Loading';
 import CreateWallet from './pages/CreateWallet';
 import SaveMnemonic from './pages/SaveMnemonic';
@@ -18,16 +17,14 @@ import SendConfirm from './pages/SendConfirm';
 @observer
 export default class MainContainer extends Component<IProps, IState> {
   public render() {
-    const { walletStore, routerStore } = this.props.store;
+    const { history, store: { walletStore: { loading } } }: any = this.props;
 
     return (
       <div style={{ width: '100%', height: '100%' }}>
-        <Loading loading={walletStore.loading} />
+        <Loading loading={loading} />
         <div style={{ width: '100%', height: '100%' }}>
-          <Router history={this.props.history}>
-            <Fragment>
-              <Redirect to={routerStore.location} />
-
+          <Router history={history}>
+            <Switch>
               <Route exact path="/create-wallet" component={CreateWallet} />
               <Route exact path="/save-mnemonic" component={SaveMnemonic} />
               <Route exact path="/import" component={ImportMnemonic} />
@@ -37,7 +34,7 @@ export default class MainContainer extends Component<IProps, IState> {
               <Route exact path="/send" component={Send} />
               <Route exact path="/send-confirm" component={SendConfirm} />
               <Route exact path="/receive" component={Receive} />
-            </Fragment>
+            </Switch>
           </Router>
         </div>
       </div>

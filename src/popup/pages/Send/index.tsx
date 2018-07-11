@@ -29,10 +29,12 @@ export default class Send extends Component<any, {}> {
       <div className={classes.root}>
         <NavBar hasBackButton title="Send" />
         <div className={classes.contentContainer}>
-          <FromField {...this.props} />
-          <ToField {...this.props} />
-          <TokenField {...this.props} />
-          <AmountField {...this.props} />
+          <div className={classes.fieldsContainer}>
+            <FromField {...this.props} />
+            <ToField {...this.props} />
+            <TokenField {...this.props} />
+            <AmountField {...this.props} />
+          </div>
           <SendButton {...this.props} />
         </div>
       </div>
@@ -73,6 +75,8 @@ const ToField = observer(({ classes, store: { sendStore, walletStore: { info } }
         type="text"
         multiline={false}
         placeholder={info.addrStr}
+        helperText={sendStore.receiverFieldError}
+        error={!!sendStore.receiverFieldError}
         InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
         onChange={(event) => sendStore.receiverAddress = event.target.value}
       />
@@ -116,8 +120,10 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
         fullWidth
         type="number"
         multiline={false}
-        placeholder="0.00"
+        placeholder={'0.00'}
         value={sendStore.amount}
+        helperText={sendStore.amountFieldError}
+        error={!!sendStore.amountFieldError}
         InputProps={{
           endAdornment: <Typography className={classes.amountTokenAdornment}>{sendStore.token}</Typography>,
           disableUnderline: true,
@@ -128,14 +134,15 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
   </div>
 ));
 
-const SendButton = ({ classes, store: { sendStore } }: any) => (
+const SendButton = observer(({ classes, store: { sendStore } }: any) => (
   <Button
     className={classes.sendButton}
     fullWidth
     variant="contained"
     color="primary"
+    disabled={sendStore.buttonDisabled}
     onClick={sendStore.routeToSendConfirm}
   >
     Send
   </Button>
-);
+));

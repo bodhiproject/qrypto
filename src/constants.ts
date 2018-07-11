@@ -15,4 +15,11 @@ export enum API_TYPE {
 
 export enum STORAGE {
   TESTNET_ACCOUNTS = 'testnetAccounts',
+  MAINNET_ACCOUNTS = 'mainnetAccounts',
+}
+
+export enum SEND_STATE {
+  INITIAL = 'Confirm',
+  SENDING = 'Sending...',
+  SENT = 'Sent!',
 }

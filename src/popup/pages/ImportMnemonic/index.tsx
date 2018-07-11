@@ -63,7 +63,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
                 classNames={classes.passwordField}
                 placeholder="Confirm password"
                 helperText={matchError}
-                error={matchError}
+                error={!!matchError}
                 onChange={(e: any) => importStore.confirmPassword = e.target.value}
               />
             </div>

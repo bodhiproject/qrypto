@@ -20,8 +20,8 @@ export default class Receive extends Component<any, {}> {
     const { loggedInAccount, info, balanceUSD } = this.props.store.walletStore;
 
     return(
-      <div>
-        <NavBar hasBackButton={true} title="Receive" />
+      <div className={classes.root}>
+        <NavBar hasBackButton title="Receive" />
         <div className={classes.contentContainer}>
           <Typography className={classes.accountName}>{loggedInAccount.name}</Typography>
           <Typography className={classes.accountAddress}>{info.addrStr}</Typography>

@@ -47,7 +47,7 @@ export default class CreateWallet extends Component<any, {}> {
               classNames={classes.confirmPasswordField}
               placeholder="Confirm password"
               helperText={matchError}
-              error={matchError}
+              error={!!matchError}
               onChange={(e: any) => createWalletStore.confirmPassword = e.target.value}
             />
           </div>
