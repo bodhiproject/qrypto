@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
-import { Typography, Button, withStyles } from '@material-ui/core';
+import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
 
 import styles from './styles';
 
-@withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class AccountInfo extends Component<any, {}> {
+class AccountInfo extends Component<WithStyles, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
     hasRightArrow: PropTypes.bool,
@@ -66,3 +65,5 @@ export default class AccountInfo extends Component<any, {}> {
     );
   }
 }
+
+export default withStyles(styles)(AccountInfo);

@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     padding: theme.padding.md,
   },
@@ -40,7 +42,7 @@ const styles = (theme) => ({
     fontSize: theme.font.sm,
     color: theme.palette.secondary.main,
     marginBottom: theme.padding.sm,
-  }, 
+  },
   actionButtonsContainer: {
     display: 'flex',
     justifyContent: 'flex-end',
