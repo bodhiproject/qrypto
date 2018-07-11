@@ -1,8 +1,9 @@
-import { observable, action } from 'mobx';
-import {  Wallet, Insight } from 'qtumjs-wallet';
-import _ from 'lodash';
+import { observable, action, computed } from 'mobx';
+import { Insight } from 'qtumjs-wallet';
+import { find, map, sumBy, partition, includes } from 'lodash';
 import moment from 'moment';
 
+import AppStore from './AppStore';
 import Transaction from '../models/Transaction';
 
 export default class AccountDetailStore {
@@ -11,27 +12,30 @@ export default class AccountDetailStore {
   @observable public pageNum: number = 0;
   @observable public pagesTotal?: number;
 
-  private wallet?: Wallet;
+  constructor(private app: AppStore) {}
 
-  @action public async loadFromWallet(wallet: Wallet) {
-    this.items = await this.load(wallet);
+  @computed public get hasMore(): boolean {
+    return !!this.pagesTotal && (this.pagesTotal > this.pageNum + 1);
+ }
+
+  @action public async loadFromWallet() {
+    this.items = await this.load();
   }
 
   @action public async loadMore() {
-    const txs = await this.load(this.wallet!, this.pageNum + 1);
+    const txs = await this.load(this.pageNum + 1);
 
     this.items = this.items.concat(txs);
   }
 
-  @action private async load(wallet: Wallet, pageNum: number = 0): Promise<Transaction[]> {
-    this.wallet = wallet;
-
+  @action private async load(pageNum: number = 0): Promise<Transaction[]> {
+    const wallet = this.app.walletStore.wallet!;
     const { pagesTotal, txs } =  await wallet.getTransactions(pageNum);
 
     this.pagesTotal = pagesTotal;
     this.pageNum = pageNum;
 
-    return txs.map((tx: Insight.IRawTransactionInfo) => {
+    return map(txs, (tx: Insight.IRawTransactionInfo) => {
       const {
         txid,
         confirmations,
@@ -40,15 +44,15 @@ export default class AccountDetailStore {
         vout,
       } = tx;
 
-      const sender = _.find(vin, {addr: wallet.address});
+      const sender = find(vin, {addr: wallet.address});
 
-      const outs = _.map(vout, ({ value, scriptPubKey: { addresses } }) => {
+      const outs = map(vout, ({ value, scriptPubKey: { addresses } }) => {
         return { value, addresses };
       });
 
-      const [mine, other] = _.partition(outs, ({ addresses }) => _.includes(addresses, wallet.address));
+      const [mine, other] = partition(outs, ({ addresses }) => includes(addresses, wallet.address));
 
-      const amount = _.sumBy(sender ? other : mine, ({ value }) => parseFloat(value));
+      const amount = sumBy(sender ? other : mine, ({ value }) => parseFloat(value));
 
       return new Transaction({
         id: txid,

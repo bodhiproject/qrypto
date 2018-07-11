@@ -25,7 +25,7 @@ export default class AccountDetail extends Component<any, {}> {
 
   public render() {
     const { classes, store: { accountDetailStore } } = this.props;
-    const { activeTabIdx, items, pagesTotal, pageNum } = accountDetailStore;
+    const { activeTabIdx, items, hasMore } = accountDetailStore;
 
     const tokens = [
       { name: 'Bodhi', token: 'BOT', amount: 123, url: 'https://coinmarketcap.com/currencies/bodhi/' },
@@ -56,7 +56,7 @@ export default class AccountDetail extends Component<any, {}> {
               <div>
                 <TransactionList classes={classes} transactions={items} />
                 <div className={classes.loadingButtonWrap}>
-                  {(pagesTotal > pageNum + 1) && (
+                  {hasMore && (
                     <Button
                       id="loadingButton"
                       color="primary"
