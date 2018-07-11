@@ -35,4 +35,12 @@ export default class AppStore {
 }
 
 export const store = new AppStore();
-window.store = store; // allows us to see store in browser console for debugging
+
+// allows us to see store in browser console for debugging
+declare global {
+  // tslint:disable-next-line:interface-name
+  interface Window {
+    store: AppStore;
+  }
+}
+window.store = store;
