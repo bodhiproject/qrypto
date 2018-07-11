@@ -14,7 +14,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   warningText: {
     fontSize: theme.font.md,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.text.primary,
     marginBottom: theme.padding.md,
   },
@@ -23,7 +23,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     padding: theme.padding.md,
     marginBottom: theme.padding.md,
     fontSize: theme.font.xl,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.primary.main,
     border: theme.border.root,
     borderRadius: theme.border.radius,

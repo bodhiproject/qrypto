@@ -9,7 +9,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   textFieldInput: {
     fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
   },
 });
 

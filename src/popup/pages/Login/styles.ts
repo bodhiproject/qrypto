@@ -18,7 +18,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   selectAcctText: {
     fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.secondary.main,
     marginBottom: theme.padding.xs,
   },
@@ -44,7 +44,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     minHeight: 0,
     padding: `0 ${theme.padding.unit}`,
     fontSize: theme.font.md,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.secondary.main,
   },
   permissionContainer: {
@@ -53,7 +53,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   permissionsHeader: {
     fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.text.primary,
     marginBottom: theme.padding.md,
   },

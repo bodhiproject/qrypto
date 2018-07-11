@@ -21,7 +21,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   logoText: {
     fontSize: 52,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.primary.main,
     marginBottom: theme.padding.lg,
     alignSelf: 'center',

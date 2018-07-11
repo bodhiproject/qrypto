@@ -6,7 +6,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   acctName: {
     fontSize: theme.font.lg,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.secondary.main,
     marginBottom: theme.padding.unit,
   },
@@ -22,7 +22,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   tokenAmount: {
     fontSize: 32,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.secondary.main,
     marginRight: theme.padding.xs,
   },

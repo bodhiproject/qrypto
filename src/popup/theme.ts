@@ -42,11 +42,11 @@ const fontSizeXl: FontSizeProperty<string> = px(18);
 
 const fontWeightBold: FontWeightProperty = 'bold';
 
-const lineHeightXs: LineHeightProperty<number> = 12;
-const lineHeightSm: LineHeightProperty<number> = 16;
-const lineHeightMd: LineHeightProperty<number> = 20;
-const lineHeightLg: LineHeightProperty<number> = 24;
-const lineHeightXl: LineHeightProperty<number> = 32;
+const lineHeightXs: LineHeightProperty<string> = px(12);
+const lineHeightSm: LineHeightProperty<string> = px(16);
+const lineHeightMd: LineHeightProperty<string> = px(20);
+const lineHeightLg: LineHeightProperty<string> = px(24);
+const lineHeightXl: LineHeightProperty<string> = px(32);
 
 /* Border */
 const borderColor: BorderColorProperty = '#CCCCCC';
@@ -87,16 +87,16 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       md: FontSizeProperty<string>;
       lg: FontSizeProperty<string>;
       xl: FontSizeProperty<string>;
-      weight: {
-        bold: FontWeightProperty;
-      };
-      lineHeight: {
-        xs: LineHeightProperty<number>;
-        sm: LineHeightProperty<number>;
-        md: LineHeightProperty<number>;
-        lg: LineHeightProperty<number>;
-        xl: LineHeightProperty<number>;
-      };
+    };
+    fontWeight: {
+      bold: FontWeightProperty;
+    };
+    lineHeight: {
+      xs: LineHeightProperty<string>;
+      sm: LineHeightProperty<string>;
+      md: LineHeightProperty<string>;
+      lg: LineHeightProperty<string>;
+      xl: LineHeightProperty<string>;
     };
     border: {
       root: BorderProperty<string>;
@@ -140,16 +140,16 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       md?: FontSizeProperty<string>;
       lg?: FontSizeProperty<string>;
       xl?: FontSizeProperty<string>;
-      weight?: {
-        bold: FontWeightProperty;
-      };
-      lineHeight?: {
-        xs: LineHeightProperty<number>;
-        sm: LineHeightProperty<number>;
-        md: LineHeightProperty<number>;
-        lg: LineHeightProperty<number>;
-        xl: LineHeightProperty<number>;
-      };
+    };
+    fontWeight?: {
+      bold?: FontWeightProperty;
+    };
+    lineHeight?: {
+      xs?: LineHeightProperty<string>;
+      sm?: LineHeightProperty<string>;
+      md?: LineHeightProperty<string>;
+      lg?: LineHeightProperty<string>;
+      xl?: LineHeightProperty<string>;
     };
     border?: {
       root?: BorderProperty<string>;
@@ -230,7 +230,7 @@ export default createMuiTheme({
     },
     MuiTab: {
       root: {
-        padding: `${spacingMd} 0`,
+        padding: 0,
       },
       label: {
         fontFamily: fontMontserrat,
@@ -247,7 +247,6 @@ export default createMuiTheme({
     red: colorRed,
     gradientPurple,
   },
-
   padding: {
     unit: spacingUnit,
     xs: spacingXs,
@@ -257,34 +256,30 @@ export default createMuiTheme({
     xl: spacingXl,
     custom: (multiplier: number) => px(spacingMultiplier * multiplier),
   },
-
   font: {
     xs: fontSizeXs,
     sm: fontSizeSm,
     md: fontSizeMd,
     lg: fontSizeLg,
     xl: fontSizeXl,
-    weight: {
-      bold: fontWeightBold,
-    },
-    lineHeight: {
-      xs: lineHeightXs,
-      sm: lineHeightSm,
-      md: lineHeightMd,
-      lg: lineHeightLg,
-      xl: lineHeightXl,
-    },
   },
-
+  fontWeight: {
+    bold: fontWeightBold,
+  },
+  lineHeight: {
+    xs: lineHeightXs,
+    sm: lineHeightSm,
+    md: lineHeightMd,
+    lg: lineHeightLg,
+    xl: lineHeightXl,
+  },
   border: {
     root: `${borderColor} solid ${borderSize}`,
     radius: borderRadius,
   },
-
   icon: {
     size: iconSize,
   },
-
   button: {
     sm: {
       height: buttonHeightSm,

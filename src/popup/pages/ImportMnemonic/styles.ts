@@ -14,7 +14,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   headerText: {
     fontSize: 20,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.text.primary,
     marginBottom: theme.padding.sm,
   },
@@ -23,7 +23,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   importHeading: {
     fontSize: 20,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     marginBottom: theme.padding.sm,
   },
   fieldContainer: {

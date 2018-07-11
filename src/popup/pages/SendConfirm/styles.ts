@@ -39,19 +39,19 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   fieldLabel: {
     color: theme.palette.text.primary,
     fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     '&.address': {
-      lineHeight: theme.font.lineHeight.sm,
+      lineHeight: theme.lineHeight.sm,
       marginBottom: theme.padding.md,
     },
     '&.cost': {
-      lineHeight: theme.font.lineHeight.md,
+      lineHeight: theme.lineHeight.md,
     },
   },
   addressValue: {
     fontSize: theme.font.sm,
     color: theme.palette.text.primary,
-    lineHeight: theme.font.lineHeight.lg,
+    lineHeight: theme.lineHeight.lg,
   },
   amountContainer: {
     flex: 1,
@@ -62,7 +62,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   fieldValue: {
     fontSize: theme.font.lg,
     color: theme.palette.text.primary,
-    lineHeight: theme.font.lineHeight.lg,
+    lineHeight: theme.lineHeight.lg,
   },
   unitContainer: {
     display: 'flex',
@@ -76,7 +76,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   errorMessage: {
     fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.color.red,
     alignSelf: 'center',
     marginBottom: theme.padding.unit,
