@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Paper, Select, MenuItem, Typography, Button, withStyles } from '@material-ui/core';
+import { Paper, Select, MenuItem, Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import { isEmpty } from 'lodash';
 
@@ -8,10 +8,9 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 import PasswordInput from '../../components/PasswordInput';
 
-@withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class Login extends Component<any, {}> {
+class Login extends Component<WithStyles, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
@@ -82,3 +81,5 @@ const LoginSection = observer(({ classes, store: { loginStore } }: any) => (
     </Button>
   </div>
 ));
+
+export default withStyles(styles)(Login);
