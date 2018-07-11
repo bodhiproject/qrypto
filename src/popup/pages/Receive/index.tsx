@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
-import { Typography, withStyles } from '@material-ui/core';
+import { Typography, withStyles, WithStyles } from '@material-ui/core';
 import QRCode from 'qrcode.react';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 
-@withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class Receive extends Component<any, {}> {
+class Receive extends Component<WithStyles, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
@@ -38,3 +37,5 @@ export default class Receive extends Component<any, {}> {
     );
   }
 }
+
+export default withStyles(styles)(Receive);
