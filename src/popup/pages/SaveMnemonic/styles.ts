@@ -29,8 +29,8 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     borderRadius: theme.border.radius,
   },
   actionButton: {
-    'height': theme.button.lg.height,
-    'borderRadius': theme.button.lg.radius,
+    height: theme.button.lg.height,
+    borderRadius: theme.button.lg.radius,
     '&.marginBottom': {
       marginBottom: theme.padding.md,
     },
