@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import { Router, Route, Switch } from 'react-router-dom';
+import { SynchronizedHistory } from 'mobx-react-router';
 
 import Loading from './components/Loading';
 import CreateWallet from './pages/CreateWallet';
@@ -13,9 +14,13 @@ import Send from './pages/Send';
 import Receive from './pages/Receive';
 import SendConfirm from './pages/SendConfirm';
 
+interface IProps {
+  history: SynchronizedHistory;
+}
+
 @inject('store')
 @observer
-export default class MainContainer extends Component<IProps, IState> {
+export default class MainContainer extends Component<IProps, {}> {
   public render() {
     const { history, store: { walletStore: { loading } } }: any = this.props;
 
@@ -40,10 +45,4 @@ export default class MainContainer extends Component<IProps, IState> {
       </div>
     );
   }
-}
-
-interface IProps {
-}
-
-interface IState {
 }
