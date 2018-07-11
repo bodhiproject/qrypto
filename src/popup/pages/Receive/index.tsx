@@ -23,15 +23,15 @@ class Receive extends Component<WithStyles & IProps, {}> {
       <div className={classes.root}>
         <NavBar hasBackButton title="Receive" />
         <div className={classes.contentContainer}>
-          <Typography className={classes.accountName}>{loggedInAccount.name}</Typography>
-          <Typography className={classes.accountAddress}>{info.addrStr}</Typography>
+          <Typography className={classes.accountName}>{loggedInAccount!.name}</Typography>
+          <Typography className={classes.accountAddress}>{info!.addrStr}</Typography>
           <div className={classes.amountContainer}>
-            <Typography className={classes.tokenAmount}>{info.balance}</Typography>
+            <Typography className={classes.tokenAmount}>{info!.balance}</Typography>
             <Typography className={classes.token}>QTUM</Typography>
           </div>
           <Typography className={classes.currencyValue}>${balanceUSD} USD</Typography>
           <div className={classes.qrCodeContainer}>
-            <QRCode value={info.addrStr} />
+            <QRCode value={info!.addrStr} />
           </div>
         </div>
       </div>

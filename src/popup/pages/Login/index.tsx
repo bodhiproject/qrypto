@@ -55,7 +55,7 @@ const AccountSection = observer(({ classes, store: { walletStore: { accounts }, 
       </Button>
     </div>
   </div>
-);
+));
 
 const PermissionSection = ({ classes }: any) => (
   <div className={classes.permissionContainer}>

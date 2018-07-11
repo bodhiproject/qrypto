@@ -9,7 +9,7 @@ import AppStore from '../../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;
-  store: AppStore;
+  store?: AppStore;
   hasBackButton?: boolean;
   hasSettingsButton?: boolean;
   hasNetworkSelector?: boolean;
@@ -35,13 +35,13 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
   );
 }));
 
-const BackButton: React.SFC<IProps> = ({ classes, isDarkTheme, store: { routerStore } }: IProps) => (
+const BackButton: React.SFC<IProps> = ({ classes, isDarkTheme, store: { routerStore } }: any) => (
   <IconButton onClick={() => routerStore.goBack()} className={classes.backIconButton}>
     <ArrowBack className={cx(classes.backButton, isDarkTheme ? 'white' : '')} />
   </IconButton>
 );
 
-const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, walletStore }, isDarkTheme }: IProps) => (
+const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, walletStore }, isDarkTheme }: any) => (
   <Fragment>
     <IconButton
       aria-owns={ui.settingsMenuAnchor ? 'settingsMenu' : undefined}
@@ -63,7 +63,7 @@ const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, wall
   </Fragment>
 ));
 
-const NetworkSelector: React.SFC<IProps> = ({ classes }: IProps) => (
+const NetworkSelector: React.SFC<IProps> = ({ classes }: any) => (
   <Button
     color="secondary"
     variant="contained"

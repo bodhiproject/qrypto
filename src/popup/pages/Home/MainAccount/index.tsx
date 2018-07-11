@@ -8,7 +8,7 @@ import AppStore from '../../../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;
-  store: AppStore;
+  store?: AppStore;
 }
 
 @inject('store')
@@ -19,7 +19,7 @@ class MainAccount extends Component<WithStyles & IProps, {}> {
 
     switch (id) {
       case 'mainCard': {
-        this.props.store.routerStore.push('/account-detail');
+        this.props.store!.routerStore.push('/account-detail');
         break;
       }
       default: {
@@ -30,7 +30,7 @@ class MainAccount extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { info } = this.props.store.walletStore;
+    const { info } = this.props.store!.walletStore;
 
     if (!info) {
       return null;

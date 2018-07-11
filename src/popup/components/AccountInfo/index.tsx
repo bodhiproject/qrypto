@@ -9,8 +9,8 @@ import AppStore from '../../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;
-  hasRightArrow: boolean;
-  store: AppStore;
+  store?: AppStore;
+  hasRightArrow?: boolean;
 }
 
 @inject('store')
@@ -29,12 +29,12 @@ class AccountInfo extends Component<WithStyles & IProps, {}> {
       sendButton: '/send',
       receiveButton: '/receive',
     }[id];
-    this.props.store.routerStore.push(location);
+    this.props.store!.routerStore.push(location);
   }
 
   public render() {
     const { classes, hasRightArrow } = this.props;
-    const { loggedInAccount, info, balanceUSD } = this.props.store.walletStore;
+    const { loggedInAccount, info, balanceUSD } = this.props.store!.walletStore;
 
     return info && (
       <div className={classes.root}>
