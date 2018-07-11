@@ -1,10 +1,10 @@
-import React, { Props } from 'react';
+import React from 'react';
 import { TextField, withStyles } from '@material-ui/core';
 import cx from 'classnames';
 
 import styles from './styles';
 
-const BorderTextField = ({ classes, classNames, placeholder, helperText, error, onChange }: Props) => (
+const BorderTextField: React.SFC<any> = ({ classes, classNames, placeholder, helperText, error, onChange }: any) => (
   <TextField
     className={cx(classes.textField, classNames)}
     required
