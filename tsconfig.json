@@ -16,6 +16,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "allowSyntheticDefaultImports": true,
     "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],
+    "checkJs": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"]
 }
