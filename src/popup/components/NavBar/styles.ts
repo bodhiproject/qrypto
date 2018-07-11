@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     margin: theme.padding.xs,
     flexDirection: 'row',
@@ -26,7 +28,7 @@ const styles = (theme) => ({
     fontSize: 18,
     '&.white': {
       color: theme.palette.secondary.main,
-    }
+    },
   },
   locationContainer: {
     height: theme.icon.size,

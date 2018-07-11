@@ -2,16 +2,15 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 
-import { Typography, Menu, MenuItem, Button, IconButton, withStyles } from '@material-ui/core';
+import { Typography, Menu, MenuItem, Button, IconButton, withStyles, WithStyles } from '@material-ui/core';
 import { ArrowBack, Settings, ArrowDropDown } from '@material-ui/icons';
 import cx from 'classnames';
 
 import styles from './styles';
 
-@withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class NavBar extends Component {
+class NavBar extends Component<WithStyles, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
     hasBackButton: PropTypes.bool,
@@ -92,3 +91,5 @@ const NetworkSelector = ({ classes, onNetworkSelectionClick }: any) => (
     <ArrowDropDown />
   </Button>
 );
+
+export default withStyles(styles)(NavBar);
