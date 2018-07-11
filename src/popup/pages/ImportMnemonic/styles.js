@@ -31,12 +31,12 @@ const styles = (theme) => ({
   },
   mnemonicTextField: {
     flex: 1,
-    padding: theme.padding.md,
     marginBottom: theme.padding.md,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
   mnemonicFieldInput: {
+    padding: theme.padding.md,
     fontSize: theme.font.lg,
     lineHeight: '20px',
   },

@@ -40,7 +40,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
                 autoFocus
                 required
                 multiline
-                rows={5}
+                rows={4}
                 type="text"
                 placeholder="Enter your seed phrase here to import your wallet."
                 onChange={(e) => importStore.mnemonic = e.target.value}
