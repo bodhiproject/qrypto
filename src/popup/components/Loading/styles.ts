@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     width: '100%',
     height: '100%',
@@ -23,7 +25,7 @@ const styles = (theme) => ({
     width: '100%',
     height: '100%',
     flex: 1,
-    display: 'flex !important', 
+    display: 'flex !important',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -31,17 +33,17 @@ const styles = (theme) => ({
   text: {
     fontSize: theme.font.md,
     color: theme.palette.text.primary,
-    marginBottom: '6px', 
-  }, 
+    marginBottom: '6px',
+  },
   anim9: {
-    width: '160px', 
-    height: '6px', 
+    width: '160px',
+    height: '6px',
     background: 'linear-gradient(to right, #5539DF, #5539DF 30%, #999 10%)',
-    animation: 'anim9 1s linear infinite', 
+    animation: 'anim9 1s linear infinite',
   },
   '@keyframes anim9': {
-    to: { backgroundPosition: '160px' }
-  }, 
+    to: { backgroundPosition: '160px' },
+  },
 });
 
 export default styles;

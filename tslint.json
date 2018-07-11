@@ -12,6 +12,7 @@
   "rules": {
     "no-var-requires": false,
     "semicolon": [true, "always"],
+    "object-literal-key-quotes": false,
     "object-literal-sort-keys": false,
     "ordered-imports": false,
     "no-console": false,

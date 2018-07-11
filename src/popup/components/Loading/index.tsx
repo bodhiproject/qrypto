@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Props } from 'react';
 import { Typography, withStyles } from '@material-ui/core';
 import cx from 'classnames';
 
 import styles from './styles';
 
-const Loading = ({ classes, loading }: any) => (
+const Loading = ({ classes, loading }: Props) => (
   <div className={cx(classes.root, loading ? 'loading' : 'notLoading')}>
     <div className={classes.container}>
       <Typography className={classes.text}>Loading...</Typography>
