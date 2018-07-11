@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Props } from 'react';
 import { TextField, withStyles } from '@material-ui/core';
 import cx from 'classnames';
 
 import styles from './styles';
 
-const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, classNames, placeholder, helperText, error, onChange }: any) => (
+const PasswordTextField = ({ classes, classNames, placeholder, helperText, error, onChange }: Props) => (
   <TextField
     className={cx(classes.passwordTextField, classNames)}
     required
@@ -18,6 +18,6 @@ const PasswordTextField = withStyles(styles, { withTheme: true })(({ classes, cl
     }}
     onChange={onChange}
   />
-));
+);
 
-export default PasswordTextField;
+export default withStyles(styles)(PasswordTextField);
