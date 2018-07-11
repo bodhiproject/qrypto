@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, TextField, Button, withStyles } from '@material-ui/core';
+import { Typography, TextField, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
@@ -8,10 +8,9 @@ import NavBar from '../../components/NavBar';
 import BorderTextField from '../../components/BorderTextField';
 import PasswordInput from '../../components/PasswordInput';
 
-@withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class ImportMnemonic extends Component<{}, IState> {
+class ImportMnemonic extends Component<WithStyles, IState> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
@@ -98,3 +97,5 @@ interface IState {
   importStore: any;
   walletStore: any;
 }
+
+export default withStyles(styles)(ImportMnemonic);
