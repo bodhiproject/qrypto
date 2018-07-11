@@ -1,4 +1,4 @@
-import React, { Fragment, Props } from 'react';
+import React, { Fragment } from 'react';
 import { inject, observer } from 'mobx-react';
 
 import { Typography, Menu, MenuItem, Button, IconButton, withStyles } from '@material-ui/core';
@@ -9,6 +9,7 @@ import styles from './styles';
 
 interface IProps {
   classes: Record<string, string>;
+  store: any;
   hasBackButton: boolean;
   hasSettingsButton: boolean;
   hasNetworkSelector: boolean;
@@ -16,7 +17,7 @@ interface IProps {
   title: string;
 }
 
-const NavBar: React.SFC<IProps> = inject('store')(observer((props: Props) => {
+const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
   const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, isDarkTheme, title } = props;
   return (
     <div className={classes.root}>
@@ -34,16 +35,16 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: Props) => {
   );
 }));
 
-const BackButton: React.SFC<IProps> = ({ classes, isDarkTheme, store: { routerStore } }: Props) => (
+const BackButton: React.SFC<IProps> = ({ classes, isDarkTheme, store: { routerStore } }: IProps) => (
   <IconButton onClick={() => routerStore.goBack()} className={classes.backIconButton}>
     <ArrowBack className={cx(classes.backButton, isDarkTheme ? 'white' : '')} />
   </IconButton>
 );
 
-const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, walletStore }, isDarkTheme }: Props) => (
+const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, walletStore }, isDarkTheme }: IProps) => (
   <Fragment>
     <IconButton
-      aria-owns={ui.settingsMenuAnchor ? 'settingsMenu' : null}
+      aria-owns={ui.settingsMenuAnchor ? 'settingsMenu' : undefined}
       aria-haspopup="true"
       color="primary"
       onClick={(e) => ui.settingsMenuAnchor = e.currentTarget}
@@ -55,14 +56,14 @@ const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, wall
       id="settingsMenu"
       anchorEl={ui.settingsMenuAnchor}
       open={Boolean(ui.settingsMenuAnchor)}
-      onClose={() => ui.settingsMenuAnchor = null}
+      onClose={() => ui.settingsMenuAnchor = undefined}
     >
       <MenuItem onClick={walletStore.logout}>Logout</MenuItem>
     </Menu>
   </Fragment>
 ));
 
-const NetworkSelector: React.SFC<IProps> = ({ classes }: Props) => (
+const NetworkSelector: React.SFC<IProps> = ({ classes }: IProps) => (
   <Button
     color="secondary"
     variant="contained"
