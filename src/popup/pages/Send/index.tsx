@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, Select, MenuItem, TextField, Button, withStyles } from '@material-ui/core';
+import { Typography, Select, MenuItem, TextField, Button, withStyles, WithStyles } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 
-@withStyles(styles, { withTheme: true })
 @inject('store')
 @observer
-export default class Send extends Component<any, {}> {
+class Send extends Component<WithStyles, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
   };
@@ -146,3 +145,5 @@ const SendButton = observer(({ classes, store: { sendStore } }: any) => (
     Send
   </Button>
 ));
+
+export default withStyles(styles)(Send);

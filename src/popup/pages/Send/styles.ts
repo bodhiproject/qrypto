@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     width: '100%',
     height: '100%',
@@ -19,7 +21,7 @@ const styles = (theme) => ({
   fieldHeading: {
     marginBottom: theme.padding.unit,
     fontSize: theme.font.sm,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   fieldContainer: {
     marginBottom: theme.padding.lg,
@@ -73,7 +75,7 @@ const styles = (theme) => ({
   sendButton: {
     height: theme.button.lg.height,
     borderRadius: theme.button.lg.radius,
-  }
+  },
 });
 
 export default styles;
