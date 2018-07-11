@@ -223,6 +223,11 @@ export default createMuiTheme({
         fontSize: fontSizeMd,
       },
     },
+    MuiSelect: {
+      select: {
+        padding: 0,
+      },
+    },
     MuiTab: {
       root: {
         padding: `${spacingMd} 0`,

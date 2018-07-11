@@ -50,11 +50,11 @@ const FromField = observer(({ classes, store: { sendStore, walletStore: { logged
     <Heading name="From" />
     <div className={classes.fieldContentContainer}>
       <Select
+        className={classes.fromSelect}
+        inputProps={{ name: 'from', id: 'from'}}
         disableUnderline
         value={info.addrStr}
         onChange={(event) => sendStore.senderAddress = event.target.value}
-        inputProps={{ name: 'from', id: 'from' }}
-        className={classes.fromSelect}
       >
         <MenuItem value={info.addrStr}>
           <Typography className={classes.fromAddress}>{loggedInAccount.name}</Typography>

@@ -33,20 +33,20 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   mnemonicTextField: {
     flex: 1,
-    marginBottom: theme.padding.md,
+    marginBottom: theme.padding.sm,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
   mnemonicFieldInput: {
-    padding: theme.padding.md,
+    padding: theme.padding.sm,
     fontSize: theme.font.lg,
     lineHeight: '20px',
   },
   accountNameField: {
-    marginBottom: theme.padding.md,
+    marginBottom: theme.padding.sm,
   },
   passwordField: {
-    marginBottom: theme.padding.md,
+    marginBottom: theme.padding.sm,
   },
   importButton: {
     height: theme.button.lg.height,

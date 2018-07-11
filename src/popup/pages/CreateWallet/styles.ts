@@ -36,10 +36,10 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     flexDirection: 'column',
   },
   walletNameField: {
-    marginBottom: theme.padding.md,
+    marginBottom: theme.padding.sm,
   },
   passwordField: {
-    marginBottom: theme.padding.md,
+    marginBottom: theme.padding.sm,
   },
   confirmPasswordField: {
     marginBottom: theme.padding.custom(8),
