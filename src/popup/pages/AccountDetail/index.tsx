@@ -68,7 +68,7 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
                       size="small"
                       onClick={() => accountDetailStore.loadMore()}
                       >
-                      Loading More
+                      Load More
                     </Button>
                   )}
                 </div>
