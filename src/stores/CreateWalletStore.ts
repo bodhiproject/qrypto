@@ -5,25 +5,15 @@ import AppStore from './AppStore';
 
 const INIT_VALUES = {
   walletName: '',
-  password: '',
-  confirmPassword: '',
   showBackButton: false,
 };
 
 export default class CreateWalletStore {
   @observable public walletName: string = INIT_VALUES.walletName;
-  @observable public password: string = INIT_VALUES.password;
-  @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
-  public showBackButton: boolean = INIT_VALUES.showBackButton;
-
-  @computed public get matchError(): string | undefined {
-    return this.getMatchError();
-  }
-
   @computed public get error(): boolean {
-    const matchError = this.getMatchError();
-    return [this.walletName, this.password, this.confirmPassword].some(isEmpty) || !!matchError;
+    return isEmpty(this.walletName);
   }
+  public showBackButton: boolean = INIT_VALUES.showBackButton;
 
   private app: AppStore;
 
@@ -42,13 +32,5 @@ export default class CreateWalletStore {
   @action
   public routeToImportWallet = () => {
     this.app.routerStore.push('/import');
-  }
-
-  private getMatchError = (): string | undefined => {
-    let error;
-    if (!isEmpty(this.password) && !isEmpty(this.confirmPassword) && this.password !== this.confirmPassword) {
-      error = 'Passwords do not match.';
-    }
-    return error;
   }
 }
