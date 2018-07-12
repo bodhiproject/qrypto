@@ -87,7 +87,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   loadingButtonWrap: {
     textAlign: 'center',
     padding: '10px',
-  }
+  },
 });
 
 export default styles;
