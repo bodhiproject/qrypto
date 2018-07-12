@@ -38,8 +38,8 @@ export default class WalletStore {
   public wallet?: Wallet = INIT_VALUES.wallet;
 
   private app: AppStore;
-  private getInfoInterval?: number = undefined;
-  private getPriceInterval?: number = undefined;
+  private getInfoInterval?: NodeJS.Timer = undefined;
+  private getPriceInterval?: NodeJS.Timer = undefined;
 
   constructor(app: AppStore) {
     this.app = app;
@@ -62,9 +62,10 @@ export default class WalletStore {
   }
 
   @action
-  public login = (password: string) => {
+  public login = async (password: string) => {
     this.loading = true;
 
+    // TODO: make this async so it doesnt block the UI
     // Generate appSalt if needed
     if (!this.appSalt) {
       const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
@@ -73,15 +74,11 @@ export default class WalletStore {
     }
 
     // Derive passwordHash
-    try {
-      const saltBuffer = Buffer.from(this.appSalt!);
-      const derivedKey = scrypt(password, saltBuffer, 131072, 8, 1, 64);
-      this.passwordHash = derivedKey.toString('hex');
+    const saltBuffer = Buffer.from(this.appSalt!);
+    const derivedKey = scrypt(password, saltBuffer, 131072, 8, 1, 64);
+    this.passwordHash = derivedKey.toString('hex');
 
-      this.fetchAccounts();
-    } catch (err) {
-      throw err;
-    }
+    this.fetchAccounts();
   }
 
   @action
