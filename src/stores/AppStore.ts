@@ -29,7 +29,7 @@ export default class AppStore {
     this.saveMnemonicStore = new SaveMnemonicStore(this);
     this.loginStore = new LoginStore(this);
     this.importStore = new ImportStore(this);
-    this.accountDetailStore = new AccountDetailStore();
+    this.accountDetailStore = new AccountDetailStore(this);
     this.sendStore = new SendStore(this);
   }
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Paper, Tabs, Tab, List, ListItem, Typography, withStyles } from '@material-ui/core';
+import { Paper, Tabs, Tab, List, ListItem, Typography, withStyles, Button } from '@material-ui/core/';
 import { KeyboardArrowRight } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
@@ -14,13 +14,18 @@ import AccountInfo from '../../components/AccountInfo';
 @observer
 export default class AccountDetail extends Component<any, {}> {
 
+  public componentDidMount() {
+    const { walletStore, accountDetailStore } = this.props.store;
+    accountDetailStore.loadFromWallet(walletStore.wallet!, walletStore.info);
+  }
+
   public handleTabChange = (_: object, idx: number) => {
     this.props.store.accountDetailStore.activeTabIdx = idx;
   }
 
   public render() {
-    const { classes } = this.props;
-    const { accountDetailStore: { activeTabIdx, items } } = this.props.store;
+    const { classes, store: { accountDetailStore } } = this.props;
+    const { activeTabIdx, items, hasMore } = accountDetailStore;
 
     const tokens = [
       { name: 'Bodhi', token: 'BOT', amount: 123, url: 'https://coinmarketcap.com/currencies/bodhi/' },
@@ -48,7 +53,22 @@ export default class AccountDetail extends Component<any, {}> {
           </Paper>
           <List className={classes.list}>
             {activeTabIdx === 0 ? (
-              <TransactionList classes={classes} transactions={items} />
+              <div>
+                <TransactionList classes={classes} transactions={items} />
+                <div className={classes.loadingButtonWrap}>
+                  {hasMore && (
+                    <Button
+                      id="loadingButton"
+                      color="primary"
+                      variant="contained"
+                      size="small"
+                      onClick={() => accountDetailStore.loadMore()}
+                      >
+                      Loading More
+                    </Button>
+                  )}
+                </div>
+              </div>
             ) : (
               <TokenList classes={classes} tokens={tokens} />
             )}

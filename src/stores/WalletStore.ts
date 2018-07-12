@@ -128,6 +128,5 @@ export default class WalletStore {
   @action
   private async getWalletInfo() {
     this.info = await this.wallet!.getInfo();
-    this.app.accountDetailStore.loadFromIds(this.info.transactions);
   }
 }
