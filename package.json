@@ -8,12 +8,12 @@
     "css-types": "tcm src",
     "postinstall": "yarn css-types",
     "linter": "tslint --project .",
-    "linter-fix": "tslint --fix .",
+    "linter-fix": "tslint --fix --project .",
     "precommit": "lint-staged",
     "prepush": "npm run linter-fix"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
+    "*.{ts,tsx}": [
       "npm run linter-fix",
       "git add"
     ]
