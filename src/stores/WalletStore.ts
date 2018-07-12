@@ -41,19 +41,19 @@ export default class WalletStore {
 
   constructor(app: AppStore) {
     this.app = app;
-    this.getChromeStorage();
+    this.getAccountsFromStorage();
   }
 
-  public getChromeStorage() {
+  public getAccountsFromStorage() {
     if (this.app.networkStore.isMainNet) {
       // Set the existing accounts from Chrome storage
       chrome.storage.local.get(STORAGE.MAINNET_ACCOUNTS, ({ mainnetAccounts }) => {
-        this.handleGetChromeStorageReturn(mainnetAccounts);
+        this.setAccountsAndRoute(mainnetAccounts);
       });
     } else {
       // Set the existing accounts from Chrome storage
       chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, ({ testnetAccounts }) => {
-        this.handleGetChromeStorageReturn(testnetAccounts);
+        this.setAccountsAndRoute(testnetAccounts);
       });
     }
   }
@@ -109,7 +109,6 @@ export default class WalletStore {
       this.loggedInAccount = foundAccount;
       this.recoverWallet(this.loggedInAccount!.mnemonic!);
       await this.startPolling();
-
       runInAction(() => {
         this.loading = false;
         this.app.routerStore.push('/home');
@@ -118,32 +117,29 @@ export default class WalletStore {
   }
 
   @action
-  public logout = () => {
-    this.reset();
-    this.app.routerStore.push('/login');
-  }
-
-  @action
-  public reset = () => {
+  public logout = (isSwitchingNetwork: boolean) => {
     this.stopPolling();
     this.info =  INIT_VALUES.info;
     this.loggedInAccount = INIT_VALUES.loggedInAccount;
     this.wallet = INIT_VALUES.wallet;
+
+    if (isSwitchingNetwork) {
+      this.accounts = INIT_VALUES.accounts;
+      this.app.walletStore.getAccountsFromStorage();
+      // we dont call this.app.routerStore.push('/login') here because it is called at the end of getAccountsFromStorage() instead
+    } else {
+      this.app.routerStore.push('/login');
+    }
   }
 
   @action
-  public resetWithNetwork = () => {
-    this.reset();
-    this.accounts = INIT_VALUES.accounts;
-  }
-
-  @action
-  private recoverWallet(mnemonic: string) {
+  private recoverWallet = (mnemonic: string) => {
     const network = this.app.networkStore.network;
     this.wallet = network.fromMnemonic(mnemonic);
   }
 
-  private handleGetChromeStorageReturn(storageAccounts: any[]) {
+  @action
+  private setAccountsAndRoute = (storageAccounts: Account[]) => {
     // Account not found, route to Create Wallet page
     if (isEmpty(storageAccounts)) {
       this.app.routerStore.push('/create-wallet');

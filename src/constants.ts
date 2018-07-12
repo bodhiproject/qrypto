@@ -16,13 +16,15 @@ export enum API_TYPE {
 export enum STORAGE {
   TESTNET_ACCOUNTS = 'testnetAccounts',
   MAINNET_ACCOUNTS = 'mainnetAccounts',
-<<<<<<< HEAD
 }
 
 export enum SEND_STATE {
   INITIAL = 'Confirm',
   SENDING = 'Sending...',
   SENT = 'Sent!',
-=======
->>>>>>> Implement NetworkStore (connect to networkSwitcherUI code; during a network switch - set the network, reload new accounts from chrome storage, reset login page default account); reset account/wallet defaults when the user logs out
+}
+
+export enum NETWORK_NAMES {
+  TESTNET = 'TestNet',
+  MAINNET = 'MainNet',
 }

@@ -7,7 +7,8 @@ import cx from 'classnames';
 
 import DropDownMenu from '../DropDownMenu';
 import AppStore from '../../../stores/AppStore';
-import { NetworkNamesArray } from '../../../stores/NetworkStore';
+import QryNetwork from '../../../models/QryNetwork';
+import styles from './styles';
 
 interface IProps {
   classes: Record<string, string>;
@@ -22,7 +23,7 @@ interface IProps {
 const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
   const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, isDarkTheme, title, store: { networkStore } } = props;
 
-    return (
+  return (
       <div className={classes.root}>
         <div className={classes.leftButtonsContainer}>
           {hasBackButton && <BackButton {...props} />}
@@ -32,7 +33,7 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
           <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
         </div>
         {hasNetworkSelector && (
-          <DropDownMenu classes={classes} onSelect={ (idx: number) => networkStore.changeNetwork(idx) } selections={ NetworkNamesArray } selectedIndex={networkStore.networkIndex} />
+          <DropDownMenu classes={classes} onSelect={ (idx: number) => networkStore.changeNetwork(idx) } selections={ networkStore.networksArray.map((net: QryNetwork) => net.name) } selectedIndex={networkStore.networkIndex} />
         )}
       </div>
   );
@@ -61,7 +62,9 @@ const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, wall
       open={Boolean(ui.settingsMenuAnchor)}
       onClose={() => ui.settingsMenuAnchor = undefined}
     >
-      <MenuItem onClick={walletStore.logout}>Logout</MenuItem>
+      <MenuItem onClick={() => walletStore.logout(false)}> Logout </MenuItem>
     </Menu>
   </Fragment>
 ));
+
+export default withStyles(styles)(NavBar);

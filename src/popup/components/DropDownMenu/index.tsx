@@ -1,32 +1,25 @@
-import React from 'react';
-import { Menu, MenuItem, Button, withStyles } from '@material-ui/core';
+import React, { Component } from 'react';
+import { Menu, MenuItem, Button, withStyles, WithStyles } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
-import PropTypes from 'prop-types';
 
 import styles from './styles';
 
-@withStyles(styles, { withTheme: true })
-export default class DropDownMenu extends React.Component {
+interface IProps {
+  classes: Record<string, string>;
+  onSelect?: (idx: number) => any;
+  selections: string[];
+  selectedIndex: number;
+}
 
-  public static propTypes = {
-    classes: PropTypes.object.isRequired,
-    onSelect: PropTypes.object.isRequired,
-    selections: PropTypes.array,
-    selectionIndex: PropTypes.integer,
-  };
+interface IState {
+  anchorEl: any;
+}
+
+class DropDownMenu extends Component<WithStyles & IProps, IState> {
 
   public state = {
-    anchorEl: null,
+    anchorEl: undefined,
   };
-
-  public onMenuItemClick = (i) => {
-    this.props.onSelect(i);
-    this.setState({ anchorEl: null });
-  }
-
-  public handleClose = () => {
-    this.setState({ anchorEl: null });
-  }
 
   public render() {
     const { classes, selections, selectedIndex } = this.props;
@@ -57,4 +50,13 @@ export default class DropDownMenu extends React.Component {
       </div>
     );
   }
+
+  private onMenuItemClick = (i: number) => {
+    if (this.props.onSelect) {
+      this.props.onSelect(i);
+    }
+    this.setState({ anchorEl: null });
+  }
 }
+
+export default withStyles(styles)(DropDownMenu);
