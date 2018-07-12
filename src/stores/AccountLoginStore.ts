@@ -32,7 +32,7 @@ export default class AccountLoginStore {
   public login = () => {
     this.app.walletStore.loading = true;
 
-    this.app.walletStore.login(this.selectedWalletName);
+    this.app.walletStore.loginAccount(this.selectedWalletName);
     this.reset();
   }
 

@@ -37,7 +37,7 @@ export default class SaveMnemonicStore {
     this.reset();
 
     this.app.walletStore.addAccount(account);
-    this.app.walletStore.login(account.name);
+    this.app.walletStore.loginAccount(account.name);
   }
 
   @action

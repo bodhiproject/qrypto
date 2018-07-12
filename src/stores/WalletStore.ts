@@ -62,7 +62,7 @@ export default class WalletStore {
   }
 
   @action
-  public newLogin = (password: string) => {
+  public login = (password: string) => {
     this.loading = true;
 
     // Generate appSalt if needed
@@ -129,7 +129,7 @@ export default class WalletStore {
   }
 
   @action
-  public async login(accountName: string) {
+  public async loginAccount(accountName: string) {
     const foundAccount = find(this.accounts, { name: accountName });
     if (foundAccount) {
       this.loggedInAccount = foundAccount;

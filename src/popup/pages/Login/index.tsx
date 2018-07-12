@@ -52,7 +52,7 @@ class Login extends Component<WithStyles & IProps, {}> {
           variant="contained"
           color="primary"
           disabled={error}
-          onClick={() => walletStore.newLogin(password)}
+          onClick={() => walletStore.login(password)}
         >
           Login
         </Button>
