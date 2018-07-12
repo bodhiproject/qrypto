@@ -15,8 +15,8 @@ interface IProps {
 @inject('store')
 @observer
 class Login extends Component<WithStyles & IProps, {}> {
-  public componentWillUnmount() {
-    // this.props.store.createWalletStore.reset();
+  public componentDidMount() {
+    this.props.store.loginStore.init();
   }
 
   public render() {

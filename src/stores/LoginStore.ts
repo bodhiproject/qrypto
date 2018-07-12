@@ -1,8 +1,7 @@
-import { observable, computed } from 'mobx';
+import { observable, computed, action } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
-import { STORAGE } from '../constants';
 
 const INIT_VALUES = {
   hasAppSalt: false,
@@ -26,15 +25,21 @@ export default class LoginStore {
 
   constructor(app: AppStore) {
     this.app = app;
+    this.app.walletStore.fetchAppSalt();
+  }
 
-    /*
-    * Check for existing appSalt in Chrome storage, else create one.
-    * The appSalt should be per install and not per session.
-    */
-    chrome.storage.local.get(STORAGE.APP_SALT, ({ appSalt }: any) => {
-      this.app.loginStore.hasAppSalt = !isEmpty(appSalt);
-      this.app.walletStore.loading = false;
-    });
+  @action
+  public init = () => {
+    this.password = INIT_VALUES.password;
+    this.confirmPassword = INIT_VALUES.confirmPassword;
+  }
+
+  @action
+  public login = () => {
+    if (!this.hasAppSalt) {
+      const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
+      this.app.walletStore.storeAppSalt(appSalt);
+    }
   }
 
   private getMatchError = (): string | undefined => {

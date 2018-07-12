@@ -1,7 +1,7 @@
 import { Wallet, Insight } from 'qtumjs-wallet';
 
 import { observable, action, toJS, computed, runInAction } from 'mobx';
-import { find } from 'lodash';
+import { find, isEmpty, split } from 'lodash';
 import axios from 'axios';
 
 import AppStore from './AppStore';
@@ -54,6 +54,27 @@ export default class WalletStore {
         this.setAccountsAndRoute(testnetAccounts);
       });
     }
+  }
+
+  @action
+  public fetchAppSalt = () => {
+    chrome.storage.local.get(STORAGE.APP_SALT, ({ appSalt }: any) => {
+      if (!isEmpty(appSalt)) {
+        const array = split(appSalt, ',').map((str) => parseInt(str, 10));
+        const uintArray = Uint8Array.from(array);
+        console.log(uintArray);
+
+        this.app.loginStore.hasAppSalt = true;
+      }
+
+      this.loading = false;
+    });
+  }
+
+  public storeAppSalt = (appSalt: Uint8Array) => {
+    chrome.storage.local.set({
+      [STORAGE.APP_SALT]: appSalt.toString(),
+    }, () => console.log('appSalt set'));
   }
 
   @action
