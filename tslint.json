@@ -1,7 +1,6 @@
 {
   "defaultSeverity": "error",
   "extends": ["tslint:recommended"],
-  "jsRules": {},
   "linterOptions": {
     "exclude": [
       "dist",
@@ -28,5 +27,6 @@
     "no-unused-variable": true,
     "max-line-length": [true, {"ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |//"}]
   },
+  "jsRules": {},
   "rulesDirectory": []
 }
