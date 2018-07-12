@@ -6,8 +6,8 @@ import { ArrowBack, Settings } from '@material-ui/icons';
 import cx from 'classnames';
 
 import DropDownMenu from '../DropDownMenu';
-import { NetworkNamesArray } from '../../../stores/WalletStore';
 import AppStore from '../../../stores/AppStore';
+import { NetworkNamesArray } from '../../../stores/NetworkStore';
 
 interface IProps {
   classes: Record<string, string>;
@@ -20,7 +20,7 @@ interface IProps {
 }
 
 const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
-  const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, isDarkTheme, title, store: { walletStore } } = props;
+  const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, isDarkTheme, title, store: { networkStore } } = props;
 
     return (
       <div className={classes.root}>
@@ -32,7 +32,7 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
           <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
         </div>
         {hasNetworkSelector && (
-          <DropDownMenu classes={classes} onSelect={ (idx: number) => walletStore.networkIndex = idx } selections={ NetworkNamesArray } selectedIndex={walletStore.networkIndex} />
+          <DropDownMenu classes={classes} onSelect={ (idx: number) => networkStore.changeNetwork(idx) } selections={ NetworkNamesArray } selectedIndex={networkStore.networkIndex} />
         )}
       </div>
   );
