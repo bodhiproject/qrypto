@@ -15,7 +15,7 @@ interface IProps {
 
 @inject('store')
 @observer
-class Login extends Component<WithStyles & IProps, {}> {
+class AccountLogin extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes } = this.props;
@@ -23,7 +23,7 @@ class Login extends Component<WithStyles & IProps, {}> {
     return (
       <div className={classes.root}>
         <Paper className={classes.headerContainer}>
-          <NavBar hasNetworkSelector isDarkTheme title="Login" />
+          <NavBar hasNetworkSelector isDarkTheme title="Account Login" />
           <AccountSection {...this.props} />
         </Paper>
         <PermissionSection {...this.props} />
@@ -33,21 +33,21 @@ class Login extends Component<WithStyles & IProps, {}> {
   }
 }
 
-const AccountSection = observer(({ classes, store: { walletStore: { accounts }, loginStore } }: any) => (
+const AccountSection = observer(({ classes, store: { walletStore: { accounts }, accountLoginStore } }: any) => (
   <div className={classes.accountContainer}>
     <Typography className={classes.selectAcctText}>Select account</Typography>
     <Select
       disableUnderline
       className={classes.accountSelect}
       name="accounts"
-      value={loginStore.selectedWalletName}
-      onChange={(e) => loginStore.selectedWalletName = e.target.value}
+      value={accountLoginStore.selectedWalletName}
+      onChange={(e) => accountLoginStore.selectedWalletName = e.target.value}
     >
       {accounts.map((acct: Account, index: number) => <MenuItem key={index} value={acct.name}>{acct.name}</MenuItem>)}
     </Select>
     <div className={classes.createAccountContainer}>
       <Typography className={classes.orText}>or</Typography>
-      <Button className={classes.createAccountButton} color="secondary" onClick={loginStore.routeToCreateWallet}>
+      <Button className={classes.createAccountButton} color="secondary" onClick={accountLoginStore.routeToCreateWallet}>
         Create New Wallet
       </Button>
     </div>
@@ -60,24 +60,24 @@ const PermissionSection = ({ classes }: any) => (
   </div>
 );
 
-const LoginSection = observer(({ classes, store: { loginStore } }: any) => (
+const LoginSection = observer(({ classes, store: { accountLoginStore } }: any) => (
   <div className={classes.loginContainer}>
     <PasswordInput
       classNames={classes.passwordField}
       placeholder="Password"
-      onChange={(e: any) => loginStore.password = e.target.value}
+      onChange={(e: any) => accountLoginStore.password = e.target.value}
     />
     <Button
       className={classes.loginButton}
       fullWidth
       variant="contained"
       color="primary"
-      disabled={isEmpty(loginStore.password)}
-      onClick={loginStore.login}
+      disabled={isEmpty(accountLoginStore.password)}
+      onClick={accountLoginStore.login}
     >
       Login
     </Button>
   </div>
 ));
 
-export default withStyles(styles)(Login);
+export default withStyles(styles)(AccountLogin);

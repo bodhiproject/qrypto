@@ -128,7 +128,7 @@ export default class WalletStore {
       this.app.walletStore.getAccountsFromStorage();
       // we dont call this.app.routerStore.push('/login') here because it is called at the end of getAccountsFromStorage() instead
     } else {
-      this.app.routerStore.push('/login');
+      this.app.routerStore.push('/account-login');
     }
   }
 
@@ -148,7 +148,7 @@ export default class WalletStore {
     }
     // Accounts found, route to Login page
     this.accounts = storageAccounts;
-    this.app.routerStore.push('/login');
+    this.app.routerStore.push('/account-login');
     this.loading = false;
   }
 

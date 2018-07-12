@@ -8,7 +8,7 @@ const INIT_VALUES = {
   password: '',
 };
 
-export default class LoginStore {
+export default class AccountLoginStore {
   @observable public selectedWalletName: string = INIT_VALUES.selectedWalletName;
   @observable public password: string = INIT_VALUES.password;
 
