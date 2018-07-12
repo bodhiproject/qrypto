@@ -1,8 +1,8 @@
 import { Wallet, Insight } from 'qtumjs-wallet';
 import { observable, action, toJS, computed, runInAction } from 'mobx';
-import { scryptSync } from 'crypto';
 import { find, isEmpty, split } from 'lodash';
 import axios from 'axios';
+import scrypt from 'scryptsy';
 
 import AppStore from './AppStore';
 import { STORAGE } from '../constants';
@@ -74,10 +74,9 @@ export default class WalletStore {
 
     // Derive passwordHash
     try {
-      console.log(scryptSync);
-      const derivedKey = scryptSync(password, this.appSalt!, 64);
+      const saltBuffer = Buffer.from(this.appSalt!);
+      const derivedKey = scrypt(password, saltBuffer, 131072, 8, 1, 64);
       this.passwordHash = derivedKey.toString('hex');
-      console.log(this.passwordHash);
 
       this.fetchAccounts();
     } catch (err) {
