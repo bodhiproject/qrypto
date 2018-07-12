@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Paper, Tabs, Tab, List, ListItem, Typography, withStyles, Button } from '@material-ui/core/';
 import { KeyboardArrowRight } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
