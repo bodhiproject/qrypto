@@ -5,7 +5,6 @@ import { inject, observer } from 'mobx-react';
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import BorderTextField from '../../components/BorderTextField';
-import PasswordInput from '../../components/PasswordInput';
 import AppStore from '../../../stores/AppStore';
 
 interface IProps {
@@ -31,7 +30,6 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
 
   public render() {
     const { classes, store: { importStore } }: any = this.props;
-    const matchError = importStore.matchError;
 
     return (
       <div className={classes.root}>
@@ -45,7 +43,7 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
                 autoFocus
                 required
                 multiline
-                rows={4}
+                rows={5}
                 type="text"
                 placeholder="Enter your seed phrase here to import your wallet."
                 onChange={(e) => importStore.mnemonic = e.target.value}
@@ -55,21 +53,8 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
                 }}
               />
               <BorderTextField
-                classNames={classes.accountNameField}
                 placeholder="Wallet name"
                 onChange={(e: any) => importStore.accountName = e.target.value}
-              />
-              <PasswordInput
-                classNames={classes.passwordField}
-                placeholder="Password"
-                onChange={(e: any) => importStore.password = e.target.value}
-              />
-              <PasswordInput
-                classNames={classes.passwordField}
-                placeholder="Confirm password"
-                helperText={matchError}
-                error={!!matchError}
-                onChange={(e: any) => importStore.confirmPassword = e.target.value}
               />
             </div>
           </div>

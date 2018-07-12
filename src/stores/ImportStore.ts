@@ -7,15 +7,11 @@ import Account from '../models/Account';
 const INIT_VALUES = {
   mnemonic: '',
   accountName: '',
-  password: '',
-  confirmPassword: '',
 };
 
 export default class ImportStore {
   @observable public mnemonic: string = INIT_VALUES.mnemonic;
   @observable public accountName: string = INIT_VALUES.accountName;
-  @observable public password: string = INIT_VALUES.password;
-  @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
 
   private app: AppStore;
 
@@ -23,13 +19,8 @@ export default class ImportStore {
     this.app = app;
   }
 
-  @computed get matchError(): string | undefined {
-    return this.getMatchError();
-  }
-
   @computed get error(): boolean {
-    const matchError = this.getMatchError();
-    return [this.mnemonic, this.accountName, this.password, this.confirmPassword].some(isEmpty) || !!matchError;
+    return [this.mnemonic, this.accountName].some(isEmpty);
   }
 
   @action
@@ -52,13 +43,5 @@ export default class ImportStore {
   public cancelImport = () => {
     this.reset();
     this.app.routerStore.goBack();
-  }
-
-  private getMatchError = (): string | undefined => {
-    let error;
-    if (!isEmpty(this.password) && !isEmpty(this.confirmPassword) && this.password !== this.confirmPassword) {
-      error = 'Passwords do not match.';
-    }
-    return error;
   }
 }
