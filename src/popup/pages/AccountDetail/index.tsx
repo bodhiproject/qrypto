@@ -24,8 +24,7 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
   }
 
   public componentDidMount() {
-    const { walletStore, accountDetailStore } = this.props.store;
-    accountDetailStore.loadFromWallet(walletStore.wallet!, walletStore.info);
+    this.props.store.accountDetailStore.loadFromWallet();
   }
 
   public render() {
