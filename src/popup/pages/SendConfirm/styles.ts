@@ -1,11 +1,13 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     height: '100%',
-    display: 'flex', 
-    flexDirection: 'column'
+    display: 'flex',
+    flexDirection: 'column',
   },
   contentContainer: {
-    margin: theme.spacing.md,
+    margin: theme.padding.md,
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
@@ -14,7 +16,7 @@ const styles = (theme) => ({
     flex: 1,
   },
   addressFieldsContainer: {
-    marginBottom: theme.spacing.custom(8),
+    marginBottom: theme.padding.custom(8),
   },
   fieldContainer: {
     width: '100%',
@@ -24,10 +26,10 @@ const styles = (theme) => ({
       flexDirection: 'row',
     },
     '&.marginSmall': {
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.padding.md,
     },
     '&.marginBig': {
-      marginBottom: theme.spacing.custom(8),
+      marginBottom: theme.padding.custom(8),
     },
   },
   labelContainer: {
@@ -37,19 +39,19 @@ const styles = (theme) => ({
   fieldLabel: {
     color: theme.palette.text.primary,
     fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     '&.address': {
-      lineHeight: theme.font.lineHeight.sm,
-      marginBottom: theme.spacing.md,
+      lineHeight: theme.lineHeight.sm,
+      marginBottom: theme.padding.md,
     },
     '&.cost': {
-      lineHeight: theme.font.lineHeight.md,
+      lineHeight: theme.lineHeight.md,
     },
   },
   addressValue: {
     fontSize: theme.font.sm,
     color: theme.palette.text.primary,
-    lineHeight: theme.font.lineHeight.lg,
+    lineHeight: theme.lineHeight.lg,
   },
   amountContainer: {
     flex: 1,
@@ -60,7 +62,7 @@ const styles = (theme) => ({
   fieldValue: {
     fontSize: theme.font.lg,
     color: theme.palette.text.primary,
-    lineHeight: theme.font.lineHeight.lg,
+    lineHeight: theme.lineHeight.lg,
   },
   unitContainer: {
     display: 'flex',
@@ -70,14 +72,14 @@ const styles = (theme) => ({
     fontSize: theme.font.sm,
     textTransform: 'uppercase',
     color: theme.palette.text.secondary,
-    marginLeft: theme.spacing.unit,
+    marginLeft: theme.padding.unit,
   },
   errorMessage: {
     fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
-    color: theme.palette.text.error,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.color.red,
     alignSelf: 'center',
-    marginBottom: theme.spacing.unit,
+    marginBottom: theme.padding.unit,
   },
   sendButton: {
     height: theme.button.lg.height,

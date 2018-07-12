@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     height: '100%',
     display: 'flex',
@@ -8,21 +10,21 @@ const styles = (theme) => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    margin: theme.spacing.md,
+    margin: theme.padding.md,
   },
   headerText: {
     fontSize: 20,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.text.primary,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.padding.sm,
   },
   inputContainer: {
     flex: 1,
   },
   importHeading: {
     fontSize: 20,
-    fontWeight: theme.font.weight.bold,
-    marginBottom: theme.spacing.sm,
+    fontWeight: theme.fontWeight.bold,
+    marginBottom: theme.padding.sm,
   },
   fieldContainer: {
     width: '100%',
@@ -31,24 +33,24 @@ const styles = (theme) => ({
   },
   mnemonicTextField: {
     flex: 1,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.padding.sm,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
   mnemonicFieldInput: {
+    padding: theme.padding.sm,
     fontSize: theme.font.lg,
     lineHeight: '20px',
   },
   accountNameField: {
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.padding.sm,
   },
   passwordField: {
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.padding.sm,
   },
   importButton: {
     height: theme.button.lg.height,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.padding.sm,
     borderRadius: theme.button.lg.radius,
     display: 'flex',
   },

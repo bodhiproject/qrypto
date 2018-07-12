@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     width: '100%',
     height: '100%',
@@ -9,7 +11,7 @@ const styles = (theme) => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    margin: theme.spacing.md,
+    margin: theme.padding.md,
   },
   fieldsContainer: {
     flex: 1,
@@ -17,15 +19,15 @@ const styles = (theme) => ({
     flexDirection: 'column',
   },
   fieldHeading: {
-    marginBottom: theme.spacing.unit,
+    marginBottom: theme.padding.unit,
     fontSize: theme.font.sm,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   fieldContainer: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.padding.lg,
   },
   fieldContentContainer: {
-    padding: theme.spacing.sm,
+    padding: theme.padding.sm,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
@@ -48,7 +50,7 @@ const styles = (theme) => ({
     fontWeight: 'bold',
   },
   amountContainer: {
-    // marginBottom: theme.spacing.custom(26),
+    // marginBottom: theme.padding.custom(26),
   },
   amountHeadingContainer: {
     width: '100%',
@@ -66,14 +68,14 @@ const styles = (theme) => ({
   amountTokenAdornment: {
     fontSize: theme.font.md,
     fontWeight: 'bold',
-    marginLeft: theme.spacing.sm,
+    marginLeft: theme.padding.sm,
     display: 'flex',
     alignItems: 'center',
   },
   sendButton: {
     height: theme.button.lg.height,
     borderRadius: theme.button.lg.radius,
-  }
+  },
 });
 
 export default styles;

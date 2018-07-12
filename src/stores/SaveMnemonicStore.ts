@@ -2,6 +2,7 @@ import { observable, action } from 'mobx';
 import bip39 from 'bip39';
 
 import Account from '../models/Account';
+import AppStore from './AppStore';
 
 const INIT_VALUES = {
   mnemonic: '',
@@ -11,10 +12,10 @@ const INIT_VALUES = {
 
 export default class SaveMnemonicStore {
   @observable public mnemonic: string = INIT_VALUES.mnemonic;
+  public walletName: string = INIT_VALUES.walletName;
+  public password: string = INIT_VALUES.password;
 
   private app: AppStore;
-  private walletName: string = INIT_VALUES.walletName;
-  private password: string = INIT_VALUES.password;
 
   constructor(app: AppStore) {
     this.app = app;

@@ -4,7 +4,7 @@ import cx from 'classnames';
 
 import styles from './styles';
 
-const BorderTextField = withStyles(styles, { withTheme: true })(({ classes, classNames, placeholder, helperText, error, onChange }: any) => (
+const BorderTextField: React.SFC<any> = ({ classes, classNames, placeholder, helperText, error, onChange }: any) => (
   <TextField
     className={cx(classes.textField, classNames)}
     required
@@ -18,6 +18,6 @@ const BorderTextField = withStyles(styles, { withTheme: true })(({ classes, clas
       classes: { input: classes.textFieldInput },
     }}
   />
-));
+);
 
-export default BorderTextField;
+export default withStyles(styles)(BorderTextField);

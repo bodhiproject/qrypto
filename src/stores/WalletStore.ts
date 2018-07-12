@@ -29,8 +29,8 @@ export default class WalletStore {
   public wallet?: Wallet = undefined;
 
   private app: AppStore;
-  private getInfoInterval?: NodeJS.Timer = undefined;
-  private getPriceInterval?: NodeJS.Timer = undefined;
+  private getInfoInterval?: number = undefined;
+  private getPriceInterval?: number = undefined;
 
   constructor(app: AppStore) {
     this.app = app;

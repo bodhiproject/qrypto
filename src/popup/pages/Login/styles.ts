@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     width: '100%',
     height: '100%',
@@ -6,24 +8,24 @@ const styles = (theme) => ({
     flexDirection: 'column',
   },
   headerContainer: {
-    background: theme.palette.background.gradient,
+    background: theme.color.gradientPurple,
     borderRadius: 0,
   },
   accountContainer: {
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing.md,
+    padding: theme.padding.md,
   },
   selectAcctText: {
     fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
-    color: theme.palette.text.light,
-    marginBottom: theme.spacing.xs,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.palette.secondary.main,
+    marginBottom: theme.padding.xs,
   },
   accountSelect: {
     flex: 1,
-    padding: theme.spacing.sm,
-    marginBottom: theme.spacing.sm,
+    padding: theme.padding.sm,
+    marginBottom: theme.padding.sm,
     background: theme.palette.secondary.main,
     borderRadius: theme.border.radius,
   },
@@ -35,34 +37,34 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     fontSize: theme.font.md,
-    color: theme.palette.text.light,
+    color: theme.palette.secondary.main,
     marginBottom: 3,
   },
   createAccountButton: {
     minHeight: 0,
-    padding: `0 ${theme.spacing.unit}`,
+    padding: `0 ${theme.padding.unit}`,
     fontSize: theme.font.md,
-    fontWeight: theme.font.weight.bold,
-    color: theme.palette.text.light,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.palette.secondary.main,
   },
   permissionContainer: {
     flex: 1,
-    padding: theme.spacing.md,
+    padding: theme.padding.md,
   },
   permissionsHeader: {
     fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.palette.text.primary,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.padding.md,
   },
   loginContainer: {
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing.md,
+    padding: theme.padding.md,
   },
   passwordField: {
     flex: 1,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.padding.md,
   },
   loginButton: {
     height: theme.button.lg.height,

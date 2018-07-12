@@ -4,7 +4,7 @@ import cx from 'classnames';
 
 import styles from './styles';
 
-const Loading = ({ classes, loading }: any) => (
+const Loading: React.SFC<any> = ({ classes, loading }: any) => (
   <div className={cx(classes.root, loading ? 'loading' : 'notLoading')}>
     <div className={classes.container}>
       <Typography className={classes.text}>Loading...</Typography>

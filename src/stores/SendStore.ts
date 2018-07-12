@@ -18,7 +18,7 @@ export default class SendStore {
   @observable public receiverAddress: string = INIT_VALUES.receiverAddress;
   @observable public token: string = INIT_VALUES.token;
   @observable public amount: number = INIT_VALUES.amount;
-  @observable public sendState: string = INIT_VALUES.sendState;
+  @observable public sendState: SEND_STATE = INIT_VALUES.sendState;
   @observable public errorMessage?: string = INIT_VALUES.errorMessage;
 
   @computed public get receiverFieldError(): string | undefined {

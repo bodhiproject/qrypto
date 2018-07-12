@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
-import { Typography, Button, withStyles } from '@material-ui/core';
+import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
 
 import styles from './styles';
+import AppStore from '../../../stores/AppStore';
 
-@withStyles(styles, { withTheme: true })
+interface IProps {
+  classes: Record<string, string>;
+  store?: AppStore;
+  hasRightArrow?: boolean;
+}
+
 @inject('store')
 @observer
-export default class AccountInfo extends Component<any, {}> {
+class AccountInfo extends Component<WithStyles & IProps, {}> {
   public static propTypes = {
     classes: PropTypes.object.isRequired,
     hasRightArrow: PropTypes.bool,
@@ -23,16 +29,16 @@ export default class AccountInfo extends Component<any, {}> {
       sendButton: '/send',
       receiveButton: '/receive',
     }[id];
-    this.props.store.routerStore.push(location);
+    this.props.store!.routerStore.push(location);
   }
 
   public render() {
     const { classes, hasRightArrow } = this.props;
-    const { loggedInAccount, info, balanceUSD } = this.props.store.walletStore;
+    const { loggedInAccount, info, balanceUSD } = this.props.store!.walletStore;
 
     return info && (
       <div className={classes.root}>
-        <Typography className={classes.acctName}>{loggedInAccount.name}</Typography>
+        <Typography className={classes.acctName}>{loggedInAccount!.name}</Typography>
         <Typography className={classes.address}>{info.addrStr}</Typography>
         <div className={classes.amountContainer}>
           <Typography className={classes.tokenAmount}>{info.balance}</Typography>
@@ -66,3 +72,5 @@ export default class AccountInfo extends Component<any, {}> {
     );
   }
 }
+
+export default withStyles(styles)(AccountInfo);

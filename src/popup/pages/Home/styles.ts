@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     width: '100%',
     height: '100%',
@@ -9,7 +11,7 @@ const styles = (theme) => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    margin: theme.spacing.md,
+    margin: theme.padding.md,
   },
 });
 

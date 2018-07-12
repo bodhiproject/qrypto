@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Paper, Tabs, Tab, List, ListItem, Typography, withStyles, Button } from '@material-ui/core/';
+import { Paper, Tabs, Tab, List, ListItem, Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
@@ -8,19 +8,23 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 import Transaction from '../../../models/Transaction';
 import AccountInfo from '../../components/AccountInfo';
+import AppStore from '../../../stores/AppStore';
 
-@withStyles(styles, { withTheme: true })
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
+
 @inject('store')
 @observer
-export default class AccountDetail extends Component<any, {}> {
 
-  public componentDidMount() {
-    const { walletStore, accountDetailStore } = this.props.store;
-    accountDetailStore.loadFromWallet(walletStore.wallet!, walletStore.info);
-  }
-
+class AccountDetail extends Component<WithStyles & IProps, {}> {
   public handleTabChange = (_: object, idx: number) => {
     this.props.store.accountDetailStore.activeTabIdx = idx;
+  }
+
+  public componentDidMount() {
+    this.props.store.accountDetailStore.loadFromWallet();
   }
 
   public render() {
@@ -64,7 +68,7 @@ export default class AccountDetail extends Component<any, {}> {
                       size="small"
                       onClick={() => accountDetailStore.loadMore()}
                       >
-                      Loading More
+                      Load More
                     </Button>
                   )}
                 </div>
@@ -130,3 +134,5 @@ const AmountInfo = ({ classes, amount, token, convertedValue }: any) => (
     )}
   </div>
 );
+
+export default withStyles(styles)(AccountDetail);

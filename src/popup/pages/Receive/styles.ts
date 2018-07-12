@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     width: '100%',
     height: '100%',
@@ -9,18 +11,18 @@ const styles = (theme) => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    margin: theme.spacing.md,
+    margin: theme.padding.md,
   },
   accountName: {
     color: theme.palette.text.primary,
     fontSize: theme.font.lg,
     fontWeight: 'bold',
-    marginBottom: theme.spacing.unit,
+    marginBottom: theme.padding.unit,
   },
   accountAddress: {
     color: theme.palette.text.primary,
     fontSize: theme.font.sm,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.padding.md,
   },
   amountContainer: {
     width: '100%',
@@ -31,7 +33,7 @@ const styles = (theme) => ({
     fontSize: 32,
     fontWeight: 'bold',
     color: theme.palette.text.primary,
-    marginRight: theme.spacing.xs,
+    marginRight: theme.padding.xs,
   },
   token: {
     fontSize: theme.font.sm,

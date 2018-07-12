@@ -1,14 +1,16 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   passwordTextField: {
     flex: 1,
+    padding: theme.padding.sm,
     fontSize: theme.font.sm,
-    padding: theme.spacing.md,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
   passwordFieldInput: {
     fontSize: theme.font.sm,
-    fontWeight: theme.font.weight.bold,
+    fontWeight: theme.fontWeight.bold,
   },
 });
 

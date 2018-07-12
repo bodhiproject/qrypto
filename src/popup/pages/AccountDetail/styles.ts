@@ -1,4 +1,6 @@
-const styles = (theme) => ({
+import { StyleRulesCallback, Theme } from '@material-ui/core';
+
+const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
     height: '100%',
     display: 'flex',
@@ -10,7 +12,7 @@ const styles = (theme) => ({
     flexDirection: 'column',
   },
   accountDetailHeader: {
-    background: theme.palette.background.gradient,
+    background: theme.color.gradientPurple,
     borderRadius: 0,
   },
   tabs: {
@@ -21,12 +23,12 @@ const styles = (theme) => ({
   },
   list: {
     flex: 1,
-    padding: `0 ${theme.spacing.md}`,
-    overflowY: 'auto'
+    padding: `0 ${theme.padding.md}`,
+    overflowY: 'auto',
   },
   listItem: {
     width: '100%',
-    padding: `${theme.spacing.md} 0`,
+    padding: `${theme.padding.md} 0`,
     cursor: 'pointer',
     display: 'inline-flex',
   },
@@ -34,11 +36,11 @@ const styles = (theme) => ({
     flex: 1,
   },
   txState: {
-    fontSize: theme.font.sm,
-    textTransform: 'uppercase',
-    marginBottom: theme.spacing.unit,
+    'fontSize': theme.font.sm,
+    'textTransform': 'uppercase',
+    'marginBottom': theme.padding.unit,
     '&.pending': {
-      color: theme.palette.extra.orange,
+      color: theme.color.orange,
     },
   },
   txId: {
@@ -51,8 +53,8 @@ const styles = (theme) => ({
   },
   arrowRight: {
     fontSize: theme.icon.size,
-    color: theme.palette.extra.gray,
-    marginLeft: theme.spacing.xs,
+    color: theme.color.gray,
+    marginLeft: theme.padding.xs,
   },
   tokenInfoContainer: {
     width: '100%',
@@ -71,7 +73,7 @@ const styles = (theme) => ({
   tokenAmount: {
     fontSize: theme.font.lg,
     color: theme.palette.text.primary,
-    marginRight: theme.spacing.unit,
+    marginRight: theme.padding.unit,
   },
   tokenTypeContainer: {
     display: 'flex',
@@ -85,7 +87,7 @@ const styles = (theme) => ({
   loadingButtonWrap: {
     textAlign: 'center',
     padding: '10px',
-  }
+  },
 });
 
 export default styles;

@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Paper, Select, MenuItem, Typography, Button, withStyles } from '@material-ui/core';
+import { Paper, Select, MenuItem, Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import { isEmpty } from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import PasswordInput from '../../components/PasswordInput';
+import AppStore from '../../../stores/AppStore';
 
-@withStyles(styles, { withTheme: true })
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
+
 @inject('store')
 @observer
-export default class Login extends Component<any, {}> {
-  public static propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
-
+class Login extends Component<WithStyles & IProps, {}> {
   public componentDidMount() {
     this.props.store.loginStore.init();
   }
@@ -55,7 +55,7 @@ const AccountSection = observer(({ classes, store: { walletStore: { accounts }, 
       </Button>
     </div>
   </div>
-);
+));
 
 const PermissionSection = ({ classes }: any) => (
   <div className={classes.permissionContainer}>
@@ -82,3 +82,5 @@ const LoginSection = observer(({ classes, store: { loginStore } }: any) => (
     </Button>
   </div>
 ));
+
+export default withStyles(styles)(Login);

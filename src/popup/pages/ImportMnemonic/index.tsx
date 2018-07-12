@@ -1,21 +1,26 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Typography, TextField, Button, withStyles } from '@material-ui/core';
+import { Typography, TextField, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import BorderTextField from '../../components/BorderTextField';
 import PasswordInput from '../../components/PasswordInput';
+import AppStore from '../../../stores/AppStore';
 
-@withStyles(styles, { withTheme: true })
+interface IProps {
+  classes: Record<string, string>;
+  store: AppStore;
+}
+
+interface IState {
+  importStore: any;
+  walletStore: any;
+}
+
 @inject('store')
 @observer
-export default class ImportMnemonic extends Component<{}, IState> {
-  public static propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
-
+class ImportMnemonic extends Component<WithStyles & IProps, IState> {
   public componentWillUnmount() {
     this.props.store.importStore.reset();
   }
@@ -40,7 +45,7 @@ export default class ImportMnemonic extends Component<{}, IState> {
                 autoFocus
                 required
                 multiline
-                rows={5}
+                rows={4}
                 type="text"
                 placeholder="Enter your seed phrase here to import your wallet."
                 onChange={(e) => importStore.mnemonic = e.target.value}
@@ -94,7 +99,4 @@ export default class ImportMnemonic extends Component<{}, IState> {
   }
 }
 
-interface IState {
-  importStore: any;
-  walletStore: any;
-}
+export default withStyles(styles)(ImportMnemonic);

@@ -54,6 +54,7 @@
     "@types/bip39": "^2.4.0",
     "@types/history": "^4.6.2",
     "@types/lodash": "^4.14.110",
+    "@types/qrcode.react": "^0.8.0",
     "axios": "^0.18.0",
     "chrome-call": "^3.0.0",
     "classnames": "^2.2.6",
