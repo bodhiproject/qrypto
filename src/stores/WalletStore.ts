@@ -1,7 +1,7 @@
 import { Wallet, Insight } from 'qtumjs-wallet';
 
 import { observable, action, toJS, computed, runInAction } from 'mobx';
-import { isEmpty, find } from 'lodash';
+import { find } from 'lodash';
 import axios from 'axios';
 
 import AppStore from './AppStore';
@@ -24,15 +24,13 @@ export default class WalletStore {
   @observable public accounts: Account[] = INIT_VALUES.accounts;
   @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   @observable public qtumPriceUSD = 0;
-
-  @computed public get balanceUSD() {
+  @computed public get balanceUSD(): string {
     if (this.qtumPriceUSD && this.info) {
       return (this.qtumPriceUSD * this.info.balance).toFixed(2);
     } else {
       return 'Loading';
     }
   }
-
   public wallet?: Wallet = INIT_VALUES.wallet;
 
   private app: AppStore;

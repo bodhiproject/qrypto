@@ -1,17 +1,17 @@
-import { observable, action, computed } from 'mobx';
+import { observable, computed } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
+import { STORAGE } from '../constants';
 
 const INIT_VALUES = {
-  walletName: '',
+  hasAppSalt: false,
   password: '',
   confirmPassword: '',
-  showBackButton: false,
 };
 
 export default class LoginStore {
-  @observable public walletName: string = INIT_VALUES.walletName;
+  @observable public hasAppSalt: boolean = INIT_VALUES.hasAppSalt;
   @observable public password: string = INIT_VALUES.password;
   @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
   @computed public get matchError(): string | undefined {
@@ -19,26 +19,22 @@ export default class LoginStore {
   }
   @computed public get error(): boolean {
     const matchError = this.getMatchError();
-    return [this.walletName, this.password, this.confirmPassword].some(isEmpty) || !!matchError;
+    return this.hasAppSalt ? isEmpty(this.password) : [this.password, this.confirmPassword].some(isEmpty) || !!matchError;
   }
 
   private app: AppStore;
 
   constructor(app: AppStore) {
     this.app = app;
-  }
 
-  @action
-  public reset = () => Object.assign(this, INIT_VALUES)
-
-  @action
-  public routeToSaveMnemonic = () => {
-    this.app.routerStore.push('/save-mnemonic');
-  }
-
-  @action
-  public routeToImportWallet = () => {
-    this.app.routerStore.push('/import');
+    /*
+    * Check for existing appSalt in Chrome storage, else create one.
+    * The appSalt should be per install and not per session.
+    */
+    chrome.storage.local.get(STORAGE.APP_SALT, ({ appSalt }: any) => {
+      this.app.loginStore.hasAppSalt = !isEmpty(appSalt);
+      this.app.walletStore.loading = false;
+    });
   }
 
   private getMatchError = (): string | undefined => {

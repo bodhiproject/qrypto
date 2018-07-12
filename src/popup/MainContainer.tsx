@@ -4,6 +4,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { SynchronizedHistory } from 'mobx-react-router';
 
 import Loading from './components/Loading';
+import Login from './pages/Login';
 import CreateWallet from './pages/CreateWallet';
 import SaveMnemonic from './pages/SaveMnemonic';
 import ImportMnemonic from './pages/ImportMnemonic';
@@ -30,6 +31,7 @@ export default class MainContainer extends Component<IProps, {}> {
         <div style={{ width: '100%', height: '100%' }}>
           <Router history={history}>
             <Switch>
+              <Route exact path="/login" component={Login} />
               <Route exact path="/create-wallet" component={CreateWallet} />
               <Route exact path="/save-mnemonic" component={SaveMnemonic} />
               <Route exact path="/import" component={ImportMnemonic} />

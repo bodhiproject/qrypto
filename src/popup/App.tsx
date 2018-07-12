@@ -12,7 +12,7 @@ import MainContainer from './MainContainer';
 // Sync history with MobX router
 const browserHistory = createBrowserHistory();
 const history = syncHistoryWithStore(browserHistory, store.routerStore);
-history.push('/create-wallet');
+history.push('/login');
 
 interface IProps {
   port: chrome.runtime.Port;

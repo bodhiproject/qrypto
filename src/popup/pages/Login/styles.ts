@@ -2,44 +2,35 @@ import { StyleRulesCallback, Theme } from '@material-ui/core';
 
 const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
+    width: '100%',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    margin: theme.padding.md,
   },
-  contentContainer: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    margin: theme.padding.xl,
-  },
-  logoContainerOuter: {
+  logoContainer: {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  logo: {
+    marginBottom: theme.padding.unit,
+  },
   logoText: {
-    fontSize: 52,
+    fontSize: 32,
     fontWeight: theme.fontWeight.bold,
     color: theme.palette.primary.main,
-    marginBottom: theme.padding.lg,
     alignSelf: 'center',
-  },
-  logoDesc: {
-    fontSize: 20,
-    color: theme.palette.primary.main,
   },
   fieldContainer: {
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
-  walletNameField: {
-    marginBottom: theme.padding.sm,
-  },
   passwordField: {
-    marginBottom: theme.padding.sm,
+    marginBottom: theme.padding.md,
   },
   confirmPasswordField: {
     marginBottom: theme.padding.custom(8),
