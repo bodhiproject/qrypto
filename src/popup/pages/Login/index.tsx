@@ -1,5 +1,15 @@
 import React, { Component } from 'react';
-import { Typography, Button, withStyles, WithStyles, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import {
+  Typography,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  withStyles,
+  WithStyles,
+} from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
