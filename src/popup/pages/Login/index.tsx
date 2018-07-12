@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react';
 import styles from './styles';
 import PasswordInput from '../../components/PasswordInput';
 import AppStore from '../../../stores/AppStore';
-import qryptoLogo from '../../../../static/images/qrypto_logo_128.png';
+import logo from '../../../images/logo.png';
 
 interface IProps {
   classes: Record<string, string>;
@@ -16,7 +16,7 @@ interface IProps {
 @observer
 class Login extends Component<WithStyles & IProps, {}> {
   public componentWillUnmount() {
-    this.props.store.createWalletStore.reset();
+    // this.props.store.createWalletStore.reset();
   }
 
   public render() {
@@ -26,14 +26,14 @@ class Login extends Component<WithStyles & IProps, {}> {
     return (
       <div className={classes.root}>
         <div className={classes.logoContainer}>
-          <img className={classes.logo} src={qryptoLogo} alt={'Logo'} />
+          <img className={classes.logo} src={logo} alt={'Logo'} />
           <Typography className={classes.logoText}>Qrypto</Typography>
         </div>
         <div className={classes.fieldContainer}>
           <PasswordInput
             classNames={classes.passwordField}
             placeholder="Password"
-            onChange={this.onPasswordChange}
+            onChange={(e: any) => loginStore.password = e.target.value}
           />
           {!hasAppSalt && (
             <PasswordInput
@@ -51,7 +51,7 @@ class Login extends Component<WithStyles & IProps, {}> {
           variant="contained"
           color="primary"
           disabled={error}
-          onClick={loginStore.routeToSaveMnemonic}
+          onClick={loginStore.login}
         >
           Login
         </Button>
