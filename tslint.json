@@ -27,23 +27,6 @@
     "no-unused-variable": true,
     "max-line-length": [true, {"ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |//"}]
   },
-  "jsRules": {
-    "no-var-requires": false,
-    "semicolon": [true, "always"],
-    "object-literal-sort-keys": false,
-    "ordered-imports": false,
-    "no-console": false,
-    "quotemark": [true, "single", "jsx-double"],
-    "variable-name": [
-      true,
-      "ban-keywords",
-      "check-format",
-      "allow-leading-underscore",
-      "allow-pascal-case"
-    ],
-    "no-empty-interface": false,
-    "no-unused-variable": true,
-    "max-line-length": [true, {"ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |//"}]
-  },
+  "jsRules": {},
   "rulesDirectory": []
 }
