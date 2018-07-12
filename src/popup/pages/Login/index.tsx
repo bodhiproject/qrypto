@@ -20,8 +20,9 @@ class Login extends Component<WithStyles & IProps, {}> {
   }
 
   public render() {
-    const { classes, store: { loginStore } } = this.props;
-    const { hasAppSalt, matchError, error } = loginStore;
+    const { classes, store: { loginStore, walletStore } } = this.props;
+    const { password, matchError, error } = loginStore;
+    const { appSalt } = walletStore;
 
     return (
       <div className={classes.root}>
@@ -35,7 +36,7 @@ class Login extends Component<WithStyles & IProps, {}> {
             placeholder="Password"
             onChange={(e: any) => loginStore.password = e.target.value}
           />
-          {!hasAppSalt && (
+          {!appSalt && (
             <PasswordInput
               classNames={classes.confirmPasswordField}
               placeholder="Confirm password"
@@ -51,7 +52,7 @@ class Login extends Component<WithStyles & IProps, {}> {
           variant="contained"
           color="primary"
           disabled={error}
-          onClick={loginStore.login}
+          onClick={() => walletStore.newLogin(password)}
         >
           Login
         </Button>

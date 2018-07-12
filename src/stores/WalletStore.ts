@@ -1,6 +1,6 @@
 import { Wallet, Insight } from 'qtumjs-wallet';
-
 import { observable, action, toJS, computed, runInAction } from 'mobx';
+import { scryptSync } from 'crypto';
 import { find, isEmpty, split } from 'lodash';
 import axios from 'axios';
 
@@ -9,6 +9,8 @@ import { STORAGE } from '../constants';
 import Account from '../models/Account';
 
 const INIT_VALUES = {
+  appSalt: undefined,
+  passwordHash: undefined,
   info: undefined,
   accounts: [],
   loggedInAccount: undefined,
@@ -20,6 +22,8 @@ export default class WalletStore {
   private static GET_PRICE_INTERVAL_MS: number = 60000;
 
   @observable public loading = true;
+  @observable public appSalt?: Uint8Array = INIT_VALUES.appSalt;
+  @observable public passwordHash?: string = INIT_VALUES.passwordHash;
   @observable public info?: Insight.IGetInfo = INIT_VALUES.info;
   @observable public accounts: Account[] = INIT_VALUES.accounts;
   @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
@@ -39,6 +43,7 @@ export default class WalletStore {
 
   constructor(app: AppStore) {
     this.app = app;
+    this.fetchStorageValues(); // TODO: check logic
     this.getAccountsFromStorage();
   }
 
@@ -57,24 +62,27 @@ export default class WalletStore {
   }
 
   @action
-  public fetchAppSalt = () => {
-    chrome.storage.local.get(STORAGE.APP_SALT, ({ appSalt }: any) => {
-      if (!isEmpty(appSalt)) {
-        const array = split(appSalt, ',').map((str) => parseInt(str, 10));
-        const uintArray = Uint8Array.from(array);
-        console.log(uintArray);
+  public newLogin = (password: string) => {
+    this.loading = true;
 
-        this.app.loginStore.hasAppSalt = true;
-      }
+    // Generate appSalt if needed
+    if (!this.appSalt) {
+      const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
+      this.appSalt = appSalt;
+      chrome.storage.local.set({ [STORAGE.APP_SALT]: appSalt.toString() }, () => console.log('appSalt set'));
+    }
 
-      this.loading = false;
-    });
-  }
+    // Derive passwordHash
+    try {
+      console.log(scryptSync);
+      const derivedKey = scryptSync(password, this.appSalt!, 64);
+      this.passwordHash = derivedKey.toString('hex');
+      console.log(this.passwordHash);
 
-  public storeAppSalt = (appSalt: Uint8Array) => {
-    chrome.storage.local.set({
-      [STORAGE.APP_SALT]: appSalt.toString(),
-    }, () => console.log('appSalt set'));
+      this.fetchAccounts();
+    } catch (err) {
+      throw err;
+    }
   }
 
   @action
@@ -169,6 +177,33 @@ export default class WalletStore {
     this.accounts = storageAccounts;
     this.app.routerStore.push('/account-login');
     this.loading = false;
+  }
+
+  private fetchStorageValues = () => {
+    chrome.storage.local.get(STORAGE.APP_SALT, ({ appSalt }: any) => {
+      if (!isEmpty(appSalt)) {
+        const array = split(appSalt, ',').map((str) => parseInt(str, 10));
+        this.appSalt =  Uint8Array.from(array);
+      }
+
+      this.loading = false;
+    });
+  }
+
+  // Set the existing accounts from Chrome storage and route
+  @action
+  private fetchAccounts = () => {
+    chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, ({ testnetAccounts }) => {
+      // Account not found, route to Create Wallet page
+      if (isEmpty(testnetAccounts)) {
+        this.app.routerStore.push('/create-wallet');
+      } else {
+        // Accounts found, route to Account Login page
+        this.accounts = testnetAccounts;
+        this.app.routerStore.push('/account-login');
+      }
+      this.loading = false;
+    });
   }
 
   @action
