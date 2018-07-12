@@ -2,7 +2,6 @@ import { StyleRulesCallback, Theme } from '@material-ui/core';
 
 const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
-    // width: '100%',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -25,7 +24,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     alignSelf: 'center',
   },
   fieldContainer: {
-    width: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -33,13 +31,11 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     marginBottom: theme.padding.md,
   },
   confirmPasswordField: {
-    marginBottom: theme.padding.custom(8),
+    marginBottom: theme.padding.md,
   },
   loginButton: {
     height: theme.button.lg.height,
-    marginBottom: theme.padding.sm,
     borderRadius: theme.button.lg.radius,
-    display: 'flex',
   },
 });
 
