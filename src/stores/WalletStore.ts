@@ -70,15 +70,35 @@ export default class WalletStore {
     if (!this.appSalt) {
       const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
       this.appSalt = appSalt;
-      chrome.storage.local.set({ [STORAGE.APP_SALT]: appSalt.toString() }, () => console.log('appSalt set'));
+      chrome.storage.local.set(
+        { [STORAGE.APP_SALT]: appSalt.toString() },
+        () => console.log('appSalt set'),
+      );
     }
 
     // Derive passwordHash
     const saltBuffer = Buffer.from(this.appSalt!);
     const derivedKey = scrypt(password, saltBuffer, 131072, 8, 1, 64);
-    this.passwordHash = derivedKey.toString('hex');
+    const passwordHash = derivedKey.toString('hex');
 
-    this.fetchAccounts();
+    if (!this.passwordHash) {
+      // New user, set passwordHash in storage
+      this.passwordHash = passwordHash;
+      chrome.storage.local.set(
+        { [STORAGE.PASSWORD_HASH]: passwordHash },
+        () => console.log('passwordHash set'),
+      );
+      this.fetchAccounts();
+    } else {
+      if (passwordHash === this.passwordHash) {
+        // Existing user, password matches
+        this.fetchAccounts();
+      } else {
+        // Existing user, password does not match
+        this.app.loginStore.invalidPassword = true;
+        this.loading = false;
+      }
+    }
   }
 
   @action
@@ -176,10 +196,15 @@ export default class WalletStore {
   }
 
   private fetchStorageValues = () => {
-    chrome.storage.local.get(STORAGE.APP_SALT, ({ appSalt }: any) => {
+    const { APP_SALT, PASSWORD_HASH } = STORAGE;
+    chrome.storage.local.get([APP_SALT, PASSWORD_HASH], ({ appSalt, passwordHash }: any) => {
       if (!isEmpty(appSalt)) {
         const array = split(appSalt, ',').map((str) => parseInt(str, 10));
         this.appSalt =  Uint8Array.from(array);
+      }
+
+      if (!isEmpty(passwordHash)) {
+        this.passwordHash = passwordHash;
       }
 
       this.loading = false;

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
+import { Typography, Button, withStyles, WithStyles, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
@@ -56,9 +56,26 @@ class Login extends Component<WithStyles & IProps, {}> {
         >
           Login
         </Button>
+        <ErrorDialog {...this.props} />
       </div>
     );
   }
 }
+
+const ErrorDialog: React.SFC<any> = observer(({ store: { loginStore }}: any) => (
+  <Dialog
+    disableBackdropClick
+    open={!!loginStore.invalidPassword}
+    onClose={() => loginStore.invalidPassword = undefined}
+  >
+    <DialogTitle>Invalid Password</DialogTitle>
+    <DialogContent>
+      <DialogContentText>You have entered an invalid password. Please try again.</DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => loginStore.invalidPassword = undefined} color="primary">Close</Button>
+    </DialogActions>
+  </Dialog>
+));
 
 export default withStyles(styles)(Login);

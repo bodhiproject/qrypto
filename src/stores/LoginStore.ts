@@ -6,11 +6,13 @@ import AppStore from './AppStore';
 const INIT_VALUES = {
   password: '',
   confirmPassword: '',
+  invalidPassword: undefined,
 };
 
 export default class LoginStore {
   @observable public password: string = INIT_VALUES.password;
   @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
+  @observable public invalidPassword?: boolean = INIT_VALUES.invalidPassword;
   @computed public get matchError(): string | undefined {
     return this.getMatchError();
   }
