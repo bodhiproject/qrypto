@@ -139,9 +139,9 @@ export default class WalletStore {
     // TODO: check if account exists already. if so, show error message and stop execution here.
 
     const network = networks.testnet;
-    this.wallet = network.fromMnemonic(mnemonic);
+    this.wallet = await network.fromMnemonic(mnemonic);
     console.time('toEncryptedPrivateKey');
-    const privateKeyHash = this.wallet.toEncryptedPrivateKey(this.passwordHash!); // TODO: await when changed to async func
+    const privateKeyHash = await this.wallet.toEncryptedPrivateKey(this.passwordHash!);
     console.timeEnd('toEncryptedPrivateKey');
     const account = new Account(accountName, privateKeyHash);
 
