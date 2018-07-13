@@ -17,20 +17,6 @@ interface IProps {
 @observer
 class SendConfirm extends Component<WithStyles & IProps, {}> {
 
-  public handleConfirm = () => {
-    const { history, store: { sendStore } } = this.props;
-    sendStore.send();
-    when(
-      () => sendStore.sendState === 'Sent!',
-      () => {
-        sendStore.sendState = 'Initial';
-        // we route to home page first so that if the user hits the Back NavBar button from the accountDetail page it will go back to the homepage instead of this sendConfirm page
-        history.push('/home');
-        history.push('/account-detail');
-      },
-    );
-  }
-
   public render() {
     const { classes, store: { sendStore } } = this.props;
     const { senderAddress, receiverAddress, amount, token, sendState, errorMessage } = sendStore;
