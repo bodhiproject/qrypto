@@ -15,6 +15,8 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     alignItems: 'center',
   },
   logo: {
+    width: 112,
+    height: 112,
     marginBottom: theme.padding.unit,
   },
   logoText: {

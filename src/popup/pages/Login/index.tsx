@@ -15,7 +15,6 @@ import { inject, observer } from 'mobx-react';
 import styles from './styles';
 import PasswordInput from '../../components/PasswordInput';
 import AppStore from '../../../stores/AppStore';
-import logo from '../../../images/logo.png';
 
 interface IProps {
   classes: Record<string, string>;
@@ -37,7 +36,7 @@ class Login extends Component<WithStyles & IProps, {}> {
     return (
       <div className={classes.root}>
         <div className={classes.logoContainer}>
-          <img className={classes.logo} src={logo} alt={'Logo'} />
+          <img className={classes.logo} src={chrome.runtime.getURL('images/logo.png')} alt={'Logo'} />
           <Typography className={classes.logoText}>Qrypto</Typography>
         </div>
         <div className={classes.fieldContainer}>
