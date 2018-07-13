@@ -91,7 +91,7 @@ async function handleSendQtumMessage(message: ISendQtumRequestPayload) {
     return;
   }
 
-  const wallet = recoverWallet(mnemonic);
+  const wallet = await recoverWallet(mnemonic);
   const { address, amount } = message;
   const result = await wallet.send(address, amount * 1e8, {
     feeRate: 400,
