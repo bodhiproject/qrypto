@@ -16,9 +16,6 @@ interface IProps {
 @inject('store')
 @observer
 class Login extends Component<WithStyles & IProps, {}> {
-  public componentDidMount() {
-    this.props.store.loginStore.init();
-  }
 
   public render() {
     const { classes } = this.props;

@@ -24,18 +24,18 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
   const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, isDarkTheme, title, store: { networkStore } } = props;
 
   return (
-      <div className={classes.root}>
-        <div className={classes.leftButtonsContainer}>
-          {hasBackButton && <BackButton {...props} />}
-          {hasSettingsButton && <SettingsButton {...props} />}
-        </div>
-        <div className={classes.locationContainer}>
-          <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
-        </div>
-        {hasNetworkSelector && (
-          <DropDownMenu classes={classes} onSelect={ (idx: number) => networkStore.changeNetwork(idx) } selections={ networkStore.networksArray.map((net: QryNetwork) => net.name) } selectedIndex={networkStore.networkIndex} />
-        )}
+    <div className={classes.root}>
+      <div className={classes.leftButtonsContainer}>
+        {hasBackButton && <BackButton {...props} />}
+        {hasSettingsButton && <SettingsButton {...props} />}
       </div>
+      <div className={classes.locationContainer}>
+        <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
+      </div>
+      {hasNetworkSelector && (
+        <DropDownMenu classes={classes} onSelect={ (idx: number) => networkStore.changeNetwork(idx) } selections={ networkStore.networksArray.map((net: QryNetwork) => net.name) } selectedIndex={networkStore.networkIndex} />
+      )}
+    </div>
   );
 }));
 
@@ -62,7 +62,7 @@ const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, wall
       open={Boolean(ui.settingsMenuAnchor)}
       onClose={() => ui.settingsMenuAnchor = undefined}
     >
-      <MenuItem onClick={() => walletStore.logout(false)}> Logout </MenuItem>
+      <MenuItem onClick={() => walletStore.logout(false)}>Logout</MenuItem>
     </Menu>
   </Fragment>
 ));

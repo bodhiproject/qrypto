@@ -107,7 +107,7 @@ export default class WalletStore {
     const foundAccount = find(this.accounts, { name: accountName });
     if (foundAccount) {
       this.loggedInAccount = foundAccount;
-      this.recoverWallet(this.loggedInAccount!.mnemonic!);
+      await this.recoverWallet(this.loggedInAccount!.mnemonic!);
       await this.startPolling();
       runInAction(() => {
         this.loading = false;
@@ -133,9 +133,9 @@ export default class WalletStore {
   }
 
   @action
-  private recoverWallet = (mnemonic: string) => {
+  private recoverWallet = async (mnemonic: string) => {
     const network = this.app.networkStore.network;
-    this.wallet = network.fromMnemonic(mnemonic);
+    this.wallet = await network.fromMnemonic(mnemonic);
   }
 
   @action
@@ -148,8 +148,6 @@ export default class WalletStore {
     }
     // Accounts found, route to Login page
     this.accounts = storageAccounts;
-     // This is used to set the default selected account on the login page, we also call it indirectly in Login/index.tsx componentDidMount so that the default account is set when a user logs out (without switching networks), which will not hit this chrome storage flow
-    this.app.loginStore.selectedWalletName = this.accounts[0].name;
     this.app.routerStore.push('/login');
     this.loading = false;
   }

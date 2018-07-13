@@ -1,10 +1,10 @@
-import { Network as qjswNetwork } from 'qtumjs-wallet';
+import { Network as QjswNetwork } from 'qtumjs-wallet';
 
 export default class QryNetwork {
   public name: string;
-  public network: qjswNetwork;
+  public network: QjswNetwork;
 
-  constructor(name: string, network: qjswNetwork) {
+  constructor(name: string, network: QjswNetwork) {
     this.name = name;
     this.network = network;
   }

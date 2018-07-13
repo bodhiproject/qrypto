@@ -17,7 +17,7 @@ interface IState {
 
 class DropDownMenu extends Component<WithStyles & IProps, IState> {
 
-  public state = {
+  public state: IState = {
     anchorEl: undefined,
   };
 
@@ -44,7 +44,7 @@ class DropDownMenu extends Component<WithStyles & IProps, IState> {
           onClose={() => this.setState({ anchorEl: null }) }
         >
           {selections.map((item, i) => (
-            <MenuItem onClick={ () => this.onMenuItemClick(i) }> {item} </MenuItem>
+            <MenuItem onClick={() => this.onMenuItemClick(i)}> {item} </MenuItem>
           ))}
         </Menu >
       </div>
