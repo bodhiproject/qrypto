@@ -1,7 +1,6 @@
 import { observable, action } from 'mobx';
 import bip39 from 'bip39';
 
-import Account from '../models/Account';
 import AppStore from './AppStore';
 
 const INIT_VALUES = {
@@ -27,12 +26,9 @@ export default class SaveMnemonicStore {
   @action
   public createWallet = () => {
     this.app.walletStore.loading = true;
-
-    const account = new Account(this.walletName, this.mnemonic);
+    this.app.walletStore.addAccount(this.walletName, this.mnemonic);
+    this.app.walletStore.loginAccount(this.walletName);
     this.reset();
-
-    this.app.walletStore.addAccount(account);
-    this.app.walletStore.loginAccount(account.name);
   }
 
   @action

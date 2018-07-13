@@ -2,7 +2,6 @@ import { observable, action, computed } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
-import Account from '../models/Account';
 
 const INIT_VALUES = {
   mnemonic: '',
@@ -29,14 +28,9 @@ export default class ImportStore {
   @action
   public importNewMnemonic = () => {
     this.app.walletStore.loading = true;
-
-    // Create and store Account in local storage
-    // TODO: implement BIP38 encryption on the mnemonic here
-    const account = new Account(this.accountName, this.mnemonic);
+    this.app.walletStore.addAccount(this.accountName, this.mnemonic);
+    this.app.walletStore.loginAccount(this.accountName);
     this.reset();
-
-    this.app.walletStore.addAccount(account);
-    this.app.walletStore.loginAccount(account.name);
   }
 
   @action

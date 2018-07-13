@@ -126,9 +126,11 @@ export default class WalletStore {
 
   @action
   public addAccount(accountName: string, mnemonic: string) {
-    // Need to recover the Wallet instance first to get the encrypted private key hash
-    this.recoverWallet(mnemonic);
-    const privateKeyHash = this.wallet!.toEncryptedPrivateKey(this.passwordHash!);
+    // Need to instantiate Wallet instance to call toEncryptedPrivateKey()
+    const network = networks.testnet;
+    const wallet = network.fromMnemonic(mnemonic);
+    // TODO: await when changed to async func
+    const privateKeyHash = wallet.toEncryptedPrivateKey(this.passwordHash!);
     const account = new Account(accountName, privateKeyHash);
 
     // Add account if not existing
@@ -151,12 +153,16 @@ export default class WalletStore {
     }
   }
 
+  /*
+  * Finds the account based on the name and logs in.
+  * @param accountName {string} The account name to search by.
+  */
   @action
   public async loginAccount(accountName: string) {
     const foundAccount = find(this.accounts, { name: accountName });
     if (foundAccount) {
       this.loggedInAccount = foundAccount;
-      await this.recoverWallet(this.loggedInAccount!.mnemonic!);
+      await this.recoverWallet();
       await this.startPolling();
       runInAction(() => {
         this.loading = false;
@@ -182,9 +188,10 @@ export default class WalletStore {
   }
 
   @action
-  private recoverWallet = async (mnemonic: string) => {
+  private recoverWallet = async () => {
     const network = this.app.networkStore.network;
-    this.wallet = await network.fromMnemonic(mnemonic);
+    // TODO: await when changed to async func
+    this.wallet = await network.fromEncryptedPrivateKey(this.loggedInAccount!.privateKeyHash, this.passwordHash);
   }
 
   @action
