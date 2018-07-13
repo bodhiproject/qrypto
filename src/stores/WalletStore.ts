@@ -124,13 +124,21 @@ export default class WalletStore {
     }
   }
 
+  /*
+  * Creates an account, stores it, and logs in.
+  * @param accountName {string} The account name for the new wallet account.
+  * @param mnemonic {string} The mnemonic to derive the wallet from.
+  */
   @action
-  public addAccount(accountName: string, mnemonic: string) {
-    // Need to instantiate Wallet instance to call toEncryptedPrivateKey()
+  public async addAccountAndLogin(accountName: string, mnemonic: string) {
+    this.loading = true;
+    // TODO: check if account exists already. if so, show error message and stop execution here.
+
     const network = networks.testnet;
-    const wallet = network.fromMnemonic(mnemonic);
-    // TODO: await when changed to async func
-    const privateKeyHash = wallet.toEncryptedPrivateKey(this.passwordHash!);
+    this.wallet = network.fromMnemonic(mnemonic);
+    console.time('toEncryptedPrivateKey');
+    const privateKeyHash = this.wallet.toEncryptedPrivateKey(this.passwordHash!); // TODO: await when changed to async func
+    console.timeEnd('toEncryptedPrivateKey');
     const account = new Account(accountName, privateKeyHash);
 
     // Add account if not existing
@@ -138,18 +146,20 @@ export default class WalletStore {
     if (!find(accounts, { privateKeyHash: account.privateKeyHash })) {
       accounts.push(account);
 
-      let storageAccountKey;
-      if (this.app.networkStore.isMainNet) {
-        storageAccountKey = STORAGE.MAINNET_ACCOUNTS;
-      } else {
-        storageAccountKey = STORAGE.TESTNET_ACCOUNTS;
-      }
-
+      // Save account in storage and memory
+      const storageAccountKey = this.app.networkStore.isMainNet ? STORAGE.MAINNET_ACCOUNTS : STORAGE.TESTNET_ACCOUNTS;
       chrome.storage.local.set({
         [storageAccountKey]: accounts,
       }, () => console.log('Account added', account));
       this.accounts = accounts;
       this.loggedInAccount = account;
+
+      // Start data polling and route to home
+      await this.startPolling();
+      runInAction(() => {
+        this.loading = false;
+        this.app.routerStore.push('/home');
+      });
     }
   }
 
@@ -159,6 +169,8 @@ export default class WalletStore {
   */
   @action
   public async loginAccount(accountName: string) {
+    this.app.walletStore.loading = true;
+
     const foundAccount = find(this.accounts, { name: accountName });
     if (foundAccount) {
       this.loggedInAccount = foundAccount;
@@ -190,7 +202,6 @@ export default class WalletStore {
   @action
   private recoverWallet = async () => {
     const network = this.app.networkStore.network;
-    // TODO: await when changed to async func
     this.wallet = await network.fromEncryptedPrivateKey(this.loggedInAccount!.privateKeyHash, this.passwordHash);
   }
 

@@ -25,9 +25,7 @@ export default class SaveMnemonicStore {
 
   @action
   public createWallet = () => {
-    this.app.walletStore.loading = true;
-    this.app.walletStore.addAccount(this.walletName, this.mnemonic);
-    this.app.walletStore.loginAccount(this.walletName);
+    this.app.walletStore.addAccountAndLogin(this.walletName, this.mnemonic);
     this.reset();
   }
 

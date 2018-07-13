@@ -30,8 +30,6 @@ export default class AccountLoginStore {
 
   @action
   public login = () => {
-    this.app.walletStore.loading = true;
-
     this.app.walletStore.loginAccount(this.selectedWalletName);
     this.reset();
   }

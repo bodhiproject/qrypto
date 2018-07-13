@@ -27,9 +27,7 @@ export default class ImportStore {
 
   @action
   public importNewMnemonic = () => {
-    this.app.walletStore.loading = true;
-    this.app.walletStore.addAccount(this.accountName, this.mnemonic);
-    this.app.walletStore.loginAccount(this.accountName);
+    this.app.walletStore.addAccountAndLogin(this.accountName, this.mnemonic);
     this.reset();
   }
 
