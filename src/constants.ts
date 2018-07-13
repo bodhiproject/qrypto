@@ -23,3 +23,8 @@ export enum SEND_STATE {
   SENDING = 'Sending...',
   SENT = 'Sent!',
 }
+
+export enum NETWORK_NAMES {
+  TESTNET = 'TestNet',
+  MAINNET = 'MainNet',
+}

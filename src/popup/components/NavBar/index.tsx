@@ -1,11 +1,14 @@
 import React, { Fragment } from 'react';
 import { inject, observer } from 'mobx-react';
-import { Typography, Menu, MenuItem, Button, IconButton, withStyles } from '@material-ui/core';
-import { ArrowBack, Settings, ArrowDropDown } from '@material-ui/icons';
+
+import { Typography, Menu, MenuItem, IconButton, withStyles } from '@material-ui/core';
+import { ArrowBack, Settings } from '@material-ui/icons';
 import cx from 'classnames';
 
-import styles from './styles';
+import DropDownMenu from '../DropDownMenu';
 import AppStore from '../../../stores/AppStore';
+import QryNetwork from '../../../models/QryNetwork';
+import styles from './styles';
 
 interface IProps {
   classes: Record<string, string>;
@@ -18,7 +21,8 @@ interface IProps {
 }
 
 const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
-  const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, isDarkTheme, title } = props;
+  const { classes, hasBackButton, hasSettingsButton, hasNetworkSelector, isDarkTheme, title, store: { networkStore } } = props;
+
   return (
     <div className={classes.root}>
       <div className={classes.leftButtonsContainer}>
@@ -29,7 +33,7 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
         <Typography className={cx(classes.locationText, isDarkTheme ? 'white' : '')}>{title}</Typography>
       </div>
       {hasNetworkSelector && (
-        <NetworkSelector {...props} />
+        <DropDownMenu classes={classes} onSelect={ (idx: number) => networkStore.changeNetwork(idx) } selections={ networkStore.networksArray.map((net: QryNetwork) => net.name) } selectedIndex={networkStore.networkIndex} />
       )}
     </div>
   );
@@ -58,21 +62,9 @@ const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, wall
       open={Boolean(ui.settingsMenuAnchor)}
       onClose={() => ui.settingsMenuAnchor = undefined}
     >
-      <MenuItem onClick={walletStore.logout}>Logout</MenuItem>
+      <MenuItem onClick={() => walletStore.logout(false)}>Logout</MenuItem>
     </Menu>
   </Fragment>
 ));
-
-const NetworkSelector: React.SFC<IProps> = ({ classes }: any) => (
-  <Button
-    color="secondary"
-    variant="contained"
-    size="small"
-    className={classes.networkButton}
-  >
-    Testnet
-    <ArrowDropDown />
-  </Button>
-);
 
 export default withStyles(styles)(NavBar);

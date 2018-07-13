@@ -1,4 +1,4 @@
-import { observable, computed, action, runInAction, when } from 'mobx';
+import { observable, computed, action, runInAction } from 'mobx';
 
 import AppStore from './AppStore';
 import { isValidAddress, isValidAmount } from '../utils';
@@ -39,15 +39,6 @@ export default class SendStore {
 
   constructor(app: AppStore) {
     this.app = app;
-
-    when(
-      () => this.sendState === SEND_STATE.SENT,
-      () => {
-        this.sendState = SEND_STATE.INITIAL;
-        this.app.routerStore.push('/home');
-        this.app.routerStore.push('/account-detail');
-      },
-    );
   }
 
   @action
@@ -63,7 +54,11 @@ export default class SendStore {
         feeRate: 4000,
       });
 
-      runInAction(() => this.sendState = SEND_STATE.SENT);
+      runInAction(() => {
+        this.app.routerStore.push('/home'); // so pressing back won't go back to sendConfirm page
+        this.app.routerStore.push('/account-detail');
+        this.sendState = SEND_STATE.INITIAL;
+      });
     } catch (err) {
       console.log(err);
       runInAction(() => {

@@ -1,4 +1,4 @@
-import { networks, Wallet, Insight } from 'qtumjs-wallet';
+import { Wallet, Insight } from 'qtumjs-wallet';
 
 import { observable, action, toJS, computed, runInAction } from 'mobx';
 import { isEmpty, find } from 'lodash';
@@ -8,14 +8,21 @@ import AppStore from './AppStore';
 import { STORAGE } from '../constants';
 import Account from '../models/Account';
 
+const INIT_VALUES = {
+  info: undefined,
+  accounts: [],
+  loggedInAccount: undefined,
+  wallet: undefined,
+};
+
 export default class WalletStore {
   private static GET_INFO_INTERVAL_MS: number = 30000;
   private static GET_PRICE_INTERVAL_MS: number = 60000;
 
   @observable public loading = true;
-  @observable public info?: Insight.IGetInfo = undefined;
-  @observable public accounts: Account[] = [];
-  @observable public loggedInAccount?: Account = undefined;
+  @observable public info?: Insight.IGetInfo = INIT_VALUES.info;
+  @observable public accounts: Account[] = INIT_VALUES.accounts;
+  @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   @observable public qtumPriceUSD = 0;
 
   @computed public get balanceUSD() {
@@ -26,7 +33,7 @@ export default class WalletStore {
     }
   }
 
-  public wallet?: Wallet = undefined;
+  public wallet?: Wallet = INIT_VALUES.wallet;
 
   private app: AppStore;
   private getInfoInterval?: number = undefined;
@@ -34,21 +41,21 @@ export default class WalletStore {
 
   constructor(app: AppStore) {
     this.app = app;
+    this.getAccountsFromStorage();
+  }
 
-    // Set the existing accounts from Chrome storage
-    chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, ({ testnetAccounts }) => {
-      // Account not found, route to Create Wallet page
-      if (isEmpty(testnetAccounts)) {
-        this.app.routerStore.push('/create-wallet');
-        this.loading = false;
-        return;
-      }
-
-      // Accounts found, route to Login page
-      this.accounts = testnetAccounts;
-      this.app.routerStore.push('/login');
-      this.loading = false;
-    });
+  public getAccountsFromStorage() {
+    if (this.app.networkStore.isMainNet) {
+      // Set the existing accounts from Chrome storage
+      chrome.storage.local.get(STORAGE.MAINNET_ACCOUNTS, ({ mainnetAccounts }) => {
+        this.setAccountsAndRoute(mainnetAccounts);
+      });
+    } else {
+      // Set the existing accounts from Chrome storage
+      chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, ({ testnetAccounts }) => {
+        this.setAccountsAndRoute(testnetAccounts);
+      });
+    }
   }
 
   @action
@@ -80,8 +87,15 @@ export default class WalletStore {
     if (!find(accounts, { mnemonic: account.mnemonic })) {
       accounts.push(account);
 
+      let storageAccountKey;
+      if (this.app.networkStore.isMainNet) {
+        storageAccountKey = STORAGE.MAINNET_ACCOUNTS;
+      } else {
+        storageAccountKey = STORAGE.TESTNET_ACCOUNTS;
+      }
+
       chrome.storage.local.set({
-        [STORAGE.TESTNET_ACCOUNTS]: accounts,
+        [storageAccountKey]: accounts,
       }, () => console.log('Account added', account));
       this.accounts = accounts;
       this.loggedInAccount = account;
@@ -93,9 +107,8 @@ export default class WalletStore {
     const foundAccount = find(this.accounts, { name: accountName });
     if (foundAccount) {
       this.loggedInAccount = foundAccount;
-      this.recoverWallet(this.loggedInAccount!.mnemonic!);
+      await this.recoverWallet(this.loggedInAccount!.mnemonic!);
       await this.startPolling();
-
       runInAction(() => {
         this.loading = false;
         this.app.routerStore.push('/home');
@@ -104,15 +117,39 @@ export default class WalletStore {
   }
 
   @action
-  public logout = () => {
-    this.app.walletStore.stopPolling();
-    this.app.routerStore.push('/login');
+  public logout = (isSwitchingNetwork: boolean) => {
+    this.stopPolling();
+    this.info =  INIT_VALUES.info;
+    this.loggedInAccount = INIT_VALUES.loggedInAccount;
+    this.wallet = INIT_VALUES.wallet;
+
+    if (isSwitchingNetwork) {
+      this.accounts = INIT_VALUES.accounts;
+      this.app.walletStore.getAccountsFromStorage();
+      // we dont call this.app.routerStore.push('/login') here because it is called at the end of getAccountsFromStorage() instead
+    } else {
+      this.app.routerStore.push('/login');
+    }
   }
 
   @action
-  private recoverWallet(mnemonic: string) {
-    const network = networks.testnet;
-    this.wallet = network.fromMnemonic(mnemonic);
+  private recoverWallet = async (mnemonic: string) => {
+    const network = this.app.networkStore.network;
+    this.wallet = await network.fromMnemonic(mnemonic);
+  }
+
+  @action
+  private setAccountsAndRoute = (storageAccounts: Account[]) => {
+    // Account not found, route to Create Wallet page
+    if (isEmpty(storageAccounts)) {
+      this.app.routerStore.push('/create-wallet');
+      this.loading = false;
+      return;
+    }
+    // Accounts found, route to Login page
+    this.accounts = storageAccounts;
+    this.app.routerStore.push('/login');
+    this.loading = false;
   }
 
   @action

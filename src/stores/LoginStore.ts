@@ -1,4 +1,5 @@
-import { observable, action } from 'mobx';
+import { observable, action, reaction } from 'mobx';
+import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
 
@@ -15,11 +16,16 @@ export default class LoginStore {
 
   constructor(app: AppStore) {
     this.app = app;
-  }
 
-  @action
-  public init = () => {
-    this.selectedWalletName = this.app.walletStore.accounts[0].name;
+    // Set the default selected account on the login page.
+    reaction(
+      () => this.app.walletStore.accounts,
+      () => {
+        if (!isEmpty(this.app.walletStore.accounts)) {
+          this.selectedWalletName = this.app.walletStore.accounts[0].name;
+        }
+      },
+    );
   }
 
   @action

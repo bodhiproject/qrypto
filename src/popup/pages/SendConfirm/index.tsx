@@ -16,6 +16,7 @@ interface IProps {
 @inject('store')
 @observer
 class SendConfirm extends Component<WithStyles & IProps, {}> {
+
   public render() {
     const { classes, store: { sendStore } } = this.props;
     const { senderAddress, receiverAddress, amount, token, sendState, errorMessage } = sendStore;
