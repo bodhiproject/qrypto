@@ -5,12 +5,10 @@ import AppStore from './AppStore';
 
 const INIT_VALUES = {
   selectedWalletName: '',
-  password: '',
 };
 
 export default class AccountLoginStore {
   @observable public selectedWalletName: string = INIT_VALUES.selectedWalletName;
-  @observable public password: string = INIT_VALUES.password;
 
   private app: AppStore;
 

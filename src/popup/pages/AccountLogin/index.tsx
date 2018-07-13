@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { Paper, Select, MenuItem, Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-import { isEmpty } from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
-import PasswordInput from '../../components/PasswordInput';
 import AppStore from '../../../stores/AppStore';
 
 interface IProps {
@@ -56,23 +54,17 @@ const AccountSection = observer(({ classes, store: { walletStore: { accounts }, 
 
 const PermissionSection = ({ classes }: any) => (
   <div className={classes.permissionContainer}>
-    <Typography className={classes.permissionsHeader}>Permissions</Typography>
+    {/* <Typography className={classes.permissionsHeader}>Permissions</Typography> */}
   </div>
 );
 
 const LoginSection = observer(({ classes, store: { accountLoginStore } }: any) => (
   <div className={classes.loginContainer}>
-    <PasswordInput
-      classNames={classes.passwordField}
-      placeholder="Password"
-      onChange={(e: any) => accountLoginStore.password = e.target.value}
-    />
     <Button
       className={classes.loginButton}
       fullWidth
       variant="contained"
       color="primary"
-      disabled={isEmpty(accountLoginStore.password)}
       onClick={accountLoginStore.login}
     >
       Login

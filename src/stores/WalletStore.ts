@@ -61,6 +61,10 @@ export default class WalletStore {
     }
   }
 
+  /*
+  * Creates a new passwordHash or validates the existing one for the main login.
+  * @param password {string} The new/existing password for the per-install appSalt.
+  */
   @action
   public login = async (password: string) => {
     this.loading = true;

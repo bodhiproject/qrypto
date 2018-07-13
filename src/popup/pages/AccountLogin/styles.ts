@@ -62,10 +62,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     flexDirection: 'column',
     padding: theme.padding.md,
   },
-  passwordField: {
-    flex: 1,
-    marginBottom: theme.padding.md,
-  },
   loginButton: {
     height: theme.button.lg.height,
     borderRadius: theme.button.lg.radius,
