@@ -71,7 +71,7 @@ function responseExtensionAPI<T>(message: IExtensionAPIMessage<T>) {
   window.postMessage(messagePayload, '*');
 }
 
-function recoverWallet(mnemonic: string): Wallet {
+function recoverWallet(mnemonic: string): Promise<Wallet> {
   const network = networks.testnet;
   return network.fromMnemonic(mnemonic);
 }
@@ -91,7 +91,7 @@ async function handleSendQtumMessage(message: ISendQtumRequestPayload) {
     return;
   }
 
-  const wallet = recoverWallet(mnemonic);
+  const wallet = await recoverWallet(mnemonic);
   const { address, amount } = message;
   const result = await wallet.send(address, amount * 1e8, {
     feeRate: 400,

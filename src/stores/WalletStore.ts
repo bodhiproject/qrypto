@@ -93,7 +93,7 @@ export default class WalletStore {
     const foundAccount = find(this.accounts, { name: accountName });
     if (foundAccount) {
       this.loggedInAccount = foundAccount;
-      this.recoverWallet(this.loggedInAccount!.mnemonic!);
+      await this.recoverWallet(this.loggedInAccount!.mnemonic!);
       await this.startPolling();
 
       runInAction(() => {
@@ -110,9 +110,10 @@ export default class WalletStore {
   }
 
   @action
-  private recoverWallet(mnemonic: string) {
+  private async recoverWallet(mnemonic: string) {
     const network = networks.testnet;
-    this.wallet = network.fromMnemonic(mnemonic);
+    this.wallet = await network.fromMnemonic(mnemonic);
+    console.log(this.wallet);
   }
 
   @action
