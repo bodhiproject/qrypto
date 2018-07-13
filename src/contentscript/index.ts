@@ -71,7 +71,7 @@ function responseExtensionAPI<T>(message: IExtensionAPIMessage<T>) {
   window.postMessage(messagePayload, '*');
 }
 
-function recoverWallet(mnemonic: string): Wallet {
+function recoverWallet(mnemonic: string): Promise<Wallet> {
   const network = networks.testnet;
   return network.fromMnemonic(mnemonic);
 }
