@@ -125,9 +125,15 @@ export default class WalletStore {
   }
 
   @action
-  public addAccount(account: Account) {
+  public addAccount(accountName: string, mnemonic: string) {
+    // Need to recover the Wallet instance first to get the encrypted private key hash
+    this.recoverWallet(mnemonic);
+    const privateKeyHash = this.wallet!.toEncryptedPrivateKey(this.passwordHash!);
+    const account = new Account(accountName, privateKeyHash);
+
+    // Add account if not existing
     const accounts = toJS(this.accounts);
-    if (!find(accounts, { mnemonic: account.mnemonic })) {
+    if (!find(accounts, { privateKeyHash: account.privateKeyHash })) {
       accounts.push(account);
 
       let storageAccountKey;

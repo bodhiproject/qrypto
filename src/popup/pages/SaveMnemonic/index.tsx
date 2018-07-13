@@ -26,6 +26,7 @@ class SaveMnemonic extends Component<WithStyles & IProps, {}> {
       <div className={classes.root}>
         <NavBar hasBackButton title="Wallet Created" />
         <div className={classes.contentContainer}>
+          {/* tslint:disable-next-line:max-line-length */}
           <Typography className={classes.warningText}>These words in this specific order are the only way to restore your wallet. Save them somewhere safe and don't share them with anyone!</Typography>
           <Typography className={classes.mnemonicText}>{saveMnemonicStore.mnemonic}</Typography>
           <Button
