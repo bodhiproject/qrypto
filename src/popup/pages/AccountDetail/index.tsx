@@ -17,14 +17,25 @@ interface IProps {
 
 @inject('store')
 @observer
-
 class AccountDetail extends Component<WithStyles & IProps, {}> {
+  private static GET_TX_INTERVAL_MS: number = 10000;
+  private getTransactionsInterval?: number = undefined;
+
   public handleTabChange = (_: object, idx: number) => {
     this.props.store.accountDetailStore.activeTabIdx = idx;
   }
 
   public componentDidMount() {
     this.props.store.accountDetailStore.loadFromWallet();
+    this.getTransactionsInterval = setInterval(() => {
+      this.props.store.accountDetailStore.loadFromWallet();
+    }, AccountDetail.GET_TX_INTERVAL_MS);
+  }
+
+  public componentWillUnmount() {
+    if (this.getTransactionsInterval) {
+      clearInterval(this.getTransactionsInterval);
+    }
   }
 
   public render() {
@@ -86,22 +97,22 @@ const shortenTxid = (txid?: string) => {
 
 const TransactionList = ({ classes, transactions }: any) =>
   transactions.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
-    <ListItem divider key={id} className={classes.listItem}>
-      <div className={classes.txInfoContainer}>
-        {pending ? (
-          <Typography className={cx(classes.txState, 'pending')}>pending</Typography>
-        ) : (
-          <Typography className={classes.txState}>{`${confirmations} confirmations`}</Typography>
-        )}
-        <Typography className={classes.txId}>{`txid: ${shortenTxid(id)}`}</Typography>
-        <Typography className={classes.txTime}>{timestamp || '01-01-2018 00:00'}</Typography>
-      </div>
-      <AmountInfo classes={classes} amount={amount} token="QTUM" />
-      <div>
-        <KeyboardArrowRight className={classes.arrowRight} />
-      </div>
-    </ListItem>
-  ));
+  <ListItem divider key={id} className={classes.listItem}>
+    <div className={classes.txInfoContainer}>
+      {pending ? (
+        <Typography className={cx(classes.txState, 'pending')}>pending</Typography>
+      ) : (
+        <Typography className={classes.txState}>{`${confirmations} confirmations`}</Typography>
+      )}
+      <Typography className={classes.txId}>{`txid: ${shortenTxid(id)}`}</Typography>
+      <Typography className={classes.txTime}>{timestamp || '01-01-2018 00:00'}</Typography>
+    </div>
+    <AmountInfo classes={classes} amount={amount} token="QTUM" />
+    <div>
+      <KeyboardArrowRight className={classes.arrowRight} />
+    </div>
+  </ListItem>
+));
 
 const TokenListComingSoon = ({ classes }: any) => (
   <ListItem className={classes.tokenListComingSoonItem}>

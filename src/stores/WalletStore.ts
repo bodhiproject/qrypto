@@ -109,7 +109,7 @@ export default class WalletStore {
       this.getWalletInfo();
     }, WalletStore.GET_INFO_INTERVAL_MS);
     this.getPriceInterval = setInterval(() => {
-        this.getQtumPrice();
+      this.getQtumPrice();
     }, WalletStore.GET_PRICE_INTERVAL_MS);
   }
 
