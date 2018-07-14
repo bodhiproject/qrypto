@@ -140,12 +140,12 @@ export default class WalletStore {
     if (this.app.networkStore.isMainNet) {
       this.mainnetAccounts.push(account);
       chrome.storage.local.set({
-        [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
+        [STORAGE.MAINNET_ACCOUNTS]: toJS(this.mainnetAccounts),
       }, () => console.log('Mainnet Account added', account));
     } else {
       this.testnetAccounts.push(account);
       chrome.storage.local.set({
-        [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
+        [STORAGE.TESTNET_ACCOUNTS]: toJS(this.testnetAccounts),
       }, () => console.log('Testnet Account added', account));
     }
 
