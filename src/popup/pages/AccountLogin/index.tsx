@@ -14,6 +14,9 @@ interface IProps {
 @inject('store')
 @observer
 class AccountLogin extends Component<WithStyles & IProps, {}> {
+  public componentDidMount() {
+    this.props.store.accountLoginStore.setSelectedWallet();
+  }
 
   public render() {
     const { classes } = this.props;

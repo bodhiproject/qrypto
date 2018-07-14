@@ -17,13 +17,17 @@ export default class AccountLoginStore {
 
     // Set the default selected account on the login page.
     reaction(
-      () => this.app.walletStore.accounts,
-      () => {
-        if (!isEmpty(this.app.walletStore.accounts)) {
-          this.selectedWalletName = this.app.walletStore.accounts[0].name;
-        }
-      },
+      () => this.app.networkStore.networkIndex,
+      () => this.setSelectedWallet(),
     );
+  }
+
+  @action
+  public setSelectedWallet = () => {
+    const accounts = this.app.walletStore.accounts;
+    if (!isEmpty(accounts)) {
+      this.selectedWalletName = accounts[0].name;
+    }
   }
 
   @action
