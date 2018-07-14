@@ -9,10 +9,13 @@ import { STORAGE } from '../constants';
 import Account from '../models/Account';
 
 const INIT_VALUES = {
+  loading: true,
   appSalt: undefined,
   passwordHash: undefined,
   info: undefined,
   accounts: [],
+  testnetAccounts: [],
+  mainnetAccounts: [],
   loggedInAccount: undefined,
   wallet: undefined,
 };
@@ -21,13 +24,17 @@ export default class WalletStore {
   private static GET_INFO_INTERVAL_MS: number = 30000;
   private static GET_PRICE_INTERVAL_MS: number = 60000;
 
-  @observable public loading = true;
+  @observable public loading = INIT_VALUES.loading;
   @observable public appSalt?: Uint8Array = INIT_VALUES.appSalt;
   @observable public passwordHash?: string = INIT_VALUES.passwordHash;
   @observable public info?: Insight.IGetInfo = INIT_VALUES.info;
-  @observable public accounts: Account[] = INIT_VALUES.accounts;
+  @observable public testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
+  @observable public mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
   @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   @observable public qtumPriceUSD = 0;
+  @computed public get accounts(): Account[] {
+    return this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+  }
   @computed public get balanceUSD(): string {
     if (this.qtumPriceUSD && this.info) {
       return (this.qtumPriceUSD * this.info.balance).toFixed(2);
@@ -43,22 +50,7 @@ export default class WalletStore {
 
   constructor(app: AppStore) {
     this.app = app;
-    this.fetchStorageValues(); // TODO: check logic
-    this.getAccountsFromStorage();
-  }
-
-  public getAccountsFromStorage() {
-    if (this.app.networkStore.isMainNet) {
-      // Set the existing accounts from Chrome storage
-      chrome.storage.local.get(STORAGE.MAINNET_ACCOUNTS, ({ mainnetAccounts }) => {
-        this.setAccountsAndRoute(mainnetAccounts);
-      });
-    } else {
-      // Set the existing accounts from Chrome storage
-      chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, ({ testnetAccounts }) => {
-        this.setAccountsAndRoute(testnetAccounts);
-      });
-    }
+    this.fetchStorageValues();
   }
 
   /*
@@ -92,11 +84,11 @@ export default class WalletStore {
         { [STORAGE.PASSWORD_HASH]: passwordHash },
         () => console.log('passwordHash set'),
       );
-      this.fetchAccounts();
+      this.routeToAccountPage();
     } else {
       if (passwordHash === this.passwordHash) {
         // Existing user, password matches
-        this.fetchAccounts();
+        this.routeToAccountPage();
       } else {
         // Existing user, password does not match
         this.app.loginStore.invalidPassword = true;
@@ -138,31 +130,27 @@ export default class WalletStore {
     this.loading = true;
     // TODO: check if account exists already. if so, show error message and stop execution here.
 
-    const network = networks.testnet;
+    // Get encrypted private key
+    const network = this.app.networkStore.network;
     this.wallet = await network.fromMnemonic(mnemonic);
     const privateKeyHash = await this.wallet.toEncryptedPrivateKey(this.passwordHash!);
     const account = new Account(accountName, privateKeyHash);
 
     // Add account if not existing
-    const accounts = toJS(this.accounts);
-    if (!find(accounts, { privateKeyHash: account.privateKeyHash })) {
-      accounts.push(account);
-
-      // Save account in storage and memory
-      const storageAccountKey = this.app.networkStore.isMainNet ? STORAGE.MAINNET_ACCOUNTS : STORAGE.TESTNET_ACCOUNTS;
+    if (this.app.networkStore.isMainNet) {
+      this.mainnetAccounts.push(account);
       chrome.storage.local.set({
-        [storageAccountKey]: accounts,
-      }, () => console.log('Account added', account));
-      this.accounts = accounts;
-      this.loggedInAccount = account;
-
-      // Start data polling and route to home
-      await this.startPolling();
-      runInAction(() => {
-        this.loading = false;
-        this.app.routerStore.push('/home');
-      });
+        [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
+      }, () => console.log('Mainnet Account added', account));
+    } else {
+      this.testnetAccounts.push(account);
+      chrome.storage.local.set({
+        [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
+      }, () => console.log('Testnet Account added', account));
     }
+
+    this.loggedInAccount = account;
+    await this.onAccountLoggedIn();
   }
 
   /*
@@ -171,85 +159,83 @@ export default class WalletStore {
   */
   @action
   public async loginAccount(accountName: string) {
-    this.app.walletStore.loading = true;
+    this.loading = true;
 
-    const foundAccount = find(this.accounts, { name: accountName });
+    const accounts = this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    const foundAccount = find(accounts, { name: accountName });
     if (foundAccount) {
       this.loggedInAccount = foundAccount;
-      await this.recoverWallet();
-      await this.startPolling();
-      runInAction(() => {
-        this.loading = false;
-        this.app.routerStore.push('/home');
-      });
+
+      // Recover wallet
+      const network = this.app.networkStore.network;
+      this.wallet = await network.fromEncryptedPrivateKey(this.loggedInAccount!.privateKeyHash, this.passwordHash);
+
+      await this.onAccountLoggedIn();
     }
   }
 
   @action
-  public logout = (isSwitchingNetwork: boolean) => {
+  public logout = () => {
     this.stopPolling();
     this.info =  INIT_VALUES.info;
     this.loggedInAccount = INIT_VALUES.loggedInAccount;
     this.wallet = INIT_VALUES.wallet;
-
-    if (isSwitchingNetwork) {
-      this.accounts = INIT_VALUES.accounts;
-      this.app.walletStore.getAccountsFromStorage();
-      // we dont call this.app.routerStore.push('/login') here because it is called at the end of getAccountsFromStorage() instead
-    } else {
-      this.app.routerStore.push('/account-login');
-    }
+    this.routeToAccountPage();
   }
 
-  @action
-  private recoverWallet = async () => {
-    const network = this.app.networkStore.network;
-    this.wallet = await network.fromEncryptedPrivateKey(this.loggedInAccount!.privateKeyHash, this.passwordHash);
-  }
-
-  @action
-  private setAccountsAndRoute = (storageAccounts: Account[]) => {
-    // Account not found, route to Create Wallet page
-    if (isEmpty(storageAccounts)) {
-      this.app.routerStore.push('/create-wallet');
-      this.loading = false;
-      return;
-    }
-    // Accounts found, route to Login page
-    this.accounts = storageAccounts;
-    this.app.routerStore.push('/account-login');
-    this.loading = false;
-  }
-
+  /*
+  * Initializes all the values from Chrome storage on startup.
+  */
   private fetchStorageValues = () => {
-    const { APP_SALT, PASSWORD_HASH } = STORAGE;
-    chrome.storage.local.get([APP_SALT, PASSWORD_HASH], ({ appSalt, passwordHash }: any) => {
-      if (!isEmpty(appSalt)) {
-        const array = split(appSalt, ',').map((str) => parseInt(str, 10));
-        this.appSalt =  Uint8Array.from(array);
-      }
+    const { APP_SALT, PASSWORD_HASH, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS } = STORAGE;
+    chrome.storage.local.get([APP_SALT, PASSWORD_HASH, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS],
+      ({ appSalt, passwordHash, mainnetAccounts, testnetAccounts }: any) => {
+        if (!isEmpty(appSalt)) {
+          const array = split(appSalt, ',').map((str) => parseInt(str, 10));
+          this.appSalt =  Uint8Array.from(array);
+        }
 
-      if (!isEmpty(passwordHash)) {
-        this.passwordHash = passwordHash;
-      }
+        if (!isEmpty(passwordHash)) {
+          this.passwordHash = passwordHash;
+        }
 
-      this.loading = false;
-    });
+        if (!isEmpty(mainnetAccounts)) {
+          this.mainnetAccounts = toJS(mainnetAccounts);
+        }
+
+        if (!isEmpty(testnetAccounts)) {
+          this.testnetAccounts = toJS(testnetAccounts);
+        }
+
+        this.loading = false;
+      });
   }
 
-  // Set the existing accounts from Chrome storage and route
+  /*
+  * Routes to the CreateWallet or AccountLogin page after unlocking with the password.
+  */
+ @action
+ private routeToAccountPage = () => {
+   const accounts = this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+   if (isEmpty(accounts)) {
+     // Account not found, route to Create Wallet page
+     this.app.routerStore.push('/create-wallet');
+   } else {
+     // Accounts found, route to Account Login page
+     this.app.routerStore.push('/account-login');
+   }
+   this.loading = false;
+ }
+
+  /*
+  * Actions after adding a new account or logging into an existing account.
+  */
   @action
-  private fetchAccounts = () => {
-    chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, ({ testnetAccounts }) => {
-      // Account not found, route to Create Wallet page
-      if (isEmpty(testnetAccounts)) {
-        this.app.routerStore.push('/create-wallet');
-      } else {
-        // Accounts found, route to Account Login page
-        this.accounts = testnetAccounts;
-        this.app.routerStore.push('/account-login');
-      }
+  private onAccountLoggedIn = async () => {
+    await this.startPolling();
+    runInAction(() => {
       this.loading = false;
+      this.app.routerStore.push('/home');
     });
   }
 

@@ -7,16 +7,14 @@ import QryNetwork from '../models/QryNetwork';
 
 export default class NetworkStore {
   @observable public networkIndex: number = 1;
-
   @computed public get network(): QjswNetwork  {
     return this.networksArray[this.networkIndex].network;
   }
-
   @computed public get isMainNet(): boolean {
      return this.networkIndex === 0;
   }
-
   public networksArray: QryNetwork[];
+
   private app: AppStore;
 
   constructor(app: AppStore) {
@@ -30,7 +28,7 @@ export default class NetworkStore {
   public changeNetwork(networkIndex: number) {
     if (this.networkIndex !== networkIndex) {
       this.networkIndex = networkIndex;
-      this.app.walletStore.logout(true);
+      this.app.walletStore.logout();
     }
   }
 }
