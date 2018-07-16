@@ -44,6 +44,12 @@ export default class WalletStore {
   }
   public wallet?: Wallet = INIT_VALUES.wallet;
 
+  @computed private get validPasswordHash(): string {
+    if (!this.passwordHash) {
+      throw Error('passwordHash should be defined');
+    }
+    return this.passwordHash!;
+  }
   private app: AppStore;
   private getInfoInterval?: NodeJS.Timer = undefined;
   private getPriceInterval?: NodeJS.Timer = undefined;
@@ -109,7 +115,7 @@ export default class WalletStore {
     // Get encrypted private key
     const network = this.app.networkStore.network;
     this.wallet = await network.fromMnemonic(mnemonic);
-    const privateKeyHash = await this.wallet.toEncryptedPrivateKey(this.passwordHash!);
+    const privateKeyHash = await this.wallet.toEncryptedPrivateKey(this.validPasswordHash);
     const account = new Account(accountName, privateKeyHash);
 
     // Add account if not existing
@@ -144,7 +150,7 @@ export default class WalletStore {
 
       // Recover wallet
       const network = this.app.networkStore.network;
-      this.wallet = await network.fromEncryptedPrivateKey(this.loggedInAccount!.privateKeyHash, this.passwordHash);
+      this.wallet = await network.fromEncryptedPrivateKey(this.loggedInAccount!.privateKeyHash, this.validPasswordHash);
 
       await this.onAccountLoggedIn();
     }
@@ -224,7 +230,7 @@ export default class WalletStore {
     }
 
     // Existing user, validate password
-    return passwordHash === this.passwordHash;
+    return passwordHash === this.validPasswordHash;
   }
 
   /*
