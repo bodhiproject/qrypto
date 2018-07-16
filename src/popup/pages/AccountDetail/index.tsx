@@ -31,10 +31,6 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
     const { classes, store: { accountDetailStore } } = this.props;
     const { activeTabIdx, items, hasMore } = accountDetailStore;
 
-    const tokens = [
-      { name: 'Bodhi', token: 'BOT', amount: 123, url: 'https://coinmarketcap.com/currencies/bodhi/' },
-    ];
-
     return (
       <div className={classes.root}>
         <div className={classes.contentContainer}>
@@ -72,7 +68,7 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
                 </div>
               </div>
             ) : (
-              <TokenList classes={classes} tokens={tokens} />
+              <TokenListComingSoon {...this.props} />
             )}
           </List>
         </div>
@@ -107,15 +103,22 @@ const TransactionList = ({ classes, transactions }: any) =>
     </ListItem>
   ));
 
-const TokenList = ({ classes, tokens }: any) =>
-  tokens.map(({ name, token, amount, url }: any) => (
-    <ListItem divider key={token} className={classes.listItem} onClick={() => window.open(url, '_blank')}>
-      <div className={classes.tokenInfoContainer}>
-        <Typography className={classes.tokenName}>{name}</Typography>
-      </div>
-      <AmountInfo classes={classes} amount={amount} token={token} convertedValue={1} />
-    </ListItem>
-  ));
+const TokenListComingSoon = ({ classes }: any) => (
+  <ListItem className={classes.tokenListComingSoonItem}>
+    <Typography className={classes.tokenListComingSoonText}>{'Coming Soon!'}</Typography>
+  </ListItem>
+);
+
+// TODO: use this when implementing token list
+// const TokenList = ({ classes, tokens }: any) =>
+//   tokens.map(({ name, token, amount, url }: any) => (
+//     <ListItem divider key={token} className={classes.listItem} onClick={() => window.open(url, '_blank')}>
+//       <div className={classes.tokenInfoContainer}>
+//         <Typography className={classes.tokenName}>{name}</Typography>
+//       </div>
+//       <AmountInfo classes={classes} amount={amount} token={token} convertedValue={1} />
+//     </ListItem>
+//   ));
 
 const AmountInfo = ({ classes, amount, token, convertedValue }: any) => (
   <div>
