@@ -1,14 +1,13 @@
 import { IExtensionMessageData, IExtensionAPIMessage } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
-import { sendToAddress, handleSendToAddressResponse } from './sendToAddress';
+import { handleRPCCallResponse } from './rpcCall';
+import { QryptoRPCProvider } from './QryptoRPCProvider';
 
 window.addEventListener('message', handleContentScriptMessage, false);
 
 // expose apis
 Object.assign(window, {
-  qtum: {
-    sendToAddress,
-  },
+  qryptoRPCProvider: new QryptoRPCProvider(),
 });
 
 const origin = location.origin;
@@ -27,9 +26,8 @@ function handleContentScriptMessage(event: MessageEvent) {
 
   const message: IExtensionAPIMessage<any> = data.message;
   switch (message.type) {
-    case API_TYPE.SEND_QTUM_RESPONSE:
-      handleSendToAddressResponse(message.payload);
-      return;
+    case API_TYPE.RPC_RESONSE:
+      return handleRPCCallResponse(message.payload);
     default:
       console.log('receive unknown type message from contentscript:', data.message);
   }

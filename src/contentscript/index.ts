@@ -3,9 +3,10 @@ import chromeCall from 'chrome-call';
 import {
   IExtensionMessageData,
   IExtensionAPIMessage,
-  ISendQtumRequestPayload,
-  ISendQtumResponsePayload,
+  IRPCCallRequestPayload,
 } from '../types';
+
+import { WalletRPCProvider } from 'qtumjs-wallet';
 
 import { TARGET_NAME, PORT_NAME, API_TYPE } from '../constants';
 import { networks, Wallet} from 'qtumjs-wallet';
@@ -54,9 +55,9 @@ function handleWebPageMessage(event: MessageEvent) {
 
   const message: IExtensionAPIMessage<any> = data.message;
   switch (message.type) {
-    case API_TYPE.SEND_QTUM_REQUEST:
-      handleSendQtumMessage(message.payload);
-      return;
+    case API_TYPE.RPC_REQUEST:
+      handleRPCCallMessage(message.payload);
+      break;
     default:
       console.log('receive unknown type message from webpage:', data.message);
   }
@@ -71,36 +72,37 @@ function responseExtensionAPI<T>(message: IExtensionAPIMessage<T>) {
   window.postMessage(messagePayload, '*');
 }
 
-function recoverWallet(mnemonic: string): Wallet {
-  const network = networks.testnet;
-  return network.fromMnemonic(mnemonic);
-}
-
-async function handleSendQtumMessage(message: ISendQtumRequestPayload) {
+async function handleRPCCallMessage(message: IRPCCallRequestPayload) {
+  const { method, args, id } = message;
   const storage: { mnemonic: string } = await chromeCall(chrome.storage.local, 'get', 'mnemonic');
   const { mnemonic } = storage;
 
   if (mnemonic == null) {
-    responseExtensionAPI<ISendQtumResponsePayload>({
-      type: API_TYPE.SEND_QTUM_RESPONSE,
+    responseExtensionAPI({
+      type: API_TYPE.RPC_RESONSE,
       payload: {
-        id: message.id,
-        error: 'cannot find mnemonic',
+        id,
+        error: 'can not found mnemonic',
       },
     });
-    return;
   }
 
-  const wallet = recoverWallet(mnemonic);
-  const { address, amount } = message;
-  const result = await wallet.send(address, amount * 1e8, {
-    feeRate: 400,
-  });
+  const wallet = await recoverWallet(mnemonic);
 
-  responseExtensionAPI<ISendQtumResponsePayload>({
-    type: API_TYPE.SEND_QTUM_RESPONSE,
+  const provider = new WalletRPCProvider(wallet);
+
+  const result = await provider.rawCall(method, args);
+
+  responseExtensionAPI({
+    type: API_TYPE.RPC_RESONSE,
     payload: {
-      id: message.id, result,
+      id,
+      result,
     },
   });
+}
+
+function recoverWallet(mnemonic: string): Promise<Wallet> {
+  const network = networks.testnet;
+  return network.fromMnemonic(mnemonic);
 }

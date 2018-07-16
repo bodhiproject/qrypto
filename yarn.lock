@@ -72,6 +72,12 @@
   dependencies:
     "@types/node" "*"
 
+"@types/bip39@^2.4.0":
+  version "2.4.0"
+  resolved "http://registry.npm.taobao.org/@types/bip39/download/@types/bip39-2.4.0.tgz#eee31a14abc8ebbb41a1ff14575c447b18346cbc"
+  dependencies:
+    "@types/node" "*"
+
 "@types/chrome@^0.0.63":
   version "0.0.63"
   resolved "https://registry.yarnpkg.com/@types/chrome/-/chrome-0.0.63.tgz#b86fc8c859ec6ae0bf929b4504d7ac47d579006d"
@@ -92,9 +98,9 @@
   version "0.0.28"
   resolved "https://registry.yarnpkg.com/@types/filewriter/-/filewriter-0.0.28.tgz#c054e8af4d9dd75db4e63abc76f885168714d4b3"
 
-"@types/history@*":
+"@types/history@*", "@types/history@^4.6.2":
   version "4.6.2"
-  resolved "https://registry.yarnpkg.com/@types/history/-/history-4.6.2.tgz#12cfaba693ba20f114ed5765467ff25fdf67ddb0"
+  resolved "http://registry.npm.taobao.org/@types/history/download/@types/history-4.6.2.tgz#12cfaba693ba20f114ed5765467ff25fdf67ddb0"
 
 "@types/jss@^9.5.3":
   version "9.5.3"
@@ -114,6 +120,12 @@
 "@types/prop-types@^15.5.3":
   version "15.5.3"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.3.tgz#bef071852dca2a2dbb65fecdb7bfb30cedae2de2"
+
+"@types/qrcode.react@^0.8.0":
+  version "0.8.0"
+  resolved "http://registry.npm.taobao.org/@types/qrcode.react/download/@types/qrcode.react-0.8.0.tgz#90b95d7dfba380f2a67ffd68e9c02b6eea4ea0be"
+  dependencies:
+    "@types/react" "*"
 
 "@types/react-dom@^16.0.4":
   version "16.0.6"
@@ -3160,6 +3172,10 @@ mixin-object@^2.0.1:
   dependencies:
     minimist "0.0.8"
 
+mobx-react-router@^4.0.4:
+  version "4.0.4"
+  resolved "http://registry.npm.taobao.org/mobx-react-router/download/mobx-react-router-4.0.4.tgz#b778618c84f16057f5ae9c09a4d364deade95fd8"
+
 mobx-react@^5.2.3:
   version "5.2.3"
   resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-5.2.3.tgz#cdf6141c2fe63377c5813cbd254e8ce0d4676631"
@@ -4127,9 +4143,9 @@ qtumjs-lib@^0.0.6:
     qtum-opcodes "^1.0.0"
     safe-buffer "^5.1.1"
 
-qtumjs-wallet@^0.0.7:
-  version "0.0.7"
-  resolved "http://registry.npm.taobao.org/qtumjs-wallet/download/qtumjs-wallet-0.0.7.tgz#190f37e80fc339828aa3509551335f10e3da3f85"
+qtumjs-wallet@^0.0.8:
+  version "0.0.8"
+  resolved "http://registry.npm.taobao.org/qtumjs-wallet/download/qtumjs-wallet-0.0.8.tgz#e2b80aa0779104d84c84db4f59f071ce7cce99c2"
   dependencies:
     "@types/bip38" "^2.0.0"
     axios "^0.17.1"

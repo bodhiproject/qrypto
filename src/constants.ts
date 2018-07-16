@@ -9,8 +9,8 @@ export enum PORT_NAME {
 }
 
 export enum API_TYPE {
-  SEND_QTUM_REQUEST,
-  SEND_QTUM_RESPONSE,
+  RPC_REQUEST,
+  RPC_RESONSE,
 }
 
 export enum STORAGE {
