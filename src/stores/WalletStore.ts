@@ -73,8 +73,13 @@ export default class WalletStore {
   public login = async (password: string) => {
     this.loading = true;
 
-    // TODO: make this async so it doesnt block the UI
-    this.generateAndSetPasswordHash(password);
+    // TODO: find solution to unblock UI
+    this.generateAppSalt();
+    try {
+      await this.derivePasswordHash(password);
+    } catch (err) {
+      throw err;
+    }
 
     if (!this.hasAccounts) {
       // New user. No created wallets yet. No need to validate.
@@ -212,31 +217,48 @@ export default class WalletStore {
   }
 
   /*
-  * Generates the appSalt (if needed) and derives the passwordHash.
-  * @param password The password to set or validate.
-  * @return Is the password valid.
+  * Generates the appSalt if needed.
   */
   @action
-  private generateAndSetPasswordHash = (password: string) => {
-    // Generate appSalt if needed
-    if (!this.appSalt) {
-      const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
-      this.appSalt = appSalt;
-      chrome.storage.local.set(
-        { [STORAGE.APP_SALT]: appSalt.toString() },
-        () => console.log('appSalt set'),
-      );
+  private generateAppSalt = () => {
+    try {
+      if (!this.appSalt) {
+        const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
+        this.appSalt = appSalt;
+        chrome.storage.local.set(
+          { [STORAGE.APP_SALT]: appSalt.toString() },
+          () => console.log('appSalt set'),
+        );
+      }
+    } catch (err) {
+      throw Error('Error generating appSalt');
     }
+  }
 
-    if (!this.appSalt) {
-      throw Error('appSalt should not be empty');
-    }
+  /*
+  * Derives the password hash with the password input.
+  * @return Promise undefined or error.
+  */
+  @action
+  private derivePasswordHash = async (password: string): Promise<any> => {
+    return new Promise((resolve: any, reject: any) => {
+      setTimeout(() => {
+        try {
+          if (!this.appSalt) {
+            throw Error('appSalt should not be empty');
+          }
 
-    // Derive passwordHash
-    const saltBuffer = Buffer.from(this.appSalt!);
-    const { N, r, p } = WalletStore.SCRYPT_PARAMS_PW;
-    const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
-    this.passwordHash = derivedKey.toString('hex');
+          const saltBuffer = Buffer.from(this.appSalt!);
+          const { N, r, p } = WalletStore.SCRYPT_PARAMS_PW;
+          const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
+          this.passwordHash = derivedKey.toString('hex');
+
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      }, 100);
+    });
   }
 
   /*
