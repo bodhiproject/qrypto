@@ -204,6 +204,10 @@ export default class WalletStore {
       );
     }
 
+    if (!this.appSalt) {
+      throw Error('appSalt should not be empty');
+    }
+
     // Derive passwordHash
     const saltBuffer = Buffer.from(this.appSalt!);
     const derivedKey = scrypt(password, saltBuffer, 131072, 8, 1, 64);
