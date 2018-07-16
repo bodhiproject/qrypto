@@ -4143,9 +4143,9 @@ qtumjs-lib@^0.0.6:
     qtum-opcodes "^1.0.0"
     safe-buffer "^5.1.1"
 
-qtumjs-wallet@^0.0.8:
-  version "0.0.8"
-  resolved "http://registry.npm.taobao.org/qtumjs-wallet/download/qtumjs-wallet-0.0.8.tgz#e2b80aa0779104d84c84db4f59f071ce7cce99c2"
+qtumjs-wallet@^0.0.9:
+  version "0.0.9"
+  resolved "http://registry.npm.taobao.org/qtumjs-wallet/download/qtumjs-wallet-0.0.9.tgz#37472270493d3bbed039f3a9b16484e5b12dcf61"
   dependencies:
     "@types/bip38" "^2.0.0"
     axios "^0.17.1"
