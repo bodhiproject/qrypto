@@ -28,8 +28,9 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
     hasNetworkSelector,
     isDarkTheme,
     title,
-    store: { networkStore },
+    store,
   }: any = props;
+  const { networkStore } = store!;
 
   return (
     <div className={classes.root}>
