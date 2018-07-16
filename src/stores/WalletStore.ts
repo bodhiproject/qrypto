@@ -22,6 +22,8 @@ const INIT_VALUES = {
 };
 
 export default class WalletStore {
+  private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
+  private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 30000;
   private static GET_PRICE_INTERVAL_MS: number = 60000;
 
@@ -127,7 +129,10 @@ export default class WalletStore {
     // Get encrypted private key
     const network = this.app.networkStore.network;
     this.wallet = await network.fromMnemonic(mnemonic);
-    const privateKeyHash = await this.wallet.toEncryptedPrivateKeyFast(this.validPasswordHash);
+    const privateKeyHash = await this.wallet.toEncryptedPrivateKey(
+      this.validPasswordHash,
+      WalletStore.SCRYPT_PARAMS_PRIV_KEY,
+    );
     const account = new Account(accountName, privateKeyHash);
 
     // Add account if not existing
@@ -162,9 +167,10 @@ export default class WalletStore {
 
       // Recover wallet
       const network = this.app.networkStore.network;
-      this.wallet = await network.fromEncryptedPrivateKeyFast(
+      this.wallet = await network.fromEncryptedPrivateKey(
         this.loggedInAccount!.privateKeyHash,
         this.validPasswordHash,
+        WalletStore.SCRYPT_PARAMS_PRIV_KEY,
       );
 
       await this.onAccountLoggedIn();
@@ -228,7 +234,8 @@ export default class WalletStore {
 
     // Derive passwordHash
     const saltBuffer = Buffer.from(this.appSalt!);
-    const derivedKey = scrypt(password, saltBuffer, 131072, 8, 1, 64);
+    const { N, r, p } = WalletStore.SCRYPT_PARAMS_PW;
+    const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
     this.passwordHash = derivedKey.toString('hex');
   }
 
@@ -250,7 +257,11 @@ export default class WalletStore {
     }
 
     try {
-      await qryNetwork.network.fromEncryptedPrivateKeyFast(account.privateKeyHash, this.validPasswordHash);
+      await qryNetwork.network.fromEncryptedPrivateKey(
+        account.privateKeyHash,
+        this.validPasswordHash,
+        WalletStore.SCRYPT_PARAMS_PRIV_KEY,
+      );
       return true;
     } catch (err) {
       console.log(err);
