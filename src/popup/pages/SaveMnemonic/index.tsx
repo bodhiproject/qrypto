@@ -24,11 +24,13 @@ class SaveMnemonic extends Component<WithStyles & IProps, {}> {
 
     return (
       <div className={classes.root}>
-        <NavBar hasBackButton title="Wallet Created" />
+        <NavBar hasBackButton title={''} />
         <div className={classes.contentContainer}>
-          {/* tslint:disable-next-line:max-line-length */}
-          <Typography className={classes.warningText}>These words in this specific order are the only way to restore your wallet. Save them somewhere safe and don't share them with anyone!</Typography>
-          <Typography className={classes.mnemonicText}>{saveMnemonicStore.mnemonic}</Typography>
+          <div className={classes.topContainer}>
+            <Typography className={classes.walletCreatedHeader}>{'Wallet Created'}</Typography>
+            <Typography className={classes.mnemonicText}>{saveMnemonicStore.mnemonic}</Typography>
+            <Typography className={classes.warningText}>{'These words in this specific order are the only way to restore your wallet. Save them somewhere safe and don\'t share them with anyone!'}</Typography>
+          </div>
           <Button
               className={cx(classes.actionButton, 'marginBottom')}
               fullWidth
@@ -42,7 +44,7 @@ class SaveMnemonic extends Component<WithStyles & IProps, {}> {
               className={classes.actionButton}
               fullWidth
               variant="contained"
-              color="secondary"
+              color="primary"
               onClick={saveMnemonicStore.saveToFile}
             >
               Save To File

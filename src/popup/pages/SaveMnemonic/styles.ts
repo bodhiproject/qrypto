@@ -12,27 +12,35 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     flexDirection: 'column',
     margin: theme.padding.md,
   },
-  warningText: {
-    fontSize: theme.font.md,
+  topContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  walletCreatedHeader: {
+    fontSize: 20,
     fontWeight: theme.fontWeight.bold,
-    color: theme.palette.text.primary,
-    marginBottom: theme.padding.md,
+    marginBottom: theme.padding.sm,
   },
   mnemonicText: {
-    flex: 1,
     padding: theme.padding.md,
     marginBottom: theme.padding.md,
-    fontSize: theme.font.xl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.palette.primary.main,
+    fontSize: theme.font.lg,
+    fontFamily: 'Roboto Mono, monospace',
+    color: theme.palette.text.primary,
     border: theme.border.root,
     borderRadius: theme.border.radius,
+  },
+  warningText: {
+    fontSize: theme.font.sm,
+    lineHeight: theme.lineHeight.md,
+    color: theme.palette.text.secondary,
   },
   actionButton: {
     height: theme.button.lg.height,
     borderRadius: theme.button.lg.radius,
     '&.marginBottom': {
-      marginBottom: theme.padding.md,
+      marginBottom: theme.padding.sm,
     },
   },
 });
