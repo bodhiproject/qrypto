@@ -75,12 +75,13 @@ const ToField = observer(({ classes, store: { sendStore, walletStore: { info } }
         type="text"
         multiline={false}
         placeholder={info.addrStr}
-        helperText={sendStore.receiverFieldError}
-        error={!!sendStore.receiverFieldError}
         InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
         onChange={(event) => sendStore.receiverAddress = event.target.value}
       />
     </div>
+    {!!sendStore.receiverAddress && sendStore.receiverFieldError && (
+      <Typography className={classes.errorText}>{sendStore.receiverFieldError}</Typography>
+    )}
   </div>
 ));
 
@@ -122,8 +123,6 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
         multiline={false}
         placeholder={'0.00'}
         value={sendStore.amount}
-        helperText={sendStore.amountFieldError}
-        error={!!sendStore.amountFieldError}
         InputProps={{
           endAdornment: <Typography className={classes.amountTokenAdornment}>{sendStore.token}</Typography>,
           disableUnderline: true,
@@ -131,6 +130,9 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
         onChange={(event) => sendStore.amount = event.target.value}
       />
     </div>
+    {sendStore.amountFieldError && (
+      <Typography className={classes.errorText}>{sendStore.amountFieldError}</Typography>
+    )}
   </div>
 ));
 

@@ -24,12 +24,17 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     fontWeight: 'bold',
   },
   fieldContainer: {
-    marginBottom: theme.padding.lg,
+    marginBottom: theme.padding.md,
   },
   fieldContentContainer: {
     padding: theme.padding.sm,
     border: theme.border.root,
     borderRadius: theme.border.radius,
+  },
+  errorText: {
+    fontSize: theme.font.xs,
+    color: theme.color.red,
+    marginTop: theme.padding.unit,
   },
   fromSelect: {
     width: '100%',
