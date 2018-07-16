@@ -63,7 +63,6 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
                     <Button
                       id="loadingButton"
                       color="primary"
-                      variant="contained"
                       size="small"
                       onClick={() => accountDetailStore.loadMore()}
                       >
