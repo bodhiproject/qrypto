@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   Typography,
   Button,
@@ -46,13 +46,18 @@ class Login extends Component<WithStyles & IProps, {}> {
             onChange={(e: any) => loginStore.password = e.target.value}
           />
           {!hasAccounts && (
-            <PasswordInput
-              classNames={classes.confirmPasswordField}
-              placeholder="Confirm password"
-              helperText={matchError}
-              error={!!matchError}
-              onChange={(e: any) => loginStore.confirmPassword = e.target.value}
-            />
+            <Fragment>
+              <PasswordInput
+                classNames={classes.confirmPasswordField}
+                placeholder="Confirm password"
+                helperText={matchError}
+                error={!!matchError}
+                onChange={(e: any) => loginStore.confirmPassword = e.target.value}
+              />
+              <Typography className={classes.masterPwNote}>
+                This will serve as your master password and will be saved when you create or import your first wallet.
+              </Typography>
+            </Fragment>
           )}
         </div>
         <Button

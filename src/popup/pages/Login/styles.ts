@@ -35,6 +35,11 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   confirmPasswordField: {
     marginBottom: theme.padding.md,
   },
+  masterPwNote: {
+    fontSize: theme.font.sm,
+    color: theme.palette.text.secondary,
+    marginBottom: theme.padding.md,
+  },
   loginButton: {
     height: theme.button.lg.height,
     borderRadius: theme.button.lg.radius,
