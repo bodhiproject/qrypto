@@ -179,6 +179,21 @@ export default class WalletStore {
       );
 
       await this.onAccountLoggedIn();
+      
+      // await this.recoverWallet(this.loggedInAccount!.mnemonic!);
+
+      // // save current account info to local storage (for QryptoRPCProvider use)
+      // this.setCurrentAccountStorage({
+      //   isMainNet: this.app.networkStore.isMainNet,
+      //   mnemonic: this.loggedInAccount!.mnemonic!,
+      //   name: accountName,
+      // });
+
+      // await this.startPolling();
+      // runInAction(() => {
+      //   this.loading = false;
+      //   this.app.routerStore.push('/home');
+      // });
     }
   }
 
@@ -189,6 +204,15 @@ export default class WalletStore {
     this.loggedInAccount = INIT_VALUES.loggedInAccount;
     this.wallet = INIT_VALUES.wallet;
     this.routeToAccountPage();
+
+    // this.removeCurrentAccountStorage();
+
+    // if (isSwitchingNetwork) {
+    //   this.accounts = INIT_VALUES.accounts;
+    //   this.app.walletStore.getAccountsFromStorage();
+    //   // we dont call this.app.routerStore.push('/login') here because it is called at the end of getAccountsFromStorage() instead
+    // } else {
+    //   this.app.routerStore.push('/login');
   }
 
   /*
@@ -332,5 +356,15 @@ export default class WalletStore {
   @action
   private async getWalletInfo() {
     this.info = await this.wallet!.getInfo();
+  }
+
+  private setCurrentAccountStorage(info: any) {
+    return chrome.storage.local.set({
+      currentAccount: info,
+    }, () => console.log('Current account info saved to local storage', info));
+  }
+
+  private removeCurrentAccountStorage() {
+    return chrome.storage.local.remove('currentAccount', () => console.log('Current account info removed from local storage'));
   }
 }

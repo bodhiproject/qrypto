@@ -29,7 +29,7 @@ export function handleRPCCallResponse(response: IRPCCallResponsePayload) {
 
     return;
   }
-  console.log('调用rpc成功');
+  console.log('call rpc method success!');
   request.resolve(response.result);
 }
 

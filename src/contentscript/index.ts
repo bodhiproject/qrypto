@@ -8,7 +8,7 @@ import {
 
 import { WalletRPCProvider } from 'qtumjs-wallet';
 
-import { TARGET_NAME, PORT_NAME, API_TYPE } from '../constants';
+import { TARGET_NAME, API_TYPE } from '../constants';
 import { networks, Wallet} from 'qtumjs-wallet';
 
 injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
@@ -23,8 +23,8 @@ injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
 
 window.addEventListener('message', handleWebPageMessage, false);
 
-const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
-port.onMessage.addListener(responseExtensionAPI);
+// const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
+// port.onMessage.addListener(responseExtensionAPI);
 
 function injectScript(src: string) {
   return new Promise((resolve) => {
@@ -74,22 +74,25 @@ function responseExtensionAPI<T>(message: IExtensionAPIMessage<T>) {
 
 async function handleRPCCallMessage(message: IRPCCallRequestPayload) {
   const { method, args, id } = message;
-  const storage: { mnemonic: string } = await chromeCall(chrome.storage.local, 'get', 'mnemonic');
-  const { mnemonic } = storage;
+  const storage = await chromeCall(chrome.storage.local, 'get', 'currentAccount');
 
-  if (mnemonic == null) {
-    responseExtensionAPI({
+  if (!(storage && storage.currentAccount)) {
+    return responseExtensionAPI({
       type: API_TYPE.RPC_RESONSE,
       payload: {
         id,
-        error: 'can not found mnemonic',
+        error: 'can not found logged account',
       },
     });
   }
 
-  const wallet = await recoverWallet(mnemonic);
+  const { currentAccount: { isMainNet, mnemonic, name } } = storage;
+
+  const wallet = await recoverWallet(isMainNet, mnemonic);
 
   const provider = new WalletRPCProvider(wallet);
+
+  console.log(`using account '${name}' to call rpc method: '${method}'`);
 
   const result = await provider.rawCall(method, args);
 
@@ -102,7 +105,7 @@ async function handleRPCCallMessage(message: IRPCCallRequestPayload) {
   });
 }
 
-function recoverWallet(mnemonic: string): Promise<Wallet> {
-  const network = networks.testnet;
+function recoverWallet(isMainNet: boolean, mnemonic: string): Promise<Wallet> {
+  const network = networks[isMainNet ? 'testnet' : 'testnet'];
   return network.fromMnemonic(mnemonic);
 }
