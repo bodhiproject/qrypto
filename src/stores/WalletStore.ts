@@ -169,16 +169,12 @@ export default class WalletStore {
   * Initializes all the values from Chrome storage on startup.
   */
   private fetchStorageValues = () => {
-    const { APP_SALT, PASSWORD_HASH, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS } = STORAGE;
-    chrome.storage.local.get([APP_SALT, PASSWORD_HASH, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS],
-      ({ appSalt, passwordHash, mainnetAccounts, testnetAccounts }: any) => {
+    const { APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS } = STORAGE;
+    chrome.storage.local.get([APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS],
+      ({ appSalt, mainnetAccounts, testnetAccounts }: any) => {
         if (!isEmpty(appSalt)) {
           const array = split(appSalt, ',').map((str) => parseInt(str, 10));
           this.appSalt =  Uint8Array.from(array);
-        }
-
-        if (!isEmpty(passwordHash)) {
-          this.passwordHash = passwordHash;
         }
 
         if (!isEmpty(mainnetAccounts)) {
@@ -222,10 +218,6 @@ export default class WalletStore {
     // New user, set passwordHash in storage
     if (!this.passwordHash) {
       this.passwordHash = passwordHash;
-      chrome.storage.local.set(
-        { [STORAGE.PASSWORD_HASH]: passwordHash },
-        () => console.log('passwordHash set'),
-      );
       return true;
     }
 
