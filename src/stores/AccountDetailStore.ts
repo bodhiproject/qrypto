@@ -7,16 +7,20 @@ import AppStore from './AppStore';
 import Transaction from '../models/Transaction';
 
 export default class AccountDetailStore {
+  private static GET_TX_INTERVAL_MS: number = 10000;
+
   @observable public activeTabIdx: number = 0;
   @observable.shallow public items: Transaction[] = [];
   @observable public pageNum: number = 0;
   @observable public pagesTotal?: number;
 
-  constructor(private app: AppStore) {}
+  private getTransactionsInterval?: NodeJS.Timer = undefined;
 
   @computed public get hasMore(): boolean {
     return !!this.pagesTotal && (this.pagesTotal > this.pageNum + 1);
- }
+  }
+
+  constructor(private app: AppStore) {}
 
   @action public async loadFromWallet() {
     this.items = await this.load();
@@ -26,6 +30,19 @@ export default class AccountDetailStore {
     const txs = await this.load(this.pageNum + 1);
 
     this.items = this.items.concat(txs);
+  }
+
+  public startTxPolling = () => {
+    this.loadFromWallet();
+    this.getTransactionsInterval = setInterval(() => {
+      this.loadFromWallet();
+    }, AccountDetailStore.GET_TX_INTERVAL_MS);
+  }
+
+  public stopTxPolling = () => {
+    if (this.getTransactionsInterval) {
+      clearInterval(this.getTransactionsInterval);
+    }
   }
 
   @action private async load(pageNum: number = 0): Promise<Transaction[]> {
