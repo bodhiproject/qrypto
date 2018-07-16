@@ -127,8 +127,7 @@ export default class WalletStore {
     // Get encrypted private key
     const network = this.app.networkStore.network;
     this.wallet = await network.fromMnemonic(mnemonic);
-    // TODO: switch to toEncryptedPrivateKeyFast when implemented
-    const privateKeyHash = await this.wallet.toEncryptedPrivateKey(this.validPasswordHash);
+    const privateKeyHash = await this.wallet.toEncryptedPrivateKeyFast(this.validPasswordHash);
     const account = new Account(accountName, privateKeyHash);
 
     // Add account if not existing
@@ -163,8 +162,10 @@ export default class WalletStore {
 
       // Recover wallet
       const network = this.app.networkStore.network;
-      // TODO: switch to fromEncryptedPrivateKeyFast when implemented
-      this.wallet = await network.fromEncryptedPrivateKey(this.loggedInAccount!.privateKeyHash, this.validPasswordHash);
+      this.wallet = await network.fromEncryptedPrivateKeyFast(
+        this.loggedInAccount!.privateKeyHash,
+        this.validPasswordHash,
+      );
 
       await this.onAccountLoggedIn();
     }
@@ -249,8 +250,7 @@ export default class WalletStore {
     }
 
     try {
-      // TODO: switch to fromEncryptedPrivateKeyFast when implemented
-      await qryNetwork.network.fromEncryptedPrivateKey(account.privateKeyHash, this.validPasswordHash);
+      await qryNetwork.network.fromEncryptedPrivateKeyFast(account.privateKeyHash, this.validPasswordHash);
       return true;
     } catch (err) {
       console.log(err);
