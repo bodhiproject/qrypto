@@ -31,7 +31,7 @@ class Login extends Component<WithStyles & IProps, {}> {
   public render() {
     const { classes, store: { loginStore, walletStore } } = this.props;
     const { password, matchError, error } = loginStore;
-    const { appSalt } = walletStore;
+    const { hasAccounts } = walletStore;
 
     return (
       <div className={classes.root}>
@@ -45,7 +45,7 @@ class Login extends Component<WithStyles & IProps, {}> {
             placeholder="Password"
             onChange={(e: any) => loginStore.password = e.target.value}
           />
-          {!appSalt && (
+          {!hasAccounts && (
             <PasswordInput
               classNames={classes.confirmPasswordField}
               placeholder="Confirm password"

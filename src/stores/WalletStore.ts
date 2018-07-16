@@ -7,6 +7,7 @@ import scrypt from 'scryptsy';
 import AppStore from './AppStore';
 import { STORAGE } from '../constants';
 import Account from '../models/Account';
+import QryNetwork from '../models/QryNetwork';
 
 const INIT_VALUES = {
   loading: true,
@@ -32,6 +33,9 @@ export default class WalletStore {
   @observable public mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
   @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   @observable public qtumPriceUSD = 0;
+  @computed public get hasAccounts(): boolean {
+    return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts);
+  }
   @computed public get accounts(): Account[] {
     return this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
   }
@@ -68,8 +72,16 @@ export default class WalletStore {
     this.loading = true;
 
     // TODO: make this async so it doesnt block the UI
-    const pwValid = this.generateAndSetPasswordHash(password);
-    if (pwValid) {
+    this.generateAndSetPasswordHash(password);
+
+    if (!this.hasAccounts) {
+      // New user. No created wallets yet. No need to validate.
+      this.routeToAccountPage();
+      return;
+    }
+
+    const isPwValid = await this.validatePassword();
+    if (isPwValid) {
       this.routeToAccountPage();
       return;
     }
@@ -115,6 +127,7 @@ export default class WalletStore {
     // Get encrypted private key
     const network = this.app.networkStore.network;
     this.wallet = await network.fromMnemonic(mnemonic);
+    // TODO: switch to toEncryptedPrivateKeyFast when implemented
     const privateKeyHash = await this.wallet.toEncryptedPrivateKey(this.validPasswordHash);
     const account = new Account(accountName, privateKeyHash);
 
@@ -150,6 +163,7 @@ export default class WalletStore {
 
       // Recover wallet
       const network = this.app.networkStore.network;
+      // TODO: switch to fromEncryptedPrivateKeyFast when implemented
       this.wallet = await network.fromEncryptedPrivateKey(this.loggedInAccount!.privateKeyHash, this.validPasswordHash);
 
       await this.onAccountLoggedIn();
@@ -185,17 +199,18 @@ export default class WalletStore {
           this.testnetAccounts = toJS(testnetAccounts);
         }
 
+        // Show the Login page after fetching storage
         this.loading = false;
       });
   }
 
   /*
-  * Generates the appSalt if needed and sets/validates the passwordHash.
+  * Generates the appSalt (if needed) and derives the passwordHash.
   * @param password The password to set or validate.
   * @return Is the password valid.
   */
   @action
-  private generateAndSetPasswordHash = (password: string): boolean => {
+  private generateAndSetPasswordHash = (password: string) => {
     // Generate appSalt if needed
     if (!this.appSalt) {
       const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
@@ -213,16 +228,34 @@ export default class WalletStore {
     // Derive passwordHash
     const saltBuffer = Buffer.from(this.appSalt!);
     const derivedKey = scrypt(password, saltBuffer, 131072, 8, 1, 64);
-    const passwordHash = derivedKey.toString('hex');
+    this.passwordHash = derivedKey.toString('hex');
+  }
 
-    // New user, set passwordHash in storage
-    if (!this.passwordHash) {
-      this.passwordHash = passwordHash;
-      return true;
+  /*
+  * Validates a password by decrypting a private key hash into a wallet instance.
+  * @return Is the password valid.
+  */
+  private validatePassword = async (): Promise<boolean> => {
+    let qryNetwork: QryNetwork;
+    let account: Account;
+    if (!isEmpty(this.mainnetAccounts)) {
+      qryNetwork = this.app.networkStore.networksArray[0];
+      account = this.mainnetAccounts[0];
+    } else if (!isEmpty(this.testnetAccounts)) {
+      qryNetwork = this.app.networkStore.networksArray[1];
+      account = this.testnetAccounts[0];
+    } else {
+      throw Error('Trying to validate password without existing account');
     }
 
-    // Existing user, validate password
-    return passwordHash === this.validPasswordHash;
+    try {
+      // TODO: switch to fromEncryptedPrivateKeyFast when implemented
+      await qryNetwork.network.fromEncryptedPrivateKey(account.privateKeyHash, this.validPasswordHash);
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
   /*
