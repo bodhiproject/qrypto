@@ -62,39 +62,15 @@ export default class WalletStore {
     this.loading = true;
 
     // TODO: make this async so it doesnt block the UI
-    // Generate appSalt if needed
-    if (!this.appSalt) {
-      const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
-      this.appSalt = appSalt;
-      chrome.storage.local.set(
-        { [STORAGE.APP_SALT]: appSalt.toString() },
-        () => console.log('appSalt set'),
-      );
-    }
-
-    // Derive passwordHash
-    const saltBuffer = Buffer.from(this.appSalt!);
-    const derivedKey = scrypt(password, saltBuffer, 131072, 8, 1, 64);
-    const passwordHash = derivedKey.toString('hex');
-
-    if (!this.passwordHash) {
-      // New user, set passwordHash in storage
-      this.passwordHash = passwordHash;
-      chrome.storage.local.set(
-        { [STORAGE.PASSWORD_HASH]: passwordHash },
-        () => console.log('passwordHash set'),
-      );
+    const pwValid = this.generateAndSetPasswordHash(password);
+    if (pwValid) {
       this.routeToAccountPage();
-    } else {
-      if (passwordHash === this.passwordHash) {
-        // Existing user, password matches
-        this.routeToAccountPage();
-      } else {
-        // Existing user, password does not match
-        this.app.loginStore.invalidPassword = true;
-        this.loading = false;
-      }
+      return;
     }
+
+    // Invalid password, display error dialog
+    this.app.loginStore.invalidPassword = true;
+    this.loading = false;
   }
 
   @action
@@ -212,20 +188,56 @@ export default class WalletStore {
   }
 
   /*
+  * Generates the appSalt if needed and sets/validates the passwordHash.
+  * @param password The password to set or validate.
+  * @return Is the password valid.
+  */
+  @action
+  private generateAndSetPasswordHash = (password: string): boolean => {
+    // Generate appSalt if needed
+    if (!this.appSalt) {
+      const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
+      this.appSalt = appSalt;
+      chrome.storage.local.set(
+        { [STORAGE.APP_SALT]: appSalt.toString() },
+        () => console.log('appSalt set'),
+      );
+    }
+
+    // Derive passwordHash
+    const saltBuffer = Buffer.from(this.appSalt!);
+    const derivedKey = scrypt(password, saltBuffer, 131072, 8, 1, 64);
+    const passwordHash = derivedKey.toString('hex');
+
+    // New user, set passwordHash in storage
+    if (!this.passwordHash) {
+      this.passwordHash = passwordHash;
+      chrome.storage.local.set(
+        { [STORAGE.PASSWORD_HASH]: passwordHash },
+        () => console.log('passwordHash set'),
+      );
+      return true;
+    }
+
+    // Existing user, validate password
+    return passwordHash === this.passwordHash;
+  }
+
+  /*
   * Routes to the CreateWallet or AccountLogin page after unlocking with the password.
   */
- @action
- private routeToAccountPage = () => {
-   const accounts = this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
-   if (isEmpty(accounts)) {
-     // Account not found, route to Create Wallet page
-     this.app.routerStore.push('/create-wallet');
-   } else {
-     // Accounts found, route to Account Login page
-     this.app.routerStore.push('/account-login');
-   }
-   this.loading = false;
- }
+  @action
+  private routeToAccountPage = () => {
+    const accounts = this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    if (isEmpty(accounts)) {
+      // Account not found, route to Create Wallet page
+      this.app.routerStore.push('/create-wallet');
+    } else {
+      // Accounts found, route to Account Login page
+      this.app.routerStore.push('/account-login');
+    }
+    this.loading = false;
+  }
 
   /*
   * Actions after adding a new account or logging into an existing account.
