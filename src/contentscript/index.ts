@@ -1,14 +1,8 @@
 import chromeCall from 'chrome-call';
+import { WalletRPCProvider, networks, Wallet } from 'qtumjs-wallet';
 
-import {
-  IExtensionMessageData,
-  IExtensionAPIMessage,
-  ISendQtumRequestPayload,
-  ISendQtumResponsePayload,
-} from '../types';
-
-import { TARGET_NAME, PORT_NAME, API_TYPE } from '../constants';
-import { networks, Wallet} from 'qtumjs-wallet';
+import { IExtensionMessageData, IExtensionAPIMessage, IRPCCallRequestPayload } from '../types';
+import { TARGET_NAME, API_TYPE, STORAGE } from '../constants';
 
 injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
   await injectScript(chrome.extension.getURL('commons.exclude-background.js'));
@@ -22,8 +16,8 @@ injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
 
 window.addEventListener('message', handleWebPageMessage, false);
 
-const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
-port.onMessage.addListener(responseExtensionAPI);
+// const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
+// port.onMessage.addListener(responseExtensionAPI);
 
 function injectScript(src: string) {
   return new Promise((resolve) => {
@@ -54,9 +48,9 @@ function handleWebPageMessage(event: MessageEvent) {
 
   const message: IExtensionAPIMessage<any> = data.message;
   switch (message.type) {
-    case API_TYPE.SEND_QTUM_REQUEST:
-      handleSendQtumMessage(message.payload);
-      return;
+    case API_TYPE.RPC_REQUEST:
+      handleRPCCallMessage(message.payload);
+      break;
     default:
       console.log('receive unknown type message from webpage:', data.message);
   }
@@ -71,36 +65,36 @@ function responseExtensionAPI<T>(message: IExtensionAPIMessage<T>) {
   window.postMessage(messagePayload, '*');
 }
 
-function recoverWallet(mnemonic: string): Wallet {
-  const network = networks.testnet;
-  return network.fromMnemonic(mnemonic);
-}
+async function handleRPCCallMessage(message: IRPCCallRequestPayload) {
+  const { method, args, id } = message;
+  const storage = await chromeCall(chrome.storage.local, 'get', STORAGE.LOGGED_IN_ACCOUNT);
 
-async function handleSendQtumMessage(message: ISendQtumRequestPayload) {
-  const storage: { mnemonic: string } = await chromeCall(chrome.storage.local, 'get', 'mnemonic');
-  const { mnemonic } = storage;
-
-  if (mnemonic == null) {
-    responseExtensionAPI<ISendQtumResponsePayload>({
-      type: API_TYPE.SEND_QTUM_RESPONSE,
+  if (!(storage && storage.loggedInAccount)) {
+    return responseExtensionAPI({
+      type: API_TYPE.RPC_RESONSE,
       payload: {
-        id: message.id,
-        error: 'cannot find mnemonic',
+        id,
+        error: 'can not find logged in account',
       },
     });
-    return;
   }
 
-  const wallet = recoverWallet(mnemonic);
-  const { address, amount } = message;
-  const result = await wallet.send(address, amount * 1e8, {
-    feeRate: 400,
-  });
+  const { loggedInAccount: { isMainNet, name, privateKeyHash, passwordHash } } = storage;
+  const provider = await getRpcProvider(isMainNet, privateKeyHash, passwordHash);
+  const result = await provider.rawCall(method, args);
+  console.log(`using account '${name}' to call rpc method: '${method}'`);
 
-  responseExtensionAPI<ISendQtumResponsePayload>({
-    type: API_TYPE.SEND_QTUM_RESPONSE,
+  responseExtensionAPI({
+    type: API_TYPE.RPC_RESONSE,
     payload: {
-      id: message.id, result,
+      id,
+      result,
     },
   });
+}
+
+async function getRpcProvider(isMainNet: boolean, privateKeyHash: string, passwordHash: string): Promise<Wallet> {
+  const network = networks[isMainNet ? 'mainnet' : 'testnet'];
+  const wallet = await network.fromEncryptedPrivateKey(privateKeyHash, passwordHash, { N: 8192, r: 8, p: 1 });
+  return new WalletRPCProvider(wallet);
 }

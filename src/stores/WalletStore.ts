@@ -178,6 +178,9 @@ export default class WalletStore {
         WalletStore.SCRYPT_PARAMS_PRIV_KEY,
       );
 
+      // Save logged in account info to local storage for QryptoRpcProvider usage
+      this.setLoggedInAccountToStorage();
+
       await this.onAccountLoggedIn();
     }
   }
@@ -188,6 +191,7 @@ export default class WalletStore {
     this.info =  INIT_VALUES.info;
     this.loggedInAccount = INIT_VALUES.loggedInAccount;
     this.wallet = INIT_VALUES.wallet;
+    this.removeLoggedInAccountFromStorage();
     this.routeToAccountPage();
   }
 
@@ -332,5 +336,26 @@ export default class WalletStore {
   @action
   private async getWalletInfo() {
     this.info = await this.wallet!.getInfo();
+  }
+
+  private setLoggedInAccountToStorage() {
+    return chrome.storage.local.set(
+      {
+        [STORAGE.LOGGED_IN_ACCOUNT]: {
+          isMainNet: this.app.networkStore.isMainNet,
+          name: this.loggedInAccount!.name!,
+          privateKeyHash: this.loggedInAccount!.privateKeyHash!,
+          passwordHash: this.passwordHash,
+        },
+      },
+      () => console.log('Logged in account info saved to local storage', info),
+    );
+  }
+
+  private removeLoggedInAccountFromStorage() {
+    return chrome.storage.local.remove(
+      STORAGE.LOGGED_IN_ACCOUNT,
+      () => console.log('Logged in account info removed from local storage'),
+    );
   }
 }

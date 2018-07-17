@@ -9,14 +9,15 @@ export enum PORT_NAME {
 }
 
 export enum API_TYPE {
-  SEND_QTUM_REQUEST,
-  SEND_QTUM_RESPONSE,
+  RPC_REQUEST,
+  RPC_RESONSE,
 }
 
 export enum STORAGE {
   APP_SALT = 'appSalt',
   TESTNET_ACCOUNTS = 'testnetAccounts',
   MAINNET_ACCOUNTS = 'mainnetAccounts',
+  LOGGED_IN_ACCOUNT = 'loggedInAccount',
 }
 
 export enum SEND_STATE {
