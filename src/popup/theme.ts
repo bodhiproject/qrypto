@@ -21,7 +21,7 @@ const px = (value: number): string => value.toString().concat('px');
 const colorWhite: ColorProperty = '#FFFFFF';
 const colorGray: ColorProperty = '#747474';
 const colorOrange: ColorProperty = '#F5A623';
-const colorRed: ColorProperty = '#E50000';
+const colorRed: ColorProperty = '#D0021B';
 
 const primaryColor: ColorProperty = '#5539DF';
 const primaryColorDark: ColorProperty = '#5539DF';
