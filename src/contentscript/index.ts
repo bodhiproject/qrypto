@@ -1,15 +1,8 @@
 import chromeCall from 'chrome-call';
+import { WalletRPCProvider, networks, Wallet } from 'qtumjs-wallet';
 
-import {
-  IExtensionMessageData,
-  IExtensionAPIMessage,
-  IRPCCallRequestPayload,
-} from '../types';
-
-import { WalletRPCProvider } from 'qtumjs-wallet';
-
-import { TARGET_NAME, API_TYPE } from '../constants';
-import { networks, Wallet} from 'qtumjs-wallet';
+import { IExtensionMessageData, IExtensionAPIMessage, IRPCCallRequestPayload } from '../types';
+import { TARGET_NAME, API_TYPE, STORAGE } from '../constants';
 
 injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
   await injectScript(chrome.extension.getURL('commons.exclude-background.js'));
@@ -74,27 +67,22 @@ function responseExtensionAPI<T>(message: IExtensionAPIMessage<T>) {
 
 async function handleRPCCallMessage(message: IRPCCallRequestPayload) {
   const { method, args, id } = message;
-  const storage = await chromeCall(chrome.storage.local, 'get', 'currentAccount');
+  const storage = await chromeCall(chrome.storage.local, 'get', STORAGE.LOGGED_IN_ACCOUNT);
 
-  if (!(storage && storage.currentAccount)) {
+  if (!(storage && storage.loggedInAccount)) {
     return responseExtensionAPI({
       type: API_TYPE.RPC_RESONSE,
       payload: {
         id,
-        error: 'can not found logged account',
+        error: 'can not find logged in account',
       },
     });
   }
 
-  const { currentAccount: { isMainNet, mnemonic, name } } = storage;
-
-  const wallet = await recoverWallet(isMainNet, mnemonic);
-
-  const provider = new WalletRPCProvider(wallet);
-
-  console.log(`using account '${name}' to call rpc method: '${method}'`);
-
+  const { loggedInAccount: { isMainNet, name, privateKeyHash, passwordHash } } = storage;
+  const provider = await getRpcProvider(isMainNet, privateKeyHash, passwordHash);
   const result = await provider.rawCall(method, args);
+  console.log(`using account '${name}' to call rpc method: '${method}'`);
 
   responseExtensionAPI({
     type: API_TYPE.RPC_RESONSE,
@@ -105,7 +93,8 @@ async function handleRPCCallMessage(message: IRPCCallRequestPayload) {
   });
 }
 
-function recoverWallet(isMainNet: boolean, mnemonic: string): Promise<Wallet> {
-  const network = networks[isMainNet ? 'testnet' : 'testnet'];
-  return network.fromMnemonic(mnemonic);
+async function getRpcProvider(isMainNet: boolean, privateKeyHash: string, passwordHash: string): Promise<Wallet> {
+  const network = networks[isMainNet ? 'mainnet' : 'testnet'];
+  const wallet = await network.fromEncryptedPrivateKey(privateKeyHash, passwordHash, { N: 8192, r: 8, p: 1 });
+  return new WalletRPCProvider(wallet);
 }

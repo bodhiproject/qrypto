@@ -17,6 +17,7 @@ export enum STORAGE {
   APP_SALT = 'appSalt',
   TESTNET_ACCOUNTS = 'testnetAccounts',
   MAINNET_ACCOUNTS = 'mainnetAccounts',
+  LOGGED_IN_ACCOUNT = 'loggedInAccount',
 }
 
 export enum SEND_STATE {
