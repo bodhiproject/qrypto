@@ -7,18 +7,18 @@ import AppStore from './AppStore';
 import Transaction from '../models/Transaction';
 
 export default class AccountDetailStore {
-  private static GET_TX_INTERVAL_MS: number = 10000;
+  private static GET_TX_INTERVAL_MS: number = 60000;
 
   @observable public activeTabIdx: number = 0;
   @observable.shallow public items: Transaction[] = [];
   @observable public pageNum: number = 0;
   @observable public pagesTotal?: number;
 
-  private getTransactionsInterval?: NodeJS.Timer = undefined;
-
   @computed public get hasMore(): boolean {
     return !!this.pagesTotal && (this.pagesTotal > this.pageNum + 1);
   }
+
+  private getTransactionsInterval?: NodeJS.Timer = undefined;
 
   constructor(private app: AppStore) {}
 
@@ -28,21 +28,34 @@ export default class AccountDetailStore {
 
   @action public async loadMore() {
     const txs = await this.load(this.pageNum + 1);
-
+    this.pageNum = this.pageNum + 1;
     this.items = this.items.concat(txs);
   }
 
   public startTxPolling = () => {
     this.loadFromWallet();
     this.getTransactionsInterval = setInterval(() => {
-      this.loadFromWallet();
+      this.refreshTransactions();
     }, AccountDetailStore.GET_TX_INTERVAL_MS);
   }
 
   public stopTxPolling = () => {
     if (this.getTransactionsInterval) {
       clearInterval(this.getTransactionsInterval);
+      this.pageNum = 0;
     }
+  }
+
+  // TODO - if a new transaction comes in, the transactions on a page will shift(ie if 1 page has 10 transactions, transaction number 10 shifts to page2), and the bottom most transaction would disappear from the list. Need to add some additional logic to keep the bottom most transaction displaying.
+  @action
+  public async refreshTransactions() {
+    let refreshedItems: Transaction[] = [];
+    let txs: Transaction[];
+    for (let i = 0; i <= this.pageNum; i++) {
+      txs = await this.load(i);
+      refreshedItems = refreshedItems.concat(txs);
+    }
+    this.items = refreshedItems;
   }
 
   @action private async load(pageNum: number = 0): Promise<Transaction[]> {
@@ -50,7 +63,6 @@ export default class AccountDetailStore {
     const { pagesTotal, txs } =  await wallet.getTransactions(pageNum);
 
     this.pagesTotal = pagesTotal;
-    this.pageNum = pageNum;
 
     return map(txs, (tx: Insight.IRawTransactionInfo) => {
       const {
