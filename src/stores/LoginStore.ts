@@ -1,6 +1,8 @@
 import { observable, computed, action } from 'mobx';
 import { isEmpty } from 'lodash';
 
+import AppStore from './AppStore';
+
 const INIT_VALUES = {
   password: '',
   confirmPassword: '',
@@ -16,7 +18,13 @@ export default class LoginStore {
   }
   @computed public get error(): boolean {
     const matchError = this.getMatchError();
-    return isEmpty(this.password) || !!matchError;
+    return (!this.app.walletStore.hasAccounts && !!matchError) || isEmpty(this.password);
+  }
+
+  private app: AppStore;
+
+  constructor(app: AppStore) {
+    this.app = app;
   }
 
   @action
@@ -27,7 +35,7 @@ export default class LoginStore {
 
   private getMatchError = (): string | undefined => {
     let error;
-    if (!isEmpty(this.password) && !isEmpty(this.confirmPassword) && this.password !== this.confirmPassword) {
+    if (this.password !== this.confirmPassword) {
       error = 'Passwords do not match.';
     }
     return error;

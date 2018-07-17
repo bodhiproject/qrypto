@@ -49,10 +49,10 @@ class Login extends Component<WithStyles & IProps, {}> {
           {!hasAccounts && (
             <Fragment>
               <PasswordInput
-                classNames={classes.confirmPasswordField}
+                classNames={classes.passwordField}
                 placeholder="Confirm password"
-                helperText={matchError}
                 error={!!matchError}
+                errorText={matchError}
                 onChange={(e: any) => loginStore.confirmPassword = e.target.value}
                 onEnterPress={this.onEnterPress}
               />

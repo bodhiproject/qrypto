@@ -32,9 +32,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   passwordField: {
     marginBottom: theme.padding.md,
   },
-  confirmPasswordField: {
-    marginBottom: theme.padding.md,
-  },
   masterPwNote: {
     fontSize: theme.font.sm,
     color: theme.palette.text.secondary,
