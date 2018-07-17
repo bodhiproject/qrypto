@@ -44,6 +44,7 @@ class Login extends Component<WithStyles & IProps, {}> {
             classNames={classes.passwordField}
             placeholder="Password"
             onChange={(e: any) => loginStore.password = e.target.value}
+            onEnterPress={this.onEnterPress}
           />
           {!hasAccounts && (
             <Fragment>
@@ -53,6 +54,7 @@ class Login extends Component<WithStyles & IProps, {}> {
                 helperText={matchError}
                 error={!!matchError}
                 onChange={(e: any) => loginStore.confirmPassword = e.target.value}
+                onEnterPress={this.onEnterPress}
               />
               <Typography className={classes.masterPwNote}>
                 This will serve as your master password and will be saved when you create or import your first wallet.
@@ -73,6 +75,13 @@ class Login extends Component<WithStyles & IProps, {}> {
         <ErrorDialog {...this.props} />
       </div>
     );
+  }
+
+  private onEnterPress = () => {
+    const { loginStore, walletStore } = this.props.store;
+    if (loginStore.error === false) {
+      walletStore.login(loginStore.password);
+    }
   }
 }
 

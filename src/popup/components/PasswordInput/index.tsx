@@ -3,8 +3,17 @@ import { TextField, withStyles } from '@material-ui/core';
 import cx from 'classnames';
 
 import styles from './styles';
+import { handleEnterPress } from '../../../utils';
 
-const PasswordTextField: React.SFC<any> = ({ classes, classNames, placeholder, helperText, error, onChange }: any) => (
+const PasswordTextField: React.SFC<any> = ({
+  classes,
+  classNames,
+  placeholder,
+  helperText,
+  error,
+  onChange,
+  onEnterPress,
+}: any) => (
   <TextField
     className={cx(classes.passwordTextField, classNames)}
     required
@@ -17,6 +26,7 @@ const PasswordTextField: React.SFC<any> = ({ classes, classNames, placeholder, h
       classes: { input: classes.passwordFieldInput },
     }}
     onChange={onChange}
+    onKeyPress={(e) => handleEnterPress(e, onEnterPress)}
   />
 );
 

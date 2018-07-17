@@ -7,7 +7,6 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 import AppStore from '../../../stores/AppStore';
 const strings = require('../../../localization/locales/en_US.json');
-console.log(strings);
 
 interface IProps {
   classes: Record<string, string>;
