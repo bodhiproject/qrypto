@@ -31,8 +31,8 @@ const secondaryColor: ColorProperty = colorWhite;
 const secondaryColorLight: ColorProperty = colorWhite;
 const secondaryColorDark: ColorProperty = colorWhite;
 
-const textColorPrimary: ColorProperty = '#333333';
-const textColorSecondary: ColorProperty = colorGray;
+const textColorPrimary: ColorProperty = 'rgba(0, 0, 0, 0.8)';
+const textColorSecondary: ColorProperty = 'rgba(0, 0, 0, 0.5)';
 
 const gradientPurple: ColorProperty = `linear-gradient(300.29deg, ${primaryColorLight} -9.7%, ${primaryColor} 85.28%)`;
 
