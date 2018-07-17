@@ -11,15 +11,17 @@ const INIT_VALUES = {
 export default class ImportStore {
   @observable public mnemonic: string = INIT_VALUES.mnemonic;
   @observable public accountName: string = INIT_VALUES.accountName;
+  @computed public get walletNameError(): string | undefined {
+    return this.app.walletStore.isWalletNameTaken(this.accountName) ? 'Wallet name is taken' : undefined;
+  }
+  @computed public get error(): boolean {
+    return [this.mnemonic, this.accountName].some(isEmpty) || !!this.walletNameError;
+  }
 
   private app: AppStore;
 
   constructor(app: AppStore) {
     this.app = app;
-  }
-
-  @computed get error(): boolean {
-    return [this.mnemonic, this.accountName].some(isEmpty);
   }
 
   @action

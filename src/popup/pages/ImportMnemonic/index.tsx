@@ -54,6 +54,8 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
               />
               <BorderTextField
                 placeholder="Wallet name"
+                error={!!importStore.walletNameError}
+                errorText={importStore.walletNameError}
                 onChange={(e: any) => importStore.accountName = e.target.value}
                 onEnterPress={this.handleEnterPress}
               />
