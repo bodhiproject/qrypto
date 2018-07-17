@@ -1,6 +1,6 @@
 import { Wallet, Insight } from 'qtumjs-wallet';
 import { observable, action, toJS, computed, runInAction } from 'mobx';
-import { find, isEmpty, split, includes } from 'lodash';
+import { find, isEmpty, split } from 'lodash';
 import axios from 'axios';
 import scrypt from 'scryptsy';
 
@@ -197,7 +197,7 @@ export default class WalletStore {
 
   public isWalletNameTaken = (name: string): boolean => {
     const accounts = this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
-    return includes(accounts, { name });
+    return !!find(accounts, { name });
   }
 
   /*
