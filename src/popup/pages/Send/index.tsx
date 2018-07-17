@@ -32,14 +32,22 @@ class Send extends Component<WithStyles & IProps, {}> {
         <div className={classes.contentContainer}>
           <div className={classes.fieldsContainer}>
             <FromField {...this.props} />
-            <ToField {...this.props} />
+            <ToField onEnterPress={this.onEnterPress} {...this.props} />
             <TokenField {...this.props} />
-            <AmountField {...this.props} />
+            <AmountField onEnterPress={this.onEnterPress} {...this.props} />
           </div>
           <SendButton {...this.props} />
         </div>
       </div>
     );
+  }
+
+  private onEnterPress = (event: any) => {
+    handleEnterPress(event, () => {
+      if (!this.props.store.sendStore.buttonDisabled) {
+        this.props.store.sendStore.routeToSendConfirm();
+      }
+    });
   }
 }
 
@@ -67,7 +75,7 @@ const FromField = observer(({ classes, store: { sendStore, walletStore: { logged
   </div>
 ));
 
-const ToField = observer(({ classes, store: { sendStore, walletStore: { info } } }: any) => (
+const ToField = observer(({ classes, store: { sendStore, walletStore: { info } }, onEnterPress }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="To" />
     <div className={classes.fieldContentContainer}>
@@ -76,8 +84,10 @@ const ToField = observer(({ classes, store: { sendStore, walletStore: { info } }
         type="text"
         multiline={false}
         placeholder={info.addrStr}
+        value={sendStore.receiverAddress}
         InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
         onChange={(event) => sendStore.receiverAddress = event.target.value}
+        onKeyPress={onEnterPress}
       />
     </div>
     {!!sendStore.receiverAddress && sendStore.receiverFieldError && (
@@ -103,7 +113,7 @@ const TokenField = observer(({ classes, store: { sendStore } }: any) => (
   </div>
 ));
 
-const AmountField = observer(({ classes, store: { walletStore: { info }, sendStore } }: any) => (
+const AmountField = observer(({ classes, store: { walletStore: { info }, sendStore }, onEnterPress }: any) => (
   <div className={classes.amountContainer}>
     <div className={classes.amountHeadingContainer}>
       <div className={classes.amountHeadingTextContainer}>
@@ -129,11 +139,7 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
           disableUnderline: true,
         }}
         onChange={(event) => sendStore.amount = event.target.value}
-        onKeyPress={(event) => handleEnterPress(event, () => {
-          if (!sendStore.buttonDisabled) {
-            sendStore.routeToSendConfirm();
-          }
-        })}
+        onKeyPress={onEnterPress}
       />
     </div>
     {sendStore.amountFieldError && (
