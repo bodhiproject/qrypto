@@ -44,7 +44,7 @@ class DropDownMenu extends Component<WithStyles & IProps, IState> {
           onClose={() => this.setState({ anchorEl: null }) }
         >
           {selections.map((item, i) => (
-            <MenuItem onClick={() => this.onMenuItemClick(i)}> {item} </MenuItem>
+            <MenuItem key={i} onClick={() => this.onMenuItemClick(i)}> {item} </MenuItem>
           ))}
         </Menu >
       </div>

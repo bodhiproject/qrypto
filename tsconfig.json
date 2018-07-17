@@ -15,13 +15,7 @@
     "experimentalDecorators": true,
     "suppressImplicitAnyIndexErrors": true,
     "allowSyntheticDefaultImports": true,
-<<<<<<< HEAD
-    "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"]
-=======
     "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],
-    "allowJs": true,
-    "checkJs": true
->>>>>>> fix ts errors
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"]
 }
