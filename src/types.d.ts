@@ -1,6 +1,6 @@
 import { utils } from 'ethers';
-import { API_TYPE, TARGET_NAME, INTERNAL_API_TYPE } from './constants';
 import { Insight } from 'qtumjs-wallet';
+import { API_TYPE, TARGET_NAME, INTERNAL_API_TYPE } from './constants';
 
 export interface IExtensionMessageData<T> {
   target: TARGET_NAME;
