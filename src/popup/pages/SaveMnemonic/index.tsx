@@ -6,7 +6,8 @@ import cx from 'classnames';
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import AppStore from '../../../stores/AppStore';
-import strings from '../../../localization/locales/en_US.json';
+const strings = require('../../../localization/locales/en_US.json');
+console.log(strings);
 
 interface IProps {
   classes: Record<string, string>;
@@ -28,9 +29,9 @@ class SaveMnemonic extends Component<WithStyles & IProps, {}> {
         <NavBar hasBackButton title={''} />
         <div className={classes.contentContainer}>
           <div className={classes.topContainer}>
-            <Typography className={classes.walletCreatedHeader}>{strings.saveMnemonic.walletCreated}</Typography>
+            <Typography className={classes.walletCreatedHeader}>{strings['saveMnemonic.walletCreated']}</Typography>
             <Typography className={classes.mnemonicText}>{saveMnemonicStore.mnemonic}</Typography>
-            <Typography className={classes.warningText}>{strings.saveMnemonic.warningText}</Typography>
+            <Typography className={classes.warningText}>{strings['saveMnemonic.warningText']}</Typography>
           </div>
           <Button
               className={cx(classes.actionButton, 'marginBottom')}
