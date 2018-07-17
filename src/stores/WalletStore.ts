@@ -200,6 +200,17 @@ export default class WalletStore {
     return !!find(accounts, { name });
   }
 
+  public isWalletMnemonicTaken = async (mnemonic: string): Promise<boolean> => {
+    const network = this.app.networkStore.network;
+    const wallet = await network.fromMnemonic(mnemonic);
+    const privateKeyHash = await wallet.toEncryptedPrivateKey(
+      this.validPasswordHash,
+      WalletStore.SCRYPT_PARAMS_PRIV_KEY,
+    );
+    const accounts = this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    return !!find(accounts, { privateKeyHash });
+  }
+
   /*
   * Initializes all the values from Chrome storage on startup.
   */
