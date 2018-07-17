@@ -1,10 +1,18 @@
-import React, { Component } from 'react';
-import { Paper, Select, MenuItem, Typography, Button, withStyles, WithStyles } from '@material-ui/core';
+import React, { Component, Fragment } from 'react';
+import {
+  Typography,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  withStyles,
+  WithStyles,
+} from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-import { isEmpty } from 'lodash';
 
 import styles from './styles';
-import NavBar from '../../components/NavBar';
 import PasswordInput from '../../components/PasswordInput';
 import AppStore from '../../../stores/AppStore';
 
@@ -16,68 +24,72 @@ interface IProps {
 @inject('store')
 @observer
 class Login extends Component<WithStyles & IProps, {}> {
+  public componentDidMount() {
+    this.props.store.loginStore.init();
+  }
 
   public render() {
-    const { classes } = this.props;
+    const { classes, store: { loginStore, walletStore } } = this.props;
+    const { password, matchError, error } = loginStore;
+    const { hasAccounts } = walletStore;
 
     return (
       <div className={classes.root}>
-        <Paper className={classes.headerContainer}>
-          <NavBar hasNetworkSelector isDarkTheme title="Login" />
-          <AccountSection {...this.props} />
-        </Paper>
-        <PermissionSection {...this.props} />
-        <LoginSection {...this.props} />
+        <div className={classes.logoContainer}>
+          <img className={classes.logo} src={chrome.runtime.getURL('images/logo.png')} alt={'Logo'} />
+          <Typography className={classes.logoText}>Qrypto</Typography>
+        </div>
+        <div className={classes.fieldContainer}>
+          <PasswordInput
+            classNames={classes.passwordField}
+            placeholder="Password"
+            onChange={(e: any) => loginStore.password = e.target.value}
+          />
+          {!hasAccounts && (
+            <Fragment>
+              <PasswordInput
+                classNames={classes.confirmPasswordField}
+                placeholder="Confirm password"
+                helperText={matchError}
+                error={!!matchError}
+                onChange={(e: any) => loginStore.confirmPassword = e.target.value}
+              />
+              <Typography className={classes.masterPwNote}>
+                This will serve as your master password and will be saved when you create or import your first wallet.
+              </Typography>
+            </Fragment>
+          )}
+        </div>
+        <Button
+          className={classes.loginButton}
+          fullWidth
+          variant="contained"
+          color="primary"
+          disabled={error}
+          onClick={() => walletStore.login(password)}
+        >
+          Login
+        </Button>
+        <ErrorDialog {...this.props} />
       </div>
     );
   }
 }
 
-const AccountSection = observer(({ classes, store: { walletStore: { accounts }, loginStore } }: any) => (
-  <div className={classes.accountContainer}>
-    <Typography className={classes.selectAcctText}>Select account</Typography>
-    <Select
-      disableUnderline
-      className={classes.accountSelect}
-      name="accounts"
-      value={loginStore.selectedWalletName}
-      onChange={(e) => loginStore.selectedWalletName = e.target.value}
-    >
-      {accounts.map((acct: Account, index: number) => <MenuItem key={index} value={acct.name}>{acct.name}</MenuItem>)}
-    </Select>
-    <div className={classes.createAccountContainer}>
-      <Typography className={classes.orText}>or</Typography>
-      <Button className={classes.createAccountButton} color="secondary" onClick={loginStore.routeToCreateWallet}>
-        Create New Wallet
-      </Button>
-    </div>
-  </div>
-));
-
-const PermissionSection = ({ classes }: any) => (
-  <div className={classes.permissionContainer}>
-    <Typography className={classes.permissionsHeader}>Permissions</Typography>
-  </div>
-);
-
-const LoginSection = observer(({ classes, store: { loginStore } }: any) => (
-  <div className={classes.loginContainer}>
-    <PasswordInput
-      classNames={classes.passwordField}
-      placeholder="Password"
-      onChange={(e: any) => loginStore.password = e.target.value}
-    />
-    <Button
-      className={classes.loginButton}
-      fullWidth
-      variant="contained"
-      color="primary"
-      disabled={isEmpty(loginStore.password)}
-      onClick={loginStore.login}
-    >
-      Login
-    </Button>
-  </div>
+const ErrorDialog: React.SFC<any> = observer(({ store: { loginStore }}: any) => (
+  <Dialog
+    disableBackdropClick
+    open={!!loginStore.invalidPassword}
+    onClose={() => loginStore.invalidPassword = undefined}
+  >
+    <DialogTitle>Invalid Password</DialogTitle>
+    <DialogContent>
+      <DialogContentText>You have entered an invalid password. Please try again.</DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => loginStore.invalidPassword = undefined} color="primary">Close</Button>
+    </DialogActions>
+  </Dialog>
 ));
 
 export default withStyles(styles)(Login);

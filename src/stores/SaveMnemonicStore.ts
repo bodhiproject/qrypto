@@ -1,19 +1,16 @@
 import { observable, action } from 'mobx';
 import bip39 from 'bip39';
 
-import Account from '../models/Account';
 import AppStore from './AppStore';
 
 const INIT_VALUES = {
   mnemonic: '',
   walletName: '',
-  password: '',
 };
 
 export default class SaveMnemonicStore {
   @observable public mnemonic: string = INIT_VALUES.mnemonic;
   public walletName: string = INIT_VALUES.walletName;
-  public password: string = INIT_VALUES.password;
 
   private app: AppStore;
 
@@ -28,16 +25,8 @@ export default class SaveMnemonicStore {
 
   @action
   public createWallet = () => {
-    // TODO: use this.password to encrypt wallet
-    console.log(this.password);
-
-    this.app.walletStore.loading = true;
-
-    const account = new Account(this.walletName, this.mnemonic);
+    this.app.walletStore.addAccountAndLogin(this.walletName, this.mnemonic);
     this.reset();
-
-    this.app.walletStore.addAccount(account);
-    this.app.walletStore.login(account.name);
   }
 
   @action

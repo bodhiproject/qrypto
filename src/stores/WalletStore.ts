@@ -1,61 +1,101 @@
 import { Wallet, Insight } from 'qtumjs-wallet';
-
 import { observable, action, toJS, computed, runInAction } from 'mobx';
-import { isEmpty, find } from 'lodash';
+import { find, isEmpty, split } from 'lodash';
 import axios from 'axios';
+import scrypt from 'scryptsy';
 
 import AppStore from './AppStore';
 import { STORAGE } from '../constants';
 import Account from '../models/Account';
+import QryNetwork from '../models/QryNetwork';
 
 const INIT_VALUES = {
+  loading: true,
+  appSalt: undefined,
+  passwordHash: undefined,
   info: undefined,
   accounts: [],
+  testnetAccounts: [],
+  mainnetAccounts: [],
   loggedInAccount: undefined,
   wallet: undefined,
 };
 
 export default class WalletStore {
+  private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
+  private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 30000;
   private static GET_PRICE_INTERVAL_MS: number = 60000;
 
-  @observable public loading = true;
+  @observable public loading = INIT_VALUES.loading;
+  @observable public appSalt?: Uint8Array = INIT_VALUES.appSalt;
+  @observable public passwordHash?: string = INIT_VALUES.passwordHash;
   @observable public info?: Insight.IGetInfo = INIT_VALUES.info;
-  @observable public accounts: Account[] = INIT_VALUES.accounts;
+  @observable public testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
+  @observable public mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
   @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   @observable public qtumPriceUSD = 0;
-
-  @computed public get balanceUSD() {
+  @computed public get hasAccounts(): boolean {
+    return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts);
+  }
+  @computed public get accounts(): Account[] {
+    return this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+  }
+  @computed public get balanceUSD(): string {
     if (this.qtumPriceUSD && this.info) {
       return (this.qtumPriceUSD * this.info.balance).toFixed(2);
     } else {
       return 'Loading';
     }
   }
-
   public wallet?: Wallet = INIT_VALUES.wallet;
 
+  @computed private get validPasswordHash(): string {
+    if (!this.passwordHash) {
+      throw Error('passwordHash should be defined');
+    }
+    return this.passwordHash!;
+  }
   private app: AppStore;
-  private getInfoInterval?: number = undefined;
-  private getPriceInterval?: number = undefined;
+  private getInfoInterval?: NodeJS.Timer = undefined;
+  private getPriceInterval?: NodeJS.Timer = undefined;
 
   constructor(app: AppStore) {
     this.app = app;
-    this.getAccountsFromStorage();
+    this.fetchStorageValues();
   }
 
-  public getAccountsFromStorage() {
-    if (this.app.networkStore.isMainNet) {
-      // Set the existing accounts from Chrome storage
-      chrome.storage.local.get(STORAGE.MAINNET_ACCOUNTS, ({ mainnetAccounts }) => {
-        this.setAccountsAndRoute(mainnetAccounts);
-      });
-    } else {
-      // Set the existing accounts from Chrome storage
-      chrome.storage.local.get(STORAGE.TESTNET_ACCOUNTS, ({ testnetAccounts }) => {
-        this.setAccountsAndRoute(testnetAccounts);
-      });
+  /*
+  * Creates a new passwordHash or validates the existing one for the main login.
+  * @param password {string} The new/existing password for the per-install appSalt.
+  */
+  @action
+  public login = async (password: string) => {
+    this.loading = true;
+
+    // TODO: move logic into content script later to unblock UI
+    this.generateAppSaltIfNecessary();
+    try {
+      await this.derivePasswordHash(password);
+    } catch (err) {
+      throw err;
     }
+
+    if (!this.hasAccounts) {
+      // New user. No created wallets yet. No need to validate.
+      this.routeToAccountPage();
+      return;
+    }
+
+    const isPwValid = await this.validatePassword();
+    if (isPwValid) {
+      this.routeToAccountPage();
+      return;
+    }
+
+    // Invalid password, display error dialog
+    this.app.loginStore.invalidPassword = true;
+    this.loading = false;
   }
 
   @action
@@ -81,75 +121,202 @@ export default class WalletStore {
     }
   }
 
+  /*
+  * Creates an account, stores it, and logs in.
+  * @param accountName {string} The account name for the new wallet account.
+  * @param mnemonic {string} The mnemonic to derive the wallet from.
+  */
   @action
-  public addAccount(account: Account) {
-    const accounts = toJS(this.accounts);
-    if (!find(accounts, { mnemonic: account.mnemonic })) {
-      accounts.push(account);
+  public async addAccountAndLogin(accountName: string, mnemonic: string) {
+    this.loading = true;
+    // TODO: check if account exists already. if so, show error message and stop execution here.
 
-      let storageAccountKey;
-      if (this.app.networkStore.isMainNet) {
-        storageAccountKey = STORAGE.MAINNET_ACCOUNTS;
-      } else {
-        storageAccountKey = STORAGE.TESTNET_ACCOUNTS;
-      }
+    // Get encrypted private key
+    const network = this.app.networkStore.network;
+    this.wallet = await network.fromMnemonic(mnemonic);
+    const privateKeyHash = await this.wallet.toEncryptedPrivateKey(
+      this.validPasswordHash,
+      WalletStore.SCRYPT_PARAMS_PRIV_KEY,
+    );
+    const account = new Account(accountName, privateKeyHash);
 
+    // Add account if not existing
+    if (this.app.networkStore.isMainNet) {
+      this.mainnetAccounts.push(account);
       chrome.storage.local.set({
-        [storageAccountKey]: accounts,
-      }, () => console.log('Account added', account));
-      this.accounts = accounts;
-      this.loggedInAccount = account;
+        [STORAGE.MAINNET_ACCOUNTS]: toJS(this.mainnetAccounts),
+      }, () => console.log('Mainnet Account added', account));
+    } else {
+      this.testnetAccounts.push(account);
+      chrome.storage.local.set({
+        [STORAGE.TESTNET_ACCOUNTS]: toJS(this.testnetAccounts),
+      }, () => console.log('Testnet Account added', account));
     }
+
+    this.loggedInAccount = account;
+    await this.onAccountLoggedIn();
   }
 
+  /*
+  * Finds the account based on the name and logs in.
+  * @param accountName {string} The account name to search by.
+  */
   @action
-  public async login(accountName: string) {
-    const foundAccount = find(this.accounts, { name: accountName });
+  public async loginAccount(accountName: string) {
+    this.loading = true;
+
+    const accounts = this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    const foundAccount = find(accounts, { name: accountName });
     if (foundAccount) {
       this.loggedInAccount = foundAccount;
-      await this.recoverWallet(this.loggedInAccount!.mnemonic!);
-      await this.startPolling();
-      runInAction(() => {
-        this.loading = false;
-        this.app.routerStore.push('/home');
-      });
+
+      // Recover wallet
+      const network = this.app.networkStore.network;
+      this.wallet = await network.fromEncryptedPrivateKey(
+        this.loggedInAccount!.privateKeyHash,
+        this.validPasswordHash,
+        WalletStore.SCRYPT_PARAMS_PRIV_KEY,
+      );
+
+      await this.onAccountLoggedIn();
     }
   }
 
   @action
-  public logout = (isSwitchingNetwork: boolean) => {
+  public logout = () => {
     this.stopPolling();
     this.info =  INIT_VALUES.info;
     this.loggedInAccount = INIT_VALUES.loggedInAccount;
     this.wallet = INIT_VALUES.wallet;
+    this.routeToAccountPage();
+  }
 
-    if (isSwitchingNetwork) {
-      this.accounts = INIT_VALUES.accounts;
-      this.app.walletStore.getAccountsFromStorage();
-      // we dont call this.app.routerStore.push('/login') here because it is called at the end of getAccountsFromStorage() instead
+  /*
+  * Initializes all the values from Chrome storage on startup.
+  */
+  private fetchStorageValues = () => {
+    const { APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS } = STORAGE;
+    chrome.storage.local.get([APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS],
+      ({ appSalt, mainnetAccounts, testnetAccounts }: any) => {
+        if (!isEmpty(appSalt)) {
+          const array = split(appSalt, ',').map((str) => parseInt(str, 10));
+          this.appSalt =  Uint8Array.from(array);
+        }
+
+        if (!isEmpty(mainnetAccounts)) {
+          this.mainnetAccounts = toJS(mainnetAccounts);
+        }
+
+        if (!isEmpty(testnetAccounts)) {
+          this.testnetAccounts = toJS(testnetAccounts);
+        }
+
+        // Show the Login page after fetching storage
+        this.loading = false;
+      });
+  }
+
+  /*
+  * Generates the appSalt if needed.
+  */
+  @action
+  private generateAppSaltIfNecessary = () => {
+    try {
+      if (!this.appSalt) {
+        const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
+        this.appSalt = appSalt;
+        chrome.storage.local.set(
+          { [STORAGE.APP_SALT]: appSalt.toString() },
+          () => console.log('appSalt set'),
+        );
+      }
+    } catch (err) {
+      throw Error('Error generating appSalt');
+    }
+  }
+
+  /*
+  * Derives the password hash with the password input.
+  * @return Promise undefined or error.
+  */
+  @action
+  private derivePasswordHash = async (password: string): Promise<any> => {
+    return new Promise((resolve: any, reject: any) => {
+      setTimeout(() => {
+        try {
+          if (!this.appSalt) {
+            throw Error('appSalt should not be empty');
+          }
+
+          const saltBuffer = Buffer.from(this.appSalt!);
+          const { N, r, p } = WalletStore.SCRYPT_PARAMS_PW;
+          const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
+          this.passwordHash = derivedKey.toString('hex');
+
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      }, 100);
+    });
+  }
+
+  /*
+  * Validates a password by decrypting a private key hash into a wallet instance.
+  * @return Is the password valid.
+  */
+  private validatePassword = async (): Promise<boolean> => {
+    let qryNetwork: QryNetwork;
+    let account: Account;
+    if (!isEmpty(this.mainnetAccounts)) {
+      qryNetwork = this.app.networkStore.networksArray[0];
+      account = this.mainnetAccounts[0];
+    } else if (!isEmpty(this.testnetAccounts)) {
+      qryNetwork = this.app.networkStore.networksArray[1];
+      account = this.testnetAccounts[0];
     } else {
-      this.app.routerStore.push('/login');
+      throw Error('Trying to validate password without existing account');
+    }
+
+    try {
+      await qryNetwork.network.fromEncryptedPrivateKey(
+        account.privateKeyHash,
+        this.validPasswordHash,
+        WalletStore.SCRYPT_PARAMS_PRIV_KEY,
+      );
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
     }
   }
 
+  /*
+  * Routes to the CreateWallet or AccountLogin page after unlocking with the password.
+  */
   @action
-  private recoverWallet = async (mnemonic: string) => {
-    const network = this.app.networkStore.network;
-    this.wallet = await network.fromMnemonic(mnemonic);
-  }
-
-  @action
-  private setAccountsAndRoute = (storageAccounts: Account[]) => {
-    // Account not found, route to Create Wallet page
-    if (isEmpty(storageAccounts)) {
+  private routeToAccountPage = () => {
+    const accounts = this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    if (isEmpty(accounts)) {
+      // Account not found, route to Create Wallet page
       this.app.routerStore.push('/create-wallet');
-      this.loading = false;
-      return;
+    } else {
+      // Accounts found, route to Account Login page
+      this.app.routerStore.push('/account-login');
     }
-    // Accounts found, route to Login page
-    this.accounts = storageAccounts;
-    this.app.routerStore.push('/login');
     this.loading = false;
+  }
+
+  /*
+  * Actions after adding a new account or logging into an existing account.
+  */
+  @action
+  private onAccountLoggedIn = async () => {
+    await this.startPolling();
+    runInAction(() => {
+      this.loading = false;
+      this.app.routerStore.push('/home');
+    });
   }
 
   @action

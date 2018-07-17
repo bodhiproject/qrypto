@@ -14,6 +14,7 @@ export enum API_TYPE {
 }
 
 export enum STORAGE {
+  APP_SALT = 'appSalt',
   TESTNET_ACCOUNTS = 'testnetAccounts',
   MAINNET_ACCOUNTS = 'mainnetAccounts',
 }

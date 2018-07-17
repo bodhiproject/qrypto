@@ -1,47 +1,45 @@
-import { observable, action, reaction } from 'mobx';
+import { observable, computed, action } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
 
 const INIT_VALUES = {
-  selectedWalletName: '',
   password: '',
+  confirmPassword: '',
+  invalidPassword: undefined,
 };
 
 export default class LoginStore {
-  @observable public selectedWalletName: string = INIT_VALUES.selectedWalletName;
   @observable public password: string = INIT_VALUES.password;
+  @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
+  @observable public invalidPassword?: boolean = INIT_VALUES.invalidPassword;
+  @computed public get matchError(): string | undefined {
+    return this.getMatchError();
+  }
+  @computed public get error(): boolean {
+    const matchError = this.getMatchError();
+    return this.app.walletStore.appSalt
+      ? isEmpty(this.password)
+      : [this.password, this.confirmPassword].some(isEmpty) || !!matchError;
+  }
 
   private app: AppStore;
 
   constructor(app: AppStore) {
     this.app = app;
-
-    // Set the default selected account on the login page.
-    reaction(
-      () => this.app.walletStore.accounts,
-      () => {
-        if (!isEmpty(this.app.walletStore.accounts)) {
-          this.selectedWalletName = this.app.walletStore.accounts[0].name;
-        }
-      },
-    );
   }
 
   @action
-  public login = () => {
-    this.app.walletStore.loading = true;
-
-    this.app.walletStore.login(this.selectedWalletName);
-    this.reset();
+  public init = () => {
+    this.password = INIT_VALUES.password;
+    this.confirmPassword = INIT_VALUES.confirmPassword;
   }
 
-  @action
-  public routeToCreateWallet = () => {
-    this.app.createWalletStore.showBackButton = true;
-    this.app.routerStore.push('/create-wallet');
+  private getMatchError = (): string | undefined => {
+    let error;
+    if (!isEmpty(this.password) && !isEmpty(this.confirmPassword) && this.password !== this.confirmPassword) {
+      error = 'Passwords do not match.';
+    }
+    return error;
   }
-
-  @action
-  public reset = () => Object.assign(this, INIT_VALUES)
 }

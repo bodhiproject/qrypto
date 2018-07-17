@@ -11,11 +11,11 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  accountDetailHeader: {
+  accountDetailPaper: {
     background: theme.color.gradientPurple,
     borderRadius: 0,
   },
-  tabs: {
+  tabsPaper: {
     borderRadius: 0,
   },
   tab: {

@@ -61,7 +61,8 @@
     "commons.background-inpage.js",
     "commons.contentscript-inpage.js",
     "commons.popup-inpage.js",
-    "inpage.js"
+    "inpage.js",
+    "images/logo.png"
   ],
   "externally_connectable": {
     "ids": ["*"]

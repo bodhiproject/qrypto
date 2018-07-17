@@ -1,6 +1,19 @@
 /* eslint-disable no-unused-vars */
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
-import { FontWeightProperty, ColorProperty, FontFamilyProperty, BorderColorProperty, BorderProperty, BorderRadiusProperty, HeightProperty, WidthProperty, FontSizeProperty, LineHeightProperty, PaddingProperty, MarginProperty } from 'csstype';
+import {
+  FontWeightProperty,
+  ColorProperty,
+  FontFamilyProperty,
+  BorderColorProperty,
+  BorderProperty,
+  BorderRadiusProperty,
+  HeightProperty,
+  WidthProperty,
+  FontSizeProperty,
+  LineHeightProperty,
+  PaddingProperty,
+  MarginProperty,
+} from 'csstype';
 
 const px = (value: number): string => value.toString().concat('px');
 

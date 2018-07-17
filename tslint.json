@@ -26,7 +26,10 @@
     ],
     "no-empty-interface": false,
     "no-unused-variable": true,
-    "max-line-length": [true, {"ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |//"}]
+    "max-line-length": [true, {
+      "limit": 120,
+      "ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |//"
+    }]
   },
   "jsRules": {},
   "rulesDirectory": []

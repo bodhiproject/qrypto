@@ -6,7 +6,6 @@ import { inject, observer } from 'mobx-react';
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import BorderTextField from '../../components/BorderTextField';
-import PasswordInput from '../../components/PasswordInput';
 import AppStore from '../../../stores/AppStore';
 
 interface IProps {
@@ -27,7 +26,6 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes, store: { createWalletStore } } = this.props;
-    const matchError = createWalletStore.matchError;
 
     return (
       <div className={classes.root}>
@@ -42,18 +40,6 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
               classNames={classes.walletNameField}
               placeholder="Wallet name"
               onChange={this.onWalletNameChange}
-            />
-            <PasswordInput
-              classNames={classes.passwordField}
-              placeholder="Password"
-              onChange={this.onPasswordChange}
-            />
-            <PasswordInput
-              classNames={classes.confirmPasswordField}
-              placeholder="Confirm password"
-              helperText={matchError}
-              error={!!matchError}
-              onChange={(e: any) => createWalletStore.confirmPassword = e.target.value}
             />
           </div>
           <Button
@@ -84,12 +70,6 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
     const { createWalletStore, saveMnemonicStore } = this.props.store;
     createWalletStore.walletName = event.target.value;
     saveMnemonicStore.walletName = event.target.value;
-  }
-
-  private onPasswordChange = (event: any) => {
-    const { createWalletStore, saveMnemonicStore } = this.props.store;
-    createWalletStore.password = event.target.value;
-    saveMnemonicStore.password = event.target.value;
   }
 }
 

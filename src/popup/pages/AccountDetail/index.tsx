@@ -38,13 +38,12 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
     return (
       <div className={classes.root}>
         <div className={classes.contentContainer}>
-          <Paper className={classes.accountDetailHeader} elevation={2}>
+          <Paper className={classes.accountDetailPaper} elevation={2}>
             <NavBar hasBackButton isDarkTheme title="Account Detail" />
             <AccountInfo />
           </Paper>
-          <Paper elevation={1}>
+          <Paper className={classes.tabsPaper} elevation={1}>
             <Tabs
-              className={classes.tabs}
               fullWidth
               indicatorColor="primary"
               textColor="primary"
@@ -64,7 +63,6 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
                     <Button
                       id="loadingButton"
                       color="primary"
-                      variant="contained"
                       size="small"
                       onClick={() => accountDetailStore.loadMore()}
                       >

@@ -33,7 +33,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   mnemonicTextField: {
     flex: 1,
-    marginBottom: theme.padding.sm,
+    marginBottom: theme.padding.md,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
@@ -41,12 +41,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     padding: theme.padding.sm,
     fontSize: theme.font.lg,
     lineHeight: '20px',
-  },
-  accountNameField: {
-    marginBottom: theme.padding.sm,
-  },
-  passwordField: {
-    marginBottom: theme.padding.sm,
   },
   importButton: {
     height: theme.button.lg.height,
