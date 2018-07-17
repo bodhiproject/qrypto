@@ -73,8 +73,8 @@ export default class WalletStore {
   public login = async (password: string) => {
     this.loading = true;
 
-    // TODO: find solution to unblock UI
-    this.generateAppSalt();
+    // TODO: move logic into content script later to unblock UI
+    this.generateAppSaltIfNecessary();
     try {
       await this.derivePasswordHash(password);
     } catch (err) {
@@ -220,7 +220,7 @@ export default class WalletStore {
   * Generates the appSalt if needed.
   */
   @action
-  private generateAppSalt = () => {
+  private generateAppSaltIfNecessary = () => {
     try {
       if (!this.appSalt) {
         const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
