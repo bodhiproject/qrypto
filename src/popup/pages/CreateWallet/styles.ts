@@ -12,24 +12,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     flexDirection: 'column',
     margin: theme.padding.xl,
   },
-  logoContainerOuter: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoText: {
-    fontSize: 52,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.palette.primary.main,
-    marginBottom: theme.padding.lg,
-    alignSelf: 'center',
-  },
-  logoDesc: {
-    fontSize: 20,
-    color: theme.palette.primary.main,
-  },
   fieldContainer: {
     width: '100%',
     display: 'flex',

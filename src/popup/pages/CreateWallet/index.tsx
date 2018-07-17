@@ -5,6 +5,7 @@ import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
+import Logo from '../../components/Logo';
 import BorderTextField from '../../components/BorderTextField';
 import AppStore from '../../../stores/AppStore';
 
@@ -31,10 +32,7 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
       <div className={classes.root}>
         <NavBar hasBackButton={createWalletStore.showBackButton} hasNetworkSelector title="" />
         <div className={classes.contentContainer}>
-          <div className={classes.logoContainerOuter}>
-            <Typography className={classes.logoText}>Qrypto</Typography>
-            <Typography className={classes.logoDesc}>Create your Qrypto wallet</Typography>
-          </div>
+          <Logo />
           <div className={classes.fieldContainer}>
             <BorderTextField
               classNames={classes.walletNameField}
