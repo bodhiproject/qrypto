@@ -42,6 +42,7 @@ class Login extends Component<WithStyles & IProps, {}> {
         <div className={classes.fieldContainer}>
           <PasswordInput
             classNames={classes.passwordField}
+            autoFocus={true}
             placeholder="Password"
             onChange={(e: any) => loginStore.password = e.target.value}
             onEnterPress={this.onEnterPress}

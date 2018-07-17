@@ -8,6 +8,7 @@ import { handleEnterPress } from '../../../utils';
 const PasswordTextField: React.SFC<any> = ({
   classes,
   classNames,
+  autoFocus,
   placeholder,
   helperText,
   error,
@@ -19,6 +20,7 @@ const PasswordTextField: React.SFC<any> = ({
     <TextField
       className={classes.textField}
       required
+      autoFocus={autoFocus}
       type="password"
       placeholder={placeholder}
       helperText={helperText}
