@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react';
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import AppStore from '../../../stores/AppStore';
+import { handleEnterPress } from '../../../utils';
 
 interface IProps {
   classes: Record<string, string>;
@@ -128,6 +129,11 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
           disableUnderline: true,
         }}
         onChange={(event) => sendStore.amount = event.target.value}
+        onKeyPress={(event) => handleEnterPress(event, () => {
+          if (!sendStore.buttonDisabled) {
+            sendStore.routeToSendConfirm();
+          }
+        })}
       />
     </div>
     {sendStore.amountFieldError && (
