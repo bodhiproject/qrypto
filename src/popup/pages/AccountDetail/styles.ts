@@ -61,7 +61,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: `120px ${theme.padding.lg}`,
+    padding: `110px ${theme.padding.lg}`,
   },
   tokenListComingSoonText: {
     fontSize: theme.font.lg,
