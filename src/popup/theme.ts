@@ -64,7 +64,7 @@ const lineHeightXl: LineHeightProperty<string> = px(32);
 /* Border */
 const borderColor: BorderColorProperty = '#CCCCCC';
 const borderSize: BorderProperty<string> = px(1);
-const borderRadius: BorderRadiusProperty<string> = px(8);
+const borderRadius: BorderRadiusProperty<string> = px(4);
 
 /* Icons */
 const iconSize: WidthProperty<string> | HeightProperty<string> = px(24);
