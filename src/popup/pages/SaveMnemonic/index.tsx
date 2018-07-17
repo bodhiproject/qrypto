@@ -6,6 +6,7 @@ import cx from 'classnames';
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import AppStore from '../../../stores/AppStore';
+import strings from '../../../localization/locales/en_US.json';
 
 interface IProps {
   classes: Record<string, string>;
@@ -27,9 +28,9 @@ class SaveMnemonic extends Component<WithStyles & IProps, {}> {
         <NavBar hasBackButton title={''} />
         <div className={classes.contentContainer}>
           <div className={classes.topContainer}>
-            <Typography className={classes.walletCreatedHeader}>{'Wallet Created'}</Typography>
+            <Typography className={classes.walletCreatedHeader}>{strings.saveMnemonic.walletCreated}</Typography>
             <Typography className={classes.mnemonicText}>{saveMnemonicStore.mnemonic}</Typography>
-            <Typography className={classes.warningText}>{'These words in this specific order are the only way to restore your wallet. Save them somewhere safe and don\'t share them with anyone!'}</Typography>
+            <Typography className={classes.warningText}>{strings.saveMnemonic.warningText}</Typography>
           </div>
           <Button
               className={cx(classes.actionButton, 'marginBottom')}
