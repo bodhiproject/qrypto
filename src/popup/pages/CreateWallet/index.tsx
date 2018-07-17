@@ -40,6 +40,7 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
               classNames={classes.walletNameField}
               placeholder="Wallet name"
               onChange={this.onWalletNameChange}
+              onEnterPress={this.handleEnterPress}
             />
           </div>
           <Button
@@ -70,6 +71,13 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
     const { createWalletStore, saveMnemonicStore } = this.props.store;
     createWalletStore.walletName = event.target.value;
     saveMnemonicStore.walletName = event.target.value;
+  }
+
+  private handleEnterPress = () => {
+    const { createWalletStore } = this.props.store;
+    if (!!createWalletStore.walletName) {
+      createWalletStore.routeToSaveMnemonic();
+    }
   }
 }
 
