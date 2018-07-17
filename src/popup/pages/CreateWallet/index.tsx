@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
+import { Typography, Button, withStyles, WithStyles, Divider } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
@@ -53,6 +53,11 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
           >
             Create Wallet
           </Button>
+          <div className={classes.selectionDividerContainer}>
+            <Divider className={classes.selectionDivider} />
+            <Typography className={classes.selectionDividerText}>or</Typography>
+            <Divider className={classes.selectionDivider} />
+          </div>
           <Button
             className={classes.importButton}
             fullWidth
