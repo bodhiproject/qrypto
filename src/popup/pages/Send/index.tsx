@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react';
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import AppStore from '../../../stores/AppStore';
+import { handleEnterPress } from '../../../utils';
 
 interface IProps {
   classes: Record<string, string>;
@@ -31,14 +32,22 @@ class Send extends Component<WithStyles & IProps, {}> {
         <div className={classes.contentContainer}>
           <div className={classes.fieldsContainer}>
             <FromField {...this.props} />
-            <ToField {...this.props} />
+            <ToField onEnterPress={this.onEnterPress} {...this.props} />
             <TokenField {...this.props} />
-            <AmountField {...this.props} />
+            <AmountField onEnterPress={this.onEnterPress} {...this.props} />
           </div>
           <SendButton {...this.props} />
         </div>
       </div>
     );
+  }
+
+  private onEnterPress = (event: any) => {
+    handleEnterPress(event, () => {
+      if (!this.props.store.sendStore.buttonDisabled) {
+        this.props.store.sendStore.routeToSendConfirm();
+      }
+    });
   }
 }
 
@@ -66,7 +75,7 @@ const FromField = observer(({ classes, store: { sendStore, walletStore: { logged
   </div>
 ));
 
-const ToField = observer(({ classes, store: { sendStore, walletStore: { info } } }: any) => (
+const ToField = observer(({ classes, store: { sendStore, walletStore: { info } }, onEnterPress }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="To" />
     <div className={classes.fieldContentContainer}>
@@ -75,12 +84,15 @@ const ToField = observer(({ classes, store: { sendStore, walletStore: { info } }
         type="text"
         multiline={false}
         placeholder={info.addrStr}
-        helperText={sendStore.receiverFieldError}
-        error={!!sendStore.receiverFieldError}
+        value={sendStore.receiverAddress}
         InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
         onChange={(event) => sendStore.receiverAddress = event.target.value}
+        onKeyPress={onEnterPress}
       />
     </div>
+    {!!sendStore.receiverAddress && sendStore.receiverFieldError && (
+      <Typography className={classes.errorText}>{sendStore.receiverFieldError}</Typography>
+    )}
   </div>
 ));
 
@@ -101,7 +113,7 @@ const TokenField = observer(({ classes, store: { sendStore } }: any) => (
   </div>
 ));
 
-const AmountField = observer(({ classes, store: { walletStore: { info }, sendStore } }: any) => (
+const AmountField = observer(({ classes, store: { walletStore: { info }, sendStore }, onEnterPress }: any) => (
   <div className={classes.amountContainer}>
     <div className={classes.amountHeadingContainer}>
       <div className={classes.amountHeadingTextContainer}>
@@ -122,15 +134,17 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
         multiline={false}
         placeholder={'0.00'}
         value={sendStore.amount}
-        helperText={sendStore.amountFieldError}
-        error={!!sendStore.amountFieldError}
         InputProps={{
           endAdornment: <Typography className={classes.amountTokenAdornment}>{sendStore.token}</Typography>,
           disableUnderline: true,
         }}
         onChange={(event) => sendStore.amount = event.target.value}
+        onKeyPress={onEnterPress}
       />
     </div>
+    {sendStore.amountFieldError && (
+      <Typography className={classes.errorText}>{sendStore.amountFieldError}</Typography>
+    )}
   </div>
 ));
 

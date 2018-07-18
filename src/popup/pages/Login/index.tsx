@@ -14,6 +14,7 @@ import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import PasswordInput from '../../components/PasswordInput';
+import Logo from '../../components/Logo';
 import AppStore from '../../../stores/AppStore';
 
 interface IProps {
@@ -35,24 +36,24 @@ class Login extends Component<WithStyles & IProps, {}> {
 
     return (
       <div className={classes.root}>
-        <div className={classes.logoContainer}>
-          <img className={classes.logo} src={chrome.runtime.getURL('images/logo.png')} alt={'Logo'} />
-          <Typography className={classes.logoText}>Qrypto</Typography>
-        </div>
+        <Logo />
         <div className={classes.fieldContainer}>
           <PasswordInput
             classNames={classes.passwordField}
+            autoFocus={true}
             placeholder="Password"
             onChange={(e: any) => loginStore.password = e.target.value}
+            onEnterPress={this.onEnterPress}
           />
           {!hasAccounts && (
             <Fragment>
               <PasswordInput
-                classNames={classes.confirmPasswordField}
+                classNames={classes.passwordField}
                 placeholder="Confirm password"
-                helperText={matchError}
                 error={!!matchError}
+                errorText={matchError}
                 onChange={(e: any) => loginStore.confirmPassword = e.target.value}
+                onEnterPress={this.onEnterPress}
               />
               <Typography className={classes.masterPwNote}>
                 This will serve as your master password and will be saved when you create or import your first wallet.
@@ -73,6 +74,13 @@ class Login extends Component<WithStyles & IProps, {}> {
         <ErrorDialog {...this.props} />
       </div>
     );
+  }
+
+  private onEnterPress = () => {
+    const { loginStore, walletStore } = this.props.store;
+    if (loginStore.error === false) {
+      walletStore.login(loginStore.password);
+    }
   }
 }
 

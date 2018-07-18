@@ -37,3 +37,15 @@ export const isValidAmount = (amount: number, maxAllowed: number) => {
   }
   return true;
 };
+
+/*
+* Handles the Enter key pressed of an input field.
+* @param event The event object.
+* @param onEnter The function callback to execute.
+*/
+export const handleEnterPress = (event: any, onEnter: any) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    onEnter();
+  }
+};

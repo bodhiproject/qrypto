@@ -55,6 +55,7 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
               <BorderTextField
                 placeholder="Wallet name"
                 onChange={(e: any) => importStore.accountName = e.target.value}
+                onEnterPress={this.handleEnterPress}
               />
             </div>
           </div>
@@ -81,6 +82,13 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
         </div>
       </div>
     );
+  }
+
+  private handleEnterPress = () => {
+    const { importStore } = this.props.store;
+    if (!importStore.error) {
+      importStore.importNewMnemonic();
+    }
   }
 }
 

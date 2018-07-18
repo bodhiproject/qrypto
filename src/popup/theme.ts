@@ -21,7 +21,7 @@ const px = (value: number): string => value.toString().concat('px');
 const colorWhite: ColorProperty = '#FFFFFF';
 const colorGray: ColorProperty = '#747474';
 const colorOrange: ColorProperty = '#F5A623';
-const colorRed: ColorProperty = '#E50000';
+const colorRed: ColorProperty = '#D0021B';
 
 const primaryColor: ColorProperty = '#5539DF';
 const primaryColorDark: ColorProperty = '#5539DF';
@@ -31,8 +31,8 @@ const secondaryColor: ColorProperty = colorWhite;
 const secondaryColorLight: ColorProperty = colorWhite;
 const secondaryColorDark: ColorProperty = colorWhite;
 
-const textColorPrimary: ColorProperty = '#333333';
-const textColorSecondary: ColorProperty = colorGray;
+const textColorPrimary: ColorProperty = 'rgba(0, 0, 0, 0.8)';
+const textColorSecondary: ColorProperty = 'rgba(0, 0, 0, 0.5)';
 
 const gradientPurple: ColorProperty = `linear-gradient(300.29deg, ${primaryColorLight} -9.7%, ${primaryColor} 85.28%)`;
 
@@ -64,7 +64,7 @@ const lineHeightXl: LineHeightProperty<string> = px(32);
 /* Border */
 const borderColor: BorderColorProperty = '#CCCCCC';
 const borderSize: BorderProperty<string> = px(1);
-const borderRadius: BorderRadiusProperty<string> = px(8);
+const borderRadius: BorderRadiusProperty<string> = px(4);
 
 /* Icons */
 const iconSize: WidthProperty<string> | HeightProperty<string> = px(24);

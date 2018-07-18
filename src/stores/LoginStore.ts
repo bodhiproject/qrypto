@@ -18,9 +18,7 @@ export default class LoginStore {
   }
   @computed public get error(): boolean {
     const matchError = this.getMatchError();
-    return this.app.walletStore.appSalt
-      ? isEmpty(this.password)
-      : [this.password, this.confirmPassword].some(isEmpty) || !!matchError;
+    return (!this.app.walletStore.hasAccounts && !!matchError) || isEmpty(this.password);
   }
 
   private app: AppStore;
@@ -37,7 +35,7 @@ export default class LoginStore {
 
   private getMatchError = (): string | undefined => {
     let error;
-    if (!isEmpty(this.password) && !isEmpty(this.confirmPassword) && this.password !== this.confirmPassword) {
+    if (this.password !== this.confirmPassword) {
       error = 'Passwords do not match.';
     }
     return error;

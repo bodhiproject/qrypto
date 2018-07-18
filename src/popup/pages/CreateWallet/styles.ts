@@ -12,24 +12,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     flexDirection: 'column',
     margin: theme.padding.xl,
   },
-  logoContainerOuter: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoText: {
-    fontSize: 52,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.palette.primary.main,
-    marginBottom: theme.padding.lg,
-    alignSelf: 'center',
-  },
-  logoDesc: {
-    fontSize: 20,
-    color: theme.palette.primary.main,
-  },
   fieldContainer: {
     width: '100%',
     display: 'flex',
@@ -40,9 +22,25 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   loginButton: {
     height: theme.button.lg.height,
-    marginBottom: theme.padding.sm,
+    marginBottom: theme.padding.lg,
     borderRadius: theme.button.lg.radius,
     display: 'flex',
+  },
+  selectionDividerContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: theme.padding.lg,
+  },
+  selectionDivider: {
+    flex: 1,
+  },
+  selectionDividerText: {
+    fontSize: theme.font.sm,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.palette.text.secondary,
+    margin: `0px ${theme.padding.md}`,
   },
   importButton: {
     minHeight: 0,

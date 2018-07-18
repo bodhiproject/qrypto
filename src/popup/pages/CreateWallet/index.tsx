@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
+import { Typography, Button, withStyles, WithStyles, Divider } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
+import Logo from '../../components/Logo';
 import BorderTextField from '../../components/BorderTextField';
 import AppStore from '../../../stores/AppStore';
 
@@ -31,15 +32,13 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
       <div className={classes.root}>
         <NavBar hasBackButton={createWalletStore.showBackButton} hasNetworkSelector title="" />
         <div className={classes.contentContainer}>
-          <div className={classes.logoContainerOuter}>
-            <Typography className={classes.logoText}>Qrypto</Typography>
-            <Typography className={classes.logoDesc}>Create your Qrypto wallet</Typography>
-          </div>
+          <Logo />
           <div className={classes.fieldContainer}>
             <BorderTextField
               classNames={classes.walletNameField}
               placeholder="Wallet name"
               onChange={this.onWalletNameChange}
+              onEnterPress={this.handleEnterPress}
             />
           </div>
           <Button
@@ -52,6 +51,11 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
           >
             Create Wallet
           </Button>
+          <div className={classes.selectionDividerContainer}>
+            <Divider className={classes.selectionDivider} />
+            <Typography className={classes.selectionDividerText}>or</Typography>
+            <Divider className={classes.selectionDivider} />
+          </div>
           <Button
             className={classes.importButton}
             fullWidth
@@ -70,6 +74,13 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
     const { createWalletStore, saveMnemonicStore } = this.props.store;
     createWalletStore.walletName = event.target.value;
     saveMnemonicStore.walletName = event.target.value;
+  }
+
+  private handleEnterPress = () => {
+    const { createWalletStore } = this.props.store;
+    if (!!createWalletStore.walletName) {
+      createWalletStore.routeToSaveMnemonic();
+    }
   }
 }
 

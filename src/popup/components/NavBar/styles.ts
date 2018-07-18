@@ -2,7 +2,7 @@ import { StyleRulesCallback, Theme } from '@material-ui/core';
 
 const styles: StyleRulesCallback = (theme: Theme) => ({
   root: {
-    margin: theme.padding.xs,
+    margin: theme.padding.md,
     flexDirection: 'row',
     display: 'flex',
   },

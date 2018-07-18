@@ -56,6 +56,18 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     color: theme.color.gray,
     marginLeft: theme.padding.xs,
   },
+  tokenListComingSoonItem: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: `110px ${theme.padding.lg}`,
+  },
+  tokenListComingSoonText: {
+    fontSize: theme.font.lg,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.palette.text.primary,
+  },
   tokenInfoContainer: {
     width: '100%',
     display: 'flex',
