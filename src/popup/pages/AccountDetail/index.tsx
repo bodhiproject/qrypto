@@ -17,14 +17,18 @@ interface IProps {
 
 @inject('store')
 @observer
-
 class AccountDetail extends Component<WithStyles & IProps, {}> {
+
   public handleTabChange = (_: object, idx: number) => {
     this.props.store.accountDetailStore.activeTabIdx = idx;
   }
 
   public componentDidMount() {
-    this.props.store.accountDetailStore.loadFromWallet();
+    this.props.store.accountDetailStore.startTxPolling();
+  }
+
+  public componentWillUnmount() {
+    this.props.store.accountDetailStore.stopTxPolling();
   }
 
   public render() {
@@ -101,7 +105,8 @@ const TransactionList = ({ classes, transactions }: any) =>
         <KeyboardArrowRight className={classes.arrowRight} />
       </div>
     </ListItem>
-  ));
+  ),
+);
 
 const TokenListComingSoon = ({ classes }: any) => (
   <ListItem className={classes.tokenListComingSoonItem}>
