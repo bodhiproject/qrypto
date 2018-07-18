@@ -239,7 +239,7 @@ export default class WalletStore {
           this.testnetAccounts = toJS(testnetAccounts);
         }
 
-        if (networkIndex === 0 || networkIndex === 1) {
+        if (networkIndex !== undefined) {
           this.app.networkStore.networkIndex = networkIndex;
         }
 
