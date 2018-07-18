@@ -1,5 +1,5 @@
 import chromeCall from 'chrome-call';
-import { WalletRPCProvider, networks, Wallet } from 'qtumjs-wallet';
+import { WalletRPCProvider, networks, Wallet, Network } from 'qtumjs-wallet';
 
 import { IExtensionMessageData, IExtensionAPIMessage, IRPCCallRequestPayload } from '../types';
 import { TARGET_NAME, API_TYPE, STORAGE } from '../constants';
@@ -93,8 +93,12 @@ async function handleRPCCallMessage(message: IRPCCallRequestPayload) {
   });
 }
 
-async function getRpcProvider(isMainNet: boolean, privateKeyHash: string, passwordHash: string): Promise<Wallet> {
-  const network = networks[isMainNet ? 'mainnet' : 'testnet'];
-  const wallet = await network.fromEncryptedPrivateKey(privateKeyHash, passwordHash, { N: 8192, r: 8, p: 1 });
+async function getRpcProvider(
+  isMainNet: boolean,
+  privateKeyHash: string,
+  passwordHash: string,
+): Promise<WalletRPCProvider> {
+  const network: Network = networks[isMainNet ? 'mainnet' : 'testnet'];
+  const wallet: Wallet = await network.fromEncryptedPrivateKey(privateKeyHash, passwordHash, { N: 8192, r: 8, p: 1 });
   return new WalletRPCProvider(wallet);
 }

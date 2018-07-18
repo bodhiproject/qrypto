@@ -10,8 +10,11 @@ const INIT_VALUES = {
 
 export default class CreateWalletStore {
   @observable public walletName: string = INIT_VALUES.walletName;
+  @computed public get walletNameError(): string | undefined {
+    return this.app.walletStore.isWalletNameTaken(this.walletName) ? 'Wallet name is taken' : undefined;
+  }
   @computed public get error(): boolean {
-    return isEmpty(this.walletName);
+    return isEmpty(this.walletName) || !!this.walletNameError;
   }
   public showBackButton: boolean = INIT_VALUES.showBackButton;
 

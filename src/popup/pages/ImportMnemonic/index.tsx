@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Typography, TextField, Button, withStyles, WithStyles } from '@material-ui/core';
+import { Typography, TextField, Button, withStyles, WithStyles, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
@@ -54,6 +54,8 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
               />
               <BorderTextField
                 placeholder="Wallet name"
+                error={!!importStore.walletNameError}
+                errorText={importStore.walletNameError}
                 onChange={(e: any) => importStore.accountName = e.target.value}
                 onEnterPress={this.handleEnterPress}
               />
@@ -80,6 +82,7 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
             </Button>
           </div>
         </div>
+        <ErrorDialog {...this.props} />
       </div>
     );
   }
@@ -91,5 +94,21 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
     }
   }
 }
+
+const ErrorDialog: React.SFC<any> = observer(({ store: { importStore }}: any) => (
+  <Dialog
+    disableBackdropClick
+    open={!!importStore.invalidMnemonic}
+    onClose={() => importStore.invalidMnemonic = false}
+  >
+    <DialogTitle>Invalid Seed Phrase</DialogTitle>
+    <DialogContent>
+      <DialogContentText>This seed phrase has been used already.</DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => importStore.invalidMnemonic = false} color="primary">Close</Button>
+    </DialogActions>
+  </Dialog>
+));
 
 export default withStyles(styles)(ImportMnemonic);

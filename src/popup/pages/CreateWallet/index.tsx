@@ -27,6 +27,7 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes, store: { createWalletStore } } = this.props;
+    console.log(createWalletStore.walletNameError);
 
     return (
       <div className={classes.root}>
@@ -37,6 +38,8 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
             <BorderTextField
               classNames={classes.walletNameField}
               placeholder="Wallet name"
+              error={!!createWalletStore.walletNameError}
+              errorText={createWalletStore.walletNameError}
               onChange={this.onWalletNameChange}
               onEnterPress={this.handleEnterPress}
             />
