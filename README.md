@@ -1,3 +1,13 @@
+# Running Dev Version
+### Chrome
+1. `yarn start` in the project folder to build the dev version and wait for it to be built
+2. Open Chrome and load URL: `chrome://extensions`
+3. Turn `Developer mode` on in the top right
+4. At the top, click `Load Unpacked Extension`
+5. Navigate to your `qrypto/dist` folder
+6. Click `Select`. The extension should now be loaded
+7. Click on the Qrypto logo in your Chrome extensions bar to open
+
 # Security Flow
 **First Time Flow**
 1. `appSalt` is generated on a per-install basis
