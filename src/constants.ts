@@ -18,6 +18,7 @@ export enum STORAGE {
   TESTNET_ACCOUNTS = 'testnetAccounts',
   MAINNET_ACCOUNTS = 'mainnetAccounts',
   LOGGED_IN_ACCOUNT = 'loggedInAccount',
+  NETWORK_INDEX = 'networkIndex',
 }
 
 export enum SEND_STATE {

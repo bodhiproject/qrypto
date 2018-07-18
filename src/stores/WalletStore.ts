@@ -223,9 +223,9 @@ export default class WalletStore {
   * Initializes all the values from Chrome storage on startup.
   */
   private fetchStorageValues = () => {
-    const { APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS } = STORAGE;
-    chrome.storage.local.get([APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS],
-      ({ appSalt, mainnetAccounts, testnetAccounts }: any) => {
+    const { APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, NETWORK_INDEX } = STORAGE;
+    chrome.storage.local.get([APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, NETWORK_INDEX],
+      ({ appSalt, mainnetAccounts, testnetAccounts, networkIndex }: any) => {
         if (!isEmpty(appSalt)) {
           const array = split(appSalt, ',').map((str) => parseInt(str, 10));
           this.appSalt =  Uint8Array.from(array);
@@ -237,6 +237,10 @@ export default class WalletStore {
 
         if (!isEmpty(testnetAccounts)) {
           this.testnetAccounts = toJS(testnetAccounts);
+        }
+
+        if (networkIndex !== undefined) {
+          this.app.networkStore.networkIndex = networkIndex;
         }
 
         // Show the Login page after fetching storage
