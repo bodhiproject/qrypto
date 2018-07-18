@@ -27,8 +27,8 @@ export default class AccountDetailStore {
   }
 
   @action public async loadMore() {
-    const txs = await this.load(this.pageNum + 1);
     this.pageNum = this.pageNum + 1;
+    const txs = await this.load(this.pageNum);
     this.items = this.items.concat(txs);
   }
 
@@ -39,7 +39,7 @@ export default class AccountDetailStore {
     }, AccountDetailStore.GET_TX_INTERVAL_MS);
   }
 
-  public stopTxPolling = () => {
+  @action public stopTxPolling = () => {
     if (this.getTransactionsInterval) {
       clearInterval(this.getTransactionsInterval);
       this.pageNum = 0;
@@ -47,13 +47,10 @@ export default class AccountDetailStore {
   }
 
   // TODO - if a new transaction comes in, the transactions on a page will shift(ie if 1 page has 10 transactions, transaction number 10 shifts to page2), and the bottom most transaction would disappear from the list. Need to add some additional logic to keep the bottom most transaction displaying.
-  @action
-  public async refreshTransactions() {
+  @action public async refreshTransactions() {
     let refreshedItems: Transaction[] = [];
-    let txs: Transaction[];
     for (let i = 0; i <= this.pageNum; i++) {
-      txs = await this.load(i);
-      refreshedItems = refreshedItems.concat(txs);
+      refreshedItems = refreshedItems.concat(await this.load(i));
     }
     this.items = refreshedItems;
   }
