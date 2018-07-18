@@ -367,12 +367,12 @@ export default class WalletStore {
       {
         [STORAGE.LOGGED_IN_ACCOUNT]: {
           isMainNet: this.app.networkStore.isMainNet,
-          name: this.loggedInAccount!.name!,
-          privateKeyHash: this.loggedInAccount!.privateKeyHash!,
+          name: this.loggedInAccount!.name,
+          privateKeyHash: this.loggedInAccount!.privateKeyHash,
           passwordHash: this.passwordHash,
         },
       },
-      () => console.log('Logged in account info saved to local storage', info),
+      () => console.log('Logged in account info saved to local storage', this.loggedInAccount!.name),
     );
   }
 
