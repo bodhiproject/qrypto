@@ -23,10 +23,6 @@ interface IState {
 
 @observer
 class App extends Component<IProps, IState> {
-  public componentWillUnmount() {
-    store.walletStore.stopPolling();
-  }
-
   public render() {
     return (
       <MobxProvider store={store} >

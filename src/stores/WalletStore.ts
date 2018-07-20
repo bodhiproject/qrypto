@@ -24,8 +24,8 @@ const INIT_VALUES = {
 export default class WalletStore {
   private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
-  private static GET_INFO_INTERVAL_MS: number = 3000;
-  private static GET_PRICE_INTERVAL_MS: number = 3000;
+  private static GET_INFO_INTERVAL_MS: number = 30000;
+  private static GET_PRICE_INTERVAL_MS: number = 60000;
 
   @observable public loading = INIT_VALUES.loading;
   @observable public appSalt?: Uint8Array = INIT_VALUES.appSalt;
@@ -57,8 +57,8 @@ export default class WalletStore {
     return this.passwordHash!;
   }
   private app: AppStore;
-  private getInfoInterval?: any = undefined;
-  private getPriceInterval?: any = undefined;
+  private getInfoInterval?: number = undefined;
+  private getPriceInterval?: number = undefined;
 
   constructor(app: AppStore) {
     this.app = app;
@@ -101,31 +101,27 @@ export default class WalletStore {
   }
 
   @action
-  public async startPolling() {
+  public startPolling = async () => {
     await this.getWalletInfo();
     await this.getQtumPrice();
 
-    this.getInfoInterval = setInterval(() => {
-      console.log('getInfoInterval');
+    this.getInfoInterval = window.setInterval(() => {
       this.getWalletInfo();
     }, WalletStore.GET_INFO_INTERVAL_MS);
-    this.getPriceInterval = setInterval(() => {
-      console.log('getPriceInterval');
+    this.getPriceInterval = window.setInterval(() => {
       this.getQtumPrice();
     }, WalletStore.GET_PRICE_INTERVAL_MS);
   }
 
   @action
-  public stopPolling() {
-    console.log(this.getInfoInterval);
+  public stopPolling = () => {
     if (this.getInfoInterval) {
-      console.log('clearing getInfoInterval');
       clearInterval(this.getInfoInterval);
+      this.getInfoInterval = undefined;
     }
-    console.log(this.getPriceInterval);
     if (this.getPriceInterval) {
-      console.log('clearing getPriceInterval');
       clearInterval(this.getPriceInterval);
+      this.getPriceInterval = undefined;
     }
   }
 
@@ -382,7 +378,7 @@ export default class WalletStore {
           passwordHash: this.passwordHash,
         },
       },
-      () => console.log('loggedInAccount saved in storage', this.loggedInAccount!.name),
+      () => console.log('loggedInAccount saved in storage'),
     );
   }
 
