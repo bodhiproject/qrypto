@@ -57,8 +57,8 @@ export default class WalletStore {
     return this.passwordHash!;
   }
   private app: AppStore;
-  private getInfoInterval?: NodeJS.Timer = undefined;
-  private getPriceInterval?: NodeJS.Timer = undefined;
+  private getInfoInterval?: number = undefined;
+  private getPriceInterval?: number = undefined;
 
   constructor(app: AppStore) {
     this.app = app;
@@ -105,10 +105,10 @@ export default class WalletStore {
     await this.getWalletInfo();
     await this.getQtumPrice();
 
-    this.getInfoInterval = setInterval(() => {
+    this.getInfoInterval = window.setInterval(() => {
       this.getWalletInfo();
     }, WalletStore.GET_INFO_INTERVAL_MS);
-    this.getPriceInterval = setInterval(() => {
+    this.getPriceInterval = window.setInterval(() => {
       this.getQtumPrice();
     }, WalletStore.GET_PRICE_INTERVAL_MS);
   }
