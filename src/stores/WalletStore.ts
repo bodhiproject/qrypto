@@ -57,8 +57,8 @@ export default class WalletStore {
     return this.passwordHash!;
   }
   private app: AppStore;
-  private getInfoInterval?: NodeJS.Timer = undefined;
-  private getPriceInterval?: NodeJS.Timer = undefined;
+  private getInfoInterval?: number = undefined;
+  private getPriceInterval?: number = undefined;
 
   constructor(app: AppStore) {
     this.app = app;
@@ -101,25 +101,27 @@ export default class WalletStore {
   }
 
   @action
-  public async startPolling() {
+  public startPolling = async () => {
     await this.getWalletInfo();
     await this.getQtumPrice();
 
-    this.getInfoInterval = setInterval(() => {
+    this.getInfoInterval = window.setInterval(() => {
       this.getWalletInfo();
     }, WalletStore.GET_INFO_INTERVAL_MS);
-    this.getPriceInterval = setInterval(() => {
+    this.getPriceInterval = window.setInterval(() => {
       this.getQtumPrice();
     }, WalletStore.GET_PRICE_INTERVAL_MS);
   }
 
   @action
-  public stopPolling() {
+  public stopPolling = () => {
     if (this.getInfoInterval) {
       clearInterval(this.getInfoInterval);
+      this.getInfoInterval = undefined;
     }
     if (this.getPriceInterval) {
       clearInterval(this.getPriceInterval);
+      this.getPriceInterval = undefined;
     }
   }
 
@@ -376,14 +378,14 @@ export default class WalletStore {
           passwordHash: this.passwordHash,
         },
       },
-      () => console.log('Logged in account info saved to local storage', this.loggedInAccount!.name),
+      () => console.log('loggedInAccount saved in storage'),
     );
   }
 
   private removeLoggedInAccountFromStorage() {
     return chrome.storage.local.remove(
       STORAGE.LOGGED_IN_ACCOUNT,
-      () => console.log('Logged in account info removed from local storage'),
+      () => console.log('loggedInAccount removed from storage'),
     );
   }
 }

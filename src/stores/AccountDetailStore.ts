@@ -18,7 +18,7 @@ export default class AccountDetailStore {
     return !!this.pagesTotal && (this.pagesTotal > this.pageNum + 1);
   }
 
-  private getTransactionsInterval?: NodeJS.Timer = undefined;
+  private getTransactionsInterval?: number = undefined;
 
   constructor(private app: AppStore) {}
 
@@ -34,7 +34,7 @@ export default class AccountDetailStore {
 
   public startTxPolling = () => {
     this.loadFromWallet();
-    this.getTransactionsInterval = setInterval(() => {
+    this.getTransactionsInterval = window.setInterval(() => {
       this.refreshTransactions();
     }, AccountDetailStore.GET_TX_INTERVAL_MS);
   }

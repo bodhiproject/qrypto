@@ -15,10 +15,6 @@ interface IProps {
 @inject('store')
 @observer
 class Home extends Component<WithStyles & IProps, {}> {
-  public componentDidMount() {
-    this.props.store.walletStore.startPolling();
-  }
-
   public render() {
     const { classes } = this.props;
 

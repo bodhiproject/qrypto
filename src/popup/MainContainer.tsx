@@ -14,14 +14,20 @@ import AccountDetail from './pages/AccountDetail';
 import Send from './pages/Send';
 import Receive from './pages/Receive';
 import SendConfirm from './pages/SendConfirm';
+import AppStore from '../stores/AppStore';
 
 interface IProps {
   history: SynchronizedHistory;
+  store?: AppStore;
 }
 
 @inject('store')
 @observer
 export default class MainContainer extends Component<IProps, {}> {
+  public componentWillUnmount() {
+    this.props.store!.walletStore.stopPolling();
+  }
+
   public render() {
     const { history, store: { walletStore: { loading } } }: any = this.props;
 
