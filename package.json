@@ -1,6 +1,6 @@
 {
   "name": "qrypto",
-  "version": "1.0.0-alpha",
+  "version": "0.0.1-alpha",
   "scripts": {
     "start": "yarn clean && mkdir dist && ./scripts/create-empty-thunk.sh && webpack --watch --devtool eval-cheap-module-source-map & yarn css-types -w",
     "build": "yarn clean && webpack && ./scripts/create-empty-thunk.sh",
