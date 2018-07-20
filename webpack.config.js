@@ -1,8 +1,8 @@
-const path = require('path')
-const webpack = require('webpack')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const autoprefixer = require('autoprefixer')
+const path = require('path');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const autoprefixer = require('autoprefixer');
 
 const styleLoaders = {
   fallback: {
@@ -116,5 +116,17 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: 'static' },
     ]),
-  ]
+  ],
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        uglifyOptions: {
+          mangle: {
+            safari10: true,
+            keep_fnames: true,
+          },
+        },
+      }),
+    ]
+  }
 }
