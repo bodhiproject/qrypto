@@ -24,8 +24,8 @@ const INIT_VALUES = {
 export default class WalletStore {
   private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
-  private static GET_INFO_INTERVAL_MS: number = 30000;
-  private static GET_PRICE_INTERVAL_MS: number = 60000;
+  private static GET_INFO_INTERVAL_MS: number = 3000;
+  private static GET_PRICE_INTERVAL_MS: number = 3000;
 
   @observable public loading = INIT_VALUES.loading;
   @observable public appSalt?: Uint8Array = INIT_VALUES.appSalt;
@@ -57,8 +57,8 @@ export default class WalletStore {
     return this.passwordHash!;
   }
   private app: AppStore;
-  private getInfoInterval?: number = undefined;
-  private getPriceInterval?: number = undefined;
+  private getInfoInterval?: any = undefined;
+  private getPriceInterval?: any = undefined;
 
   constructor(app: AppStore) {
     this.app = app;
@@ -105,20 +105,26 @@ export default class WalletStore {
     await this.getWalletInfo();
     await this.getQtumPrice();
 
-    this.getInfoInterval = window.setInterval(() => {
+    this.getInfoInterval = setInterval(() => {
+      console.log('getInfoInterval');
       this.getWalletInfo();
     }, WalletStore.GET_INFO_INTERVAL_MS);
-    this.getPriceInterval = window.setInterval(() => {
+    this.getPriceInterval = setInterval(() => {
+      console.log('getPriceInterval');
       this.getQtumPrice();
     }, WalletStore.GET_PRICE_INTERVAL_MS);
   }
 
   @action
   public stopPolling() {
+    console.log(this.getInfoInterval);
     if (this.getInfoInterval) {
+      console.log('clearing getInfoInterval');
       clearInterval(this.getInfoInterval);
     }
+    console.log(this.getPriceInterval);
     if (this.getPriceInterval) {
+      console.log('clearing getPriceInterval');
       clearInterval(this.getPriceInterval);
     }
   }
@@ -376,14 +382,14 @@ export default class WalletStore {
           passwordHash: this.passwordHash,
         },
       },
-      () => console.log('Logged in account info saved to local storage', this.loggedInAccount!.name),
+      () => console.log('loggedInAccount saved in storage', this.loggedInAccount!.name),
     );
   }
 
   private removeLoggedInAccountFromStorage() {
     return chrome.storage.local.remove(
       STORAGE.LOGGED_IN_ACCOUNT,
-      () => console.log('Logged in account info removed from local storage'),
+      () => console.log('loggedInAccount removed from storage'),
     );
   }
 }

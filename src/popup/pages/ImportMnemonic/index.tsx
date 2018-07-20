@@ -24,10 +24,6 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
     this.props.store.importStore.reset();
   }
 
-  public componentDidMount() {
-    this.props.store.walletStore.stopPolling();
-  }
-
   public render() {
     const { classes, store: { importStore } }: any = this.props;
 

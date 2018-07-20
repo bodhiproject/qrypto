@@ -27,7 +27,6 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes, store: { createWalletStore } } = this.props;
-    console.log(createWalletStore.walletNameError);
 
     return (
       <div className={classes.root}>
