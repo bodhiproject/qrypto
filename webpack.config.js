@@ -110,81 +110,9 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'all',
-      chunks: ['background', 'contentscript', 'popup', 'inpage'],
-      minChunks: 4,
-      filename: 'commons.[name].js'
-    }),
-
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'exclude-background',
-      chunks: ['contentscript', 'popup', 'inpage'],
-      minChunks: 3,
-      filename: 'commons.[name].js'
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'exclude-contentscript',
-      chunks: ['background', 'popup', 'inpage'],
-      minChunks: 3,
-      filename: 'commons.[name].js'
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'exclude-popup',
-      chunks: ['background', 'contentscript', 'inpage'],
-      minChunks: 3,
-      filename: 'commons.[name].js'
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'exclude-inpage',
-      chunks: ['background', 'contentscript', 'popup'],
-      minChunks: 3,
-      filename: 'commons.[name].js'
-    }),
-
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'background-contentscript',
-      chunks: ['background', 'contentscript'],
-      minChunks: 2,
-      filename: 'commons.[name].js'
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'background-popup',
-      chunks: ['background', 'popup'],
-      minChunks: 2,
-      filename: 'commons.[name].js'
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'background-inpage',
-      chunks: ['background', 'inpage'],
-      minChunks: 2,
-      filename: 'commons.[name].js'
-    }),
-
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'contentscript-popup',
-      chunks: ['contentscript', 'popup'],
-      minChunks: 2,
-      filename: 'commons.[name].js'
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'contentscript-inpage',
-      chunks: ['contentscript', 'inpage'],
-      minChunks: 2,
-      filename: 'commons.[name].js'
-    }),
-
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'popup-inpage',
-      chunks: ['popup', 'inpage'],
-      minChunks: 2,
-      filename: 'commons.[name].js'
-    }),
-
     new ExtractTextPlugin({
       filename: '[name].css',
     }),
-
     new CopyWebpackPlugin([
       { from: 'static' },
     ]),
