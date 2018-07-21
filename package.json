@@ -3,9 +3,9 @@
   "version": "0.0.1-alpha",
   "private": true,
   "scripts": {
-    "start": "yarn clean && mkdir dist && ./scripts/create-empty-thunk.sh && webpack --watch --devtool eval-cheap-module-source-map & yarn css-types -w",
-    "build": "yarn clean && webpack -p && ./scripts/create-empty-thunk.sh",
     "clean": "rm -rf dist",
+    "start": "yarn clean && mkdir dist && ./scripts/create-empty-thunk.sh && webpack --config webpack.dev.config.js --watch --devtool eval-cheap-module-source-map & yarn css-types -w",
+    "build": "yarn clean && webpack -p --config webpack.prod.config.js && ./scripts/create-empty-thunk.sh",
     "css-types": "tcm src",
     "postinstall": "yarn css-types",
     "linter": "tslint --project .",

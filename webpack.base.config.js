@@ -1,5 +1,4 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const autoprefixer = require('autoprefixer');
@@ -35,10 +34,10 @@ const styleLoaders = {
 
 module.exports = {
   entry: {
-    background: ['./src/background/index.ts'],
-    contentscript: ['./src/contentscript/index.ts'],
-    inpage: ['./src/inpage/index.ts'],
-    popup: ['./src/popup/index.tsx'],
+    background: './src/background/index.ts',
+    contentscript: './src/contentscript/index.ts',
+    inpage: './src/inpage/index.ts',
+    popup: './src/popup/index.tsx',
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -117,16 +116,4 @@ module.exports = {
       { from: 'static' },
     ]),
   ],
-  optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        uglifyOptions: {
-          mangle: {
-            safari10: true,
-            keep_fnames: true,
-          },
-        },
-      }),
-    ]
-  }
 }
