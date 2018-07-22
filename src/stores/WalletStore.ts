@@ -5,7 +5,7 @@ import axios from 'axios';
 import scrypt from 'scryptsy';
 
 import AppStore from './AppStore';
-import { STORAGE } from '../constants';
+import { STORAGE, MESSAGE_TYPE } from '../constants';
 import Account from '../models/Account';
 import QryNetwork from '../models/QryNetwork';
 
@@ -71,33 +71,27 @@ export default class WalletStore {
   */
   @action
   public login = async (password: string) => {
-    this.loading = true;
+    this.generateAppSaltIfNecessary();
+    try {
+      await this.derivePasswordHash(password);
+    } catch (err) {
+      throw err;
+    }
 
-    // TODO: move logic into content script later to unblock UI
-    runInAction(async () => {
-      this.generateAppSaltIfNecessary();
-      try {
-        await this.derivePasswordHash(password);
-      } catch (err) {
-        throw err;
-      }
+    if (!this.hasAccounts) {
+      // New user. No created wallets yet. No need to validate.
+      this.routeToAccountPage();
+      return;
+    }
 
-      if (!this.hasAccounts) {
-        // New user. No created wallets yet. No need to validate.
-        this.routeToAccountPage();
-        return;
-      }
+    const isPwValid = await this.validatePassword();
+    if (isPwValid) {
+      this.routeToAccountPage();
+      return;
+    }
 
-      const isPwValid = await this.validatePassword();
-      if (isPwValid) {
-        this.routeToAccountPage();
-        return;
-      }
-
-      // Invalid password, display error dialog
-      this.app.loginStore.invalidPassword = true;
-      this.loading = false;
-    });
+    // Invalid password, display error dialog
+    this.app.loginStore.invalidPassword = true;
   }
 
   @action
@@ -333,12 +327,11 @@ export default class WalletStore {
     const accounts = this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     if (isEmpty(accounts)) {
       // Account not found, route to Create Wallet page
-      this.app.routerStore.push('/create-wallet');
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS });
     } else {
       // Accounts found, route to Account Login page
-      this.app.routerStore.push('/account-login');
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_WITH_ACCOUNTS });
     }
-    this.loading = false;
   }
 
   /*

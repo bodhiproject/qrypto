@@ -1,18 +1,18 @@
-import { TARGET_NAME } from '../constants';
-import { isMessageNotValid } from '../utils';
+import { MESSAGE_TYPE } from '../constants';
+import { handleLogin } from './login';
 
-window.addEventListener('message', handleBackgroundMessage, false);
+const onMessage = (request: any, sender: chrome.runtime.MessageSender) => {
+  console.log('request', request);
+  console.log('sender', sender);
 
-function handleBackgroundMessage(event: MessageEvent) {
-  if (isMessageNotValid(event, TARGET_NAME.BACKGROUND)) {
-    return;
-  }
+  switch (request.type) {
+    case MESSAGE_TYPE.LOGIN:
+      handleLogin(request);
+      break;
 
-  const message: IExtensionAPIMessage<any> = event.data.message;
-  switch (message.type) {
-    case API_TYPE.RPC_RESONSE:
-      return handleRpcCallResponse(message.payload);
     default:
-      throw Error(`Background processing invalid type: ${message}`);
+      break;
   }
-}
+};
+
+chrome.runtime.onMessage.addListener(onMessage);

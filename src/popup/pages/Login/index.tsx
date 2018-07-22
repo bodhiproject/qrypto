@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { withRouter } from 'react-router';
 import {
   Typography,
   Button,
@@ -16,6 +17,7 @@ import styles from './styles';
 import PasswordInput from '../../components/PasswordInput';
 import Logo from '../../components/Logo';
 import AppStore from '../../../stores/AppStore';
+import { MESSAGE_TYPE } from '../../../constants';
 
 interface IProps {
   classes: Record<string, string>;
@@ -77,9 +79,10 @@ class Login extends Component<WithStyles & IProps, {}> {
   }
 
   private onEnterPress = () => {
-    const { loginStore, walletStore } = this.props.store;
+    const { history, store: { loginStore } }: any = this.props;
     if (loginStore.error === false) {
-      walletStore.login(loginStore.password);
+      history.push('/loading');
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN, password: loginStore.password });
     }
   }
 }
@@ -100,4 +103,4 @@ const ErrorDialog: React.SFC<any> = observer(({ store: { loginStore }}: any) => 
   </Dialog>
 ));
 
-export default withStyles(styles)(Login);
+export default withRouter<any>(withStyles(styles)(Login));

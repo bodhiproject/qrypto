@@ -14,6 +14,12 @@ export enum API_TYPE {
   RPC_RESONSE,
 }
 
+export enum MESSAGE_TYPE {
+  LOGIN,
+  LOGIN_SUCCESS_WITH_ACCOUNTS,
+  LOGIN_SUCCESS_NO_ACCOUNTS,
+}
+
 export enum STORAGE {
   APP_SALT = 'appSalt',
   TESTNET_ACCOUNTS = 'testnetAccounts',
