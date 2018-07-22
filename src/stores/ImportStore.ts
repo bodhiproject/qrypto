@@ -1,4 +1,4 @@
-import { observable, action, computed, runInAction } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
@@ -28,27 +28,6 @@ export default class ImportStore {
 
   @action
   public reset = () => Object.assign(this, INIT_VALUES)
-
-  @action
-  public importNewMnemonic = async () => {
-    this.app.walletStore.loading = true;
-
-    // Validate mnemonic if taken or not
-    const isTaken = await this.app.walletStore.isWalletMnemonicTaken(this.mnemonic);
-    if (isTaken) {
-      runInAction(() => {
-        // Show error dialog
-        this.invalidMnemonic = true;
-        this.app.walletStore.loading = false;
-      });
-      return;
-    }
-
-    runInAction(() => {
-      this.app.walletStore.addAccountAndLogin(this.accountName, this.mnemonic);
-      this.reset();
-    });
-  }
 
   @action
   public cancelImport = () => {

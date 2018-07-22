@@ -1,6 +1,7 @@
 import scrypt from 'scryptsy';
-import { networks } from 'qtumjs-wallet';
-import { isEmpty, split } from 'lodash';
+import { networks, Network, Wallet, Insight } from 'qtumjs-wallet';
+import { isEmpty, split, find } from 'lodash';
+import axios from 'axios';
 
 import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES } from '../constants';
 import Account from '../models/Account';
@@ -9,6 +10,8 @@ import QryNetwork from '../models/QryNetwork';
 class Background {
   private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
+  private static GET_INFO_INTERVAL_MS: number = 30000;
+  private static GET_PRICE_INTERVAL_MS: number = 60000;
   private static NETWORKS: QryNetwork[] = [
     new QryNetwork(NETWORK_NAMES.MAINNET, networks.mainnet),
     new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet),
@@ -19,6 +22,12 @@ class Background {
   private mainnetAccounts: Account[] = [];
   private testnetAccounts: Account[] = [];
   private networkIndex: number = 1;
+  private wallet?: Wallet;
+  private loggedInAccount?: Account;
+  private getInfoInterval?: number = undefined;
+  private getPriceInterval?: number = undefined;
+  private info?: Insight.IGetInfo = undefined;
+  private qtumPriceUSD: number = 0;
 
   public get hasAccounts(): boolean {
     return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts);
@@ -33,6 +42,10 @@ class Background {
       throw Error('passwordHash should be defined');
     }
     return this.passwordHash!;
+  }
+
+  private get network(): Network  {
+    return Background.NETWORKS[this.networkIndex].network;
   }
 
   /*
@@ -64,7 +77,41 @@ class Background {
       });
   }
 
-  public generateAppSaltIfNecessary = () => {
+  public login = async (password: string) => {
+    instance.generateAppSaltIfNecessary();
+
+    try {
+      await instance.derivePasswordHash(password);
+    } catch (err) {
+      throw err;
+    }
+
+    if (!instance.hasAccounts) {
+      // New user. No created wallets yet. No need to validate.
+      instance.routeToAccountPage();
+      return;
+    }
+
+    const isPwValid = await instance.validatePassword();
+    if (isPwValid) {
+      instance.routeToAccountPage();
+      return;
+    }
+
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_FAILURE });
+  }
+
+  public importMnemonic = async (accountName: string, mnemonic: string) => {
+    const isTaken = await instance.isWalletMnemonicTaken(mnemonic);
+    if (isTaken) {
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_FAILURE });
+      return;
+    }
+
+    this.addAccountAndLogin(accountName, mnemonic);
+  }
+
+  private generateAppSaltIfNecessary = () => {
     try {
       if (!this.appSalt) {
         const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
@@ -83,7 +130,7 @@ class Background {
   * Derives the password hash with the password input.
   * @return Promise undefined or error.
   */
-  public derivePasswordHash = async (password: string): Promise<any> => {
+  private derivePasswordHash = async (password: string): Promise<any> => {
     return new Promise((resolve: any, reject: any) => {
       setTimeout(() => {
         try {
@@ -107,7 +154,7 @@ class Background {
   /*
   * Routes to the CreateWallet or AccountLogin page after unlocking with the password.
   */
-  public routeToAccountPage = () => {
+  private routeToAccountPage = () => {
     const accounts = this.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     if (isEmpty(accounts)) {
       // Account not found, route to Create Wallet page
@@ -122,7 +169,7 @@ class Background {
   * Validates a password by decrypting a private key hash into a wallet instance.
   * @return Is the password valid.
   */
-  public validatePassword = async (): Promise<boolean> => {
+  private validatePassword = async (): Promise<boolean> => {
     let qryNetwork: QryNetwork;
     let account: Account;
     if (!isEmpty(this.mainnetAccounts)) {
@@ -147,33 +194,96 @@ class Background {
       return false;
     }
   }
+
+  private isWalletMnemonicTaken = async (mnemonic: string): Promise<boolean> => {
+    const wallet = await this.network.fromMnemonic(mnemonic);
+    const privateKeyHash = await wallet.toEncryptedPrivateKey(
+      this.validPasswordHash,
+      Background.SCRYPT_PARAMS_PRIV_KEY,
+    );
+    const accounts = this.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    return !!find(accounts, { privateKeyHash });
+  }
+
+  private getQtumPrice = async () => {
+    try {
+      const jsonObj = await axios.get('https://api.coinmarketcap.com/v2/ticker/1684/');
+      this.qtumPriceUSD = jsonObj.data.data.quotes.USD.price;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  private getWalletInfo = async () => {
+    this.info = await this.wallet!.getInfo();
+  }
+
+  private startPolling = async () => {
+    await this.getWalletInfo();
+    await this.getQtumPrice();
+
+    this.getInfoInterval = window.setInterval(() => {
+      this.getWalletInfo();
+    }, Background.GET_INFO_INTERVAL_MS);
+    this.getPriceInterval = window.setInterval(() => {
+      this.getQtumPrice();
+    }, Background.GET_PRICE_INTERVAL_MS);
+  }
+
+  private stopPolling = () => {
+    if (this.getInfoInterval) {
+      clearInterval(this.getInfoInterval);
+      this.getInfoInterval = undefined;
+    }
+    if (this.getPriceInterval) {
+      clearInterval(this.getPriceInterval);
+      this.getPriceInterval = undefined;
+    }
+  }
+
+  /*
+  * Actions after adding a new account or logging into an existing account.
+  */
+  private onAccountLoggedIn = async () => {
+    await this.startPolling();
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ROUTE_HOME });
+  }
+
+  /*
+  * Creates an account, stores it, and logs in.
+  * @param accountName {string} The account name for the new wallet account.
+  * @param mnemonic {string} The mnemonic to derive the wallet from.
+  */
+  private async addAccountAndLogin(accountName: string, mnemonic: string) {
+    // Get encrypted private key
+    const network = this.network;
+    this.wallet = await network.fromMnemonic(mnemonic);
+    const privateKeyHash = await this.wallet.toEncryptedPrivateKey(
+      this.validPasswordHash,
+      Background.SCRYPT_PARAMS_PRIV_KEY,
+    );
+    const account = new Account(accountName, privateKeyHash);
+
+    // Add account if not existing
+    if (this.isMainNet) {
+      this.mainnetAccounts.push(account);
+      chrome.storage.local.set({
+        [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
+      }, () => console.log('Mainnet Account added', account));
+    } else {
+      this.testnetAccounts.push(account);
+      chrome.storage.local.set({
+        [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
+      }, () => console.log('Testnet Account added', account));
+    }
+
+    this.loggedInAccount = account;
+    await this.onAccountLoggedIn();
+  }
 }
+
 const instance = new Background();
 instance.fetchStorageValues();
-
-const handleLogin = async ({ password }: any) => {
-  instance.generateAppSaltIfNecessary();
-
-  try {
-    await instance.derivePasswordHash(password);
-  } catch (err) {
-    throw err;
-  }
-
-  if (!instance.hasAccounts) {
-    // New user. No created wallets yet. No need to validate.
-    instance.routeToAccountPage();
-    return;
-  }
-
-  const isPwValid = await instance.validatePassword();
-  if (isPwValid) {
-    instance.routeToAccountPage();
-    return;
-  }
-
-  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_FAILURE });
-};
 
 const onMessage = (request: any, sender: chrome.runtime.MessageSender) => {
   console.log('request', request);
@@ -181,7 +291,12 @@ const onMessage = (request: any, sender: chrome.runtime.MessageSender) => {
 
   switch (request.type) {
     case MESSAGE_TYPE.LOGIN:
-      handleLogin(request);
+      instance.login(request.password);
+      break;
+
+    case MESSAGE_TYPE.IMPORT_MNEMONIC:
+      const { accountName, mnemonic } = request;
+      instance.importMnemonic(accountName, mnemonic);
       break;
 
     default:

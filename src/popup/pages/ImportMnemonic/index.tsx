@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { Typography, TextField, Button, withStyles, WithStyles, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
@@ -6,6 +7,7 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 import BorderTextField from '../../components/BorderTextField';
 import AppStore from '../../../stores/AppStore';
+import { MESSAGE_TYPE } from '../../../constants';
 
 interface IProps {
   classes: Record<string, string>;
@@ -53,7 +55,7 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
                 error={!!importStore.walletNameError}
                 errorText={importStore.walletNameError}
                 onChange={(e: any) => importStore.accountName = e.target.value}
-                onEnterPress={this.handleEnterPress}
+                onEnterPress={this.importMnemonic}
               />
             </div>
           </div>
@@ -63,7 +65,7 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={importStore.importNewMnemonic}
+              onClick={this.importMnemonic}
               disabled={importStore.error}
             >
               Import
@@ -83,10 +85,15 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
     );
   }
 
-  private handleEnterPress = () => {
-    const { importStore } = this.props.store;
+  private importMnemonic = () => {
+    const { history, store: { importStore } }: any = this.props;
     if (!importStore.error) {
-      importStore.importNewMnemonic();
+      history.push('/loading');
+      chrome.runtime.sendMessage({
+        type: MESSAGE_TYPE.IMPORT_MNEMONIC,
+        accountName: importStore.accountName,
+        mnemonic: importStore.mnemonic,
+      });
     }
   }
 }
@@ -107,4 +114,4 @@ const ErrorDialog: React.SFC<any> = observer(({ store: { importStore }}: any) =>
   </Dialog>
 ));
 
-export default withStyles(styles)(ImportMnemonic);
+export default withRouter<any>(withStyles(styles)(ImportMnemonic));

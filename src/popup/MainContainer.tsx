@@ -59,10 +59,14 @@ export default class MainContainer extends Component<IProps, {}> {
 
   private handleMessage = (request: any, sender: chrome.runtime.MessageSender) => {
     console.log(request, sender);
-    const { history, store: { loginStore } }: any = this.props;
+    const { history, store: { loginStore, importStore } }: any = this.props;
     switch (request.type) {
       case MESSAGE_TYPE.ROUTE_LOGIN:
         history.push('/login');
+        break;
+
+      case MESSAGE_TYPE.ROUTE_HOME:
+        history.push('/home');
         break;
 
       case MESSAGE_TYPE.LOGIN_FAILURE:
@@ -76,6 +80,11 @@ export default class MainContainer extends Component<IProps, {}> {
 
       case MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS:
         history.push('/create-wallet');
+        break;
+
+      case MESSAGE_TYPE.IMPORT_MNEMONIC_FAILURE:
+        importStore.invalidMnemonic = true;
+        history.push('/import');
         break;
 
       default:
