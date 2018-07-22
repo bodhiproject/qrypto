@@ -1,11 +1,12 @@
 export enum TARGET_NAME {
-  INPAGE = 'my_extension_inpage',
-  CONTENTSCRIPT = 'my_extension_contentscript',
+  INPAGE = 'qrypto-inpage',
+  CONTENTSCRIPT = 'qrypto-contentscript',
+  BACKGROUND = 'qrypto-background',
 }
 
 export enum PORT_NAME {
-  POPUP = 'my_extension_popup',
-  CONTENTSCRIPT = 'my_extension_contentscript',
+  POPUP = 'qrypto-popup',
+  CONTENTSCRIPT = 'qrypto-contentscript',
 }
 
 export enum API_TYPE {
