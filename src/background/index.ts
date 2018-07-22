@@ -101,12 +101,63 @@ class Background {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_FAILURE });
   }
 
+  /*
+  * Creates an account, stores it, and logs in.
+  * @param accountName {string} The account name for the new wallet account.
+  * @param mnemonic {string} The mnemonic to derive the wallet from.
+  */
+  public async addAccountAndLogin(accountName: string, mnemonic: string) {
+    // Get encrypted private key
+    const network = this.network;
+    this.wallet = await network.fromMnemonic(mnemonic);
+    const privateKeyHash = await this.wallet.toEncryptedPrivateKey(
+      this.validPasswordHash,
+      Background.SCRYPT_PARAMS_PRIV_KEY,
+    );
+    const account = new Account(accountName, privateKeyHash);
+
+    // Add account if not existing
+    if (this.isMainNet) {
+      this.mainnetAccounts.push(account);
+      chrome.storage.local.set({
+        [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
+      }, () => console.log('Mainnet Account added', account));
+    } else {
+      this.testnetAccounts.push(account);
+      chrome.storage.local.set({
+        [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
+      }, () => console.log('Testnet Account added', account));
+    }
+
+    this.loggedInAccount = account;
+    await this.onAccountLoggedIn();
+  }
+
   public importMnemonic = async (accountName: string, mnemonic: string) => {
     const isTaken = await instance.isWalletMnemonicTaken(mnemonic);
     if (isTaken) {
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_FAILURE });
       return;
     }
+
+    this.addAccountAndLogin(accountName, mnemonic);
+  }
+
+  public saveToFile = (accountName: string, mnemonic: string) => {
+    const timestamp = new Date().toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+    const file = new Blob([mnemonic], {type: 'text/plain'});
+    const element = document.createElement('a');
+    element.href = URL.createObjectURL(file);
+    element.download = `qrypto_${accountName}_${timestamp}.bak`;
+    element.click();
 
     this.addAccountAndLogin(accountName, mnemonic);
   }
@@ -248,38 +299,6 @@ class Background {
     await this.startPolling();
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ROUTE_HOME });
   }
-
-  /*
-  * Creates an account, stores it, and logs in.
-  * @param accountName {string} The account name for the new wallet account.
-  * @param mnemonic {string} The mnemonic to derive the wallet from.
-  */
-  private async addAccountAndLogin(accountName: string, mnemonic: string) {
-    // Get encrypted private key
-    const network = this.network;
-    this.wallet = await network.fromMnemonic(mnemonic);
-    const privateKeyHash = await this.wallet.toEncryptedPrivateKey(
-      this.validPasswordHash,
-      Background.SCRYPT_PARAMS_PRIV_KEY,
-    );
-    const account = new Account(accountName, privateKeyHash);
-
-    // Add account if not existing
-    if (this.isMainNet) {
-      this.mainnetAccounts.push(account);
-      chrome.storage.local.set({
-        [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
-      }, () => console.log('Mainnet Account added', account));
-    } else {
-      this.testnetAccounts.push(account);
-      chrome.storage.local.set({
-        [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
-      }, () => console.log('Testnet Account added', account));
-    }
-
-    this.loggedInAccount = account;
-    await this.onAccountLoggedIn();
-  }
 }
 
 const instance = new Background();
@@ -295,8 +314,15 @@ const onMessage = (request: any, sender: chrome.runtime.MessageSender) => {
       break;
 
     case MESSAGE_TYPE.IMPORT_MNEMONIC:
-      const { accountName, mnemonic } = request;
-      instance.importMnemonic(accountName, mnemonic);
+      instance.importMnemonic(request.accountName, request.mnemonic);
+      break;
+
+    case MESSAGE_TYPE.CREATE_WALLET:
+      instance.addAccountAndLogin(request.accountName, request.mnemonic);
+      break;
+
+    case MESSAGE_TYPE.SAVE_TO_FILE:
+      instance.saveToFile(request.accountName, request.mnemonic);
       break;
 
     default:
