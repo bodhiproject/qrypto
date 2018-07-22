@@ -1,13 +1,11 @@
 import { Wallet, Insight } from 'qtumjs-wallet';
 import { observable, action, toJS, computed, runInAction } from 'mobx';
-import { find, isEmpty, split } from 'lodash';
+import { find, isEmpty } from 'lodash';
 import axios from 'axios';
-import scrypt from 'scryptsy';
 
 import AppStore from './AppStore';
 import { STORAGE, MESSAGE_TYPE } from '../constants';
 import Account from '../models/Account';
-import QryNetwork from '../models/QryNetwork';
 
 const INIT_VALUES = {
   loading: true,
@@ -22,7 +20,6 @@ const INIT_VALUES = {
 };
 
 export default class WalletStore {
-  private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 30000;
   private static GET_PRICE_INTERVAL_MS: number = 60000;
@@ -62,37 +59,6 @@ export default class WalletStore {
 
   constructor(app: AppStore) {
     this.app = app;
-    this.fetchStorageValues();
-  }
-
-  /*
-  * Creates a new passwordHash or validates the existing one for the main login.
-  * @param password {string} The new/existing password for the per-install appSalt.
-  */
-  @action
-  public login = async (password: string) => {
-    this.generateAppSaltIfNecessary();
-    try {
-      await this.derivePasswordHash(password);
-    } catch (err) {
-      throw err;
-    }
-
-    if (!this.hasAccounts) {
-      // New user. No created wallets yet. No need to validate.
-      this.routeToAccountPage();
-      return;
-    }
-
-    const isPwValid = await this.validatePassword();
-    if (isPwValid) {
-      this.routeToAccountPage();
-      return;
-    }
-
-    // Invalid password, display error dialog
-    this.app.loginStore.invalidPassword = true;
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_FAILURE });
   }
 
   @action
@@ -214,110 +180,6 @@ export default class WalletStore {
     );
     const accounts = this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     return !!find(accounts, { privateKeyHash });
-  }
-
-  /*
-  * Initializes all the values from Chrome storage on startup.
-  */
-  private fetchStorageValues = () => {
-    const { APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, NETWORK_INDEX } = STORAGE;
-    chrome.storage.local.get([APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, NETWORK_INDEX],
-      ({ appSalt, mainnetAccounts, testnetAccounts, networkIndex }: any) => {
-        if (!isEmpty(appSalt)) {
-          const array = split(appSalt, ',').map((str) => parseInt(str, 10));
-          this.appSalt =  Uint8Array.from(array);
-        }
-
-        if (!isEmpty(mainnetAccounts)) {
-          this.mainnetAccounts = toJS(mainnetAccounts);
-        }
-
-        if (!isEmpty(testnetAccounts)) {
-          this.testnetAccounts = toJS(testnetAccounts);
-        }
-
-        if (networkIndex !== undefined) {
-          this.app.networkStore.networkIndex = networkIndex;
-        }
-
-        // Show the Login page after fetching storage
-        this.loading = false;
-      });
-  }
-
-  /*
-  * Generates the appSalt if needed.
-  */
-  @action
-  private generateAppSaltIfNecessary = () => {
-    try {
-      if (!this.appSalt) {
-        const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
-        this.appSalt = appSalt;
-        chrome.storage.local.set(
-          { [STORAGE.APP_SALT]: appSalt.toString() },
-          () => console.log('appSalt set'),
-        );
-      }
-    } catch (err) {
-      throw Error('Error generating appSalt');
-    }
-  }
-
-  /*
-  * Derives the password hash with the password input.
-  * @return Promise undefined or error.
-  */
-  @action
-  private derivePasswordHash = async (password: string): Promise<any> => {
-    return new Promise((resolve: any, reject: any) => {
-      setTimeout(() => {
-        try {
-          if (!this.appSalt) {
-            throw Error('appSalt should not be empty');
-          }
-
-          const saltBuffer = Buffer.from(this.appSalt!);
-          const { N, r, p } = WalletStore.SCRYPT_PARAMS_PW;
-          const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
-          this.passwordHash = derivedKey.toString('hex');
-
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      }, 100);
-    });
-  }
-
-  /*
-  * Validates a password by decrypting a private key hash into a wallet instance.
-  * @return Is the password valid.
-  */
-  private validatePassword = async (): Promise<boolean> => {
-    let qryNetwork: QryNetwork;
-    let account: Account;
-    if (!isEmpty(this.mainnetAccounts)) {
-      qryNetwork = this.app.networkStore.networksArray[0];
-      account = this.mainnetAccounts[0];
-    } else if (!isEmpty(this.testnetAccounts)) {
-      qryNetwork = this.app.networkStore.networksArray[1];
-      account = this.testnetAccounts[0];
-    } else {
-      throw Error('Trying to validate password without existing account');
-    }
-
-    try {
-      await qryNetwork.network.fromEncryptedPrivateKey(
-        account.privateKeyHash,
-        this.validPasswordHash,
-        WalletStore.SCRYPT_PARAMS_PRIV_KEY,
-      );
-      return true;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
   }
 
   /*

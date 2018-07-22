@@ -59,18 +59,23 @@ export default class MainContainer extends Component<IProps, {}> {
 
   private handleMessage = (request: any, sender: chrome.runtime.MessageSender) => {
     console.log(request, sender);
-    const { history } = this.props;
+    const { history, store: { loginStore } }: any = this.props;
     switch (request.type) {
+      case MESSAGE_TYPE.ROUTE_LOGIN:
+        history.push('/login');
+        break;
+
+      case MESSAGE_TYPE.LOGIN_FAILURE:
+        loginStore.invalidPassword = true;
+        history.push('/login');
+        break;
+
       case MESSAGE_TYPE.LOGIN_SUCCESS_WITH_ACCOUNTS:
         history.push('/account-login');
         break;
 
       case MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS:
         history.push('/create-wallet');
-        break;
-
-      case MESSAGE_TYPE.LOGIN_FAILURE:
-        history.push('/login');
         break;
 
       default:
