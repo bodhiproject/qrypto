@@ -92,6 +92,7 @@ export default class WalletStore {
 
     // Invalid password, display error dialog
     this.app.loginStore.invalidPassword = true;
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_FAILURE });
   }
 
   @action

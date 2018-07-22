@@ -69,6 +69,10 @@ export default class MainContainer extends Component<IProps, {}> {
         history.push('/create-wallet');
         break;
 
+      case MESSAGE_TYPE.LOGIN_FAILURE:
+        history.push('/login');
+        break;
+
       default:
         break;
     }
