@@ -24,6 +24,7 @@ interface IProps {
 
 const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
   const {
+    history,
     classes,
     hasBackButton,
     hasSettingsButton,
@@ -45,7 +46,10 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
       </div>
       {hasNetworkSelector && (
         <DropDownMenu
-          onSelect={(idx: number) => networkStore.changeNetwork(idx)}
+          onSelect={(idx: number) => {
+            history.push('/loading');
+            chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK, networkIndex: idx });
+          }}
           selections={networkStore.networksArray.map((net: QryNetwork) => net.name)}
           selectedIndex={networkStore.networkIndex}
         />

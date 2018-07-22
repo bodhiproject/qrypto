@@ -205,6 +205,17 @@ class Background {
     this.routeToAccountPage();
   }
 
+  public changeNetwork = (networkIndex: number) => {
+    if (this.networkIndex !== networkIndex) {
+      this.networkIndex = networkIndex;
+      chrome.storage.local.set({
+        [STORAGE.NETWORK_INDEX]: networkIndex,
+      }, () => console.log('networkIndex added to storage', networkIndex));
+
+      this.logout();
+    }
+  }
+
   private generateAppSaltIfNecessary = () => {
     try {
       if (!this.appSalt) {
@@ -374,6 +385,10 @@ const onMessage = (request: any, sender: chrome.runtime.MessageSender) => {
 
     case MESSAGE_TYPE.LOGOUT:
       instance.logout();
+      break;
+
+    case MESSAGE_TYPE.CHANGE_NETWORK:
+      instance.changeNetwork(request.networkIndex);
       break;
 
     default:
