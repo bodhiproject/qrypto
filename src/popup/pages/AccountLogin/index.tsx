@@ -5,6 +5,8 @@ import { inject, observer } from 'mobx-react';
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import AppStore from '../../../stores/AppStore';
+import { withRouter } from '../../../../node_modules/@types/react-router';
+import { MESSAGE_TYPE } from '../../../constants';
 
 interface IProps {
   classes: Record<string, string>;
@@ -61,18 +63,24 @@ const PermissionSection = ({ classes }: any) => (
   </div>
 );
 
-const LoginSection = observer(({ classes, store: { accountLoginStore } }: any) => (
+const LoginSection = observer(withRouter(({ history, classes, store: { accountLoginStore } }: any) => (
   <div className={classes.loginContainer}>
     <Button
       className={classes.loginButton}
       fullWidth
       variant="contained"
       color="primary"
-      onClick={accountLoginStore.login}
+      onClick={() => {
+        history.push('/loading');
+        chrome.runtime.sendMessage({
+          type: MESSAGE_TYPE.ACCOUNT_LOGIN,
+          selectedWalletName: accountLoginStore.selectedWalletName,
+        });
+      }}
     >
       Login
     </Button>
   </div>
-));
+)));
 
 export default withStyles(styles)(AccountLogin);

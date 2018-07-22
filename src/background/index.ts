@@ -162,6 +162,31 @@ class Background {
     this.addAccountAndLogin(accountName, mnemonic);
   }
 
+  /*
+  * Finds the account based on the name and logs in.
+  * @param accountName {string} The account name to search by.
+  */
+  public async loginAccount(accountName: string) {
+    const accounts = this.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    const foundAccount = find(accounts, { name: accountName });
+
+    if (!foundAccount) {
+      throw Error('Account should not be undefined');
+    }
+
+    this.loggedInAccount = foundAccount;
+
+    // Recover wallet
+    const network = this.network;
+    this.wallet = await network.fromEncryptedPrivateKey(
+      this.loggedInAccount!.privateKeyHash,
+      this.validPasswordHash,
+      Background.SCRYPT_PARAMS_PRIV_KEY,
+    );
+
+    await this.onAccountLoggedIn();
+  }
+
   private generateAppSaltIfNecessary = () => {
     try {
       if (!this.appSalt) {
@@ -323,6 +348,10 @@ const onMessage = (request: any, sender: chrome.runtime.MessageSender) => {
 
     case MESSAGE_TYPE.SAVE_TO_FILE:
       instance.saveToFile(request.accountName, request.mnemonic);
+      break;
+
+    case MESSAGE_TYPE.ACCOUNT_LOGIN:
+      instance.loginAccount(request.selectedWalletName);
       break;
 
     default:
