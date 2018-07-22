@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 
 import { Typography, Menu, MenuItem, IconButton, withStyles } from '@material-ui/core';
@@ -9,6 +10,7 @@ import DropDownMenu from '../DropDownMenu';
 import AppStore from '../../../stores/AppStore';
 import QryNetwork from '../../../models/QryNetwork';
 import styles from './styles';
+import { MESSAGE_TYPE } from '../../../constants';
 
 interface IProps {
   classes: Record<string, string>;
@@ -58,7 +60,8 @@ const BackButton: React.SFC<IProps> = ({ classes, isDarkTheme, store: { routerSt
   </IconButton>
 );
 
-const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, walletStore }, isDarkTheme }: any) => (
+const SettingsButton: React.SFC<IProps> =
+  observer(({ history, classes, store: { ui }, isDarkTheme }: any) => (
   <Fragment>
     <IconButton
       aria-owns={ui.settingsMenuAnchor ? 'settingsMenu' : undefined}
@@ -75,9 +78,16 @@ const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, wall
       open={Boolean(ui.settingsMenuAnchor)}
       onClose={() => ui.settingsMenuAnchor = undefined}
     >
-      <MenuItem onClick={walletStore.logout}>Logout</MenuItem>
+      <MenuItem
+        onClick={() => {
+          history.push('/loading');
+          chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGOUT });
+        }}
+      >
+        Logout
+      </MenuItem>
     </Menu>
   </Fragment>
 ));
 
-export default withStyles(styles)(NavBar);
+export default withRouter<any>(withStyles(styles)(NavBar));

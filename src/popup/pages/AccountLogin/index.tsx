@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { Paper, Select, MenuItem, Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import AppStore from '../../../stores/AppStore';
-import { withRouter } from '../../../../node_modules/@types/react-router';
 import { MESSAGE_TYPE } from '../../../constants';
 
 interface IProps {

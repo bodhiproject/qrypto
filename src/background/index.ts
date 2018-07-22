@@ -7,6 +7,16 @@ import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES } from '../constants';
 import Account from '../models/Account';
 import QryNetwork from '../models/QryNetwork';
 
+const INIT_VALUES = {
+  appSalt: undefined,
+  passwordHash: undefined,
+  mainnetAccounts: [],
+  testnetAccounts: [],
+  loggedInAccount: undefined,
+  wallet: undefined,
+  info: undefined,
+};
+
 class Background {
   private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
@@ -17,16 +27,16 @@ class Background {
     new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet),
   ];
 
-  private appSalt?: Uint8Array;
-  private passwordHash?: string;
-  private mainnetAccounts: Account[] = [];
-  private testnetAccounts: Account[] = [];
+  private appSalt?: Uint8Array = INIT_VALUES.appSalt;
+  private passwordHash?: string = INIT_VALUES.passwordHash;
+  private mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
+  private testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
   private networkIndex: number = 1;
-  private wallet?: Wallet;
-  private loggedInAccount?: Account;
+  private loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
+  private wallet?: Wallet = INIT_VALUES.wallet;
+  private info?: Insight.IGetInfo = INIT_VALUES.info;
   private getInfoInterval?: number = undefined;
   private getPriceInterval?: number = undefined;
-  private info?: Insight.IGetInfo = undefined;
   private qtumPriceUSD: number = 0;
 
   public get hasAccounts(): boolean {
@@ -185,6 +195,14 @@ class Background {
     );
 
     await this.onAccountLoggedIn();
+  }
+
+  public logout = () => {
+    this.stopPolling();
+    this.loggedInAccount = INIT_VALUES.loggedInAccount;
+    this.wallet = INIT_VALUES.wallet;
+    this.info =  INIT_VALUES.info;
+    this.routeToAccountPage();
   }
 
   private generateAppSaltIfNecessary = () => {
@@ -352,6 +370,10 @@ const onMessage = (request: any, sender: chrome.runtime.MessageSender) => {
 
     case MESSAGE_TYPE.ACCOUNT_LOGIN:
       instance.loginAccount(request.selectedWalletName);
+      break;
+
+    case MESSAGE_TYPE.LOGOUT:
+      instance.logout();
       break;
 
     default:
