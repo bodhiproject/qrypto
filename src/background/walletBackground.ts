@@ -385,11 +385,7 @@ export default class WalletBackground {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ROUTE_HOME });
   }
 
-  private handleMessage = (
-    request: any,
-    sender: chrome.runtime.MessageSender,
-    sendResponse: (response: any) => void,
-  ) => {
+  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.LOGIN:
         this.login(request.password);
@@ -405,6 +401,9 @@ export default class WalletBackground {
         break;
       case MESSAGE_TYPE.ACCOUNT_LOGIN:
         this.loginAccount(request.selectedWalletName);
+        break;
+      case MESSAGE_TYPE.SEND_TOKENS:
+        this.sendTokens(request.receiverAddress, request.amount);
         break;
       case MESSAGE_TYPE.LOGOUT:
         this.logout();
