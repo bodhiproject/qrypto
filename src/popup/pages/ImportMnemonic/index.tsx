@@ -7,7 +7,6 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 import BorderTextField from '../../components/BorderTextField';
 import AppStore from '../../../stores/AppStore';
-import { MESSAGE_TYPE } from '../../../constants';
 
 interface IProps {
   classes: Record<string, string>;
@@ -52,10 +51,10 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
               />
               <BorderTextField
                 placeholder="Wallet name"
-                error={!!importStore.walletNameError}
+                error={importStore.walletNameTaken}
                 errorText={importStore.walletNameError}
                 onChange={(e: any) => importStore.accountName = e.target.value}
-                onEnterPress={this.importMnemonic}
+                onEnterPress={importStore.importMnemonic}
               />
             </div>
           </div>
@@ -65,7 +64,7 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={this.importMnemonic}
+              onClick={importStore.importMnemonic}
               disabled={importStore.error}
             >
               Import
@@ -83,18 +82,6 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
         <ErrorDialog {...this.props} />
       </div>
     );
-  }
-
-  private importMnemonic = () => {
-    const { history, store: { importStore } }: any = this.props;
-    if (!importStore.error) {
-      history.push('/loading');
-      chrome.runtime.sendMessage({
-        type: MESSAGE_TYPE.IMPORT_MNEMONIC,
-        accountName: importStore.accountName,
-        mnemonic: importStore.mnemonic,
-      });
-    }
   }
 }
 

@@ -41,7 +41,7 @@ class Background {
   private qtumPriceUSD: number = 0;
 
   public get accounts(): Account[] {
-    return this.isMainNet ? this.mainnetAccounts : this.testnetAccounts;x
+    return this.isMainNet ? this.mainnetAccounts : this.testnetAccounts; x;
   }
 
   public get hasAccounts(): boolean {
@@ -69,6 +69,10 @@ class Background {
 
   private get network(): Network  {
     return Background.NETWORKS[this.networkIndex].network;
+  }
+
+  public isWalletNameTaken = (name: string): boolean => {
+    return !!find(this.accounts, { name });
   }
 
   /*
@@ -420,6 +424,9 @@ const onMessage = (request: any, sender: chrome.runtime.MessageSender, sendRespo
       break;
     case MESSAGE_TYPE.GET_QTUM_BALANCE_USD:
       sendResponse(instance.qtumBalanceUSD);
+      break;
+    case MESSAGE_TYPE.VALIDATE_WALLET_NAME:
+      sendResponse(instance.isWalletNameTaken(request.name));
       break;
     default:
       break;
