@@ -234,6 +234,17 @@ export default class WalletBackground {
     }
   }
 
+  public sendTokens = async (receiverAddress: string, amount: number) => {
+    try {
+      const wallet = this.wallet!;
+      await wallet.send(receiverAddress, amount * 1e8, { feeRate: 4000 });
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
+    } catch (err) {
+      console.log(err);
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
+    }
+  }
+
   private generateAppSaltIfNecessary = () => {
     try {
       if (!this.appSalt) {
@@ -403,6 +414,9 @@ export default class WalletBackground {
         break;
       case MESSAGE_TYPE.GET_NETWORKS:
         sendResponse(WalletBackground.NETWORKS);
+        break;
+      case MESSAGE_TYPE.IS_MAINNET:
+        sendResponse(this.isMainNet);
         break;
       case MESSAGE_TYPE.HAS_ACCOUNTS:
         sendResponse(this.hasAccounts);

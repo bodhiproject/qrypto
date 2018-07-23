@@ -39,12 +39,13 @@ export default class AccountDetailBackground {
   // TODO - if a new transaction comes in, the transactions on a page will shift(ie if 1 page has 10 transactions,
   // transaction number 10 shifts to page2), and the bottom most transaction would disappear from the list.
   // Need to add some additional logic to keep the bottom most transaction displaying.
-  public async refreshTransactions() {
+  private async refreshTransactions() {
     let refreshedItems: Transaction[] = [];
     for (let i = 0; i <= this.pageNum; i++) {
       refreshedItems = refreshedItems.concat(await this.fetchTransactions(i));
     }
     this.transactions = refreshedItems;
+    this.sendTransactionsMessage();
   }
 
   private startPolling = async () => {
@@ -103,7 +104,7 @@ export default class AccountDetailBackground {
     });
   }
 
-  private onMessage = (request: any, sender: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+  private onMessage = (request: any) => {
     switch (request.type) {
       case MESSAGE_TYPE.START_TX_POLLING:
         this.startPolling();
