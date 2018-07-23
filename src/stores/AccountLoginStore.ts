@@ -20,10 +20,10 @@ export default class AccountLoginStore {
 
     // TODO: refactor using onMessage
     // Set the default selected account on the login page.
-    reaction(
-      () => this.app.networkStore.networkIndex,
-      () => this.getAccounts(),
-    );
+    // reaction(
+    //   () => this.app.networkStore.networkIndex,
+    //   () => this.getAccounts(),
+    // );
   }
 
   @action

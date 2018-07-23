@@ -42,7 +42,7 @@ class Background {
   private qtumPriceUSD: number = 0;
 
   public get accounts(): Account[] {
-    return this.isMainNet ? this.mainnetAccounts : this.testnetAccounts; x;
+    return this.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
   }
 
   public get hasAccounts(): boolean {
@@ -203,6 +203,7 @@ class Background {
     }
 
     this.loggedInAccount = foundAccount;
+    console.log(this.loggedInAccount);
 
     // Recover wallet
     const network = this.network;
@@ -389,9 +390,6 @@ declare global {
 window.bg = instance;
 
 const onMessage = (request: any, sender: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
-  console.log('request', request);
-  console.log('sender', sender);
-
   switch (request.type) {
     case MESSAGE_TYPE.LOGIN:
       instance.login(request.password);

@@ -58,7 +58,6 @@ export default class MainContainer extends Component<IProps, {}> {
   }
 
   private handleMessage = (request: any, sender: chrome.runtime.MessageSender) => {
-    console.log(request, sender);
     const { history, store: { loginStore, importStore } }: any = this.props;
     switch (request.type) {
       case MESSAGE_TYPE.ROUTE_LOGIN:
