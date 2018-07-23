@@ -1,7 +1,7 @@
 import { IExtensionAPIMessage } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 import { handleRpcCallResponse } from './utils';
-import { QryptoRpcProvider } from './QryptoRpcProvider';
+import { QryptoRpcProvider } from './QryptoRPCProvider';
 import { isMessageNotValid } from '../utils';
 
 window.addEventListener('message', handleInpageMessage, false);

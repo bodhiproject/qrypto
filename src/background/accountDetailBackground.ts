@@ -2,10 +2,11 @@ import { Insight } from 'qtumjs-wallet';
 import { map, find, partition, sumBy, includes } from 'lodash';
 import moment from 'moment';
 
+import Background from '.';
 import { MESSAGE_TYPE } from '../constants';
 import Transaction from '../models/Transaction';
 
-export default class AccountDetailBg {
+export default class AccountDetailBackground {
   private static GET_TX_INTERVAL_MS: number = 60000;
 
   public transactions: Transaction[] = [];
@@ -15,10 +16,10 @@ export default class AccountDetailBg {
     return !!this.pagesTotal && (this.pagesTotal > this.pageNum + 1);
   }
 
-  private bg: any;
+  private bg: Background;
   private getTransactionsInterval?: number = undefined;
 
-  constructor(bg: any) {
+  constructor(bg: Background) {
     this.bg = bg;
     chrome.runtime.onMessage.addListener(this.onMessage);
   }
@@ -50,7 +51,7 @@ export default class AccountDetailBg {
     this.fetchFirst();
     this.getTransactionsInterval = window.setInterval(() => {
       this.refreshTransactions();
-    }, AccountDetailBg.GET_TX_INTERVAL_MS);
+    }, AccountDetailBackground.GET_TX_INTERVAL_MS);
   }
 
   private stopPolling = () => {
@@ -61,9 +62,12 @@ export default class AccountDetailBg {
   }
 
   private async fetchTransactions(pageNum: number = 0): Promise<Transaction[]> {
-    const wallet = this.bg.wallet;
-    const { pagesTotal, txs } =  await wallet.getTransactions(pageNum);
+    const wallet = this.bg.wallet.wallet;
+    if (!wallet) {
+      throw Error('Trying to fetch transactions with undefined wallet instance.');
+    }
 
+    const { pagesTotal, txs } =  await wallet.getTransactions(pageNum);
     this.pagesTotal = pagesTotal;
 
     return map(txs, (tx: Insight.IRawTransactionInfo) => {

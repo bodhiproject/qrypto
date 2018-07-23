@@ -1,6 +1,5 @@
 import { observable, action } from 'mobx';
 
-import AppStore from './AppStore';
 import { MESSAGE_TYPE } from '../constants';
 import Transaction from '../models/Transaction';
 
@@ -15,19 +14,18 @@ export default class AccountDetailStore {
   @observable public transactions: Transaction[] = INIT_VALUES.transactions;
   @observable public hasMore: boolean = INIT_VALUES.hasMore;
 
-  constructor(private app: AppStore) {}
-
   public init = () => {
     chrome.runtime.onMessage.addListener(this.handleMessage);
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.START_TX_POLLING });
   }
 
   public deinit = () => {
+    chrome.runtime.onMessage.removeListener(this.handleMessage);
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
   }
 
   public fetchMore = () => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MORE_TXS });
   }
 
   @action

@@ -64,7 +64,7 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
                       id="loadingButton"
                       color="primary"
                       size="small"
-                      onClick={() => accountDetailStore.fetchMore()}
+                      onClick={accountDetailStore.fetchMore}
                       >
                       Load More
                     </Button>
