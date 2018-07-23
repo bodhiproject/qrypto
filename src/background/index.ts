@@ -29,6 +29,7 @@ class Background {
   private static GET_PRICE_INTERVAL_MS: number = 60000;
 
   public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
+  public wallet?: Wallet = INIT_VALUES.wallet;
   public info?: Insight.IGetInfo = INIT_VALUES.info;
 
   private appSalt?: Uint8Array = INIT_VALUES.appSalt;
@@ -36,7 +37,6 @@ class Background {
   private mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
   private testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
   private networkIndex: number = 1;
-  private wallet?: Wallet = INIT_VALUES.wallet;
   private getInfoInterval?: number = undefined;
   private getPriceInterval?: number = undefined;
   private qtumPriceUSD: number = 0;
@@ -203,7 +203,6 @@ class Background {
     }
 
     this.loggedInAccount = foundAccount;
-    console.log(this.loggedInAccount);
 
     // Recover wallet
     const network = this.network;
@@ -376,6 +375,7 @@ class Background {
   }
 }
 
+// Init
 const instance = new Background();
 instance.fetchStorageValues();
 export default instance;

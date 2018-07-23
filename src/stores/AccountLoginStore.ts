@@ -1,4 +1,4 @@
-import { observable, action, reaction } from 'mobx';
+import { observable, action } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
