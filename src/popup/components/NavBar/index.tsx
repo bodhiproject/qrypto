@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 
 import { Typography, Menu, MenuItem, IconButton, withStyles } from '@material-ui/core';
@@ -10,7 +9,6 @@ import DropDownMenu from '../DropDownMenu';
 import AppStore from '../../../stores/AppStore';
 import QryNetwork from '../../../models/QryNetwork';
 import styles from './styles';
-import { MESSAGE_TYPE } from '../../../constants';
 
 interface IProps {
   classes: Record<string, string>;
@@ -24,16 +22,14 @@ interface IProps {
 
 const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
   const {
-    history,
     classes,
     hasBackButton,
     hasSettingsButton,
     hasNetworkSelector,
     isDarkTheme,
     title,
-    store,
+    store: { navBarStore },
   }: any = props;
-  const { networkStore } = store!;
 
   return (
     <div className={classes.root}>
@@ -46,12 +42,9 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
       </div>
       {hasNetworkSelector && (
         <DropDownMenu
-          onSelect={(idx: number) => {
-            history.push('/loading');
-            chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK, networkIndex: idx });
-          }}
-          selections={networkStore.networksArray.map((net: QryNetwork) => net.name)}
-          selectedIndex={networkStore.networkIndex}
+          onSelect={navBarStore.changeNetwork}
+          selections={navBarStore.networks.map((net: QryNetwork) => net.name)}
+          selectedIndex={navBarStore.networkIndex}
         />
       )}
     </div>
@@ -65,28 +58,25 @@ const BackButton: React.SFC<IProps> = ({ classes, isDarkTheme, store: { routerSt
 );
 
 const SettingsButton: React.SFC<IProps> =
-  observer(({ history, classes, store: { ui }, isDarkTheme }: any) => (
+  observer(({ classes, store: { navBarStore }, isDarkTheme }: any) => (
   <Fragment>
     <IconButton
-      aria-owns={ui.settingsMenuAnchor ? 'settingsMenu' : undefined}
+      aria-owns={navBarStore.settingsMenuAnchor ? 'settingsMenu' : undefined}
       aria-haspopup="true"
       color="primary"
-      onClick={(e) => ui.settingsMenuAnchor = e.currentTarget}
+      onClick={(e) => navBarStore.settingsMenuAnchor = e.currentTarget}
       className={classes.settingsIconButton}
     >
       <Settings className={cx(classes.settingsButton, isDarkTheme ? 'white' : '')} />
     </IconButton>
     <Menu
       id="settingsMenu"
-      anchorEl={ui.settingsMenuAnchor}
-      open={Boolean(ui.settingsMenuAnchor)}
-      onClose={() => ui.settingsMenuAnchor = undefined}
+      anchorEl={navBarStore.settingsMenuAnchor}
+      open={Boolean(navBarStore.settingsMenuAnchor)}
+      onClose={() => navBarStore.settingsMenuAnchor = undefined}
     >
       <MenuItem
-        onClick={() => {
-          history.push('/loading');
-          chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGOUT });
-        }}
+        onClick={navBarStore.logout}
       >
         Logout
       </MenuItem>
@@ -94,4 +84,4 @@ const SettingsButton: React.SFC<IProps> =
   </Fragment>
 ));
 
-export default withRouter<any>(withStyles(styles)(NavBar));
+export default withStyles(styles)(NavBar);

@@ -1,6 +1,6 @@
 import { RouterStore } from 'mobx-react-router';
 
-import UiStore from './UiStore';
+import NavBarStore from './components/NavBarStore';
 import LoginStore from './LoginStore';
 import CreateWalletStore from './CreateWalletStore';
 import SaveMnemonicStore from './SaveMnemonicStore';
@@ -12,7 +12,7 @@ import SendStore from './SendStore';
 export default class AppStore {
   public location = '/account-login';
   public routerStore: RouterStore;
-  public ui: UiStore;
+  public navBarStore: NavBarStore;
   public loginStore: LoginStore;
   public createWalletStore: CreateWalletStore;
   public saveMnemonicStore: SaveMnemonicStore;
@@ -23,7 +23,7 @@ export default class AppStore {
 
   constructor() {
     this.routerStore = new RouterStore();
-    this.ui = new UiStore();
+    this.navBarStore = new NavBarStore(this);
     this.loginStore = new LoginStore();
     this.createWalletStore = new CreateWalletStore(this);
     this.saveMnemonicStore = new SaveMnemonicStore(this);

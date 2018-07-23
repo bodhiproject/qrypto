@@ -18,14 +18,15 @@ const INIT_VALUES = {
 };
 
 class Background {
+  public static NETWORKS: QryNetwork[] = [
+    new QryNetwork(NETWORK_NAMES.MAINNET, networks.mainnet),
+    new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet),
+  ];
+
   private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 10000;
   private static GET_PRICE_INTERVAL_MS: number = 60000;
-  private static NETWORKS: QryNetwork[] = [
-    new QryNetwork(NETWORK_NAMES.MAINNET, networks.mainnet),
-    new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet),
-  ];
 
   public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   public info?: Insight.IGetInfo = INIT_VALUES.info;
@@ -412,6 +413,9 @@ const onMessage = (request: any, sender: chrome.runtime.MessageSender, sendRespo
       break;
     case MESSAGE_TYPE.CHANGE_NETWORK:
       instance.changeNetwork(request.networkIndex);
+      break;
+    case MESSAGE_TYPE.GET_NETWORKS:
+      sendResponse(Background.NETWORKS);
       break;
     case MESSAGE_TYPE.HAS_ACCOUNTS:
       sendResponse(instance.hasAccounts);
