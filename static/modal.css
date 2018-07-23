@@ -1,0 +1,22 @@
+html.qrypto-extension-modal-wrap {
+  height: 100%;
+}
+
+.qrypto-extension-modal-wrap body {
+  position: relative;
+  overflow: hidden;
+}
+
+.qrypto-extension-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.qrypto-extension-modal {
+  position: absolute;
+  z-index: 10000;
+}
