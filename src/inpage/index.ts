@@ -10,7 +10,6 @@ window.addEventListener('message', handleContentScriptMessage, false);
 // expose apis
 Object.assign(window, {
   qryptoRpcProvider: new QryptoRpcProvider(),
-  closeModal,
   testModal: async () => {
     const modal = await showModal(300, 300, {background: '#FFF'});
     const content = template(`
