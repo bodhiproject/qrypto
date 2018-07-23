@@ -30,7 +30,7 @@ export default class MainContainer extends Component<IProps, {}> {
   }
 
   public componentWillUnmount() {
-    this.props.store!.walletStore.stopPolling();
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGOUT });
   }
 
   public render() {

@@ -25,19 +25,11 @@ export default class WalletStore {
   @observable public testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
   @observable public mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
   @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
-  @observable public qtumPriceUSD = 0;
   @computed public get hasAccounts(): boolean {
     return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts);
   }
   @computed public get accounts(): Account[] {
     return this.app.networkStore.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
-  }
-  @computed public get balanceUSD(): string {
-    if (this.qtumPriceUSD && this.info) {
-      return (this.qtumPriceUSD * this.info.balance).toFixed(2);
-    } else {
-      return 'Loading';
-    }
   }
   public wallet?: Wallet = INIT_VALUES.wallet;
 

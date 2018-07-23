@@ -2,6 +2,7 @@ import { observable, action, reaction } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
+import { MESSAGE_TYPE } from '../constants';
 
 const INIT_VALUES = {
   selectedWalletName: '',
@@ -24,10 +25,11 @@ export default class AccountLoginStore {
 
   @action
   public setSelectedWallet = () => {
-    const accounts = this.app.walletStore.accounts;
-    if (!isEmpty(accounts)) {
-      this.selectedWalletName = accounts[0].name;
-    }
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_ACCOUNTS }, (response: any) => {
+      if (!isEmpty(response)) {
+        this.selectedWalletName = response[0].name;
+      }
+    });
   }
 
   @action

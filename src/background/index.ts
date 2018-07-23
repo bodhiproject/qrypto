@@ -20,24 +20,29 @@ const INIT_VALUES = {
 class Background {
   private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
-  private static GET_INFO_INTERVAL_MS: number = 30000;
+  private static GET_INFO_INTERVAL_MS: number = 10000;
   private static GET_PRICE_INTERVAL_MS: number = 60000;
   private static NETWORKS: QryNetwork[] = [
     new QryNetwork(NETWORK_NAMES.MAINNET, networks.mainnet),
     new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet),
   ];
 
+  public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
+  public info?: Insight.IGetInfo = INIT_VALUES.info;
+
   private appSalt?: Uint8Array = INIT_VALUES.appSalt;
   private passwordHash?: string = INIT_VALUES.passwordHash;
   private mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
   private testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
   private networkIndex: number = 1;
-  private loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   private wallet?: Wallet = INIT_VALUES.wallet;
-  private info?: Insight.IGetInfo = INIT_VALUES.info;
   private getInfoInterval?: number = undefined;
   private getPriceInterval?: number = undefined;
   private qtumPriceUSD: number = 0;
+
+  public get accounts(): Account[] {
+    return this.isMainNet ? this.mainnetAccounts : this.testnetAccounts;x
+  }
 
   public get hasAccounts(): boolean {
     return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts);
@@ -45,6 +50,14 @@ class Background {
 
   public get isMainNet(): boolean {
     return this.networkIndex === 0;
+  }
+
+  public get qtumBalanceUSD(): string {
+    if (this.qtumPriceUSD && this.info) {
+      return (this.qtumPriceUSD * this.info.balance).toFixed(2);
+    } else {
+      return 'Loading';
+    }
   }
 
   private get validPasswordHash(): string {
@@ -314,6 +327,7 @@ class Background {
     try {
       const jsonObj = await axios.get('https://api.coinmarketcap.com/v2/ticker/1684/');
       this.qtumPriceUSD = jsonObj.data.data.quotes.USD.price;
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QTUM_PRICE_RETURN, qtumBalanceUSD: this.qtumBalanceUSD });
     } catch (err) {
       console.log(err);
     }
@@ -321,6 +335,7 @@ class Background {
 
   private getWalletInfo = async () => {
     this.info = await this.wallet!.getInfo();
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.info });
   }
 
   private startPolling = async () => {
@@ -357,8 +372,18 @@ class Background {
 
 const instance = new Background();
 instance.fetchStorageValues();
+export default instance;
 
-const onMessage = (request: any, sender: chrome.runtime.MessageSender) => {
+// Add instance to window for debugging
+declare global {
+  // tslint:disable-next-line:interface-name
+  interface Window {
+    bg: Background;
+  }
+}
+window.bg = instance;
+
+const onMessage = (request: any, sender: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
   console.log('request', request);
   console.log('sender', sender);
 
@@ -366,31 +391,36 @@ const onMessage = (request: any, sender: chrome.runtime.MessageSender) => {
     case MESSAGE_TYPE.LOGIN:
       instance.login(request.password);
       break;
-
     case MESSAGE_TYPE.IMPORT_MNEMONIC:
       instance.importMnemonic(request.accountName, request.mnemonic);
       break;
-
     case MESSAGE_TYPE.CREATE_WALLET:
       instance.addAccountAndLogin(request.accountName, request.mnemonic);
       break;
-
     case MESSAGE_TYPE.SAVE_TO_FILE:
       instance.saveToFile(request.accountName, request.mnemonic);
       break;
-
     case MESSAGE_TYPE.ACCOUNT_LOGIN:
       instance.loginAccount(request.selectedWalletName);
       break;
-
     case MESSAGE_TYPE.LOGOUT:
       instance.logout();
       break;
-
     case MESSAGE_TYPE.CHANGE_NETWORK:
       instance.changeNetwork(request.networkIndex);
       break;
-
+    case MESSAGE_TYPE.GET_ACCOUNTS:
+      sendResponse(instance.accounts);
+      break;
+    case MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT:
+      sendResponse(instance.loggedInAccount);
+      break;
+    case MESSAGE_TYPE.GET_WALLET_INFO:
+      sendResponse(instance.info);
+      break;
+    case MESSAGE_TYPE.GET_QTUM_BALANCE_USD:
+      sendResponse(instance.qtumBalanceUSD);
+      break;
     default:
       break;
   }

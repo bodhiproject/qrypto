@@ -1,19 +1,36 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import { Card, CardContent, withStyles, WithStyles } from '@material-ui/core';
+import { Insight } from 'qtumjs-wallet';
 
 import styles from './styles';
 import AccountInfo from '../../../components/AccountInfo';
 import AppStore from '../../../../stores/AppStore';
+import { MESSAGE_TYPE } from '../../../../constants';
 
 interface IProps {
   classes: Record<string, string>;
   store?: AppStore;
 }
 
+interface IState {
+  info?: Insight.IGetInfo;
+}
+
 @inject('store')
 @observer
-class MainAccount extends Component<WithStyles & IProps, {}> {
+class MainAccount extends Component<WithStyles & IProps, IState> {
+  public state: IState = {
+    info: undefined,
+  };
+
+  public componentDidMount() {
+    chrome.runtime.onMessage.addListener(this.handleMessage);
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO }, (response: any) => {
+      this.setState({ info: response });
+    });
+  }
+
   public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
 
@@ -30,13 +47,14 @@ class MainAccount extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { info } = this.props.store!.walletStore;
+    const { info } = this.state;
+    console.log(info);
 
-    if (!info) {
-      return null;
-    }
+    // if (!info) {
+    //   return null;
+    // }
 
-    return info && (
+    return (
       <div>
         <Card raised id="mainCard" onClick={(e) => this.handleClick('mainCard', e)} className={classes.card}>
           <CardContent className={classes.cardContent}>
@@ -45,6 +63,19 @@ class MainAccount extends Component<WithStyles & IProps, {}> {
         </Card>
       </div>
     );
+  }
+
+  private handleMessage = (request: any) => {
+    switch (request.type) {
+      case MESSAGE_TYPE.GET_WALLET_INFO_RETURN:
+        // this.setState({
+          // info: request.info,
+        // });
+        break;
+
+      default:
+        break;
+    }
   }
 }
 
