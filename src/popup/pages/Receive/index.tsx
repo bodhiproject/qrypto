@@ -17,7 +17,7 @@ interface IProps {
 class Receive extends Component<WithStyles & IProps, {}> {
   public render() {
     const { classes } = this.props;
-    const { loggedInAccount, info, balanceUSD } = this.props.store.walletStore;
+    const { loggedInAccount, info, qtumBalanceUSD } = this.props.store.sessionStore;
 
     return(
       <div className={classes.root}>
@@ -29,7 +29,7 @@ class Receive extends Component<WithStyles & IProps, {}> {
             <Typography className={classes.tokenAmount}>{info!.balance}</Typography>
             <Typography className={classes.token}>QTUM</Typography>
           </div>
-          <Typography className={classes.currencyValue}>${balanceUSD} USD</Typography>
+          <Typography className={classes.currencyValue}>${qtumBalanceUSD} USD</Typography>
           <div className={classes.qrCodeContainer}>
             <QRCode value={info!.addrStr} />
           </div>

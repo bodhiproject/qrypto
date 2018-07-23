@@ -15,10 +15,6 @@ interface IProps {
 @inject('store')
 @observer
 class AccountInfo extends Component<WithStyles & IProps, {}> {
-  public componentDidMount() {
-    this.props.store!.accountInfoStore.init();
-  }
-
   public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
 
@@ -32,7 +28,7 @@ class AccountInfo extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes, hasRightArrow } = this.props;
-    const { loggedInAccount, info, qtumBalanceUSD } = this.props.store!.accountInfoStore;
+    const { loggedInAccount, info, qtumBalanceUSD } = this.props.store!.sessionStore;
 
     if (!loggedInAccount || !info) {
       return null;

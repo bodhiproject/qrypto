@@ -382,7 +382,7 @@ export default class WalletBackground {
   */
   private onAccountLoggedIn = async () => {
     await this.startPolling();
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ROUTE_HOME });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {

@@ -14,10 +14,6 @@ interface IProps {
 @inject('store')
 @observer
 class MainAccount extends Component<WithStyles & IProps, {}> {
-  public componentDidMount() {
-    this.props.store!.homeStore.init();
-  }
-
   public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
 
@@ -34,7 +30,7 @@ class MainAccount extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { info } = this.props.store!.homeStore;
+    const { info } = this.props.store!.sessionStore;
 
     if (!info) {
       return null;

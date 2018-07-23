@@ -1,7 +1,7 @@
 import { observable, action } from 'mobx';
 import { Insight } from 'qtumjs-wallet';
 
-import { MESSAGE_TYPE } from '../../constants';
+import { MESSAGE_TYPE } from '../constants';
 
 const INIT_VALUES = {
   loggedInAccount: undefined,
@@ -9,14 +9,17 @@ const INIT_VALUES = {
   qtumBalanceUSD: undefined,
 };
 
-export default class AccountInfoStore {
+export default class SessionStore {
   @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   @observable public info?: Insight.IGetInfo = INIT_VALUES.info;
   @observable public qtumBalanceUSD?: string = undefined;
 
+  constructor() {
+    chrome.runtime.onMessage.addListener(this.handleMessage);
+  }
+
   @action
   public init = () => {
-    chrome.runtime.onMessage.addListener(this.handleMessage);
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT }, (response: any) => {
       this.loggedInAccount = response;
     });
@@ -29,6 +32,9 @@ export default class AccountInfoStore {
   @action
   private handleMessage = (request: any) => {
     switch (request.type) {
+      case MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS:
+        this.init();
+        break;
       case MESSAGE_TYPE.GET_WALLET_INFO_RETURN:
         this.info = request.info;
         break;

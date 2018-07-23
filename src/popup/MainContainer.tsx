@@ -64,7 +64,7 @@ export default class MainContainer extends Component<IProps, {}> {
         history.push('/login');
         break;
 
-      case MESSAGE_TYPE.ROUTE_HOME:
+      case MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS:
         history.push('/home');
         break;
 
