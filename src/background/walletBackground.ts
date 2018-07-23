@@ -1,11 +1,11 @@
 import scrypt from 'scryptsy';
-import { networks, Network, Wallet, Insight } from 'qtumjs-wallet';
+import { Wallet, Insight, Network } from 'qtumjs-wallet';
 import { isEmpty, split, find } from 'lodash';
 import axios from 'axios';
 
-import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES } from '../constants';
+import Background from '.';
+import { MESSAGE_TYPE, STORAGE } from '../constants';
 import Account from '../models/Account';
-import QryNetwork from '../models/QryNetwork';
 
 const INIT_VALUES = {
   appSalt: undefined,
@@ -18,11 +18,6 @@ const INIT_VALUES = {
 };
 
 export default class WalletBackground {
-  public static NETWORKS: QryNetwork[] = [
-    new QryNetwork(NETWORK_NAMES.MAINNET, networks.mainnet),
-    new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet),
-  ];
-
   private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 10000;
@@ -31,28 +26,12 @@ export default class WalletBackground {
   public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   public wallet?: Wallet = INIT_VALUES.wallet;
   public info?: Insight.IGetInfo = INIT_VALUES.info;
-
-  private appSalt?: Uint8Array = INIT_VALUES.appSalt;
-  private passwordHash?: string = INIT_VALUES.passwordHash;
-  private mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
-  private testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
-  private networkIndex: number = 1;
-  private getInfoInterval?: number = undefined;
-  private getPriceInterval?: number = undefined;
-  private qtumPriceUSD: number = 0;
-
   public get accounts(): Account[] {
-    return this.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    return this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
   }
-
   public get hasAccounts(): boolean {
     return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts);
   }
-
-  public get isMainNet(): boolean {
-    return this.networkIndex === 0;
-  }
-
   public get qtumBalanceUSD(): string {
     if (this.qtumPriceUSD && this.info) {
       return (this.qtumPriceUSD * this.info.balance).toFixed(2);
@@ -61,6 +40,14 @@ export default class WalletBackground {
     }
   }
 
+  private bg: Background;
+  private appSalt?: Uint8Array = INIT_VALUES.appSalt;
+  private passwordHash?: string = INIT_VALUES.passwordHash;
+  private mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
+  private testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
+  private getInfoInterval?: number = undefined;
+  private getPriceInterval?: number = undefined;
+  private qtumPriceUSD: number = 0;
   private get validPasswordHash(): string {
     if (!this.passwordHash) {
       throw Error('passwordHash should be defined');
@@ -68,17 +55,14 @@ export default class WalletBackground {
     return this.passwordHash!;
   }
 
-  private get network(): Network  {
-    return WalletBackground.NETWORKS[this.networkIndex].network;
-  }
-
-  constructor() {
+  constructor(bg: Background) {
+    this.bg = bg;
     chrome.runtime.onMessage.addListener(this.handleMessage);
 
     // Initializes all the values from Chrome storage on startup
-    const { APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, NETWORK_INDEX } = STORAGE;
-    chrome.storage.local.get([APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, NETWORK_INDEX],
-      ({ appSalt, mainnetAccounts, testnetAccounts, networkIndex }: any) => {
+    const { APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS } = STORAGE;
+    chrome.storage.local.get([APP_SALT, MAINNET_ACCOUNTS, TESTNET_ACCOUNTS],
+      ({ appSalt, mainnetAccounts, testnetAccounts }: any) => {
         if (!isEmpty(appSalt)) {
           const array = split(appSalt, ',').map((str) => parseInt(str, 10));
           this.appSalt =  Uint8Array.from(array);
@@ -90,10 +74,6 @@ export default class WalletBackground {
 
         if (!isEmpty(testnetAccounts)) {
           this.testnetAccounts = testnetAccounts;
-        }
-
-        if (networkIndex !== undefined) {
-          this.networkIndex = networkIndex;
         }
 
         // Show the Login page after fetching storage
@@ -136,7 +116,7 @@ export default class WalletBackground {
   */
   public async addAccountAndLogin(accountName: string, mnemonic: string) {
     // Get encrypted private key
-    const network = this.network;
+    const network = this.bg.network.network;
     this.wallet = await network.fromMnemonic(mnemonic);
     const privateKeyHash = await this.wallet.toEncryptedPrivateKey(
       this.validPasswordHash,
@@ -145,7 +125,7 @@ export default class WalletBackground {
     const account = new Account(accountName, privateKeyHash);
 
     // Add account if not existing
-    if (this.isMainNet) {
+    if (this.bg.network.isMainNet) {
       this.mainnetAccounts.push(account);
       chrome.storage.local.set({
         [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
@@ -195,7 +175,7 @@ export default class WalletBackground {
   * @param accountName {string} The account name to search by.
   */
   public async loginAccount(accountName: string) {
-    const accounts = this.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     const foundAccount = find(accounts, { name: accountName });
 
     if (!foundAccount) {
@@ -205,7 +185,7 @@ export default class WalletBackground {
     this.loggedInAccount = foundAccount;
 
     // Recover wallet
-    const network = this.network;
+    const network = this.bg.network.network;
     this.wallet = await network.fromEncryptedPrivateKey(
       this.loggedInAccount!.privateKeyHash,
       this.validPasswordHash,
@@ -221,17 +201,6 @@ export default class WalletBackground {
     this.wallet = INIT_VALUES.wallet;
     this.info =  INIT_VALUES.info;
     this.routeToAccountPage();
-  }
-
-  public changeNetwork = (networkIndex: number) => {
-    if (this.networkIndex !== networkIndex) {
-      this.networkIndex = networkIndex;
-      chrome.storage.local.set({
-        [STORAGE.NETWORK_INDEX]: networkIndex,
-      }, () => console.log('networkIndex added to storage', networkIndex));
-
-      this.logout();
-    }
   }
 
   public sendTokens = async (receiverAddress: string, amount: number) => {
@@ -289,7 +258,7 @@ export default class WalletBackground {
   * Routes to the CreateWallet or AccountLogin page after unlocking with the password.
   */
   private routeToAccountPage = () => {
-    const accounts = this.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     if (isEmpty(accounts)) {
       // Account not found, route to Create Wallet page
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS });
@@ -304,20 +273,18 @@ export default class WalletBackground {
   * @return Is the password valid.
   */
   private validatePassword = async (): Promise<boolean> => {
-    let qryNetwork: QryNetwork;
     let account: Account;
     if (!isEmpty(this.mainnetAccounts)) {
-      qryNetwork = WalletBackground.NETWORKS[0];
       account = this.mainnetAccounts[0];
     } else if (!isEmpty(this.testnetAccounts)) {
-      qryNetwork = WalletBackground.NETWORKS[1];
       account = this.testnetAccounts[0];
     } else {
       throw Error('Trying to validate password without existing account');
     }
 
     try {
-      await qryNetwork.network.fromEncryptedPrivateKey(
+      const network: Network = this.bg.network.network;
+      await network.fromEncryptedPrivateKey(
         account.privateKeyHash,
         this.validPasswordHash,
         WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
@@ -330,12 +297,13 @@ export default class WalletBackground {
   }
 
   private isWalletMnemonicTaken = async (mnemonic: string): Promise<boolean> => {
-    const wallet = await this.network.fromMnemonic(mnemonic);
+    const network = this.bg.network.network;
+    const wallet = await network.fromMnemonic(mnemonic);
     const privateKeyHash = await wallet.toEncryptedPrivateKey(
       this.validPasswordHash,
       WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
     );
-    const accounts = this.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     return !!find(accounts, { privateKeyHash });
   }
 
@@ -407,15 +375,6 @@ export default class WalletBackground {
         break;
       case MESSAGE_TYPE.LOGOUT:
         this.logout();
-        break;
-      case MESSAGE_TYPE.CHANGE_NETWORK:
-        this.changeNetwork(request.networkIndex);
-        break;
-      case MESSAGE_TYPE.GET_NETWORKS:
-        sendResponse(WalletBackground.NETWORKS);
-        break;
-      case MESSAGE_TYPE.IS_MAINNET:
-        sendResponse(this.isMainNet);
         break;
       case MESSAGE_TYPE.HAS_ACCOUNTS:
         sendResponse(this.hasAccounts);

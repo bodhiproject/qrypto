@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, reaction } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
@@ -18,12 +18,11 @@ export default class AccountLoginStore {
   constructor(app: AppStore) {
     this.app = app;
 
-    // TODO: refactor using onMessage
     // Set the default selected account on the login page.
-    // reaction(
-    //   () => this.app.networkStore.networkIndex,
-    //   () => this.getAccounts(),
-    // );
+    reaction(
+      () => this.app.sessionStore.networkIndex,
+      () => this.getAccounts(),
+    );
   }
 
   @action
