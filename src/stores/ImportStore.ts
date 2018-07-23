@@ -53,5 +53,5 @@ export default class ImportStore {
   }
 
   @action
-  public cancelImport = () => this.app.routerStore.goBack()
+  public cancelImport = () => this.app.routerStore.push('/create-wallet')
 }
