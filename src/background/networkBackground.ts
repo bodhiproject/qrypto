@@ -27,6 +27,7 @@ export default class NetworkBackground {
     chrome.storage.local.get([STORAGE.NETWORK_INDEX], ({ networkIndex }: any) => {
       if (networkIndex !== undefined) {
         this.networkIndex = networkIndex;
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex: this.networkIndex });
       }
     });
   }
@@ -50,6 +51,9 @@ export default class NetworkBackground {
         break;
       case MESSAGE_TYPE.GET_NETWORKS:
         sendResponse(NetworkBackground.NETWORKS);
+        break;
+      case MESSAGE_TYPE.GET_NETWORK_INDEX:
+        sendResponse(this.networkIndex);
         break;
       case MESSAGE_TYPE.IS_MAINNET:
         sendResponse(this.isMainNet);
