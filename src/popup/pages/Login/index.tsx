@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import { withRouter } from 'react-router';
 import {
   Typography,
   Button,
@@ -17,7 +16,6 @@ import styles from './styles';
 import PasswordInput from '../../components/PasswordInput';
 import Logo from '../../components/Logo';
 import AppStore from '../../../stores/AppStore';
-import { MESSAGE_TYPE } from '../../../constants';
 
 interface IProps {
   classes: Record<string, string>;
@@ -44,7 +42,7 @@ class Login extends Component<WithStyles & IProps, {}> {
             autoFocus={true}
             placeholder="Password"
             onChange={(e: any) => loginStore.password = e.target.value}
-            onEnterPress={this.login}
+            onEnterPress={loginStore.login}
           />
           {!hasAccounts && (
             <Fragment>
@@ -54,7 +52,7 @@ class Login extends Component<WithStyles & IProps, {}> {
                 error={!!matchError}
                 errorText={matchError}
                 onChange={(e: any) => loginStore.confirmPassword = e.target.value}
-                onEnterPress={this.login}
+                onEnterPress={loginStore.login}
               />
               <Typography className={classes.masterPwNote}>
                 This will serve as your master password and will be saved when you create or import your first wallet.
@@ -68,21 +66,13 @@ class Login extends Component<WithStyles & IProps, {}> {
           variant="contained"
           color="primary"
           disabled={error}
-          onClick={this.login}
+          onClick={loginStore.login}
         >
           Login
         </Button>
         <ErrorDialog {...this.props} />
       </div>
     );
-  }
-
-  private login = () => {
-    const { history, store: { loginStore } }: any = this.props;
-    if (loginStore.error === false) {
-      history.push('/loading');
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN, password: loginStore.password });
-    }
   }
 }
 
@@ -102,4 +92,4 @@ const ErrorDialog: React.SFC<any> = observer(({ store: { loginStore }}: any) => 
   </Dialog>
 ));
 
-export default withRouter<any>(withStyles(styles)(Login));
+export default withStyles(styles)(Login);

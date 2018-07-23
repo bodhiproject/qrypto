@@ -1,6 +1,7 @@
 import { observable, computed, action } from 'mobx';
 import { isEmpty } from 'lodash';
 
+import AppStore from './AppStore';
 import { MESSAGE_TYPE } from '../constants';
 
 const INIT_VALUES = {
@@ -23,7 +24,10 @@ export default class LoginStore {
     return (!this.hasAccounts && !!matchError) || isEmpty(this.password);
   }
 
-  constructor() {
+  private app: AppStore;
+
+  constructor(app: AppStore) {
+    this.app = app;
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.HAS_ACCOUNTS }, (response: any) => this.hasAccounts = response);
   }
 
@@ -31,6 +35,13 @@ export default class LoginStore {
   public init = () => {
     this.password = INIT_VALUES.password;
     this.confirmPassword = INIT_VALUES.confirmPassword;
+  }
+
+  public login = () => {
+    if (this.error === false) {
+      this.app.routerStore.push('/loading');
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN, password: this.password });
+    }
   }
 
   private getMatchError = (): string | undefined => {

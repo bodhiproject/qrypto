@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import { Typography, TextField, Button, withStyles, WithStyles, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
@@ -101,4 +100,4 @@ const ErrorDialog: React.SFC<any> = observer(({ store: { importStore }}: any) =>
   </Dialog>
 ));
 
-export default withRouter<any>(withStyles(styles)(ImportMnemonic));
+export default withStyles(styles)(ImportMnemonic);
