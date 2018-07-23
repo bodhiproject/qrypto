@@ -15,10 +15,11 @@ Object.assign(window, {
     const modal = await showModal(300, 300, {background: '#FFF'});
     const content = template(`
       <p>I'm a test Modal!</p>
-      <button onclick="window.parent.closeModal()">close me</button>
+      <button>close me</button>
     `);
 
     modal.contentDocument!.write(content());
+    modal.contentDocument!.querySelector('button')!.addEventListener('click', closeModal);
     return modal;
   },
 });
