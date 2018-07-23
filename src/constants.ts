@@ -15,10 +15,8 @@ export enum API_TYPE {
 }
 
 export enum MESSAGE_TYPE {
-  // Routes
-  ROUTE_LOGIN,
-
   // Actions
+  ROUTE_LOGIN,
   LOGIN,
   LOGIN_SUCCESS_WITH_ACCOUNTS,
   LOGIN_SUCCESS_NO_ACCOUNTS,
