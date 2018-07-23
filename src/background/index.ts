@@ -413,6 +413,9 @@ const onMessage = (request: any, sender: chrome.runtime.MessageSender, sendRespo
     case MESSAGE_TYPE.CHANGE_NETWORK:
       instance.changeNetwork(request.networkIndex);
       break;
+    case MESSAGE_TYPE.HAS_ACCOUNTS:
+      sendResponse(instance.hasAccounts);
+      break;
     case MESSAGE_TYPE.GET_ACCOUNTS:
       sendResponse(instance.accounts);
       break;

@@ -32,9 +32,8 @@ class Login extends Component<WithStyles & IProps, {}> {
   }
 
   public render() {
-    const { classes, store: { loginStore, walletStore } } = this.props;
-    const { matchError, error } = loginStore;
-    const { hasAccounts } = walletStore;
+    const { classes, store: { loginStore } } = this.props;
+    const { hasAccounts, matchError, error } = loginStore;
 
     return (
       <div className={classes.root}>

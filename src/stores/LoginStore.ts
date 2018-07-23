@@ -1,15 +1,17 @@
 import { observable, computed, action } from 'mobx';
 import { isEmpty } from 'lodash';
 
-import AppStore from './AppStore';
+import { MESSAGE_TYPE } from '../constants';
 
 const INIT_VALUES = {
+  hasAccounts: false,
   password: '',
   confirmPassword: '',
   invalidPassword: undefined,
 };
 
 export default class LoginStore {
+  @observable public hasAccounts: boolean = INIT_VALUES.hasAccounts;
   @observable public password: string = INIT_VALUES.password;
   @observable public confirmPassword: string = INIT_VALUES.confirmPassword;
   @observable public invalidPassword?: boolean = INIT_VALUES.invalidPassword;
@@ -18,13 +20,11 @@ export default class LoginStore {
   }
   @computed public get error(): boolean {
     const matchError = this.getMatchError();
-    return (!this.app.walletStore.hasAccounts && !!matchError) || isEmpty(this.password);
+    return (!this.hasAccounts && !!matchError) || isEmpty(this.password);
   }
 
-  private app: AppStore;
-
-  constructor(app: AppStore) {
-    this.app = app;
+  constructor() {
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.HAS_ACCOUNTS }, (response: any) => this.hasAccounts = response);
   }
 
   @action
