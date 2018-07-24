@@ -40,7 +40,7 @@ export default class NetworkBackground {
       }, () => console.log('networkIndex changed', networkIndex));
 
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex });
-      this.bg.wallet.logout();
+      this.bg.account.logoutAccount();
     }
   }
 

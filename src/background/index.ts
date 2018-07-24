@@ -1,14 +1,17 @@
 import WalletBackground from './walletBackground';
+import AccountBackground from './accountBackground';
 import AccountDetailBackground from './accountDetailBackground';
 import NetworkBackground from './networkBackground';
 
 export default class Background {
   public wallet: WalletBackground;
+  public account: AccountBackground;
   public network: NetworkBackground;
   public accountDetail: AccountDetailBackground;
 
   constructor() {
     this.wallet = new WalletBackground(this);
+    this.account = new AccountBackground(this);
     this.network = new NetworkBackground(this);
     this.accountDetail = new AccountDetailBackground(this);
   }
