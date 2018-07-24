@@ -17,6 +17,14 @@ export const isMessageNotValid = (event: MessageEvent, targetName: TARGET_NAME):
 };
 
 /*
+* Generates a random string id.
+* @return The random string id.
+*/
+export const generateRandomId = (): string => {
+  return Math.random().toString().slice(-8);
+};
+
+/*
 * Validates the Qtum address based on length and starting character.
 * @param address {string} The Qtum address to validate.
 * @param isTestnet {boolean} Flag if is a testnet address (or else mainnet address).

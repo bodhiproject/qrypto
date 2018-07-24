@@ -18,6 +18,12 @@ export default class RPCBackground {
     }
   }
 
+  public getBlockCount = () => {
+    if (this.rpcProvider) {
+      this.rpcProvider.rawCall()
+    }
+  }
+
   private onMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       default:
