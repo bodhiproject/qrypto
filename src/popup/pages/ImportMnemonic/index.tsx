@@ -50,10 +50,10 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
               />
               <BorderTextField
                 placeholder="Wallet name"
-                error={!!importStore.walletNameError}
+                error={importStore.walletNameTaken}
                 errorText={importStore.walletNameError}
                 onChange={(e: any) => importStore.accountName = e.target.value}
-                onEnterPress={this.handleEnterPress}
+                onEnterPress={importStore.importMnemonic}
               />
             </div>
           </div>
@@ -63,7 +63,7 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={importStore.importNewMnemonic}
+              onClick={importStore.importMnemonic}
               disabled={importStore.error}
             >
               Import
@@ -81,13 +81,6 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
         <ErrorDialog {...this.props} />
       </div>
     );
-  }
-
-  private handleEnterPress = () => {
-    const { importStore } = this.props.store;
-    if (!importStore.error) {
-      importStore.importNewMnemonic();
-    }
   }
 }
 

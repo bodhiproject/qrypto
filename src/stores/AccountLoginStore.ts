@@ -2,6 +2,8 @@ import { observable, action, reaction } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
+import { MESSAGE_TYPE } from '../constants';
+import Account from '../models/Account';
 
 const INIT_VALUES = {
   selectedWalletName: '',
@@ -9,6 +11,7 @@ const INIT_VALUES = {
 
 export default class AccountLoginStore {
   @observable public selectedWalletName: string = INIT_VALUES.selectedWalletName;
+  @observable public accounts: Account[] = [];
 
   private app: AppStore;
 
@@ -17,23 +20,35 @@ export default class AccountLoginStore {
 
     // Set the default selected account on the login page.
     reaction(
-      () => this.app.networkStore.networkIndex,
-      () => this.setSelectedWallet(),
+      () => this.app.sessionStore.networkIndex,
+      () => this.getAccounts(),
     );
   }
 
   @action
+  public getAccounts = () => {
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_ACCOUNTS }, (response: any) => {
+      if (!isEmpty(response)) {
+        this.accounts = response;
+        this.setSelectedWallet();
+      }
+    });
+  }
+
+  @action
   public setSelectedWallet = () => {
-    const accounts = this.app.walletStore.accounts;
-    if (!isEmpty(accounts)) {
-      this.selectedWalletName = accounts[0].name;
+    if (!isEmpty(this.accounts)) {
+      this.selectedWalletName = this.accounts[0].name;
     }
   }
 
   @action
-  public login = () => {
-    this.app.walletStore.loginAccount(this.selectedWalletName);
-    this.reset();
+  public loginAccount = () => {
+    this.app.routerStore.push('/loading');
+    chrome.runtime.sendMessage({
+      type: MESSAGE_TYPE.ACCOUNT_LOGIN,
+      selectedWalletName: this.selectedWalletName,
+    });
   }
 
   @action

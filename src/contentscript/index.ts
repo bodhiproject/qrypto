@@ -3,6 +3,7 @@ import { WalletRPCProvider, networks, Wallet, Network } from 'qtumjs-wallet';
 
 import { IExtensionMessageData, IExtensionAPIMessage, IRPCCallRequestPayload } from '../types';
 import { TARGET_NAME, API_TYPE, STORAGE } from '../constants';
+import { isMessageNotValid } from '../utils';
 
 injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
   await injectScript(chrome.extension.getURL('commons.exclude-background.js'));
@@ -14,7 +15,7 @@ injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
   await injectScript(chrome.extension.getURL('inpage.js'));
 });
 
-window.addEventListener('message', handleWebPageMessage, false);
+window.addEventListener('message', handleContentScriptMessage, false);
 
 // const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
 // port.onMessage.addListener(responseExtensionAPI);
@@ -32,27 +33,18 @@ function injectScript(src: string) {
   });
 }
 
-const origin = location.origin;
-function handleWebPageMessage(event: MessageEvent) {
-  // validate message
-  const data: IExtensionMessageData<any> = event.data;
-  if (
-    event.origin !== origin ||
-    event.source !== window ||
-    typeof data !== 'object' ||
-    data.message == null ||
-    data.target !== TARGET_NAME.CONTENTSCRIPT
-  ) {
+function handleContentScriptMessage(event: MessageEvent) {
+  if (isMessageNotValid(event, TARGET_NAME.CONTENTSCRIPT)) {
     return;
   }
 
-  const message: IExtensionAPIMessage<any> = data.message;
+  const message: IExtensionAPIMessage<any> = event.data.message;
   switch (message.type) {
     case API_TYPE.RPC_REQUEST:
       handleRPCCallMessage(message.payload);
       break;
     default:
-      console.log('receive unknown type message from webpage:', data.message);
+      throw Error(`Contentscript processing invalid type: ${message}`);
   }
 }
 

@@ -30,13 +30,13 @@ class MainAccount extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { info } = this.props.store!.walletStore;
+    const { info } = this.props.store!.sessionStore;
 
     if (!info) {
       return null;
     }
 
-    return info && (
+    return (
       <div>
         <Card raised id="mainCard" onClick={(e) => this.handleClick('mainCard', e)} className={classes.card}>
           <CardContent className={classes.cardContent}>

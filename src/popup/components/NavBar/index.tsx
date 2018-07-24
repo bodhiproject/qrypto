@@ -28,9 +28,8 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
     hasNetworkSelector,
     isDarkTheme,
     title,
-    store,
+    store: { navBarStore, sessionStore },
   }: any = props;
-  const { networkStore } = store!;
 
   return (
     <div className={classes.root}>
@@ -43,9 +42,9 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
       </div>
       {hasNetworkSelector && (
         <DropDownMenu
-          onSelect={(idx: number) => networkStore.changeNetwork(idx)}
-          selections={networkStore.networksArray.map((net: QryNetwork) => net.name)}
-          selectedIndex={networkStore.networkIndex}
+          onSelect={navBarStore.changeNetwork}
+          selections={navBarStore.networks.map((net: QryNetwork) => net.name)}
+          selectedIndex={sessionStore.networkIndex}
         />
       )}
     </div>
@@ -58,24 +57,29 @@ const BackButton: React.SFC<IProps> = ({ classes, isDarkTheme, store: { routerSt
   </IconButton>
 );
 
-const SettingsButton: React.SFC<IProps> = observer(({ classes, store: { ui, walletStore }, isDarkTheme }: any) => (
+const SettingsButton: React.SFC<IProps> =
+  observer(({ classes, store: { navBarStore }, isDarkTheme }: any) => (
   <Fragment>
     <IconButton
-      aria-owns={ui.settingsMenuAnchor ? 'settingsMenu' : undefined}
+      aria-owns={navBarStore.settingsMenuAnchor ? 'settingsMenu' : undefined}
       aria-haspopup="true"
       color="primary"
-      onClick={(e) => ui.settingsMenuAnchor = e.currentTarget}
+      onClick={(e) => navBarStore.settingsMenuAnchor = e.currentTarget}
       className={classes.settingsIconButton}
     >
       <Settings className={cx(classes.settingsButton, isDarkTheme ? 'white' : '')} />
     </IconButton>
     <Menu
       id="settingsMenu"
-      anchorEl={ui.settingsMenuAnchor}
-      open={Boolean(ui.settingsMenuAnchor)}
-      onClose={() => ui.settingsMenuAnchor = undefined}
+      anchorEl={navBarStore.settingsMenuAnchor}
+      open={Boolean(navBarStore.settingsMenuAnchor)}
+      onClose={() => navBarStore.settingsMenuAnchor = undefined}
     >
-      <MenuItem onClick={walletStore.logout}>Logout</MenuItem>
+      <MenuItem
+        onClick={navBarStore.logout}
+      >
+        Logout
+      </MenuItem>
     </Menu>
   </Fragment>
 ));

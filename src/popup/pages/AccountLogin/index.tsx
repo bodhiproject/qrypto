@@ -14,8 +14,9 @@ interface IProps {
 @inject('store')
 @observer
 class AccountLogin extends Component<WithStyles & IProps, {}> {
+
   public componentDidMount() {
-    this.props.store.accountLoginStore.setSelectedWallet();
+    this.props.store.accountLoginStore.getAccounts();
   }
 
   public render() {
@@ -34,7 +35,7 @@ class AccountLogin extends Component<WithStyles & IProps, {}> {
   }
 }
 
-const AccountSection = observer(({ classes, store: { walletStore: { accounts }, accountLoginStore } }: any) => (
+const AccountSection = observer(({ classes, store: { accountLoginStore } }: any) => (
   <div className={classes.accountContainer}>
     <Typography className={classes.selectAcctText}>Select account</Typography>
     <Select
@@ -44,7 +45,9 @@ const AccountSection = observer(({ classes, store: { walletStore: { accounts }, 
       value={accountLoginStore.selectedWalletName}
       onChange={(e) => accountLoginStore.selectedWalletName = e.target.value}
     >
-      {accounts.map((acct: Account, index: number) => <MenuItem key={index} value={acct.name}>{acct.name}</MenuItem>)}
+      {accountLoginStore.accounts.map((acct: Account, index: number) =>
+        <MenuItem key={index} value={acct.name}>{acct.name}</MenuItem>)
+      }
     </Select>
     <div className={classes.createAccountContainer}>
       <Typography className={classes.orText}>or</Typography>
@@ -68,7 +71,7 @@ const LoginSection = observer(({ classes, store: { accountLoginStore } }: any) =
       fullWidth
       variant="contained"
       color="primary"
-      onClick={accountLoginStore.login}
+      onClick={accountLoginStore.loginAccount}
     >
       Login
     </Button>

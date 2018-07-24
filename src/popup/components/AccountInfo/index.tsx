@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
@@ -16,11 +15,6 @@ interface IProps {
 @inject('store')
 @observer
 class AccountInfo extends Component<WithStyles & IProps, {}> {
-  public static propTypes = {
-    classes: PropTypes.object.isRequired,
-    hasRightArrow: PropTypes.bool,
-  };
-
   public handleClick = (id: string, event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
 
@@ -34,7 +28,11 @@ class AccountInfo extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes, hasRightArrow } = this.props;
-    const { loggedInAccount, info, balanceUSD } = this.props.store!.walletStore;
+    const { loggedInAccount, info, qtumBalanceUSD } = this.props.store!.sessionStore;
+
+    if (!loggedInAccount || !info) {
+      return null;
+    }
 
     return info && (
       <div className={classes.root}>
@@ -45,7 +43,7 @@ class AccountInfo extends Component<WithStyles & IProps, {}> {
           <Typography className={classes.token}>QTUM</Typography>
           {hasRightArrow && <KeyboardArrowRight className={classes.rightArrow} />}
         </div>
-        <Typography className={classes.balanceUSD}>${balanceUSD} USD</Typography>
+        <Typography className={classes.balanceUSD}>${qtumBalanceUSD} USD</Typography>
         <div className={classes.actionButtonsContainer}>
           <Button
             id="sendButton"

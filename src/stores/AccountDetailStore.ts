@@ -1,92 +1,42 @@
-import { observable, action, computed } from 'mobx';
-import { Insight } from 'qtumjs-wallet';
-import { find, map, sumBy, partition, includes } from 'lodash';
-import moment from 'moment';
+import { observable, action } from 'mobx';
 
-import AppStore from './AppStore';
+import { MESSAGE_TYPE } from '../constants';
 import Transaction from '../models/Transaction';
 
+const INIT_VALUES = {
+  activeTabIdx: 0,
+  transactions: [],
+  hasMore: false,
+};
+
 export default class AccountDetailStore {
-  private static GET_TX_INTERVAL_MS: number = 60000;
+  @observable public activeTabIdx: number = INIT_VALUES.activeTabIdx;
+  @observable public transactions: Transaction[] = INIT_VALUES.transactions;
+  @observable public hasMore: boolean = INIT_VALUES.hasMore;
 
-  @observable public activeTabIdx: number = 0;
-  @observable.shallow public items: Transaction[] = [];
-  @observable public pageNum: number = 0;
-  @observable public pagesTotal?: number;
-
-  @computed public get hasMore(): boolean {
-    return !!this.pagesTotal && (this.pagesTotal > this.pageNum + 1);
+  public init = () => {
+    chrome.runtime.onMessage.addListener(this.handleMessage);
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.START_TX_POLLING });
   }
 
-  private getTransactionsInterval?: number = undefined;
-
-  constructor(private app: AppStore) {}
-
-  @action public async loadFromWallet() {
-    this.items = await this.load();
+  public deinit = () => {
+    chrome.runtime.onMessage.removeListener(this.handleMessage);
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
   }
 
-  @action public async loadMore() {
-    this.pageNum = this.pageNum + 1;
-    const txs = await this.load(this.pageNum);
-    this.items = this.items.concat(txs);
+  public fetchMore = () => {
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MORE_TXS });
   }
 
-  public startTxPolling = () => {
-    this.loadFromWallet();
-    this.getTransactionsInterval = window.setInterval(() => {
-      this.refreshTransactions();
-    }, AccountDetailStore.GET_TX_INTERVAL_MS);
-  }
-
-  @action public stopTxPolling = () => {
-    if (this.getTransactionsInterval) {
-      clearInterval(this.getTransactionsInterval);
-      this.pageNum = 0;
+  @action
+  private handleMessage = (request: any) => {
+    switch (request.type) {
+      case MESSAGE_TYPE.GET_TXS_RETURN:
+        this.transactions = request.transactions;
+        this.hasMore = request.hasMore;
+        break;
+      default:
+        break;
     }
   }
-
-  // TODO - if a new transaction comes in, the transactions on a page will shift(ie if 1 page has 10 transactions, transaction number 10 shifts to page2), and the bottom most transaction would disappear from the list. Need to add some additional logic to keep the bottom most transaction displaying.
-  @action public async refreshTransactions() {
-    let refreshedItems: Transaction[] = [];
-    for (let i = 0; i <= this.pageNum; i++) {
-      refreshedItems = refreshedItems.concat(await this.load(i));
-    }
-    this.items = refreshedItems;
-  }
-
-  @action private async load(pageNum: number = 0): Promise<Transaction[]> {
-    const wallet = this.app.walletStore.wallet!;
-    const { pagesTotal, txs } =  await wallet.getTransactions(pageNum);
-
-    this.pagesTotal = pagesTotal;
-
-    return map(txs, (tx: Insight.IRawTransactionInfo) => {
-      const {
-        txid,
-        confirmations,
-        time,
-        vin,
-        vout,
-      } = tx;
-
-      const sender = find(vin, {addr: wallet.address});
-
-      const outs = map(vout, ({ value, scriptPubKey: { addresses } }) => {
-        return { value, addresses };
-      });
-
-      const [mine, other] = partition(outs, ({ addresses }) => includes(addresses, wallet.address));
-
-      const amount = sumBy(sender ? other : mine, ({ value }) => parseFloat(value));
-
-      return new Transaction({
-        id: txid,
-        timestamp: moment(new Date(time * 1000)).format('MM-DD-YYYY, HH:mm'),
-        confirmations,
-        amount,
-      });
-    });
-  }
-
 }

@@ -17,14 +17,16 @@ interface IProps {
 @observer
 class Send extends Component<WithStyles & IProps, {}> {
   public componentDidMount() {
-    const { store: { sendStore, walletStore } } = this.props;
-
-    // Set default sender address
-    sendStore.senderAddress = walletStore.info!.addrStr;
+    this.props.store.sendStore.init();
   }
 
   public render() {
     const { classes } = this.props;
+    const { loggedInAccount, info } = this.props.store.sessionStore;
+
+    if (!loggedInAccount || !info) {
+      return null;
+    }
 
     return (
       <div className={classes.root}>
@@ -55,7 +57,7 @@ const Heading = withStyles(styles, { withTheme: true })(({ classes, name }: any)
   <Typography className={classes.fieldHeading}>{name}</Typography>
 ));
 
-const FromField = observer(({ classes, store: { sendStore, walletStore: { loggedInAccount, info } } }: any) => (
+const FromField = observer(({ classes, store: { sendStore, sessionStore } }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="From" />
     <div className={classes.fieldContentContainer}>
@@ -63,19 +65,19 @@ const FromField = observer(({ classes, store: { sendStore, walletStore: { logged
         className={classes.fromSelect}
         inputProps={{ name: 'from', id: 'from'}}
         disableUnderline
-        value={info.addrStr}
+        value={sessionStore.info.addrStr}
         onChange={(event) => sendStore.senderAddress = event.target.value}
       >
-        <MenuItem value={info.addrStr}>
-          <Typography className={classes.fromAddress}>{loggedInAccount.name}</Typography>
+        <MenuItem value={sessionStore.info.addrStr}>
+          <Typography className={classes.fromAddress}>{sessionStore.loggedInAccount.name}</Typography>
         </MenuItem>
       </Select>
-      <Typography className={classes.fromBalance}>{info.balance} QTUM</Typography>
+      <Typography className={classes.fromBalance}>{sessionStore.info.balance} QTUM</Typography>
     </div>
   </div>
 ));
 
-const ToField = observer(({ classes, store: { sendStore, walletStore: { info } }, onEnterPress }: any) => (
+const ToField = observer(({ classes, store: { sendStore, sessionStore }, onEnterPress }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="To" />
     <div className={classes.fieldContentContainer}>
@@ -83,7 +85,7 @@ const ToField = observer(({ classes, store: { sendStore, walletStore: { info } }
         fullWidth
         type="text"
         multiline={false}
-        placeholder={info.addrStr}
+        placeholder={sessionStore.info.addrStr}
         value={sendStore.receiverAddress}
         InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
         onChange={(event) => sendStore.receiverAddress = event.target.value}
@@ -113,7 +115,7 @@ const TokenField = observer(({ classes, store: { sendStore } }: any) => (
   </div>
 ));
 
-const AmountField = observer(({ classes, store: { walletStore: { info }, sendStore }, onEnterPress }: any) => (
+const AmountField = observer(({ classes, store: { sendStore, sessionStore }, onEnterPress }: any) => (
   <div className={classes.amountContainer}>
     <div className={classes.amountHeadingContainer}>
       <div className={classes.amountHeadingTextContainer}>
@@ -122,7 +124,7 @@ const AmountField = observer(({ classes, store: { walletStore: { info }, sendSto
       <Button
         color="primary"
         className={classes.maxButton}
-        onClick={() => sendStore.amount = info.balance}
+        onClick={() => sendStore.amount = sessionStore.info.balance}
       >
         Max
       </Button>
