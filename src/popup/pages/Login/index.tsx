@@ -30,9 +30,8 @@ class Login extends Component<WithStyles & IProps, {}> {
   }
 
   public render() {
-    const { classes, store: { loginStore, walletStore } } = this.props;
-    const { password, matchError, error } = loginStore;
-    const { hasAccounts } = walletStore;
+    const { classes, store: { loginStore } } = this.props;
+    const { hasAccounts, matchError, error } = loginStore;
 
     return (
       <div className={classes.root}>
@@ -43,7 +42,7 @@ class Login extends Component<WithStyles & IProps, {}> {
             autoFocus={true}
             placeholder="Password"
             onChange={(e: any) => loginStore.password = e.target.value}
-            onEnterPress={this.onEnterPress}
+            onEnterPress={loginStore.login}
           />
           {!hasAccounts && (
             <Fragment>
@@ -53,7 +52,7 @@ class Login extends Component<WithStyles & IProps, {}> {
                 error={!!matchError}
                 errorText={matchError}
                 onChange={(e: any) => loginStore.confirmPassword = e.target.value}
-                onEnterPress={this.onEnterPress}
+                onEnterPress={loginStore.login}
               />
               <Typography className={classes.masterPwNote}>
                 This will serve as your master password and will be saved when you create or import your first wallet.
@@ -67,20 +66,13 @@ class Login extends Component<WithStyles & IProps, {}> {
           variant="contained"
           color="primary"
           disabled={error}
-          onClick={() => walletStore.login(password)}
+          onClick={loginStore.login}
         >
           Login
         </Button>
         <ErrorDialog {...this.props} />
       </div>
     );
-  }
-
-  private onEnterPress = () => {
-    const { loginStore, walletStore } = this.props.store;
-    if (loginStore.error === false) {
-      walletStore.login(loginStore.password);
-    }
   }
 }
 

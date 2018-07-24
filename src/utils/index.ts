@@ -1,4 +1,20 @@
 import { isFinite } from 'lodash';
+import { TARGET_NAME } from '../constants';
+import { IExtensionMessageData } from '../types';
+
+/*
+* Validates a MessageEvent.
+* @param event The message to validate.
+* @param targetName The expected target for the message.
+*/
+export const isMessageNotValid = (event: MessageEvent, targetName: TARGET_NAME): boolean => {
+  const data: IExtensionMessageData<any> = event.data;
+  return event.origin !== location.origin
+    || event.source !== window
+    || typeof data !== 'object'
+    || data.message == null
+    || data.target !== targetName;
+};
 
 /*
 * Validates the Qtum address based on length and starting character.

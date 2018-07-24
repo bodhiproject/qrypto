@@ -37,7 +37,7 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
             <BorderTextField
               classNames={classes.walletNameField}
               placeholder="Wallet name"
-              error={!!createWalletStore.walletNameError}
+              error={createWalletStore.walletNameTaken}
               errorText={createWalletStore.walletNameError}
               onChange={this.onWalletNameChange}
               onEnterPress={this.handleEnterPress}

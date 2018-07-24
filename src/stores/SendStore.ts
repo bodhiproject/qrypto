@@ -1,8 +1,8 @@
-import { observable, computed, action, runInAction } from 'mobx';
+import { observable, computed, action } from 'mobx';
 
 import AppStore from './AppStore';
+import { SEND_STATE, MESSAGE_TYPE } from '../constants';
 import { isValidAddress, isValidAmount } from '../utils';
-import { SEND_STATE } from '../constants';
 
 const INIT_VALUES = {
   senderAddress: '',
@@ -20,25 +20,28 @@ export default class SendStore {
   @observable public amount: number = INIT_VALUES.amount;
   @observable public sendState: SEND_STATE = INIT_VALUES.sendState;
   @observable public errorMessage?: string = INIT_VALUES.errorMessage;
-
   @computed public get receiverFieldError(): string | undefined {
-    const isTestnet = true; // TODO: set validation based on network var
-    return isValidAddress(this.receiverAddress, isTestnet) ? undefined : 'Not a valid Qtum address';
+    return isValidAddress(this.receiverAddress, !this.isMainNet) ? undefined : 'Not a valid Qtum address';
   }
-
   @computed public get amountFieldError(): string | undefined {
-    return this.app.walletStore.info && isValidAmount(Number(this.amount), this.app.walletStore.info.balance)
-      ? undefined : 'Not a valid amount';
+    const { info } = this.app.sessionStore;
+    return info && isValidAmount(Number(this.amount), info.balance) ? undefined : 'Not a valid amount';
   }
-
   @computed public get buttonDisabled(): boolean {
     return !this.senderAddress || !!this.receiverFieldError || !this.token || !!this.amountFieldError;
   }
 
   private app: AppStore;
+  private isMainNet: boolean = false;
 
   constructor(app: AppStore) {
     this.app = app;
+  }
+
+  @action
+  public init = () => {
+    chrome.runtime.onMessage.addListener(this.handleMessage);
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IS_MAINNET }, (response: any) => this.isMainNet = response);
   }
 
   @action
@@ -47,24 +50,29 @@ export default class SendStore {
   }
 
   @action
-  public send = async () => {
-    try {
-      this.sendState = SEND_STATE.SENDING;
-      await this.app.walletStore.wallet!.send(this.receiverAddress, this.amount * 1e8, {
-        feeRate: 4000,
-      });
+  public send = () => {
+    this.sendState = SEND_STATE.SENDING;
+    chrome.runtime.sendMessage({
+      type: MESSAGE_TYPE.SEND_TOKENS,
+      receiverAddress: this.receiverAddress,
+      amount: this.amount,
+    });
+  }
 
-      runInAction(() => {
+  @action
+  private handleMessage = (request: any) => {
+    switch (request.type) {
+      case MESSAGE_TYPE.SEND_TOKENS_SUCCESS:
         this.app.routerStore.push('/home'); // so pressing back won't go back to sendConfirm page
         this.app.routerStore.push('/account-detail');
         this.sendState = SEND_STATE.INITIAL;
-      });
-    } catch (err) {
-      console.log(err);
-      runInAction(() => {
+        break;
+      case MESSAGE_TYPE.SEND_TOKENS_FAILURE:
         this.sendState = SEND_STATE.INITIAL;
-        this.errorMessage = err.message;
-      });
+        this.errorMessage = request.error.message;
+        break;
+      default:
+        break;
     }
   }
 }

@@ -24,16 +24,16 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
   }
 
   public componentDidMount() {
-    this.props.store.accountDetailStore.startTxPolling();
+    this.props.store.accountDetailStore.init();
   }
 
   public componentWillUnmount() {
-    this.props.store.accountDetailStore.stopTxPolling();
+    this.props.store.accountDetailStore.deinit();
   }
 
   public render() {
     const { classes, store: { accountDetailStore } } = this.props;
-    const { activeTabIdx, items, hasMore } = accountDetailStore;
+    const { activeTabIdx, transactions, hasMore } = accountDetailStore;
 
     return (
       <div className={classes.root}>
@@ -57,14 +57,14 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
           <List className={classes.list}>
             {activeTabIdx === 0 ? (
               <div>
-                <TransactionList classes={classes} transactions={items} />
+                <TransactionList classes={classes} transactions={transactions} />
                 <div className={classes.loadingButtonWrap}>
                   {hasMore && (
                     <Button
                       id="loadingButton"
                       color="primary"
                       size="small"
-                      onClick={() => accountDetailStore.loadMore()}
+                      onClick={accountDetailStore.fetchMore}
                       >
                       Load More
                     </Button>
