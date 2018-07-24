@@ -37,7 +37,7 @@ export default class AccountDetailBackground {
     this.sendTransactionsMessage();
   }
 
-  // TODO - if a new transaction comes in, the transactions on a page will shift(ie if 1 page has 10 transactions,
+  // TODO: if a new transaction comes in, the transactions on a page will shift(ie if 1 page has 10 transactions,
   // transaction number 10 shifts to page2), and the bottom most transaction would disappear from the list.
   // Need to add some additional logic to keep the bottom most transaction displaying.
   private refreshTransactions = async () => {

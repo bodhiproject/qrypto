@@ -177,6 +177,7 @@ export default class AccountBackground {
   public logoutAccount = () => {
     this.bg.wallet.stopPolling();
     this.bg.wallet.resetWallet();
+    this.bg.external.stopPolling();
     this.resetAccount();
     this.routeToAccountPage();
   }
@@ -234,6 +235,7 @@ export default class AccountBackground {
   */
   private onAccountLoggedIn = async () => {
     await this.bg.wallet.startPolling();
+    await this.bg.external.startPolling();
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 

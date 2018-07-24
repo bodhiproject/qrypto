@@ -1,40 +1,30 @@
 import scrypt from 'scryptsy';
 import { Wallet, Insight } from 'qtumjs-wallet';
 import { isEmpty, split } from 'lodash';
-import axios from 'axios';
 
 import Background from '.';
 import { MESSAGE_TYPE, STORAGE } from '../constants';
 
 const INIT_VALUES = {
-  appSalt: undefined,
-  passwordHash: undefined,
   wallet: undefined,
   info: undefined,
+  appSalt: undefined,
+  passwordHash: undefined,
+  getInfoInterval: undefined,
 };
 
 export default class WalletBackground {
   private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 10000;
-  private static GET_PRICE_INTERVAL_MS: number = 60000;
 
   public wallet?: Wallet = INIT_VALUES.wallet;
   public info?: Insight.IGetInfo = INIT_VALUES.info;
-  public get qtumBalanceUSD(): string {
-    if (this.qtumPriceUSD && this.info) {
-      return (this.qtumPriceUSD * this.info.balance).toFixed(2);
-    } else {
-      return 'Loading';
-    }
-  }
 
   private bg: Background;
   private appSalt?: Uint8Array = INIT_VALUES.appSalt;
   private passwordHash?: string = INIT_VALUES.passwordHash;
-  private getInfoInterval?: number = undefined;
-  private getPriceInterval?: number = undefined;
-  private qtumPriceUSD: number = 0;
+  private getInfoInterval?: number = INIT_VALUES.getInfoInterval;
   private get validPasswordHash(): string {
     if (!this.passwordHash) {
       throw Error('passwordHash should be defined');
@@ -142,14 +132,10 @@ export default class WalletBackground {
   */
   public startPolling = async () => {
     await this.getWalletInfo();
-    await this.getQtumPrice();
 
     this.getInfoInterval = window.setInterval(() => {
       this.getWalletInfo();
     }, WalletBackground.GET_INFO_INTERVAL_MS);
-    this.getPriceInterval = window.setInterval(() => {
-      this.getQtumPrice();
-    }, WalletBackground.GET_PRICE_INTERVAL_MS);
   }
 
   /*
@@ -159,10 +145,6 @@ export default class WalletBackground {
     if (this.getInfoInterval) {
       clearInterval(this.getInfoInterval);
       this.getInfoInterval = undefined;
-    }
-    if (this.getPriceInterval) {
-      clearInterval(this.getPriceInterval);
-      this.getPriceInterval = undefined;
     }
   }
 
@@ -190,26 +172,10 @@ export default class WalletBackground {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.info });
   }
 
-  /*
-  * Gets the current Qtum market price.
-  */
-  private getQtumPrice = async () => {
-    try {
-      const jsonObj = await axios.get('https://api.coinmarketcap.com/v2/ticker/1684/');
-      this.qtumPriceUSD = jsonObj.data.data.quotes.USD.price;
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QTUM_PRICE_RETURN, qtumBalanceUSD: this.qtumBalanceUSD });
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.GET_WALLET_INFO:
         sendResponse(this.info);
-        break;
-      case MESSAGE_TYPE.GET_QTUM_BALANCE_USD:
-        sendResponse(this.qtumBalanceUSD);
         break;
       case MESSAGE_TYPE.SEND_TOKENS:
         this.sendTokens(request.receiverAddress, request.amount);
