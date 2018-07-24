@@ -200,6 +200,7 @@ export default class AccountBackground {
   * Actions after adding a new account or logging into an existing account.
   */
   public onAccountLoggedIn = async () => {
+    this.bg.rpc.createRpcProvider();
     await this.bg.wallet.startPolling();
     await this.bg.external.startPolling();
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
