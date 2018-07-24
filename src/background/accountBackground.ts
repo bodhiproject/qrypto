@@ -27,7 +27,6 @@ export default class AccountBackground {
     this.bg = bg;
     chrome.runtime.onMessage.addListener(this.handleMessage);
 
-    // Initializes all the values from Chrome storage on startup
     const { MAINNET_ACCOUNTS, TESTNET_ACCOUNTS } = STORAGE;
     chrome.storage.local.get([MAINNET_ACCOUNTS, TESTNET_ACCOUNTS], ({ mainnetAccounts, testnetAccounts }: any) => {
       if (!isEmpty(mainnetAccounts)) {
@@ -37,6 +36,8 @@ export default class AccountBackground {
       if (!isEmpty(testnetAccounts)) {
         this.testnetAccounts = testnetAccounts;
       }
+
+      this.bg.onInitFinished('account');
     });
   }
 

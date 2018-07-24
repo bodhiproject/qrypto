@@ -22,13 +22,14 @@ export default class NetworkBackground {
 
   constructor(bg: Background) {
     this.bg = bg;
-
     chrome.runtime.onMessage.addListener(this.onMessage);
     chrome.storage.local.get([STORAGE.NETWORK_INDEX], ({ networkIndex }: any) => {
       if (networkIndex !== undefined) {
         this.networkIndex = networkIndex;
         chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex: this.networkIndex });
       }
+
+      this.bg.onInitFinished('network');
     });
   }
 

@@ -45,18 +45,13 @@ export default class WalletBackground {
   constructor(bg: Background) {
     this.bg = bg;
     chrome.runtime.onMessage.addListener(this.handleMessage);
-
-    // Initializes all the values from Chrome storage on startup
-    const { APP_SALT } = STORAGE;
-    chrome.storage.local.get([APP_SALT], ({ appSalt }: any) => {
+    chrome.storage.local.get([STORAGE.APP_SALT], ({ appSalt }: any) => {
       if (!isEmpty(appSalt)) {
         const array = split(appSalt, ',').map((str) => parseInt(str, 10));
         this.appSalt =  Uint8Array.from(array);
       }
 
-      // TODO: wait for all init before routing to login. move this to upper level Background
-      // Show the Login page after fetching storage
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ROUTE_LOGIN });
+      this.bg.onInitFinished('wallet');
     });
   }
 
