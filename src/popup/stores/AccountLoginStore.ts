@@ -2,8 +2,8 @@ import { observable, action, reaction } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
-import { MESSAGE_TYPE } from '../constants';
-import Account from '../models/Account';
+import { MESSAGE_TYPE } from '../../constants';
+import Account from '../../models/Account';
 
 const INIT_VALUES = {
   selectedWalletName: '',

@@ -2,7 +2,7 @@ import { observable, computed, action } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
-import { MESSAGE_TYPE } from '../constants';
+import { MESSAGE_TYPE } from '../../constants';
 
 const INIT_VALUES = {
   hasAccounts: false,
