@@ -15,6 +15,8 @@ injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
   await injectScript(chrome.extension.getURL('inpage.js'));
 });
 
+injectStylesheet(chrome.extension.getURL('css/modal.css'));
+
 window.addEventListener('message', handleContentScriptMessage, false);
 
 // const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
@@ -25,11 +27,21 @@ function injectScript(src: string) {
     const scriptElement = document.createElement('script');
     const headOrDocumentElement = document.head || document.documentElement;
 
-    scriptElement.onload = function onScriptLoad() {
-      resolve();
-    };
+    scriptElement.onload = () => resolve();
     scriptElement.src = src;
     headOrDocumentElement.insertAdjacentElement('afterbegin', scriptElement);
+  });
+}
+
+function injectStylesheet(src: string) {
+  return new Promise((resolve) => {
+    const styleElement = document.createElement('link');
+    const headOrDocumentElement = document.head || document.documentElement;
+
+    styleElement.onload = () => resolve();
+    styleElement.rel = 'stylesheet';
+    styleElement.href = src;
+    headOrDocumentElement.insertAdjacentElement('afterbegin', styleElement);
   });
 }
 
