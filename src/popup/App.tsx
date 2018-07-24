@@ -6,7 +6,7 @@ import { syncHistoryWithStore } from 'mobx-react-router';
 import { createBrowserHistory } from 'history';
 
 import theme from './theme';
-import { store } from '../stores/AppStore';
+import { store } from './stores/AppStore';
 import MainContainer from './MainContainer';
 
 // Sync history with MobX router
