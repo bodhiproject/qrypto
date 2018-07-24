@@ -47,10 +47,4 @@ export default class Background {
 
 // Add instance to window for debugging
 const bg = new Background();
-declare global {
-  // tslint:disable-next-line:interface-name
-  interface Window {
-    bg: Background;
-  }
-}
-window.bg = bg;
+Object.assign(window, { bg });
