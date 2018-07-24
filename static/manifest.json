@@ -60,7 +60,7 @@
     "commons.popup-inpage.js",
     "inpage.js",
     "images/logo.png",
-    "modal.css"
+    "css/modal.css"
   ],
   "externally_connectable": {
     "ids": ["*"]
