@@ -14,7 +14,7 @@ injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
   await injectScript(chrome.extension.getURL('inpage.js'));
 });
 
-injectStylesheet(chrome.extension.getURL('modal.css'));
+injectStylesheet(chrome.extension.getURL('css/modal.css'));
 
 window.addEventListener('message', handleWebPageMessage, false);
 
