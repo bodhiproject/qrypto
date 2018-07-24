@@ -1,20 +1,15 @@
-import scrypt from 'scryptsy';
 import { Wallet, Insight } from 'qtumjs-wallet';
-import { isEmpty, split } from 'lodash';
 
 import Background from '.';
-import { MESSAGE_TYPE, STORAGE } from '../constants';
+import { MESSAGE_TYPE } from '../constants';
 
 const INIT_VALUES = {
   wallet: undefined,
   info: undefined,
-  appSalt: undefined,
-  passwordHash: undefined,
   getInfoInterval: undefined,
 };
 
 export default class WalletBackground {
-  private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 10000;
 
@@ -22,27 +17,12 @@ export default class WalletBackground {
   public info?: Insight.IGetInfo = INIT_VALUES.info;
 
   private bg: Background;
-  private appSalt?: Uint8Array = INIT_VALUES.appSalt;
-  private passwordHash?: string = INIT_VALUES.passwordHash;
   private getInfoInterval?: number = INIT_VALUES.getInfoInterval;
-  private get validPasswordHash(): string {
-    if (!this.passwordHash) {
-      throw Error('passwordHash should be defined');
-    }
-    return this.passwordHash!;
-  }
 
   constructor(bg: Background) {
     this.bg = bg;
     chrome.runtime.onMessage.addListener(this.handleMessage);
-    chrome.storage.local.get([STORAGE.APP_SALT], ({ appSalt }: any) => {
-      if (!isEmpty(appSalt)) {
-        const array = split(appSalt, ',').map((str) => parseInt(str, 10));
-        this.appSalt =  Uint8Array.from(array);
-      }
-
-      this.bg.onInitFinished('wallet');
-    });
+    this.bg.onInitFinished('wallet');
   }
 
   /*
@@ -54,49 +34,6 @@ export default class WalletBackground {
   }
 
   /*
-  * Generates the one-time created appSalt (if necessary) used to encrypt the user password.
-  */
-  public generateAppSaltIfNecessary = () => {
-    try {
-      if (!this.appSalt) {
-        const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
-        this.appSalt = appSalt;
-        chrome.storage.local.set(
-          { [STORAGE.APP_SALT]: appSalt.toString() },
-          () => console.log('appSalt set'),
-        );
-      }
-    } catch (err) {
-      throw Error('Error generating appSalt');
-    }
-  }
-
-  /*
-  * Derives the password hash with the password input.
-  * @return Undefined or error.
-  */
-  public derivePasswordHash = async (password: string): Promise<any> => {
-    return new Promise((resolve: any, reject: any) => {
-      setTimeout(() => {
-        try {
-          if (!this.appSalt) {
-            throw Error('appSalt should not be empty');
-          }
-
-          const saltBuffer = Buffer.from(this.appSalt!);
-          const { N, r, p } = WalletBackground.SCRYPT_PARAMS_PW;
-          const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
-          this.passwordHash = derivedKey.toString('hex');
-
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      }, 100);
-    });
-  }
-
-  /*
   * Derives the private key hash with the password hash.
   * @return Private key hash or exception thrown.
   */
@@ -105,7 +42,7 @@ export default class WalletBackground {
       const network = this.bg.network.network;
       this.wallet = await network.fromMnemonic(mnemonic);
       const privateKeyHash = await this.wallet.toEncryptedPrivateKey(
-        this.validPasswordHash,
+        this.bg.crypto.validPasswordHash,
         WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
       );
       return privateKeyHash;
@@ -122,7 +59,7 @@ export default class WalletBackground {
     const network = this.bg.network.network;
     this.wallet = await network.fromEncryptedPrivateKey(
       privateKeyHash,
-      this.validPasswordHash,
+      this.bg.crypto.validPasswordHash,
       WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
     );
   }

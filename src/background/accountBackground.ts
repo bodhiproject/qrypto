@@ -61,10 +61,10 @@ export default class AccountBackground {
   * Initial login with the master password and routing to the correct account login page.
   */
   public login = async (password: string) => {
-    this.bg.wallet.generateAppSaltIfNecessary();
+    this.bg.crypto.generateAppSaltIfNecessary();
 
     try {
-      await this.bg.wallet.derivePasswordHash(password);
+      await this.bg.crypto.derivePasswordHash(password);
     } catch (err) {
       throw err;
     }
