@@ -33,6 +33,9 @@ export default class Background {
     this.accountDetail = new AccountDetailBackground(this);
   }
 
+  /*
+  * Routes to the login page after all Chrome storage values have been fetched.
+  */
   public onInitFinished = (className: string) => {
     this.initFinished[className] = true;
 

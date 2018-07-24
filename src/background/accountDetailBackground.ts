@@ -25,11 +25,17 @@ export default class AccountDetailBackground {
     this.bg.onInitFinished('accountDetail');
   }
 
+  /*
+  * Fetches the first page of transactions.
+  */
   public fetchFirst = async () => {
     this.transactions = await this.fetchTransactions(0);
     this.sendTransactionsMessage();
   }
 
+  /*
+  * Fetches the more transactions based on pageNum.
+  */
   public fetchMore = async () => {
     this.pageNum = this.pageNum + 1;
     const txs = await this.fetchTransactions(this.pageNum);
@@ -49,6 +55,9 @@ export default class AccountDetailBackground {
     this.sendTransactionsMessage();
   }
 
+  /*
+  * Starts polling for periodic info updates.
+  */
   private startPolling = async () => {
     this.fetchFirst();
     this.getTransactionsInterval = window.setInterval(() => {
@@ -56,6 +65,9 @@ export default class AccountDetailBackground {
     }, AccountDetailBackground.GET_TX_INTERVAL_MS);
   }
 
+  /*
+  * Stops polling for the periodic info updates.
+  */
   private stopPolling = () => {
     if (this.getTransactionsInterval) {
       clearInterval(this.getTransactionsInterval);
@@ -63,6 +75,11 @@ export default class AccountDetailBackground {
     }
   }
 
+  /*
+  * Fetches the transactions of the current wallet instance.
+  * @param pageNum The page of transactions to fetch.
+  * @return The Transactions array.
+  */
   private fetchTransactions = async (pageNum: number = 0): Promise<Transaction[]> => {
     const wallet = this.bg.wallet.wallet;
     if (!wallet) {
@@ -97,6 +114,9 @@ export default class AccountDetailBackground {
     });
   }
 
+  /*
+  * Sends the message after fetching transactions.
+  */
   private sendTransactionsMessage = () => {
     chrome.runtime.sendMessage({
       type: MESSAGE_TYPE.GET_TXS_RETURN,

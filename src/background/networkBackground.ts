@@ -33,6 +33,10 @@ export default class NetworkBackground {
     });
   }
 
+  /*
+  * Changes the networkIndex and logs out of the loggedInAccount.
+  * @param networkIndex The index of the network to change to.
+  */
   public changeNetwork = (networkIndex: number) => {
     if (this.networkIndex !== networkIndex) {
       this.networkIndex = networkIndex;
