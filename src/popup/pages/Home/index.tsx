@@ -5,7 +5,7 @@ import { withStyles, WithStyles } from '@material-ui/core';
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import MainAccount from './MainAccount';
-import AppStore from '../../../stores/AppStore';
+import AppStore from '../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;

@@ -6,7 +6,7 @@ import { ArrowBack, Settings } from '@material-ui/icons';
 import cx from 'classnames';
 
 import DropDownMenu from '../DropDownMenu';
-import AppStore from '../../../stores/AppStore';
+import AppStore from '../../stores/AppStore';
 import QryNetwork from '../../../models/QryNetwork';
 import styles from './styles';
 

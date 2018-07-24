@@ -6,7 +6,7 @@ import cx from 'classnames';
 import styles from './styles';
 import { SEND_STATE } from '../../../constants';
 import NavBar from '../../components/NavBar';
-import AppStore from '../../../stores/AppStore';
+import AppStore from '../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;

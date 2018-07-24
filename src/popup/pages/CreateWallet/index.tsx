@@ -7,7 +7,7 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 import Logo from '../../components/Logo';
 import BorderTextField from '../../components/BorderTextField';
-import AppStore from '../../../stores/AppStore';
+import AppStore from '../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;

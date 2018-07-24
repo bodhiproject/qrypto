@@ -8,7 +8,7 @@ import styles from './styles';
 import NavBar from '../../components/NavBar';
 import Transaction from '../../../models/Transaction';
 import AccountInfo from '../../components/AccountInfo';
-import AppStore from '../../../stores/AppStore';
+import AppStore from '../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;
