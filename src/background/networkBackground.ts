@@ -22,7 +22,7 @@ export default class NetworkBackground {
 
   constructor(bg: Background) {
     this.bg = bg;
-    chrome.runtime.onMessage.addListener(this.onMessage);
+    chrome.runtime.onMessage.addListener(this.handleMessage);
     chrome.storage.local.get([STORAGE.NETWORK_INDEX], ({ networkIndex }: any) => {
       if (networkIndex !== undefined) {
         this.networkIndex = networkIndex;
@@ -45,7 +45,7 @@ export default class NetworkBackground {
     }
   }
 
-  private onMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.CHANGE_NETWORK:
         this.changeNetwork(request.networkIndex);

@@ -15,6 +15,7 @@ export default class Background {
     wallet: false,
     account: false,
     network: false,
+    accountDetail: false,
   };
 
   constructor() {
