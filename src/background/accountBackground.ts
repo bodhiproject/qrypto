@@ -11,13 +11,13 @@ const INIT_VALUES = {
 };
 
 export default class AccountBackground {
-  public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   public get accounts(): Account[] {
     return this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
   }
   public get hasAccounts(): boolean {
     return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts);
   }
+  public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
 
   private bg: Background;
   private mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
@@ -185,7 +185,7 @@ export default class AccountBackground {
   /*
   * Routes to the CreateWallet or AccountLogin page after unlocking with the password.
   */
-  private routeToAccountPage = () => {
+  public routeToAccountPage = () => {
     const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     if (isEmpty(accounts)) {
       // Account not found, route to Create Wallet page
@@ -194,6 +194,15 @@ export default class AccountBackground {
       // Accounts found, route to Account Login page
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_WITH_ACCOUNTS });
     }
+  }
+
+  /*
+  * Actions after adding a new account or logging into an existing account.
+  */
+  public onAccountLoggedIn = async () => {
+    await this.bg.wallet.startPolling();
+    await this.bg.external.startPolling();
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 
   /*
@@ -228,15 +237,6 @@ export default class AccountBackground {
     const privateKeyHash = await this.bg.wallet.derivePrivateKeyHash(mnemonic);
     const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     return !!find(accounts, { privateKeyHash });
-  }
-
-  /*
-  * Actions after adding a new account or logging into an existing account.
-  */
-  private onAccountLoggedIn = async () => {
-    await this.bg.wallet.startPolling();
-    await this.bg.external.startPolling();
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {

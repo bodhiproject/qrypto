@@ -35,6 +35,14 @@ export default class CryptoBackground {
     });
   }
 
+  public hasValidPasswordHash(): boolean {
+    return !!this.passwordHash;
+  }
+
+  public resetPasswordHash = () => {
+    this.passwordHash = INIT_VALUES.passwordHash;
+  }
+
   /*
   * Generates the one-time created appSalt (if necessary) used to encrypt the user password.
   */

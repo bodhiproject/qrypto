@@ -2,7 +2,7 @@ import { observable, computed, action } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
-import { MESSAGE_TYPE } from '../../constants';
+import { MESSAGE_TYPE, RESPONSE_TYPE } from '../../constants';
 
 const INIT_VALUES = {
   hasAccounts: false,
@@ -29,6 +29,11 @@ export default class LoginStore {
   constructor(app: AppStore) {
     this.app = app;
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.HAS_ACCOUNTS }, (response: any) => this.hasAccounts = response);
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.RESTORE_SESSION }, (response: any) => {
+      if (response === RESPONSE_TYPE.LOADING) {
+        this.app.routerStore.push('/loading');
+      }
+    });
   }
 
   @action

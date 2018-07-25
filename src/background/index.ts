@@ -6,6 +6,7 @@ import AccountBackground from './accountBackground';
 import NetworkBackground from './networkBackground';
 import ExternalBackground from './externalBackground';
 import AccountDetailBackground from './accountDetailBackground';
+import SessionBackground from './sessionBackground';
 import { MESSAGE_TYPE } from '../constants';
 
 export default class Background {
@@ -15,6 +16,7 @@ export default class Background {
   public network: NetworkBackground;
   public external: ExternalBackground;
   public accountDetail: AccountDetailBackground;
+  public session: SessionBackground;
   public initFinished: object = {
     crypto: false,
     wallet: false,
@@ -22,6 +24,7 @@ export default class Background {
     network: false,
     external: false,
     accountDetail: false,
+    session: false,
   };
 
   constructor() {
@@ -31,6 +34,7 @@ export default class Background {
     this.network = new NetworkBackground(this);
     this.external = new ExternalBackground(this);
     this.accountDetail = new AccountDetailBackground(this);
+    this.session = new SessionBackground(this);
   }
 
   /*
