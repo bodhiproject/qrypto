@@ -22,6 +22,7 @@ export default class SessionBackground {
         this.bg.wallet.stopPolling();
         this.bg.external.stopPolling();
         this.bg.accountDetail.stopPolling();
+
         // Logout from bgp after interval
         this.sessionTimeout = window.setTimeout(() => {
           this.bg.crypto.resetPasswordHash();
@@ -30,6 +31,8 @@ export default class SessionBackground {
         },  SessionBackground.SESSION_LOGOUT_INTERVAL_MS);
       });
     });
+
+    this.bg.onInitFinished('session');
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
@@ -42,6 +45,8 @@ export default class SessionBackground {
           sendResponse(RESPONSE_TYPE.LOADING);
           this.bg.account.routeToAccountPage();
         }
+        break;
+      default:
         break;
     }
   }
