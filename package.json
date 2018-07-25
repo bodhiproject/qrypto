@@ -56,6 +56,7 @@
   "dependencies": {
     "@material-ui/icons": "^1.1.0",
     "@types/bip39": "^2.4.0",
+    "@types/bn.js": "^4.11.1",
     "@types/history": "^4.6.2",
     "@types/lodash": "^4.14.110",
     "@types/qrcode.react": "^0.8.0",

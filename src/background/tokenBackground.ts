@@ -1,4 +1,5 @@
 import { each } from 'lodash';
+import BN from 'BN.js';
 
 import Background from '.';
 import { MESSAGE_TYPE } from '../constants';
@@ -50,7 +51,10 @@ export default class TokenBackground {
       'balanceOf',
       [this.bg.wallet.wallet!.address],
     );
-    token.balance = res.executionResult.formattedOutput[0].toNumber();
+    let balance = res.executionResult.formattedOutput[0]; // Returns as a BN instance
+    balance = balance.div(new BN(10 ** token.decimals)).toNumber(); // Convert to regular denomination
+    token.balance = balance;
+
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_BALANCES_RETURN, token });
   }
 
