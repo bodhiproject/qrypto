@@ -9,6 +9,7 @@ import NavBar from '../../components/NavBar';
 import Transaction from '../../../models/Transaction';
 import AccountInfo from '../../components/AccountInfo';
 import AppStore from '../../stores/AppStore';
+import QRCToken from '../../../models/QRCToken';
 
 interface IProps {
   classes: Record<string, string>;
@@ -115,12 +116,12 @@ const TransactionList = ({ classes, transactions }: any) =>
 // );
 
 const TokenList = ({ classes, tokens }: any) =>
-  tokens.map(({ name, token, amount, url }: any) => (
-    <ListItem divider key={token} className={classes.listItem} onClick={() => window.open(url, '_blank')}>
+  tokens.map(({ name, abbreviation, balance }: QRCToken) => (
+    <ListItem divider key={abbreviation} className={classes.listItem}>
       <div className={classes.tokenInfoContainer}>
         <Typography className={classes.tokenName}>{name}</Typography>
       </div>
-      <AmountInfo classes={classes} amount={amount} token={token} convertedValue={1} />
+      <AmountInfo classes={classes} amount={balance} token={abbreviation} convertedValue={0} />
     </ListItem>
   ));
 
