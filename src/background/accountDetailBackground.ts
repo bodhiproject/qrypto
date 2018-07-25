@@ -43,6 +43,16 @@ export default class AccountDetailBackground {
     this.sendTransactionsMessage();
   }
 
+  /*
+  * Stops polling for the periodic info updates.
+  */
+  public stopPolling = () => {
+    if (this.getTransactionsInterval) {
+      clearInterval(this.getTransactionsInterval);
+      this.pageNum = 0;
+    }
+  }
+
   // TODO: if a new transaction comes in, the transactions on a page will shift(ie if 1 page has 10 transactions,
   // transaction number 10 shifts to page2), and the bottom most transaction would disappear from the list.
   // Need to add some additional logic to keep the bottom most transaction displaying.
@@ -60,18 +70,10 @@ export default class AccountDetailBackground {
   */
   private startPolling = async () => {
     this.fetchFirst();
-    this.getTransactionsInterval = window.setInterval(() => {
-      this.refreshTransactions();
-    }, AccountDetailBackground.GET_TX_INTERVAL_MS);
-  }
-
-  /*
-  * Stops polling for the periodic info updates.
-  */
-  private stopPolling = () => {
-    if (this.getTransactionsInterval) {
-      clearInterval(this.getTransactionsInterval);
-      this.pageNum = 0;
+    if (!this.getTransactionsInterval) {
+      this.getTransactionsInterval = window.setInterval(() => {
+        this.refreshTransactions();
+      }, AccountDetailBackground.GET_TX_INTERVAL_MS);
     }
   }
 

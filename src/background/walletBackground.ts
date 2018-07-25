@@ -69,10 +69,11 @@ export default class WalletBackground {
   */
   public startPolling = async () => {
     await this.getWalletInfo();
-
-    this.getInfoInterval = window.setInterval(() => {
-      this.getWalletInfo();
-    }, WalletBackground.GET_INFO_INTERVAL_MS);
+    if (!this.getInfoInterval) {
+      this.getInfoInterval = window.setInterval(() => {
+        this.getWalletInfo();
+      }, WalletBackground.GET_INFO_INTERVAL_MS);
+    }
   }
 
   /*
