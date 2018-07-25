@@ -53,9 +53,9 @@ export default class AccountBackground {
   /*
   * Resets the account vars back to initial state.
   */
- public resetAccount = () => {
-  this.loggedInAccount = INIT_VALUES.loggedInAccount;
-}
+  public resetAccount = () => {
+    this.loggedInAccount = INIT_VALUES.loggedInAccount;
+  }
 
   /*
   * Initial login with the master password and routing to the correct account login page.
@@ -175,11 +175,8 @@ export default class AccountBackground {
   * Logs out of the current account and routes back to the account login.
   */
   public logoutAccount = () => {
-    this.bg.wallet.stopPolling();
-    this.bg.wallet.resetWallet();
-    this.bg.external.stopPolling();
-    this.bg.rpc.reset();
-    this.resetAccount();
+    this.bg.session.clearAllIntervals();
+    this.bg.session.clearSession();
     this.routeToAccountPage();
   }
 

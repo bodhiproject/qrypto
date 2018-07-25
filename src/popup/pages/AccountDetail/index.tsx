@@ -34,7 +34,7 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes, store: { accountDetailStore } } = this.props;
-    const { activeTabIdx, transactions, hasMore } = accountDetailStore;
+    const { activeTabIdx, hasMore } = accountDetailStore;
 
     return (
       <div className={classes.root}>
@@ -58,14 +58,14 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
           <List className={classes.list}>
             {activeTabIdx === 0 ? (
               <div>
-                <TransactionList classes={classes} transactions={transactions} />
+                <TransactionList {...this.props} />
                 <div className={classes.loadingButtonWrap}>
                   {hasMore && (
                     <Button
                       id="loadingButton"
                       color="primary"
                       size="small"
-                      onClick={accountDetailStore.fetchMore}
+                      onClick={accountDetailStore.fetchMoreTxs}
                       >
                       Load More
                     </Button>
@@ -89,7 +89,7 @@ const shortenTxid = (txid?: string) => {
   return `${txid.substr(0, 6)}...${txid.substr(txid.length - 6, txid.length)}`;
 };
 
-const TransactionList = ({ classes, transactions }: any) =>
+const TransactionList = observer(({ classes, store: { accountDetailStore: { transactions } } }: any) =>
   transactions.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
     <ListItem divider key={id} className={classes.listItem}>
       <div className={classes.txInfoContainer}>
@@ -107,9 +107,9 @@ const TransactionList = ({ classes, transactions }: any) =>
       </div>
     </ListItem>
   ),
-);
+));
 
-const TokenList = ({ classes, store: { accountDetailStore: { tokens } } }: any) =>
+const TokenList = observer(({ classes, store: { accountDetailStore: { tokens } } }: any) =>
   tokens.map(({ name, abbreviation, balance }: QRCToken) => (
     <ListItem divider key={abbreviation} className={classes.listItem}>
       <div className={classes.tokenInfoContainer}>
@@ -117,7 +117,7 @@ const TokenList = ({ classes, store: { accountDetailStore: { tokens } } }: any) 
       </div>
       <AmountInfo classes={classes} amount={balance} token={abbreviation} convertedValue={0} />
     </ListItem>
-  ));
+  )));
 
 const AmountInfo = ({ classes, amount, token }: any) => (
   <div>

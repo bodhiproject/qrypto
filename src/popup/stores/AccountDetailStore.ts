@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, reaction } from 'mobx';
 import { findIndex } from 'lodash';
 
 import { MESSAGE_TYPE } from '../../constants';
@@ -18,23 +18,40 @@ export default class AccountDetailStore {
   @observable public tokens: QRCToken[] = INIT_VALUES.tokens;
   @observable public hasMore: boolean = INIT_VALUES.hasMore;
 
+  constructor() {
+    reaction(
+      () => this.activeTabIdx,
+      () => this.activeTabIdx === 0 ? this.onTransactionTabSelected() : this.onTokenTabSelected(),
+    );
+  }
+
   @action
   public init = () => {
     chrome.runtime.onMessage.addListener(this.handleMessage);
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.START_TX_POLLING });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_LIST }, (response: any) => {
-      this.tokens = response;
-    });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_BALANCES });
+    this.onTransactionTabSelected();
   }
 
   public deinit = () => {
     chrome.runtime.onMessage.removeListener(this.handleMessage);
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_QRC_TOKEN_BALANCE_POLLING });
   }
 
-  public fetchMore = () => {
+  public fetchMoreTxs = () => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MORE_TXS });
+  }
+
+  private onTransactionTabSelected = () => {
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.START_TX_POLLING });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_QRC_TOKEN_BALANCE_POLLING });
+  }
+
+  private onTokenTabSelected = () => {
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_LIST }, (response: any) => {
+      this.tokens = response;
+    });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.START_QRC_TOKEN_BALANCE_POLLING });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
   }
 
   @action

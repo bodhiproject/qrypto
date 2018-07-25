@@ -10,12 +10,16 @@ import testnetTokenList from '../contracts/testnetTokenList';
 
 const INIT_VALUES = {
   tokens: undefined,
+  getBalancesInterval: undefined,
 };
 
 export default class TokenBackground {
+  private static GET_BALANCES_INTERVAL_MS: number = 60000;
+
   public tokens?: QRCToken[] = INIT_VALUES.tokens;
 
   private bg: Background;
+  private getBalancesInterval?: number = INIT_VALUES.getBalancesInterval;
 
   constructor(bg: Background) {
     this.bg = bg;
@@ -24,12 +28,13 @@ export default class TokenBackground {
   }
 
   /*
-  * Fetch the tokens balances via RPC calls.
+  * Stops polling for the periodic info updates.
   */
-  public getBalances = () => {
-    each(this.tokens, async (token: QRCToken) => {
-      await this.getQRCTokenBalance(token);
-    });
+  public stopPolling = () => {
+    if (this.getBalancesInterval) {
+      clearInterval(this.getBalancesInterval);
+      this.getBalancesInterval = undefined;
+    }
   }
 
   /*
@@ -44,6 +49,27 @@ export default class TokenBackground {
       this.tokens = mainnetTokenList;
     } else {
       this.tokens = testnetTokenList;
+    }
+  }
+
+  /*
+  * Fetch the tokens balances via RPC calls.
+  */
+  private getBalances = () => {
+    each(this.tokens, async (token: QRCToken) => {
+      await this.getQRCTokenBalance(token);
+    });
+  }
+
+  /*
+  * Starts polling for periodic info updates.
+  */
+  private startPolling = async () => {
+    await this.getBalances();
+    if (!this.getBalancesInterval) {
+      this.getBalancesInterval = window.setInterval(() => {
+        this.getBalances();
+      }, TokenBackground.GET_BALANCES_INTERVAL_MS);
     }
   }
 
@@ -72,8 +98,11 @@ export default class TokenBackground {
         this.initTokenList();
         sendResponse(this.tokens);
         break;
-      case MESSAGE_TYPE.GET_QRC_TOKEN_BALANCES:
-        this.getBalances();
+      case MESSAGE_TYPE.START_QRC_TOKEN_BALANCE_POLLING:
+        this.startPolling();
+        break;
+      case MESSAGE_TYPE.STOP_QRC_TOKEN_BALANCE_POLLING:
+        this.stopPolling();
         break;
       default:
         break;

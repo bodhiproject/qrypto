@@ -11,7 +11,7 @@ const INIT_VALUES = {
 
 export default class WalletBackground {
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
-  private static GET_INFO_INTERVAL_MS: number = 10000;
+  private static GET_INFO_INTERVAL_MS: number = 30000;
 
   public wallet?: Wallet = INIT_VALUES.wallet;
   public info?: Insight.IGetInfo = INIT_VALUES.info;
