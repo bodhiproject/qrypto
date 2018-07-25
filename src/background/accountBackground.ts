@@ -3,7 +3,6 @@ import { isEmpty, find } from 'lodash';
 import Background from '.';
 import { MESSAGE_TYPE, STORAGE } from '../constants';
 import Account from '../models/Account';
-import WalletBackground from './walletBackground';
 
 const INIT_VALUES = {
   mainnetAccounts: [],
@@ -271,21 +270,6 @@ export default class AccountBackground {
         break;
       case MESSAGE_TYPE.VALIDATE_WALLET_NAME:
         sendResponse(this.isWalletNameTaken(request.name));
-        break;
-      case MESSAGE_TYPE.GET_CURRENT_WALLET_INFO:
-        if (this.loggedInAccount) {
-          const { name, privateKeyHash } = this.loggedInAccount;
-
-          sendResponse({
-            name,
-            privateKeyHash,
-            passwordHash: this.bg.crypto.passwordHash,
-            scryptParams: WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
-            isMainNet: this.bg.network.isMainNet,
-          });
-        } else {
-          sendResponse(undefined);
-        }
         break;
       default:
         break;

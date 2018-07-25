@@ -10,7 +10,7 @@ const INIT_VALUES = {
 };
 
 export default class WalletBackground {
-  public static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
+  private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 10000;
 
   public wallet?: Wallet = INIT_VALUES.wallet;
