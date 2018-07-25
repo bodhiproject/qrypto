@@ -122,7 +122,7 @@ const TokenList = ({ classes, store: { accountDetailStore: { tokens } } }: any) 
 const AmountInfo = ({ classes, amount, token }: any) => (
   <div>
     <div className={classes.tokenContainer}>
-      <Typography className={classes.tokenAmount}>{!!amount ? amount : '...'}</Typography>
+      <Typography className={classes.tokenAmount}>{amount || '...'}</Typography>
       <div className={classes.tokenTypeContainer}>
         <Typography className={classes.tokenType}>{token}</Typography>
       </div>
