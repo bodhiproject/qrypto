@@ -55,7 +55,7 @@ export enum MESSAGE_TYPE {
 }
 
 export enum RESPONSE_TYPE {
-  LOADING,
+  RESTORING_SESSION,
 }
 
 export enum STORAGE {

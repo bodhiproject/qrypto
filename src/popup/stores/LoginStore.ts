@@ -30,7 +30,7 @@ export default class LoginStore {
     this.app = app;
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.HAS_ACCOUNTS }, (response: any) => this.hasAccounts = response);
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.RESTORE_SESSION }, (response: any) => {
-      if (response === RESPONSE_TYPE.LOADING) {
+      if (response === RESPONSE_TYPE.RESTORING_SESSION) {
         this.app.routerStore.push('/loading');
       }
     });

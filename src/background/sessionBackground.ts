@@ -39,10 +39,10 @@ export default class SessionBackground {
     switch (request.type) {
       case MESSAGE_TYPE.RESTORE_SESSION:
         if (this.bg.wallet.wallet && this.bg.account.loggedInAccount) {
-          sendResponse(RESPONSE_TYPE.LOADING);
+          sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
           this.bg.account.onAccountLoggedIn();
         } else if (this.bg.crypto.hasValidPasswordHash()) {
-          sendResponse(RESPONSE_TYPE.LOADING);
+          sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
           this.bg.account.routeToAccountPage();
         }
         break;
