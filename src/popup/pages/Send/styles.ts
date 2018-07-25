@@ -43,10 +43,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     fontSize: theme.font.md,
     fontWeight: 'bold',
   },
-  fromBalance: {
-    fontSize: theme.font.md,
-    color: '#333333',
-  },
   tokenSelect: {
     width: '100%',
   },

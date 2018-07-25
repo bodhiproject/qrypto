@@ -74,7 +74,6 @@ const FromField = observer(({ classes, store: { sendStore, sessionStore } }: any
           <Typography className={classes.fromAddress}>{sessionStore.loggedInAccount.name}</Typography>
         </MenuItem>
       </Select>
-      <Typography className={classes.fromBalance}>{sessionStore.info.balance} QTUM</Typography>
     </div>
   </div>
 ));
