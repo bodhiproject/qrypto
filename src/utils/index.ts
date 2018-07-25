@@ -26,11 +26,11 @@ export const generateRandomId = (): string => {
 
 /*
 * Validates the Qtum address based on length and starting character.
-* @param address {string} The Qtum address to validate.
 * @param isTestnet {boolean} Flag if is a testnet address (or else mainnet address).
+* @param address {string} The Qtum address to validate.
 * @return {boolean} Returns if it is a valid Qtum address.
 */
-export const isValidAddress = (address: string, isTestnet: boolean) => {
+export const isValidAddress = (isTestnet: boolean, address?: string) => {
   if (!address) {
     return false;
   }

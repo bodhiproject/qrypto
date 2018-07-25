@@ -8,9 +8,9 @@ import QRCToken from '../../models/QRCToken';
 
 const INIT_VALUES = {
   tokens: [],
-  senderAddress: '',
-  receiverAddress: '',
-  token: 'QTUM',
+  senderAddress: undefined,
+  receiverAddress: undefined,
+  token: undefined,
   amount: 0,
   maxAmount: undefined,
   sendState: SEND_STATE.INITIAL,
@@ -19,15 +19,15 @@ const INIT_VALUES = {
 
 export default class SendStore {
   @observable public tokens: QRCToken[] = INIT_VALUES.tokens;
-  @observable public senderAddress: string = INIT_VALUES.senderAddress;
-  @observable public receiverAddress: string = INIT_VALUES.receiverAddress;
-  @observable public token: string = INIT_VALUES.token;
+  @observable public senderAddress?: string = INIT_VALUES.senderAddress;
+  @observable public receiverAddress?: string = INIT_VALUES.receiverAddress;
+  @observable public token?: string = INIT_VALUES.token;
   @observable public amount: number = INIT_VALUES.amount;
   @observable public maxAmount?: number = INIT_VALUES.maxAmount;
   @observable public sendState: SEND_STATE = INIT_VALUES.sendState;
   @observable public errorMessage?: string = INIT_VALUES.errorMessage;
   @computed public get receiverFieldError(): string | undefined {
-    return isValidAddress(this.receiverAddress, !this.isMainNet) ? undefined : 'Not a valid Qtum address';
+    return isValidAddress(!this.isMainNet, this.receiverAddress) ? undefined : 'Not a valid Qtum address';
   }
   @computed public get amountFieldError(): string | undefined {
     return this.maxAmount && isValidAmount(Number(this.amount), this.maxAmount) ? undefined : 'Not a valid amount';
@@ -56,8 +56,10 @@ export default class SendStore {
       this.tokens = response;
       this.tokens.unshift(new QRCToken('Qtum Token', 'QTUM', 8, ''));
       this.tokens[0].balance = this.app.sessionStore.info ? this.app.sessionStore.info!.balance : undefined;
+      this.token = this.tokens[0].abbreviation;
       this.setMaxAmount();
     });
+    this.senderAddress = this.app.sessionStore.info ? this.app.sessionStore.info!.addrStr : undefined;
   }
 
   @action
