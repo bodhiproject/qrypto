@@ -85,7 +85,7 @@ const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailSto
           <KeyboardArrowRight className={classes.arrowRight} />
         </div>
       </ListItem>
-    )}
+    ))}
     <div className={classes.loadingButtonWrap}>
       {accountDetailStore.hasMore && (
         <Button
