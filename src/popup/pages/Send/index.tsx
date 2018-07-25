@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { Typography, Select, MenuItem, TextField, Button, withStyles, WithStyles } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
+import { map } from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import AppStore from '../../stores/AppStore';
 import { handleEnterPress } from '../../../utils';
+import QRCToken from '../../../models/QRCToken';
 
 interface IProps {
   classes: Record<string, string>;
@@ -109,22 +111,27 @@ const TokenField = observer(({ classes, store: { sendStore } }: any) => (
         className={classes.tokenSelect}
         onChange={(event) => sendStore.token = event.target.value}
       >
-        <MenuItem value="QTUM"><Typography className={classes.tokenText}>QTUM</Typography></MenuItem>
+        {map(sendStore.tokens, (token: QRCToken) => (
+          <MenuItem key={token.abbreviation} value={token.abbreviation}>
+            <Typography className={classes.tokenText}>{token.abbreviation}</Typography>
+          </MenuItem>
+        ))}
       </Select>
     </div>
   </div>
 ));
 
-const AmountField = observer(({ classes, store: { sendStore, sessionStore }, onEnterPress }: any) => (
+const AmountField = observer(({ classes, store: { sendStore }, onEnterPress }: any) => (
   <div className={classes.amountContainer}>
     <div className={classes.amountHeadingContainer}>
       <div className={classes.amountHeadingTextContainer}>
         <Heading name="Amount" />
       </div>
+      <Typography className={classes.maxAmountText}>{sendStore.maxAmount}</Typography>
       <Button
         color="primary"
         className={classes.maxButton}
-        onClick={() => sendStore.amount = sessionStore.info.balance}
+        onClick={() => sendStore.amount = sendStore.maxAmount}
       >
         Max
       </Button>

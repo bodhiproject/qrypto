@@ -54,16 +54,17 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     fontSize: theme.font.md,
     fontWeight: 'bold',
   },
-  amountContainer: {
-    // marginBottom: theme.padding.custom(26),
-  },
   amountHeadingContainer: {
     width: '100%',
     flexDirection: 'row',
     display: 'inline-flex',
+    alignItems: 'center',
   },
   amountHeadingTextContainer: {
     flex: 1,
+  },
+  maxAmountText: {
+    fontSize: theme.font.sm,
   },
   maxButton: {
     minWidth: 0,

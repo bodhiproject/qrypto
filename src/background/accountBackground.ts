@@ -201,6 +201,7 @@ export default class AccountBackground {
     this.bg.token.initTokenList();
     this.bg.rpc.createRpcProvider();
     await this.bg.wallet.startPolling();
+    await this.bg.token.startPolling();
     await this.bg.external.startPolling();
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }

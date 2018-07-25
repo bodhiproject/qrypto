@@ -28,9 +28,9 @@ export default class SessionBackground {
   */
   public clearAllIntervals = () => {
     this.bg.wallet.stopPolling();
+    this.bg.token.stopPolling();
     this.bg.external.stopPolling();
     this.bg.accountDetail.stopPolling();
-    this.bg.token.stopPolling();
   }
 
   /*

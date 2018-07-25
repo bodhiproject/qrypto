@@ -33,7 +33,6 @@ export default class AccountDetailStore {
   public deinit = () => {
     chrome.runtime.onMessage.removeListener(this.handleMessage);
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_QRC_TOKEN_BALANCE_POLLING });
   }
 
   public fetchMoreTxs = () => {
@@ -42,14 +41,12 @@ export default class AccountDetailStore {
 
   private onTransactionTabSelected = () => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.START_TX_POLLING });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_QRC_TOKEN_BALANCE_POLLING });
   }
 
   private onTokenTabSelected = () => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_LIST }, (response: any) => {
       this.tokens = response;
     });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.START_QRC_TOKEN_BALANCE_POLLING });
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
   }
 

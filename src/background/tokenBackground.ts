@@ -43,6 +43,18 @@ export default class TokenBackground {
   }
 
   /*
+  * Starts polling for periodic info updates.
+  */
+  public startPolling = async () => {
+    await this.getBalances();
+    if (!this.getBalancesInterval) {
+      this.getBalancesInterval = window.setInterval(() => {
+        this.getBalances();
+      }, TokenBackground.GET_BALANCES_INTERVAL_MS);
+    }
+  }
+
+  /*
   * Stops polling for the periodic info updates.
   */
   public stopPolling = () => {
@@ -59,18 +71,6 @@ export default class TokenBackground {
     each(this.tokens, async (token: QRCToken) => {
       await this.getQRCTokenBalance(token);
     });
-  }
-
-  /*
-  * Starts polling for periodic info updates.
-  */
-  private startPolling = async () => {
-    await this.getBalances();
-    if (!this.getBalancesInterval) {
-      this.getBalancesInterval = window.setInterval(() => {
-        this.getBalances();
-      }, TokenBackground.GET_BALANCES_INTERVAL_MS);
-    }
   }
 
   /*
@@ -101,12 +101,6 @@ export default class TokenBackground {
     switch (request.type) {
       case MESSAGE_TYPE.GET_QRC_TOKEN_LIST:
         sendResponse(this.tokens);
-        break;
-      case MESSAGE_TYPE.START_QRC_TOKEN_BALANCE_POLLING:
-        this.startPolling();
-        break;
-      case MESSAGE_TYPE.STOP_QRC_TOKEN_BALANCE_POLLING:
-        this.stopPolling();
         break;
       default:
         break;
