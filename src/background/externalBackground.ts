@@ -31,10 +31,11 @@ export default class ExternalBackground {
   */
   public startPolling = async () => {
     await this.getQtumPrice();
-
-    this.getPriceInterval = window.setInterval(() => {
-      this.getQtumPrice();
-    }, ExternalBackground.GET_PRICE_INTERVAL_MS);
+    if (!this.getPriceInterval) {
+      this.getPriceInterval = window.setInterval(() => {
+        this.getQtumPrice();
+      }, ExternalBackground.GET_PRICE_INTERVAL_MS);
+    }
   }
 
   /*
