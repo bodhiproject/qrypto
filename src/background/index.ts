@@ -7,7 +7,7 @@ import AccountBackground from './accountBackground';
 import NetworkBackground from './networkBackground';
 import ExternalBackground from './externalBackground';
 import RPCBackground from './rpcBackground';
-import AccountDetailBackground from './accountDetailBackground';
+import TransactionBackground from './transactionBackground';
 import SessionBackground from './sessionBackground';
 import { MESSAGE_TYPE } from '../constants';
 
@@ -19,7 +19,7 @@ export default class Background {
   public network: NetworkBackground;
   public external: ExternalBackground;
   public rpc: RPCBackground;
-  public accountDetail: AccountDetailBackground;
+  public transaction: TransactionBackground;
   public session: SessionBackground;
   public initFinished: object = {
     crypto: false,
@@ -29,7 +29,7 @@ export default class Background {
     network: false,
     external: false,
     rpc: false,
-    accountDetail: false,
+    transaction: false,
     session: false,
   };
 
@@ -41,7 +41,7 @@ export default class Background {
     this.network = new NetworkBackground(this);
     this.external = new ExternalBackground(this);
     this.rpc = new RPCBackground(this);
-    this.accountDetail = new AccountDetailBackground(this);
+    this.transaction = new TransactionBackground(this);
     this.session = new SessionBackground(this);
   }
 

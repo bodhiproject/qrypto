@@ -87,7 +87,7 @@ const ToField = observer(({ classes, store: { sendStore, sessionStore }, onEnter
         type="text"
         multiline={false}
         placeholder={sessionStore.info.addrStr}
-        value={sendStore.receiverAddress}
+        value={sendStore.receiverAddress || ''}
         InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
         onChange={(event) => sendStore.receiverAddress = event.target.value}
         onKeyPress={onEnterPress}

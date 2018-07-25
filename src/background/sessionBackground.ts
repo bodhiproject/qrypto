@@ -30,7 +30,7 @@ export default class SessionBackground {
     this.bg.wallet.stopPolling();
     this.bg.token.stopPolling();
     this.bg.external.stopPolling();
-    this.bg.accountDetail.stopPolling();
+    this.bg.transaction.stopPolling();
   }
 
   /*
