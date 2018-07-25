@@ -5,9 +5,13 @@ import { find } from 'lodash';
 import Background from '.';
 import qrc20TokenABI from '../contracts/qrc20TokenABI';
 
+const INIT_VALUES = {
+  rpcProvider: undefined,
+};
+
 export default class RPCBackground {
   private bg: Background;
-  private rpcProvider?: WalletRPCProvider;
+  private rpcProvider?: WalletRPCProvider = INIT_VALUES.rpcProvider;
 
   constructor(bg: Background) {
     this.bg = bg;
@@ -20,6 +24,10 @@ export default class RPCBackground {
       this.rpcProvider = new WalletRPCProvider(wallet);
       await this.getBalance('a6dd0b0399dc6162cedde85ed50c6fa4a0dd44f1', 'qMZK8FNPRm54jvTLAGEs1biTCgyCkcsmna');
     }
+  }
+
+  public reset = () => {
+    Object.assign(this, INIT_VALUES);
   }
 
   public getBalance = async (tokenAddress: string, balanceAddress: string) => {
@@ -36,11 +44,7 @@ export default class RPCBackground {
         contract.address,
         dataHex,
       ]) as Insight.IContractCall;
-      res = Decoder.decodeCall(
-        res,
-        contract.abi,
-        methodName,
-      );
+      res = Decoder.decodeCall(res, contract.abi, methodName);
       console.log(res.executionResult.formattedOutput[0].toString());
     }
   }

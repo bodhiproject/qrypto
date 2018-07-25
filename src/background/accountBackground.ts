@@ -178,6 +178,7 @@ export default class AccountBackground {
     this.bg.wallet.stopPolling();
     this.bg.wallet.resetWallet();
     this.bg.external.stopPolling();
+    this.bg.rpc.reset();
     this.resetAccount();
     this.routeToAccountPage();
   }
