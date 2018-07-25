@@ -119,19 +119,19 @@ const TokenList = ({ classes, store: { accountDetailStore: { tokens } } }: any) 
     </ListItem>
   ));
 
-const AmountInfo = ({ classes, amount, token, convertedValue }: any) => (
+const AmountInfo = ({ classes, amount, token }: any) => (
   <div>
     <div className={classes.tokenContainer}>
-      <Typography className={classes.tokenAmount}>{amount}</Typography>
+      <Typography className={classes.tokenAmount}>{!!amount ? amount : '...'}</Typography>
       <div className={classes.tokenTypeContainer}>
         <Typography className={classes.tokenType}>{token}</Typography>
       </div>
     </div>
-    {convertedValue && (
+    {/* convertedValue && (
       <div className={classes.conversionContainer}>
         <Typography className={classes.tokenType}>{`= ${convertedValue} QTUM`}</Typography>
       </div>
-    )}
+    ) */}
   </div>
 );
 

@@ -51,6 +51,7 @@ export default class TokenBackground {
       'balanceOf',
       [this.bg.wallet.wallet!.address],
     );
+
     let balance = res.executionResult.formattedOutput[0]; // Returns as a BN instance
     balance = balance.div(new BN(10 ** token.decimals)).toNumber(); // Convert to regular denomination
     token.balance = balance;
