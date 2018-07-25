@@ -1,7 +1,7 @@
 import { observable, action } from 'mobx';
 
-import { MESSAGE_TYPE } from '../constants';
-import Transaction from '../models/Transaction';
+import { MESSAGE_TYPE } from '../../constants';
+import Transaction from '../../models/Transaction';
 
 const INIT_VALUES = {
   activeTabIdx: 0,

@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
-import AppStore from '../../../stores/AppStore';
+import AppStore from '../../stores/AppStore';
 import { handleEnterPress } from '../../../utils';
 
 interface IProps {

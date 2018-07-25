@@ -4,7 +4,7 @@ import { Card, CardContent, withStyles, WithStyles } from '@material-ui/core';
 
 import styles from './styles';
 import AccountInfo from '../../../components/AccountInfo';
-import AppStore from '../../../../stores/AppStore';
+import AppStore from '../../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;

@@ -15,7 +15,7 @@ import { inject, observer } from 'mobx-react';
 import styles from './styles';
 import PasswordInput from '../../components/PasswordInput';
 import Logo from '../../components/Logo';
-import AppStore from '../../../stores/AppStore';
+import AppStore from '../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;

@@ -21,25 +21,32 @@ export default class AccountDetailBackground {
 
   constructor(bg: Background) {
     this.bg = bg;
-    chrome.runtime.onMessage.addListener(this.onMessage);
+    chrome.runtime.onMessage.addListener(this.handleMessage);
+    this.bg.onInitFinished('accountDetail');
   }
 
-  public async fetchFirst() {
+  /*
+  * Fetches the first page of transactions.
+  */
+  public fetchFirst = async () => {
     this.transactions = await this.fetchTransactions(0);
     this.sendTransactionsMessage();
   }
 
-  public async fetchMore() {
+  /*
+  * Fetches the more transactions based on pageNum.
+  */
+  public fetchMore = async () => {
     this.pageNum = this.pageNum + 1;
     const txs = await this.fetchTransactions(this.pageNum);
     this.transactions = this.transactions.concat(txs);
     this.sendTransactionsMessage();
   }
 
-  // TODO - if a new transaction comes in, the transactions on a page will shift(ie if 1 page has 10 transactions,
+  // TODO: if a new transaction comes in, the transactions on a page will shift(ie if 1 page has 10 transactions,
   // transaction number 10 shifts to page2), and the bottom most transaction would disappear from the list.
   // Need to add some additional logic to keep the bottom most transaction displaying.
-  private async refreshTransactions() {
+  private refreshTransactions = async () => {
     let refreshedItems: Transaction[] = [];
     for (let i = 0; i <= this.pageNum; i++) {
       refreshedItems = refreshedItems.concat(await this.fetchTransactions(i));
@@ -48,6 +55,9 @@ export default class AccountDetailBackground {
     this.sendTransactionsMessage();
   }
 
+  /*
+  * Starts polling for periodic info updates.
+  */
   private startPolling = async () => {
     this.fetchFirst();
     this.getTransactionsInterval = window.setInterval(() => {
@@ -55,6 +65,9 @@ export default class AccountDetailBackground {
     }, AccountDetailBackground.GET_TX_INTERVAL_MS);
   }
 
+  /*
+  * Stops polling for the periodic info updates.
+  */
   private stopPolling = () => {
     if (this.getTransactionsInterval) {
       clearInterval(this.getTransactionsInterval);
@@ -62,7 +75,12 @@ export default class AccountDetailBackground {
     }
   }
 
-  private async fetchTransactions(pageNum: number = 0): Promise<Transaction[]> {
+  /*
+  * Fetches the transactions of the current wallet instance.
+  * @param pageNum The page of transactions to fetch.
+  * @return The Transactions array.
+  */
+  private fetchTransactions = async (pageNum: number = 0): Promise<Transaction[]> => {
     const wallet = this.bg.wallet.wallet;
     if (!wallet) {
       throw Error('Trying to fetch transactions with undefined wallet instance.');
@@ -96,6 +114,9 @@ export default class AccountDetailBackground {
     });
   }
 
+  /*
+  * Sends the message after fetching transactions.
+  */
   private sendTransactionsMessage = () => {
     chrome.runtime.sendMessage({
       type: MESSAGE_TYPE.GET_TXS_RETURN,
@@ -104,7 +125,7 @@ export default class AccountDetailBackground {
     });
   }
 
-  private onMessage = (request: any) => {
+  private handleMessage = (request: any) => {
     switch (request.type) {
       case MESSAGE_TYPE.START_TX_POLLING:
         this.startPolling();

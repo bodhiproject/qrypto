@@ -14,7 +14,7 @@ import AccountDetail from './pages/AccountDetail';
 import Send from './pages/Send';
 import Receive from './pages/Receive';
 import SendConfirm from './pages/SendConfirm';
-import AppStore from '../stores/AppStore';
+import AppStore from './stores/AppStore';
 import { MESSAGE_TYPE } from '../constants';
 
 interface IProps {

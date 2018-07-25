@@ -1,7 +1,7 @@
 import { observable, action } from 'mobx';
 
-import { MESSAGE_TYPE } from '../../constants';
-import QryNetwork from '../../models/QryNetwork';
+import { MESSAGE_TYPE } from '../../../constants';
+import QryNetwork from '../../../models/QryNetwork';
 import AppStore from '../AppStore';
 
 const INIT_VALUES = {

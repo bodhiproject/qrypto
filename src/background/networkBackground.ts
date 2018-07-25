@@ -22,16 +22,21 @@ export default class NetworkBackground {
 
   constructor(bg: Background) {
     this.bg = bg;
-
-    chrome.runtime.onMessage.addListener(this.onMessage);
+    chrome.runtime.onMessage.addListener(this.handleMessage);
     chrome.storage.local.get([STORAGE.NETWORK_INDEX], ({ networkIndex }: any) => {
       if (networkIndex !== undefined) {
         this.networkIndex = networkIndex;
         chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex: this.networkIndex });
       }
+
+      this.bg.onInitFinished('network');
     });
   }
 
+  /*
+  * Changes the networkIndex and logs out of the loggedInAccount.
+  * @param networkIndex The index of the network to change to.
+  */
   public changeNetwork = (networkIndex: number) => {
     if (this.networkIndex !== networkIndex) {
       this.networkIndex = networkIndex;
@@ -40,11 +45,11 @@ export default class NetworkBackground {
       }, () => console.log('networkIndex changed', networkIndex));
 
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex });
-      this.bg.wallet.logout();
+      this.bg.account.logoutAccount();
     }
   }
 
-  private onMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.CHANGE_NETWORK:
         this.changeNetwork(request.networkIndex);

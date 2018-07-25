@@ -5,7 +5,7 @@ import cx from 'classnames';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
-import AppStore from '../../../stores/AppStore';
+import AppStore from '../../stores/AppStore';
 import { MESSAGE_TYPE } from '../../../constants';
 const strings = require('../../../localization/locales/en_US.json');
 

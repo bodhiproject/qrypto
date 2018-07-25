@@ -4,7 +4,7 @@ import { Typography, Button, withStyles, WithStyles } from '@material-ui/core';
 import { KeyboardArrowRight } from '@material-ui/icons';
 
 import styles from './styles';
-import AppStore from '../../../stores/AppStore';
+import AppStore from '../../stores/AppStore';
 
 interface IProps {
   classes: Record<string, string>;

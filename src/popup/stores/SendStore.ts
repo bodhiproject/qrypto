@@ -1,8 +1,8 @@
 import { observable, computed, action } from 'mobx';
 
 import AppStore from './AppStore';
-import { SEND_STATE, MESSAGE_TYPE } from '../constants';
-import { isValidAddress, isValidAmount } from '../utils';
+import { SEND_STATE, MESSAGE_TYPE } from '../../constants';
+import { isValidAddress, isValidAmount } from '../../utils';
 
 const INIT_VALUES = {
   senderAddress: '',
