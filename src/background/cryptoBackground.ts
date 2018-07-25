@@ -19,9 +19,9 @@ export default class CryptoBackground {
     return this.passwordHash!;
   }
 
+  public passwordHash?: string = INIT_VALUES.passwordHash;
   private bg: Background;
   private appSalt?: Uint8Array = INIT_VALUES.appSalt;
-  private passwordHash?: string = INIT_VALUES.passwordHash;
 
   constructor(bg: Background) {
     this.bg = bg;
