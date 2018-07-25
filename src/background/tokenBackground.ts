@@ -32,7 +32,10 @@ export default class TokenBackground {
     });
   }
 
-  private setTokenList = () => {
+  /*
+  * Init the token list based on the environment.
+  */
+  private initTokenList = () => {
     if (this.tokens) {
       return;
     }
@@ -44,6 +47,10 @@ export default class TokenBackground {
     }
   }
 
+  /*
+  * Makes an RPC call to the contract to get the token balance of this current wallet address.
+  * @param token The QRCToken to get the balance of.
+  */
   private getQRCTokenBalance = async (token: QRCToken) => {
     const res = await this.bg.rpc.callContract(
       token.address,
@@ -62,7 +69,7 @@ export default class TokenBackground {
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.GET_QRC_TOKEN_LIST:
-        this.setTokenList();
+        this.initTokenList();
         sendResponse(this.tokens);
         break;
       case MESSAGE_TYPE.GET_QRC_TOKEN_BALANCES:
