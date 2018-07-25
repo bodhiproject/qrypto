@@ -1,6 +1,6 @@
 import { WalletRPCProvider, Insight } from 'qtumjs-wallet';
-import { Contract, Decoder } from 'qweb3';
 import { find } from 'lodash';
+const { Contract, Decoder } = require('qweb3');
 
 import Background from '.';
 import qrc20TokenABI from '../contracts/qrc20TokenABI';
