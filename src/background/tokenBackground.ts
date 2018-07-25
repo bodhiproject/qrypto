@@ -28,19 +28,9 @@ export default class TokenBackground {
   }
 
   /*
-  * Stops polling for the periodic info updates.
-  */
-  public stopPolling = () => {
-    if (this.getBalancesInterval) {
-      clearInterval(this.getBalancesInterval);
-      this.getBalancesInterval = undefined;
-    }
-  }
-
-  /*
   * Init the token list based on the environment.
   */
-  private initTokenList = () => {
+  public initTokenList = () => {
     if (this.tokens) {
       return;
     }
@@ -49,6 +39,16 @@ export default class TokenBackground {
       this.tokens = mainnetTokenList;
     } else {
       this.tokens = testnetTokenList;
+    }
+  }
+
+  /*
+  * Stops polling for the periodic info updates.
+  */
+  public stopPolling = () => {
+    if (this.getBalancesInterval) {
+      clearInterval(this.getBalancesInterval);
+      this.getBalancesInterval = undefined;
     }
   }
 
@@ -95,7 +95,6 @@ export default class TokenBackground {
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.GET_QRC_TOKEN_LIST:
-        this.initTokenList();
         sendResponse(this.tokens);
         break;
       case MESSAGE_TYPE.START_QRC_TOKEN_BALANCE_POLLING:

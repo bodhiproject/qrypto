@@ -198,6 +198,7 @@ export default class AccountBackground {
   * Actions after adding a new account or logging into an existing account.
   */
   public onAccountLoggedIn = async () => {
+    this.bg.token.initTokenList();
     this.bg.rpc.createRpcProvider();
     await this.bg.wallet.startPolling();
     await this.bg.external.startPolling();
