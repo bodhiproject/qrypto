@@ -115,7 +115,7 @@ const TransactionList = ({ classes, transactions }: any) =>
 //   </ListItem>
 // );
 
-const TokenList = ({ classes, tokens }: any) =>
+const TokenList = ({ classes, store: { accountDetailStore: { tokens } } }: any) =>
   tokens.map(({ name, abbreviation, balance }: QRCToken) => (
     <ListItem divider key={abbreviation} className={classes.listItem}>
       <div className={classes.tokenInfoContainer}>
