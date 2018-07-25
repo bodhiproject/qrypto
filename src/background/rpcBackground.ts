@@ -58,4 +58,33 @@ export default class RPCBackground {
     res = Decoder.decodeCall(res, contract.abi, methodName);
     return res;
   }
+
+  /*
+  * Executes a sendtocontract on the blockchain.
+  * @param contractAddress The contract address of the contract.
+  * @param abi The ABI of the contract.
+  * @param methodName The method to call that is in the ABI.
+  * @param args The arguments that are needed when calling the method.
+  * @return The result of the callcontract.
+  */
+  public sendToContract = async (
+    contractAddress: string,
+    abi: any[],
+    methodName: string,
+    args: any[],
+  ): Promise<Insight.ISendRawTxResult> => {
+    if (!this.rpcProvider) {
+      throw Error('Tried to sendToContract with no RPC provider.');
+    }
+
+    const contract = new Contract('', contractAddress, abi);
+    const methodObj = find(contract.abi, { name: methodName });
+    const dataHex = contract.constructDataHex(methodObj, args);
+
+    const res: Insight.ISendRawTxResult = await this.rpcProvider.rawCall('sendToContract', [
+      contract.address,
+      dataHex,
+    ]) as Insight.ISendRawTxResult;
+    return res;
+  }
 }
