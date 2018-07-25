@@ -22,7 +22,7 @@ class SendConfirm extends Component<WithStyles & IProps, {}> {
     const { senderAddress, receiverAddress, amount, token, sendState, errorMessage } = sendStore;
     const { SENDING, SENT } = SEND_STATE;
 
-    return(
+    return (
       <div className={classes.root}>
         <NavBar hasBackButton title="Confirm" />
         <div className={classes.contentContainer}>

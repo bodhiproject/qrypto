@@ -11,7 +11,7 @@ const INIT_VALUES = {
   senderAddress: undefined,
   receiverAddress: undefined,
   token: undefined,
-  amount: 0,
+  amount: '',
   maxAmount: undefined,
   sendState: SEND_STATE.INITIAL,
   errorMessage: undefined,
@@ -22,7 +22,7 @@ export default class SendStore {
   @observable public senderAddress?: string = INIT_VALUES.senderAddress;
   @observable public receiverAddress?: string = INIT_VALUES.receiverAddress;
   @observable public token?: QRCToken = INIT_VALUES.token;
-  @observable public amount: number = INIT_VALUES.amount;
+  @observable public amount: string = INIT_VALUES.amount;
   @observable public maxAmount?: number = INIT_VALUES.maxAmount;
   @observable public sendState: SEND_STATE = INIT_VALUES.sendState;
   @observable public errorMessage?: string = INIT_VALUES.errorMessage;
