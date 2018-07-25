@@ -1,4 +1,3 @@
-import { WalletRPCProvider, networks, Wallet, Network } from 'qtumjs-wallet';
 
 import { IExtensionMessageData, IExtensionAPIMessage, IRPCCallRequestPayload } from '../types';
 import { TARGET_NAME, API_TYPE, MESSAGE_TYPE } from '../constants';
@@ -17,6 +16,8 @@ injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
 injectStylesheet(chrome.extension.getURL('css/modal.css'));
 
 window.addEventListener('message', handleContentScriptMessage, false);
+
+chrome.runtime.onMessage.addListener(handBackgroundScriptMessage);
 
 // const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
 // port.onMessage.addListener(responseExtensionAPI);
@@ -70,9 +71,9 @@ function responseExtensionAPI<T>(message: IExtensionAPIMessage<T>) {
 function handleRPCCallMessage(message: IRPCCallRequestPayload) {
   const { method, args, id } = message;
 
-  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_CURRENT_WALLET_INFO }, async (result: any) => {
-    if (!result) {
-      return responseExtensionAPI({
+  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.RPC_CALL, id, method, args }, (hasWallet) => {
+    if (!hasWallet) {
+      responseExtensionAPI({
         type: API_TYPE.RPC_RESONSE,
         payload: {
           id,
@@ -80,30 +81,23 @@ function handleRPCCallMessage(message: IRPCCallRequestPayload) {
         },
       });
     }
-
-    const { isMainNet, name, privateKeyHash, passwordHash, scryptParams } = result;
-    const provider = await getRpcProvider(isMainNet, privateKeyHash, passwordHash, scryptParams);
-    const response = await provider.rawCall(method, args);
-
-    console.log(`using account '${name}' to call rpc method: '${method}'`);
-
-    responseExtensionAPI({
-      type: API_TYPE.RPC_RESONSE,
-      payload: {
-        id,
-        result: response,
-      },
-    });
   });
 }
 
-async function getRpcProvider(
-  isMainNet: boolean,
-  privateKeyHash: string,
-  passwordHash: string,
-  scryptParams: { N: number, r: number, p: number },
-): Promise<WalletRPCProvider> {
-  const network: Network = networks[isMainNet ? 'mainnet' : 'testnet'];
-  const wallet: Wallet = await network.fromEncryptedPrivateKey(privateKeyHash, passwordHash, scryptParams);
-  return new WalletRPCProvider(wallet);
+function handBackgroundScriptMessage(message: any) {
+  switch (message.type) {
+    case MESSAGE_TYPE.RPC_CALL_RETURN:
+      const { id, result } = message;
+
+      responseExtensionAPI({
+        type: API_TYPE.RPC_RESONSE,
+        payload: {
+          id,
+          result,
+        },
+      });
+      break;
+    default:
+      break;
+  }
 }

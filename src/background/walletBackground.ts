@@ -1,4 +1,4 @@
-import { Wallet, Insight } from 'qtumjs-wallet';
+import { Wallet, Insight, WalletRPCProvider } from 'qtumjs-wallet';
 
 import Background from '.';
 import { MESSAGE_TYPE } from '../constants';
@@ -109,6 +109,14 @@ export default class WalletBackground {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.info });
   }
 
+  private callRpc = async (id: number, method: string, args: any[]) => {
+    const provider = new WalletRPCProvider(this.wallet!);
+    const result = await provider.rawCall(method, args);
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, result });
+    });
+  }
+
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.GET_WALLET_INFO:
@@ -116,6 +124,14 @@ export default class WalletBackground {
         break;
       case MESSAGE_TYPE.SEND_TOKENS:
         this.sendTokens(request.receiverAddress, request.amount);
+        break;
+      case MESSAGE_TYPE.RPC_CALL:
+        if (this.wallet) {
+          this.callRpc(request.id, request.method, request.args);
+          sendResponse(true);
+        } else {
+          sendResponse(false);
+        }
         break;
       default:
         break;
