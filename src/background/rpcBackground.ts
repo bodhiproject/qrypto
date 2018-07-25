@@ -22,7 +22,7 @@ export default class RPCBackground {
     const wallet = this.bg.wallet.wallet;
     if (wallet) {
       this.rpcProvider = new WalletRPCProvider(wallet);
-      await this.getBalance('a6dd0b0399dc6162cedde85ed50c6fa4a0dd44f1', 'qMZK8FNPRm54jvTLAGEs1biTCgyCkcsmna');
+      await this.getQRCTokenBalance('a6dd0b0399dc6162cedde85ed50c6fa4a0dd44f1', 'qMZK8FNPRm54jvTLAGEs1biTCgyCkcsmna');
     }
   }
 
@@ -30,7 +30,7 @@ export default class RPCBackground {
     Object.assign(this, INIT_VALUES);
   }
 
-  public getBalance = async (tokenAddress: string, balanceAddress: string) => {
+  public getQRCTokenBalance = async (tokenAddress: string, balanceAddress: string) => {
     await this.callContract(tokenAddress, 'balanceOf', [balanceAddress]);
   }
 
