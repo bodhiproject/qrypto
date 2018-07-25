@@ -3,7 +3,6 @@ import { find } from 'lodash';
 const { Contract, Decoder } = require('qweb3');
 
 import Background from '.';
-import qrc20TokenABI from '../contracts/qrc20TokenABI';
 
 const INIT_VALUES = {
   rpcProvider: undefined,
@@ -23,7 +22,6 @@ export default class RPCBackground {
     const wallet = this.bg.wallet.wallet;
     if (wallet) {
       this.rpcProvider = new WalletRPCProvider(wallet);
-      await this.getQRCTokenBalance('a6dd0b0399dc6162cedde85ed50c6fa4a0dd44f1', 'qMZK8FNPRm54jvTLAGEs1biTCgyCkcsmna');
     }
   }
 
@@ -31,13 +29,9 @@ export default class RPCBackground {
     Object.assign(this, INIT_VALUES);
   }
 
-  public getQRCTokenBalance = async (tokenAddress: string, balanceAddress: string) => {
-    await this.callContract(tokenAddress, 'balanceOf', [balanceAddress]);
-  }
-
-  private callContract = async (contractAddress: string, methodName: string, args: any[]) => {
+  public callContract = async (contractAddress: string, abi: any[], methodName: string, args: any[]): Promise<any> => {
     if (this.rpcProvider) {
-      const contract = new Contract('', contractAddress, qrc20TokenABI);
+      const contract = new Contract('', contractAddress, abi);
       const methodObj = find(contract.abi, { name: methodName });
       const dataHex = contract.constructDataHex(methodObj, args);
 
@@ -46,8 +40,9 @@ export default class RPCBackground {
         dataHex,
       ]) as Insight.IContractCall;
       res = Decoder.decodeCall(res, contract.abi, methodName);
-      console.log(res.executionResult.formattedOutput[0].toString());
+      return res;
     }
+
   }
 
   private onMessage = (request: any) => {
