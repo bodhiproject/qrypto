@@ -16,6 +16,7 @@ export default class RPCBackground {
   constructor(bg: Background) {
     this.bg = bg;
     chrome.runtime.onMessage.addListener(this.onMessage);
+    this.bg.onInitFinished('rpc');
   }
 
   public createRpcProvider = async () => {

@@ -109,12 +109,6 @@ const TransactionList = ({ classes, transactions }: any) =>
   ),
 );
 
-// const TokenListComingSoon = ({ classes }: any) => (
-//   <ListItem className={classes.tokenListComingSoonItem}>
-//     <Typography className={classes.tokenListComingSoonText}>{'Coming Soon!'}</Typography>
-//   </ListItem>
-// );
-
 const TokenList = ({ classes, store: { accountDetailStore: { tokens } } }: any) =>
   tokens.map(({ name, abbreviation, balance }: QRCToken) => (
     <ListItem divider key={abbreviation} className={classes.listItem}>
