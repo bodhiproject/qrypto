@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bodhiproject/qrypto.svg?branch=master)](https://travis-ci.org/bodhiproject/qrypto)
+
 # Running Dev Version
 ### Chrome
 1. `yarn start` in the project folder to build the dev version and wait for it to be built
