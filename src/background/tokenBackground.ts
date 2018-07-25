@@ -1,5 +1,5 @@
 import { each } from 'lodash';
-import BN from 'BN.js';
+import BN from 'bn.js';
 
 import Background from '.';
 import { MESSAGE_TYPE } from '../constants';

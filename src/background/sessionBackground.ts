@@ -2,7 +2,7 @@ import Background from '.';
 import { MESSAGE_TYPE, RESPONSE_TYPE } from '../constants';
 
 export default class SessionBackground {
-  private static SESSION_LOGOUT_INTERVAL_MS: number = 10000;
+  private static SESSION_LOGOUT_INTERVAL_MS: number = 600000;
 
   public sessionTimeout?: number = undefined;
 
