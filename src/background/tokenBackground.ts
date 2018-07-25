@@ -1,4 +1,4 @@
-import { each } from 'lodash';
+import { each, findIndex } from 'lodash';
 import BN from 'bn.js';
 
 import Background from '.';
@@ -87,9 +87,14 @@ export default class TokenBackground {
 
     let balance = res.executionResult.formattedOutput[0]; // Returns as a BN instance
     balance = balance.div(new BN(10 ** token.decimals)).toNumber(); // Convert to regular denomination
-    token.balance = balance;
 
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_BALANCES_RETURN, token });
+    // Upddate token balance in place
+    const index = findIndex(this.tokens, { name: token.name, abbreviation: token.abbreviation });
+    if (index !== -1) {
+      this.tokens![index].balance = balance;
+    }
+
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKEN_BALANCES_RETURN, tokens: this.tokens });
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {

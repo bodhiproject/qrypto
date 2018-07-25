@@ -1,5 +1,4 @@
 import { observable, action, reaction } from 'mobx';
-import { findIndex } from 'lodash';
 
 import { MESSAGE_TYPE } from '../../constants';
 import Transaction from '../../models/Transaction';
@@ -55,22 +54,14 @@ export default class AccountDetailStore {
   }
 
   @action
-  private updateToken = (token: QRCToken) => {
-    const index = findIndex(this.tokens, { name: token.name, abbreviation: token.abbreviation });
-    if (index !== -1) {
-      this.tokens[index] = token;
-    }
-  }
-
-  @action
   private handleMessage = (request: any) => {
     switch (request.type) {
       case MESSAGE_TYPE.GET_TXS_RETURN:
         this.transactions = request.transactions;
         this.hasMore = request.hasMore;
         break;
-      case MESSAGE_TYPE.GET_QRC_TOKEN_BALANCES_RETURN:
-        this.updateToken(request.token);
+      case MESSAGE_TYPE.QRC_TOKEN_BALANCES_RETURN:
+        this.tokens = request.tokens;
         break;
       default:
         break;
