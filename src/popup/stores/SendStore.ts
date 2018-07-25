@@ -21,7 +21,7 @@ export default class SendStore {
   @observable public tokens: QRCToken[] = INIT_VALUES.tokens;
   @observable public senderAddress?: string = INIT_VALUES.senderAddress;
   @observable public receiverAddress?: string = INIT_VALUES.receiverAddress;
-  @observable public token?: string = INIT_VALUES.token;
+  @observable public token?: QRCToken = INIT_VALUES.token;
   @observable public amount: number = INIT_VALUES.amount;
   @observable public maxAmount?: number = INIT_VALUES.maxAmount;
   @observable public sendState: SEND_STATE = INIT_VALUES.sendState;
@@ -44,7 +44,7 @@ export default class SendStore {
 
     reaction(
       () => this.token,
-      () => this.setMaxAmount(),
+      () => this.maxAmount = this.token!.balance,
     );
   }
 
@@ -56,10 +56,18 @@ export default class SendStore {
       this.tokens = response;
       this.tokens.unshift(new QRCToken('Qtum Token', 'QTUM', 8, ''));
       this.tokens[0].balance = this.app.sessionStore.info ? this.app.sessionStore.info!.balance : undefined;
-      this.token = this.tokens[0].abbreviation;
-      this.setMaxAmount();
+      this.token = this.tokens[0];
+      this.maxAmount = this.token!.balance;
     });
     this.senderAddress = this.app.sessionStore.info ? this.app.sessionStore.info!.addrStr : undefined;
+  }
+
+  @action
+  public changeToken = (tokenAbbreviation: string) => {
+    const token = find(this.tokens, { abbreviation: tokenAbbreviation });
+    if (token) {
+      this.token = token;
+    }
   }
 
   @action
@@ -69,18 +77,25 @@ export default class SendStore {
 
   @action
   public send = () => {
-    this.sendState = SEND_STATE.SENDING;
-    chrome.runtime.sendMessage({
-      type: MESSAGE_TYPE.SEND_TOKENS,
-      receiverAddress: this.receiverAddress,
-      amount: this.amount,
-    });
-  }
+    if (!this.token) {
+      return;
+    }
 
-  @action
-  private setMaxAmount = () => {
-    const qrc = find(this.tokens, { abbreviation: this.token });
-    this.maxAmount = qrc ? qrc.balance : undefined;
+    this.sendState = SEND_STATE.SENDING;
+    if (this.token.abbreviation === 'QTUM') {
+      chrome.runtime.sendMessage({
+        type: MESSAGE_TYPE.SEND_TOKENS,
+        receiverAddress: this.receiverAddress,
+        amount: this.amount,
+      });
+    } else {
+      chrome.runtime.sendMessage({
+        type: MESSAGE_TYPE.SEND_QRC_TOKENS,
+        receiverAddress: this.receiverAddress,
+        amount: this.amount,
+        token: this.token,
+      });
+    }
   }
 
   @action

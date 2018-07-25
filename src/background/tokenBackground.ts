@@ -97,10 +97,30 @@ export default class TokenBackground {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKEN_BALANCES_RETURN, tokens: this.tokens });
   }
 
+  /*
+  * Send QRC tokens.
+  * @param receiverAddress The receiver of the send.
+  * @param amount The amount to send in decimal format.
+  * @param token The QRC token being sent.
+  */
+  private sendQRCToken = async (receiverAddress: string, amount: number, token: QRCToken) => {
+    try {
+      const bnAmount = new BN(amount).mul(new BN(10 ** token.decimals));
+      await this.bg.rpc.sendToContract(token.address, qrc20TokenABI, 'transfer', [receiverAddress, bnAmount]);
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
+    } catch (err) {
+      console.log(err);
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
+    }
+  }
+
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.GET_QRC_TOKEN_LIST:
         sendResponse(this.tokens);
+        break;
+      case MESSAGE_TYPE.SEND_QRC_TOKENS:
+        this.sendQRCToken(request.receiverAddress, request.amount, request.token);
         break;
       default:
         break;
