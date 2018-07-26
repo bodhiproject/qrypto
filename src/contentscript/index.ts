@@ -1,8 +1,6 @@
-import chromeCall from 'chrome-call';
-import { WalletRPCProvider, networks, Wallet, Network } from 'qtumjs-wallet';
 
 import { IExtensionMessageData, IExtensionAPIMessage, IRPCCallRequestPayload } from '../types';
-import { TARGET_NAME, API_TYPE, STORAGE } from '../constants';
+import { TARGET_NAME, API_TYPE, MESSAGE_TYPE } from '../constants';
 import { isMessageNotValid } from '../utils';
 
 injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
@@ -18,6 +16,8 @@ injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
 injectStylesheet(chrome.extension.getURL('css/modal.css'));
 
 window.addEventListener('message', handleContentScriptMessage, false);
+
+chrome.runtime.onMessage.addListener(handBackgroundScriptMessage);
 
 // const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
 // port.onMessage.addListener(responseExtensionAPI);
@@ -65,44 +65,39 @@ function responseExtensionAPI<T>(message: IExtensionAPIMessage<T>) {
     target: TARGET_NAME.INPAGE,
     message,
   };
-
   window.postMessage(messagePayload, '*');
 }
 
-async function handleRPCCallMessage(message: IRPCCallRequestPayload) {
+function handleRPCCallMessage(message: IRPCCallRequestPayload) {
   const { method, args, id } = message;
-  const storage = await chromeCall(chrome.storage.local, 'get', STORAGE.LOGGED_IN_ACCOUNT);
 
-  if (!(storage && storage.loggedInAccount)) {
-    return responseExtensionAPI({
-      type: API_TYPE.RPC_RESONSE,
-      payload: {
-        id,
-        error: 'can not find logged in account',
-      },
-    });
-  }
-
-  const { loggedInAccount: { isMainNet, name, privateKeyHash, passwordHash } } = storage;
-  const provider = await getRpcProvider(isMainNet, privateKeyHash, passwordHash);
-  const result = await provider.rawCall(method, args);
-  console.log(`using account '${name}' to call rpc method: '${method}'`);
-
-  responseExtensionAPI({
-    type: API_TYPE.RPC_RESONSE,
-    payload: {
-      id,
-      result,
-    },
+  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.RPC_CALL, id, method, args }, (hasWallet) => {
+    if (!hasWallet) {
+      responseExtensionAPI({
+        type: API_TYPE.RPC_RESONSE,
+        payload: {
+          id,
+          error: 'can not find logged in account',
+        },
+      });
+    }
   });
 }
 
-async function getRpcProvider(
-  isMainNet: boolean,
-  privateKeyHash: string,
-  passwordHash: string,
-): Promise<WalletRPCProvider> {
-  const network: Network = networks[isMainNet ? 'mainnet' : 'testnet'];
-  const wallet: Wallet = await network.fromEncryptedPrivateKey(privateKeyHash, passwordHash, { N: 8192, r: 8, p: 1 });
-  return new WalletRPCProvider(wallet);
+function handBackgroundScriptMessage(message: any) {
+  switch (message.type) {
+    case MESSAGE_TYPE.RPC_CALL_RETURN:
+      const { id, result } = message;
+
+      responseExtensionAPI({
+        type: API_TYPE.RPC_RESONSE,
+        payload: {
+          id,
+          result,
+        },
+      });
+      break;
+    default:
+      break;
+  }
 }
