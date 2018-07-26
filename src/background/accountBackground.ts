@@ -11,13 +11,13 @@ const INIT_VALUES = {
 };
 
 export default class AccountBackground {
-  public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   public get accounts(): Account[] {
     return this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
   }
   public get hasAccounts(): boolean {
     return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts);
   }
+  public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
 
   private bg: Background;
   private mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
@@ -53,9 +53,9 @@ export default class AccountBackground {
   /*
   * Resets the account vars back to initial state.
   */
- public resetAccount = () => {
-  this.loggedInAccount = INIT_VALUES.loggedInAccount;
-}
+  public resetAccount = () => {
+    this.loggedInAccount = INIT_VALUES.loggedInAccount;
+  }
 
   /*
   * Initial login with the master password and routing to the correct account login page.
@@ -175,17 +175,15 @@ export default class AccountBackground {
   * Logs out of the current account and routes back to the account login.
   */
   public logoutAccount = () => {
-    this.bg.wallet.stopPolling();
-    this.bg.wallet.resetWallet();
-    this.bg.external.stopPolling();
-    this.resetAccount();
+    this.bg.session.clearAllIntervals();
+    this.bg.session.clearSession();
     this.routeToAccountPage();
   }
 
   /*
   * Routes to the CreateWallet or AccountLogin page after unlocking with the password.
   */
-  private routeToAccountPage = () => {
+  public routeToAccountPage = () => {
     const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     if (isEmpty(accounts)) {
       // Account not found, route to Create Wallet page
@@ -194,6 +192,18 @@ export default class AccountBackground {
       // Accounts found, route to Account Login page
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_WITH_ACCOUNTS });
     }
+  }
+
+  /*
+  * Actions after adding a new account or logging into an existing account.
+  */
+  public onAccountLoggedIn = async () => {
+    this.bg.token.initTokenList();
+    this.bg.rpc.createRpcProvider();
+    await this.bg.wallet.startPolling();
+    await this.bg.token.startPolling();
+    await this.bg.external.startPolling();
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 
   /*
@@ -228,15 +238,6 @@ export default class AccountBackground {
     const privateKeyHash = await this.bg.wallet.derivePrivateKeyHash(mnemonic);
     const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     return !!find(accounts, { privateKeyHash });
-  }
-
-  /*
-  * Actions after adding a new account or logging into an existing account.
-  */
-  private onAccountLoggedIn = async () => {
-    await this.bg.wallet.startPolling();
-    await this.bg.external.startPolling();
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {

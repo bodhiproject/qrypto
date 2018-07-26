@@ -2,7 +2,7 @@ import { template } from 'lodash';
 import { IExtensionAPIMessage } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 import { handleRpcCallResponse } from './utils';
-import { QryptoRpcProvider } from './QryptoRpcProvider';
+import { QryptoRpcProvider } from './QryptoRPCProvider';
 import { showModal, closeModal } from './modal';
 import { isMessageNotValid } from '../utils';
 

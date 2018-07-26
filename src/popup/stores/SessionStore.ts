@@ -2,6 +2,7 @@ import { observable, action } from 'mobx';
 import { Insight } from 'qtumjs-wallet';
 
 import { MESSAGE_TYPE } from '../../constants';
+import Account from '../../models/Account';
 
 const INIT_VALUES = {
   networkIndex: 1,

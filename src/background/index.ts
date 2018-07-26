@@ -2,35 +2,47 @@ import { every } from 'lodash';
 
 import CryptoBackground from './cryptoBackground';
 import WalletBackground from './walletBackground';
+import TokenBackground from './tokenBackground';
 import AccountBackground from './accountBackground';
 import NetworkBackground from './networkBackground';
 import ExternalBackground from './externalBackground';
-import AccountDetailBackground from './accountDetailBackground';
+import RPCBackground from './rpcBackground';
+import TransactionBackground from './transactionBackground';
+import SessionBackground from './sessionBackground';
 import { MESSAGE_TYPE } from '../constants';
 
 export default class Background {
   public crypto: CryptoBackground;
   public wallet: WalletBackground;
+  public token: TokenBackground;
   public account: AccountBackground;
   public network: NetworkBackground;
   public external: ExternalBackground;
-  public accountDetail: AccountDetailBackground;
+  public rpc: RPCBackground;
+  public transaction: TransactionBackground;
+  public session: SessionBackground;
   public initFinished: object = {
     crypto: false,
     wallet: false,
+    token: false,
     account: false,
     network: false,
     external: false,
-    accountDetail: false,
+    rpc: false,
+    transaction: false,
+    session: false,
   };
 
   constructor() {
     this.crypto = new CryptoBackground(this);
     this.wallet = new WalletBackground(this);
+    this.token = new TokenBackground(this);
     this.account = new AccountBackground(this);
     this.network = new NetworkBackground(this);
     this.external = new ExternalBackground(this);
-    this.accountDetail = new AccountDetailBackground(this);
+    this.rpc = new RPCBackground(this);
+    this.transaction = new TransactionBackground(this);
+    this.session = new SessionBackground(this);
   }
 
   /*
