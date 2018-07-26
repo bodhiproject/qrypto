@@ -56,6 +56,7 @@
   "dependencies": {
     "@material-ui/icons": "^1.1.0",
     "@types/bip39": "^2.4.0",
+    "@types/bn.js": "^4.11.1",
     "@types/history": "^4.6.2",
     "@types/lodash": "^4.14.110",
     "@types/qrcode.react": "^0.8.0",
@@ -69,6 +70,7 @@
     "moment": "^2.22.2",
     "qrcode.react": "^0.8.0",
     "qtumjs-wallet": "^0.0.11",
+    "qweb3": "^0.8.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   }

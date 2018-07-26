@@ -14,25 +14,54 @@ export default class SessionBackground {
 
     // When popup is opened
     chrome.runtime.onConnect.addListener((port) => {
-      // If port is reconnected(user reopened the popup), clear sessionTimeout
-      clearTimeout(this.sessionTimeout);
+      this.onPopupOpened();
 
       // Add listener for when popup is closed
-      port.onDisconnect.addListener(() => {
-        this.bg.wallet.stopPolling();
-        this.bg.external.stopPolling();
-        this.bg.accountDetail.stopPolling();
-
-        // Logout from bgp after interval
-        this.sessionTimeout = window.setTimeout(() => {
-          this.bg.crypto.resetPasswordHash();
-          this.bg.account.logoutAccount();
-          console.log('sessionTimeout - passwordHash and wallet cleared');
-        },  SessionBackground.SESSION_LOGOUT_INTERVAL_MS);
-      });
+      port.onDisconnect.addListener(() => this.onPopupClosed());
     });
 
     this.bg.onInitFinished('session');
+  }
+
+  /*
+  * Clears all the intervals throughout the app.
+  */
+  public clearAllIntervals = () => {
+    this.bg.wallet.stopPolling();
+    this.bg.token.stopPolling();
+    this.bg.external.stopPolling();
+    this.bg.transaction.stopPolling();
+  }
+
+  /*
+  * Closes the current session and resets all the necessary session values.
+  */
+  public clearSession = () => {
+    this.bg.account.resetAccount();
+    this.bg.wallet.resetWallet();
+    this.bg.rpc.reset();
+  }
+
+  /*
+  * Actions taken when the popup is opened.
+  */
+  private onPopupOpened = () => {
+    // If port is reconnected (user reopened the popup), clear sessionTimeout
+    clearTimeout(this.sessionTimeout);
+  }
+
+  /*
+  * Actions taken when the popup is closed..
+  */
+  private onPopupClosed = () => {
+    this.clearAllIntervals();
+
+    // Logout from bgp after interval
+    this.sessionTimeout = window.setTimeout(() => {
+      this.clearSession();
+      this.bg.crypto.resetPasswordHash();
+      console.log('Session cleared');
+    },  SessionBackground.SESSION_LOGOUT_INTERVAL_MS);
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {

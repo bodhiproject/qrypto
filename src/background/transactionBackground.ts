@@ -6,7 +6,7 @@ import Background from '.';
 import { MESSAGE_TYPE } from '../constants';
 import Transaction from '../models/Transaction';
 
-export default class AccountDetailBackground {
+export default class TransactionBackground {
   private static GET_TX_INTERVAL_MS: number = 60000;
 
   public transactions: Transaction[] = [];
@@ -22,7 +22,7 @@ export default class AccountDetailBackground {
   constructor(bg: Background) {
     this.bg = bg;
     chrome.runtime.onMessage.addListener(this.handleMessage);
-    this.bg.onInitFinished('accountDetail');
+    this.bg.onInitFinished('transaction');
   }
 
   /*
@@ -73,7 +73,7 @@ export default class AccountDetailBackground {
     if (!this.getTransactionsInterval) {
       this.getTransactionsInterval = window.setInterval(() => {
         this.refreshTransactions();
-      }, AccountDetailBackground.GET_TX_INTERVAL_MS);
+      }, TransactionBackground.GET_TX_INTERVAL_MS);
     }
   }
 

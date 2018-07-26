@@ -22,7 +22,7 @@ class SendConfirm extends Component<WithStyles & IProps, {}> {
     const { senderAddress, receiverAddress, amount, token, sendState, errorMessage } = sendStore;
     const { SENDING, SENT } = SEND_STATE;
 
-    return(
+    return (
       <div className={classes.root}>
         <NavBar hasBackButton title="Confirm" />
         <div className={classes.contentContainer}>
@@ -31,7 +31,7 @@ class SendConfirm extends Component<WithStyles & IProps, {}> {
               <AddressField fieldName={'From'} address={senderAddress} {...this.props} />
               <AddressField fieldName={'To'} address={receiverAddress} {...this.props} />
             </div>
-            <CostField fieldName={'Amount'} amount={amount} unit={token} {...this.props} />
+            <CostField fieldName={'Amount'} amount={amount} unit={token!.abbreviation} {...this.props} />
             <CostField fieldName={'Gas Limit'} amount={'250000'} unit={'GAS'} {...this.props} />
             <CostField fieldName={'Gas Price'} amount={'0.0000004'} unit={'QTUM'} {...this.props} />
             <CostField fieldName={'Max Transaction Fee'} amount={'0.01'} unit={'QTUM'} {...this.props} />
