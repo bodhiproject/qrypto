@@ -49,6 +49,7 @@ export default class TransactionBackground {
   public stopPolling = () => {
     if (this.getTransactionsInterval) {
       clearInterval(this.getTransactionsInterval);
+      this.getTransactionsInterval = undefined;
       this.pageNum = 0;
     }
   }
