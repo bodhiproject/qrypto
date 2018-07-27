@@ -41,6 +41,7 @@ export enum MESSAGE_TYPE {
   CHANGE_NETWORK,
   CHANGE_NETWORK_SUCCESS,
   RPC_CALL,
+  SAVE_SESSION_LOGOUT_INTERVAL,
 
   // Getters
   GET_NETWORKS,
@@ -53,6 +54,7 @@ export enum MESSAGE_TYPE {
   GET_ACCOUNT_INFO,
   GET_QTUM_BALANCE_USD,
   GET_QTUM_PRICE_RETURN,
+  GET_SESSION_LOGOUT_INTERVAL,
   IS_MAINNET,
   HAS_ACCOUNTS,
   VALIDATE_WALLET_NAME,
@@ -80,4 +82,12 @@ export enum SEND_STATE {
 export enum NETWORK_NAMES {
   TESTNET = 'TestNet',
   MAINNET = 'MainNet',
+}
+
+export enum INTERVAL_NAMES {
+  NONE = 'None',
+  ONE_MIN = '1 min',
+  TWENTY_MIN = '20 min',
+  TWO_HOUR = '2 hr',
+  TWELVE_HOUR = '12 hr',
 }
