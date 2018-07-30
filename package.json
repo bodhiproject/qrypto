@@ -69,7 +69,7 @@
     "mobx-react-router": "^4.0.4",
     "moment": "^2.22.2",
     "qrcode.react": "^0.8.0",
-    "qtumjs-wallet": "^0.0.11",
+    "qtumjs-wallet": "^0.0.15",
     "qweb3": "^0.8.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
