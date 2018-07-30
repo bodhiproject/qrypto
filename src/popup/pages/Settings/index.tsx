@@ -6,7 +6,7 @@ import { map } from 'lodash';
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import AppStore from '../../stores/AppStore';
-import { SessionLogoutInterval, sliArray } from '../../../models/SessionLogoutInterval';
+import { SessionLogoutInterval } from '../../../models/SessionLogoutInterval';
 
 interface IProps {
   classes: Record<string, string>;
@@ -32,7 +32,7 @@ class Settings extends Component<WithStyles & IProps, {}> {
   }
 }
 
-const SliField = observer(({ classes, store: { sessionStore } }: any) => (
+const SliField: React.SFC<any> = observer(({ classes, store: { settingsStore } }: any) => (
   <div className={classes.fieldContainer}>
     <Heading name="Session Logout Interval" />
     <div className={classes.fieldContentContainer}>
@@ -40,10 +40,10 @@ const SliField = observer(({ classes, store: { sessionStore } }: any) => (
         className={classes.select}
         inputProps={{ name: 'sessionLogoutInterval', id: 'sessionLogoutInterval'}}
         disableUnderline
-        value={sessionStore.sessionLogoutInterval}
-        onChange={(event) => sessionStore.changeSessionLogoutInterval(event.target.value)}
+        value={settingsStore.sessionLogoutInterval}
+        onChange={(event) => settingsStore.changeSessionLogoutInterval(event.target.value)}
       >
-      {map(sliArray, (sli: SessionLogoutInterval) =>
+      {map(settingsStore.sliArray, (sli: SessionLogoutInterval) =>
         <MenuItem key={sli.interval} value={sli.interval}>
           <Typography className={classes.selectTypography}>{sli.name}</Typography>
         </MenuItem>,

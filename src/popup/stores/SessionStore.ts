@@ -9,7 +9,6 @@ const INIT_VALUES = {
   loggedInAccount: undefined,
   info: undefined,
   qtumBalanceUSD: undefined,
-  sessionLogoutInterval: undefined,
 };
 
 export default class SessionStore {
@@ -17,7 +16,6 @@ export default class SessionStore {
   @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
   @observable public info?: Insight.IGetInfo = INIT_VALUES.info;
   @observable public qtumBalanceUSD?: string = undefined;
-  @observable public sessionLogoutInterval: number = 0; // this value will be overridden on component load by sessionBackground thru MESSAGE_TYPE.GET_SESSION_LOGOUT_INTERVAL
 
   constructor() {
     chrome.runtime.onMessage.addListener(this.handleMessage);
@@ -37,21 +35,6 @@ export default class SessionStore {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QTUM_BALANCE_USD }, (response: any) => {
       this.qtumBalanceUSD = response;
     });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_SESSION_LOGOUT_INTERVAL }, (response: any) => {
-      this.sessionLogoutInterval = response;
-    });
-  }
-
-  public saveSessionLogoutIntervalInBP = () => {
-    chrome.runtime.sendMessage({
-      type: MESSAGE_TYPE.SAVE_SESSION_LOGOUT_INTERVAL,
-      value: this.sessionLogoutInterval,
-    });
-  }
-
-  public changeSessionLogoutInterval = (sliInterval: number) => {
-    this.sessionLogoutInterval = sliInterval;
-    this.saveSessionLogoutIntervalInBP();
   }
 
   @action

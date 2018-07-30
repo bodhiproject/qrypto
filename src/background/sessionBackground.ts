@@ -6,7 +6,7 @@ export default class SessionBackground {
   public sessionTimeout?: number = undefined;
 
   private bg: Background;
-  private sessionLogoutInterval: number = 1200000; // in ms
+  private sessionLogoutInterval: number = 600000; // in ms
 
   constructor(bg: Background) {
     this.bg = bg;

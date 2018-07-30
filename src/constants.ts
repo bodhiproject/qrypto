@@ -87,7 +87,8 @@ export enum NETWORK_NAMES {
 export enum INTERVAL_NAMES {
   NONE = 'None',
   ONE_MIN = '1 min',
-  TWENTY_MIN = '20 min',
+  TEN_MIN = '10 min',
+  THIRTY_MIN = '30 min',
   TWO_HOUR = '2 hr',
   TWELVE_HOUR = '12 hr',
 }
