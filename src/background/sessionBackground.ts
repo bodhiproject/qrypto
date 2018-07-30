@@ -2,11 +2,11 @@ import Background from '.';
 import { MESSAGE_TYPE, RESPONSE_TYPE } from '../constants';
 
 export default class SessionBackground {
-  private static SESSION_LOGOUT_INTERVAL_MS: number = 600000;
 
   public sessionTimeout?: number = undefined;
 
   private bg: Background;
+  private sessionLogoutInterval: number = 600000; // in ms
 
   constructor(bg: Background) {
     this.bg = bg;
@@ -61,7 +61,7 @@ export default class SessionBackground {
       this.clearSession();
       this.bg.crypto.resetPasswordHash();
       console.log('Session cleared');
-    },  SessionBackground.SESSION_LOGOUT_INTERVAL_MS);
+    },  this.sessionLogoutInterval);
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
@@ -74,6 +74,12 @@ export default class SessionBackground {
           sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
           this.bg.account.routeToAccountPage();
         }
+        break;
+      case MESSAGE_TYPE.GET_SESSION_LOGOUT_INTERVAL:
+        sendResponse(this.sessionLogoutInterval);
+        break;
+      case MESSAGE_TYPE.SAVE_SESSION_LOGOUT_INTERVAL:
+        this.sessionLogoutInterval = request.value;
         break;
       default:
         break;
