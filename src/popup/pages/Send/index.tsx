@@ -105,14 +105,14 @@ const TokenField = observer(({ classes, store: { sendStore } }: any) => (
     <div className={classes.fieldContentContainer}>
       <Select
         disableUnderline
-        value={sendStore.token ? sendStore.token.abbreviation : ''}
+        value={sendStore.token ? sendStore.token.symbol : ''}
         inputProps={{ name: 'from', id: 'from' }}
         className={classes.tokenSelect}
         onChange={(event) => sendStore.changeToken(event.target.value)}
       >
         {map(sendStore.tokens, (token: QRCToken) => (
-          <MenuItem key={token.abbreviation} value={token.abbreviation}>
-            <Typography className={classes.tokenText}>{token.abbreviation}</Typography>
+          <MenuItem key={token.symbol} value={token.symbol}>
+            <Typography className={classes.tokenText}>{token.symbol}</Typography>
           </MenuItem>
         ))}
       </Select>
@@ -145,7 +145,7 @@ const AmountField = observer(({ classes, store: { sendStore }, onEnterPress }: a
         InputProps={{
           endAdornment: (
             <Typography className={classes.amountTokenAdornment}>
-              {sendStore.token && sendStore.token.abbreviation}
+              {sendStore.token && sendStore.token.symbol}
             </Typography>
           ),
           disableUnderline: true,
