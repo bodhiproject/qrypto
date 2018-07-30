@@ -43,7 +43,7 @@ export default class WalletBackground {
         try {
           const network = this.bg.network.network;
           this.wallet = network.fromMnemonic(mnemonic);
-          const privateKeyHash = this.wallet.(
+          const privateKeyHash = this.wallet.toEncryptedPrivateKey(
             this.bg.crypto.validPasswordHash,
             WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
           );
