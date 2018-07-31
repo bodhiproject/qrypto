@@ -39,19 +39,17 @@ export default class WalletBackground {
   */
   public derivePrivateKeyHash = async (mnemonic: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
-      setImmediate(() => {
-        try {
-          const network = this.bg.network.network;
-          this.wallet = network.fromMnemonic(mnemonic);
-          const privateKeyHash = this.wallet.toEncryptedPrivateKey(
-            this.bg.crypto.validPasswordHash,
-            WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
-          );
-          resolve(privateKeyHash);
-        } catch (e) {
-          reject(e);
-        }
-      });
+      try {
+        const network = this.bg.network.network;
+        this.wallet = network.fromMnemonic(mnemonic);
+        const privateKeyHash = this.wallet.toEncryptedPrivateKey(
+          this.bg.crypto.validPasswordHash,
+          WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
+        );
+        resolve(privateKeyHash);
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
@@ -60,14 +58,12 @@ export default class WalletBackground {
   * @param privateKeyHash The private key hash to recover the wallet from.
   */
   public async recoverWallet(privateKeyHash: string) {
-    setImmediate(() => {
-      const network = this.bg.network.network;
-      this.wallet = network.fromEncryptedPrivateKey(
-        privateKeyHash,
-        this.bg.crypto.validPasswordHash,
-        WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
-      );
-    });
+    const network = this.bg.network.network;
+    this.wallet = network.fromEncryptedPrivateKey(
+      privateKeyHash,
+      this.bg.crypto.validPasswordHash,
+      WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
+    );
   }
 
   /*
