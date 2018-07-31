@@ -63,8 +63,8 @@ export default class SendStore {
   }
 
   @action
-  public changeToken = (tokenAbbreviation: string) => {
-    const token = find(this.tokens, { abbreviation: tokenAbbreviation });
+  public changeToken = (tokenSymbol: string) => {
+    const token = find(this.tokens, { symbol: tokenSymbol });
     if (token) {
       this.token = token;
     }
@@ -82,7 +82,7 @@ export default class SendStore {
     }
 
     this.sendState = SEND_STATE.SENDING;
-    if (this.token.abbreviation === 'QTUM') {
+    if (this.token.symbol === 'QTUM') {
       chrome.runtime.sendMessage({
         type: MESSAGE_TYPE.SEND_TOKENS,
         receiverAddress: this.receiverAddress,

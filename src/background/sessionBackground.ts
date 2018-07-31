@@ -39,6 +39,7 @@ export default class SessionBackground {
   public clearSession = () => {
     this.bg.account.resetAccount();
     this.bg.wallet.resetWallet();
+    this.bg.token.resetTokenList();
     this.bg.rpc.reset();
   }
 

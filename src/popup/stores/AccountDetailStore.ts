@@ -27,7 +27,7 @@ export default class AccountDetailStore {
   @action
   public init = () => {
     chrome.runtime.onMessage.addListener(this.handleMessage);
-    this.onTransactionTabSelected();
+    this.activeTabIdx === 0 ? this.onTransactionTabSelected() : this.onTokenTabSelected();
   }
 
   public deinit = () => {
