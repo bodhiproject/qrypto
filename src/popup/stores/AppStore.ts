@@ -7,6 +7,7 @@ import CreateWalletStore from './CreateWalletStore';
 import SaveMnemonicStore from './SaveMnemonicStore';
 import AccountLoginStore from './AccountLoginStore';
 import ImportStore from './ImportStore';
+import SettingsStore from './SettingsStore';
 import AccountDetailStore from './AccountDetailStore';
 import SendStore from './SendStore';
 
@@ -19,6 +20,7 @@ export default class AppStore {
   public saveMnemonicStore: SaveMnemonicStore;
   public accountLoginStore: AccountLoginStore;
   public importStore: ImportStore;
+  public settingsStore: SettingsStore;
   public accountDetailStore: AccountDetailStore;
   public sendStore: SendStore;
 
@@ -31,6 +33,7 @@ export default class AppStore {
     this.saveMnemonicStore = new SaveMnemonicStore();
     this.accountLoginStore = new AccountLoginStore(this);
     this.importStore = new ImportStore(this);
+    this.settingsStore = new SettingsStore();
     this.accountDetailStore = new AccountDetailStore();
     this.sendStore = new SendStore(this);
   }

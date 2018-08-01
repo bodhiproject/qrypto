@@ -27,6 +27,10 @@ export default class TokenBackground {
     this.bg.onInitFinished('token');
   }
 
+  public resetTokenList = () => {
+    this.tokens = INIT_VALUES.tokens;
+  }
+
   /*
   * Init the token list based on the environment.
   */
@@ -88,8 +92,8 @@ export default class TokenBackground {
     let balance = res.executionResult.formattedOutput[0]; // Returns as a BN instance
     balance = balance.div(new BN(10 ** token.decimals)).toNumber(); // Convert to regular denomination
 
-    // Upddate token balance in place
-    const index = findIndex(this.tokens, { name: token.name, abbreviation: token.abbreviation });
+    // Update token balance in place
+    const index = findIndex(this.tokens, { name: token.name, symbol: token.symbol });
     if (index !== -1) {
       this.tokens![index].balance = balance;
     }

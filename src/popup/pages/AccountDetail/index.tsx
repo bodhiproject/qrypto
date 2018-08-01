@@ -102,12 +102,12 @@ const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailSto
 ));
 
 const TokenList: SFC<any> = observer(({ classes, store: { accountDetailStore: { tokens } } }: any) =>
-  tokens.map(({ name, abbreviation, balance }: QRCToken) => (
-    <ListItem divider key={abbreviation} className={classes.listItem}>
+  tokens.map(({ name, symbol, balance }: QRCToken) => (
+    <ListItem divider key={symbol} className={classes.listItem}>
       <div className={classes.tokenInfoContainer}>
         <Typography className={classes.tokenName}>{name}</Typography>
       </div>
-      <AmountInfo classes={classes} amount={balance} token={abbreviation} convertedValue={0} />
+      <AmountInfo classes={classes} amount={balance} token={symbol} convertedValue={0} />
     </ListItem>
   )));
 
