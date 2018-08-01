@@ -38,17 +38,19 @@ export default class WalletBackground {
   * @return Private key hash or exception thrown.
   */
   public derivePrivateKeyHash = async (mnemonic: string): Promise<string> => {
-    try {
-      const network = this.bg.network.network;
-      this.wallet = await network.fromMnemonic(mnemonic);
-      const privateKeyHash = await this.wallet.toEncryptedPrivateKey(
-        this.bg.crypto.validPasswordHash,
-        WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
-      );
-      return privateKeyHash;
-    } catch (err) {
-      throw err;
-    }
+    return new Promise<string>((resolve, reject) => {
+      try {
+        const network = this.bg.network.network;
+        this.wallet = network.fromMnemonic(mnemonic);
+        const privateKeyHash = this.wallet.toEncryptedPrivateKey(
+          this.bg.crypto.validPasswordHash,
+          WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
+        );
+        resolve(privateKeyHash);
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
   /*
@@ -57,7 +59,7 @@ export default class WalletBackground {
   */
   public async recoverWallet(privateKeyHash: string) {
     const network = this.bg.network.network;
-    this.wallet = await network.fromEncryptedPrivateKey(
+    this.wallet = network.fromEncryptedPrivateKey(
       privateKeyHash,
       this.bg.crypto.validPasswordHash,
       WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
