@@ -86,7 +86,7 @@ const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailSto
         </div>
       </ListItem>
     ))}
-    <div className={classes.loadingButtonWrap}>
+    <div className={classes.bottomButtonWrap}>
       {accountDetailStore.hasMore && (
         <Button
           id="loadingButton"
@@ -101,15 +101,29 @@ const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailSto
   </div>
 ));
 
-const TokenList: SFC<any> = observer(({ classes, store: { accountDetailStore: { tokens } } }: any) =>
-  tokens.map(({ name, symbol, balance }: QRCToken) => (
-    <ListItem divider key={symbol} className={classes.listItem}>
-      <div className={classes.tokenInfoContainer}>
-        <Typography className={classes.tokenName}>{name}</Typography>
-      </div>
-      <AmountInfo classes={classes} amount={balance} token={symbol} convertedValue={0} />
-    </ListItem>
-  )));
+const TokenList: SFC<any> = observer(({ history, classes, store: { accountDetailStore: { tokens } } }: any) => (
+  <div>
+    {tokens.map(({ name, symbol, balance }: QRCToken) => (
+      <ListItem divider key={symbol} className={classes.listItem}>
+        <div className={classes.tokenInfoContainer}>
+          <Typography className={classes.tokenName}>{name}</Typography>
+        </div>
+        <AmountInfo classes={classes} amount={balance} token={symbol} convertedValue={0} />
+      </ListItem>
+    ))}
+    <div className={classes.bottomButtonWrap}>
+      <Button
+        id="addTokenButton"
+        color="primary"
+        size="small"
+        onClick={() => history.push('/add-token')}
+        >
+        Add New Token
+      </Button>
+
+    </div>
+  </div>
+  ));
 
 const AmountInfo: SFC<any> = ({ classes, amount, token }: any) => (
   <div>

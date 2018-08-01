@@ -43,6 +43,16 @@ export const isValidAddress = (isTestnet: boolean, address?: string) => {
   return address.startsWith('Q');
 };
 
+export const isValidContractAddressLength = (address?: string) => {
+  if (!address) {
+    return false;
+  }
+  if (address.length !== 40) {
+    return false;
+  }
+  return true;
+};
+
 /*
 * Validates the amount of tokens to send.
 * @param amount {number} The amount of tokens to validate.

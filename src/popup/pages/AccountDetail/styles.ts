@@ -96,7 +96,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     fontSize: theme.font.xs,
     color: theme.palette.text.secondary,
   },
-  loadingButtonWrap: {
+  bottomButtonWrap: {
     textAlign: 'center',
     padding: '10px',
   },

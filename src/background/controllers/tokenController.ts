@@ -110,6 +110,61 @@ export default class TokenController extends IController {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKEN_BALANCES_RETURN, tokens: this.tokens });
   }
 
+  private getQRCTokenDetails = async (contractAddress: string) => {
+    let msg;
+    /*
+    * Further contract address validation - if the addr provided does not have name,
+    * symbol, and decimals fields, it will throw an error as it is not a valid
+    * qrc20TokenContractAddr
+    */
+    try {
+      const nameRes = await this.bg.rpc.callContract(
+        contractAddress,
+        qrc20TokenABI,
+        'name',
+        [],
+      );
+      const name = nameRes.executionResult.formattedOutput[0];
+
+      const symbolRes = await this.bg.rpc.callContract(
+        contractAddress,
+        qrc20TokenABI,
+        'symbol',
+        [],
+      );
+      const symbol = symbolRes.executionResult.formattedOutput[0];
+
+      const decimalsRes = await this.bg.rpc.callContract(
+        contractAddress,
+        qrc20TokenABI,
+        'decimals',
+        [],
+      );
+      const decimals = decimalsRes.executionResult.formattedOutput[0];
+
+      if (name && symbol && decimals) {
+        const token = new QRCToken(name, symbol, decimals, contractAddress);
+        msg = {
+          type: MESSAGE_TYPE.QRC_TOKEN_DETAILS_RETURN,
+          isValid: true,
+          token,
+        };
+      } else {
+        msg = {
+          type: MESSAGE_TYPE.QRC_TOKEN_DETAILS_RETURN,
+          isValid: false,
+        };
+      }
+    } catch {
+      msg = {
+        type: MESSAGE_TYPE.QRC_TOKEN_DETAILS_RETURN,
+        isValid: false,
+      };
+    }
+
+    chrome.runtime.sendMessage(msg);
+  }
+
   /*
   * Send QRC tokens.
   * @param receiverAddress The receiver of the send.
@@ -132,6 +187,12 @@ export default class TokenController extends IController {
     }
   }
 
+  private addToken = async (contractAddress: string, name: string, symbol: string, decimals: number) => {
+    const newToken = new QRCToken(name, symbol, decimals, contractAddress);
+    this.tokens!.push(newToken);
+    await this.getQRCTokenBalance(newToken);
+  }
+
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.GET_QRC_TOKEN_LIST:
@@ -139,6 +200,12 @@ export default class TokenController extends IController {
         break;
       case MESSAGE_TYPE.SEND_QRC_TOKENS:
         this.sendQRCToken(request.receiverAddress, request.amount, request.token);
+        break;
+      case MESSAGE_TYPE.ADD_TOKEN:
+        this.addToken(request.contractAddress, request.name, request.symbol, request.decimals);
+        break;
+      case MESSAGE_TYPE.GET_QRC_TOKEN_DETAILS:
+        this.getQRCTokenDetails(request.contractAddress);
         break;
       default:
         break;
