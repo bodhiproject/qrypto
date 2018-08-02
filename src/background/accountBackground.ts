@@ -298,9 +298,11 @@ export default class AccountBackground {
     }
 
     await this.loggedInAccount!.wallet!.getInfo();
-    // TODO: calculate qtumBalanceUSD
+    if (this.loggedInAccount!.info) {
+      this.loggedInAccount!.qtumUSD = this.bg.external.calculateQtumToUSD(this.loggedInAccount!.info!.balance);
+    }
 
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount!.info });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount });
   }
 
   /*

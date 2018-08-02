@@ -11,6 +11,7 @@ export default class Account implements ISigner {
   @observable public subAccounts: SubAccount[] = [];
   @observable public wallet?: Wallet;
   @observable public info?: Insight.IGetInfo;
+  @observable public qtumUSD?: number;
 
   constructor(name: string, privateKeyHash: string) {
     this.name = name;

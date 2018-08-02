@@ -6,13 +6,11 @@ import Account from '../../models/Account';
 const INIT_VALUES = {
   networkIndex: 1,
   loggedInAccount: undefined,
-  qtumBalanceUSD: undefined,
 };
 
 export default class SessionStore {
   @observable public networkIndex: number = INIT_VALUES.networkIndex;
   @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
-  @observable public qtumBalanceUSD?: string = undefined;
 
   constructor() {
     chrome.runtime.onMessage.addListener(this.handleMessage);
@@ -28,9 +26,6 @@ export default class SessionStore {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT }, (response: any) => {
       this.loggedInAccount = response;
     });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QTUM_BALANCE_USD }, (response: any) => {
-      this.qtumBalanceUSD = response;
-    });
   }
 
   @action
@@ -43,10 +38,7 @@ export default class SessionStore {
         this.init();
         break;
       case MESSAGE_TYPE.GET_WALLET_INFO_RETURN:
-        this.info = request.info;
-        break;
-      case MESSAGE_TYPE.GET_QTUM_PRICE_RETURN:
-        this.qtumBalanceUSD = request.qtumBalanceUSD;
+        this.loggedInAccount = request.loggedInAccount;
         break;
       default:
         break;
