@@ -164,10 +164,9 @@ export default class AccountBackground {
       throw Error('Account should not be undefined');
     }
 
-    this.loggedInAccount = foundAccount;
-
     try {
-      await this.bg.wallet.recoverWallet(this.loggedInAccount!.privateKeyHash);
+      this.loggedInAccount = foundAccount;
+      this.loggedInAccount.wallet = this.recoverFromPrivateKeyHash(this.loggedInAccount.privateKeyHash);
       await this.onAccountLoggedIn();
     } catch (err) {
       this.loggedInAccount = INIT_VALUES.loggedInAccount;
@@ -233,13 +232,9 @@ export default class AccountBackground {
   * Recovers the wallet instance from an encrypted private key.
   * @param privateKeyHash The private key hash to recover the wallet from.
   */
-  private async recoverWallet(privateKeyHash: string) {
-    if (!this.loggedInAccount) {
-      throw Error('Trying to recover wallet with no loggedInAccount.');
-    }
-
+  private recoverFromPrivateKeyHash(privateKeyHash: string) {
     const network = this.bg.network.network;
-    this.loggedInAccount!.wallet = network.fromEncryptedPrivateKey(
+    return network.fromEncryptedPrivateKey(
       privateKeyHash,
       this.bg.crypto.validPasswordHash,
       AccountBackground.SCRYPT_PARAMS_PRIV_KEY,
@@ -261,7 +256,7 @@ export default class AccountBackground {
     }
 
     try {
-      await this.recoverWallet(account.privateKeyHash);
+      this.recoverFromPrivateKeyHash(account.privateKeyHash);
       return true;
     } catch (err) {
       console.log(err);
