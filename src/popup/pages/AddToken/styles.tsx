@@ -24,7 +24,14 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     fontWeight: 'bold',
   },
   fieldContainer: {
-    marginBottom: theme.padding.md,
+    marginBottom: theme.padding.custom(8),
+  },
+  detailContainer: {
+    width: '100%',
+    borderBottom: theme.border.root,
+    display: 'flex',
+    flexDirection: 'row',
+    marginBottom: theme.padding.custom(8),
   },
   fieldContentContainer: {
     padding: theme.padding.sm,
@@ -35,6 +42,27 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     fontSize: theme.font.xs,
     color: theme.color.red,
     marginTop: theme.padding.unit,
+  },
+  labelContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  detailLabel: {
+    color: theme.palette.text.primary,
+    fontSize: theme.font.sm,
+    fontWeight: theme.fontWeight.bold,
+    lineHeight: theme.lineHeight.md,
+  },
+  valueContainer: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  detailValue: {
+    fontSize: theme.font.lg,
+    color: theme.palette.text.primary,
+    lineHeight: theme.lineHeight.lg,
   },
   addButton: {
     height: theme.button.lg.height,

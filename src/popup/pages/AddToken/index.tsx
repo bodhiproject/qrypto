@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Typography, TextField, Button, withStyles, WithStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
+import cx from 'classnames';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
@@ -20,7 +21,7 @@ class AddToken extends Component<WithStyles & IProps, {}> {
   }
 
   public render() {
-    const { classes } = this.props;
+    const { classes, store: { addTokenStore } } = this.props;
 
     return (
       <div className={classes.root}>
@@ -28,9 +29,13 @@ class AddToken extends Component<WithStyles & IProps, {}> {
         <div className={classes.contentContainer}>
           <div className={classes.fieldsContainer}>
             <ContractAddressField onEnterPress={this.onEnterPress} {...this.props} />
-            <NameField {...this.props} />
-            <SymbolField {...this.props} />
-            <DecimalsField {...this.props} />
+            {addTokenStore.name &&
+            (<div>
+              <DetailField fieldName={'Token Name'} value={addTokenStore.name || ''} classes={classes} />
+              <DetailField fieldName={'Token Symbol'} value={addTokenStore.symbol || ''} {...this.props} />
+              <DetailField fieldName={'Decimals'} value={addTokenStore.decimals || ''} {...this.props} />
+            </div>)
+            }
           </div>
           <AddButton {...this.props} />
         </div>
@@ -71,53 +76,16 @@ const ContractAddressField = observer(({ classes, store: { addTokenStore }, onEn
   </div>
 ));
 
-const NameField = observer(({ classes, store: { addTokenStore } }: any) => (
-  <div className={classes.fieldContainer}>
-    <Heading name="Token Name" />
-    <div className={classes.fieldContentContainer}>
-      <TextField
-        fullWidth
-        type="text"
-        multiline={false}
-        value={addTokenStore.name || ''}
-        InputProps={{ disableUnderline: true }}
-        disabled
-      />
+const DetailField = ({ classes, fieldName, value }: any) => (
+  <div className={cx(classes.detailContainer)}>
+    <div className={classes.labelContainer}>
+      <Typography className={cx(classes.detailLabel)}>{fieldName}</Typography>
+    </div>
+    <div className={classes.valueContainer}>
+      <Typography className={classes.detailValue}>{value}</Typography>
     </div>
   </div>
-));
-
-const SymbolField = observer(({ classes, store: { addTokenStore } }: any) => (
-  <div className={classes.fieldContainer}>
-    <Heading name="Token Symbol" />
-    <div className={classes.fieldContentContainer}>
-      <TextField
-        fullWidth
-        type="text"
-        multiline={false}
-        value={addTokenStore.symbol || ''}
-        InputProps={{ disableUnderline: true }}
-        disabled
-      />
-    </div>
-  </div>
-));
-
-const DecimalsField = observer(({ classes, store: { addTokenStore } }: any) => (
-  <div className={classes.fieldContainer}>
-    <Heading name="Decimals" />
-    <div className={classes.fieldContentContainer}>
-      <TextField
-        fullWidth
-        type="text"
-        multiline={false}
-        value={addTokenStore.decimals || ''}
-        InputProps={{ disableUnderline: true }}
-        disabled
-      />
-    </div>
-  </div>
-));
+);
 
 const AddButton = observer(({ classes, store: { addTokenStore } }: any) => (
   <Button

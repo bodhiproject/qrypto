@@ -9,6 +9,7 @@ const INIT_VALUES = {
   transactions: [],
   tokens: [],
   hasMore: false,
+  shouldScrollToBottom: false,
 };
 
 export default class AccountDetailStore {
@@ -16,6 +17,7 @@ export default class AccountDetailStore {
   @observable public transactions: Transaction[] = INIT_VALUES.transactions;
   @observable public tokens: QRCToken[] = INIT_VALUES.tokens;
   @observable public hasMore: boolean = INIT_VALUES.hasMore;
+  @observable public shouldScrollToBottom: boolean = INIT_VALUES.shouldScrollToBottom;
 
   constructor() {
     reaction(

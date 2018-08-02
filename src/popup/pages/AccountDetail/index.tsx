@@ -20,12 +20,24 @@ interface IProps {
 @observer
 class AccountDetail extends Component<WithStyles & IProps, {}> {
 
+  private messagesEnd?: HTMLElement | null;
+
   public componentDidMount() {
-    this.props.store.accountDetailStore.init();
+    const { store: { accountDetailStore } } = this.props;
+    accountDetailStore.init();
+
+    if (accountDetailStore.shouldScrollToBottom === true) {
+      this.scrollToBottom();
+    }
   }
 
   public componentWillUnmount() {
     this.props.store.accountDetailStore.deinit();
+  }
+
+  public scrollToBottom() {
+    this.messagesEnd!.scrollIntoView({ behavior: 'smooth' });
+    this.props.store.accountDetailStore.shouldScrollToBottom = false;
   }
 
   public render() {
@@ -53,6 +65,7 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
           </Paper>
           <List className={classes.list}>
             {activeTabIdx === 0 ? <TransactionList {...this.props} /> : <TokenList {...this.props} />}
+            <div ref={(el) => { this.messagesEnd = el; }}></div>
           </List>
         </div>
       </div>

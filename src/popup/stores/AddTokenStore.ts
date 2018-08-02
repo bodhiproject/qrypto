@@ -59,6 +59,7 @@ export default class AddTokenStore {
       decimals: this.decimals,
     });
     this.app.routerStore.push('/account-detail');
+    this.app.accountDetailStore.shouldScrollToBottom = true;
     this.setInitValues();
   }
 
