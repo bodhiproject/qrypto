@@ -1,6 +1,8 @@
 import { utils } from 'ethers';
 import { Insight } from 'qtumjs-wallet';
+
 import { API_TYPE, TARGET_NAME, INTERNAL_API_TYPE } from './constants';
+import Transaction from './models/Transaction';
 
 export interface IExtensionMessageData<T> {
   target: TARGET_NAME;
@@ -34,4 +36,9 @@ export interface IRPCCallResponsePayload {
   id: string;
   result?: Insight.IContractCall | Insight.ISendRawTxResult;
   error?: string;
+}
+
+export interface ISigner {
+  signTransaction(address: string, transaction: Transaction): Transaction;
+  // signMessage(address: string, message: Transaction): Transaction;
 }

@@ -1,11 +1,13 @@
 import { observable, action } from 'mobx';
 import { findIndex } from 'lodash';
+import { Wallet } from 'qtumjs-wallet';
 
 import Permission from './Permission';
 
 export default class SubAccount {
   @observable public name: string;
   @observable public permissions: Permission[] = [];
+  @observable public wallet?: Wallet;
 
   constructor(name: string, permissions: Permission[]) {
     this.name = name;
