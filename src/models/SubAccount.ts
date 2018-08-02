@@ -3,8 +3,10 @@ import { findIndex } from 'lodash';
 import { Wallet } from 'qtumjs-wallet';
 
 import Permission from './Permission';
+import Transaction from './Transaction';
+import { ISigner } from '../types';
 
-export default class SubAccount {
+export default class SubAccount implements ISigner {
   @observable public name: string;
   @observable public permissions: Permission[] = [];
   @observable public wallet?: Wallet;
@@ -23,5 +25,11 @@ export default class SubAccount {
     } else {
       this.permissions.push(permission);
     }
+  }
+
+  public signTransaction(address: string, transaction: Transaction): Transaction {
+    // TODO: implement signing logic
+    console.log(address, transaction);
+    return null;
   }
 }
