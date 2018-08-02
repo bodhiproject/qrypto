@@ -10,7 +10,6 @@ const INIT_VALUES = {
 };
 
 export default class WalletBackground {
-  private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 30000;
 
   public wallet?: Wallet = INIT_VALUES.wallet;
@@ -31,39 +30,6 @@ export default class WalletBackground {
   public resetWallet = () => {
     this.wallet = INIT_VALUES.wallet;
     this.info =  INIT_VALUES.info;
-  }
-
-  /*
-  * Derives the private key hash with the password hash.
-  * @return Private key hash or exception thrown.
-  */
-  public derivePrivateKeyHash = async (mnemonic: string): Promise<string> => {
-    return new Promise<string>((resolve, reject) => {
-      try {
-        const network = this.bg.network.network;
-        this.wallet = network.fromMnemonic(mnemonic);
-        const privateKeyHash = this.wallet.toEncryptedPrivateKey(
-          this.bg.crypto.validPasswordHash,
-          WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
-        );
-        resolve(privateKeyHash);
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-
-  /*
-  * Recovers the wallet instance from an encrypted private key.
-  * @param privateKeyHash The private key hash to recover the wallet from.
-  */
-  public async recoverWallet(privateKeyHash: string) {
-    const network = this.bg.network.network;
-    this.wallet = network.fromEncryptedPrivateKey(
-      privateKeyHash,
-      this.bg.crypto.validPasswordHash,
-      WalletBackground.SCRYPT_PARAMS_PRIV_KEY,
-    );
   }
 
   /*

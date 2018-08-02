@@ -11,6 +11,8 @@ const INIT_VALUES = {
 };
 
 export default class AccountBackground {
+  private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
+
   public get accounts(): Account[] {
     return this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
   }
@@ -90,8 +92,8 @@ export default class AccountBackground {
   * @param mnemonic The mnemonic to derive the wallet from.
   */
   public addAccountAndLogin = async (accountName: string, mnemonic: string) => {
-    const privateKeyHash = await this.bg.wallet.derivePrivateKeyHash(mnemonic);
-    const account = new Account(accountName, privateKeyHash);
+    const walletObj = await this.recoverFromMnemonic(mnemonic);
+    const account = new Account(accountName, walletObj.privateKeyHash);
 
     // Add account if not existing
     if (this.bg.network.isMainNet) {
@@ -106,6 +108,7 @@ export default class AccountBackground {
       }, () => console.log('Testnet Account added', account));
     }
 
+    account.wallet = walletObj.wallet;
     this.loggedInAccount = account;
     await this.onAccountLoggedIn();
   }
@@ -207,6 +210,43 @@ export default class AccountBackground {
   }
 
   /*
+  * Recovers the wallet from mnemonic.
+  * @return Private key hash and wallet instance or exception thrown.
+  */
+  private recoverFromMnemonic = async (mnemonic: string): Promise<any> => {
+    return new Promise<any>((resolve, reject) => {
+      try {
+        const network = this.bg.network.network;
+        const wallet = network.fromMnemonic(mnemonic);
+        const privateKeyHash = wallet.toEncryptedPrivateKey(
+          this.bg.crypto.validPasswordHash,
+          AccountBackground.SCRYPT_PARAMS_PRIV_KEY,
+        );
+        resolve({ privateKeyHash, wallet });
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  /*
+  * Recovers the wallet instance from an encrypted private key.
+  * @param privateKeyHash The private key hash to recover the wallet from.
+  */
+  private async recoverWallet(privateKeyHash: string) {
+    if (!this.loggedInAccount) {
+      throw Error('Trying to recover wallet with no loggedInAccount.');
+    }
+
+    const network = this.bg.network.network;
+    this.loggedInAccount!.wallet = network.fromEncryptedPrivateKey(
+      privateKeyHash,
+      this.bg.crypto.validPasswordHash,
+      AccountBackground.SCRYPT_PARAMS_PRIV_KEY,
+    );
+  }
+
+  /*
   * Validates a password by decrypting a private key hash into a wallet instance.
   * @return Is the password valid.
   */
@@ -221,7 +261,7 @@ export default class AccountBackground {
     }
 
     try {
-      await this.bg.wallet.recoverWallet(account.privateKeyHash);
+      await this.recoverWallet(account.privateKeyHash);
       return true;
     } catch (err) {
       console.log(err);
@@ -235,7 +275,7 @@ export default class AccountBackground {
   * @return Has the mnemonic been used.
   */
   private isWalletMnemonicTaken = async (mnemonic: string): Promise<boolean> => {
-    const privateKeyHash = await this.bg.wallet.derivePrivateKeyHash(mnemonic);
+    const privateKeyHash = (await this.recoverFromMnemonic(mnemonic)).privateKeyHash;
     const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     return !!find(accounts, { privateKeyHash });
   }
