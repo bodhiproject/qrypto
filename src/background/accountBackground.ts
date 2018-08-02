@@ -8,10 +8,12 @@ const INIT_VALUES = {
   mainnetAccounts: [],
   testnetAccounts: [],
   loggedInAccount: undefined,
+  getInfoInterval: undefined,
 };
 
 export default class AccountBackground {
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
+  private static GET_INFO_INTERVAL_MS: number = 30000;
 
   public get accounts(): Account[] {
     return this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
@@ -24,6 +26,7 @@ export default class AccountBackground {
   private bg: Background;
   private mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
   private testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
+  private getInfoInterval?: number = INIT_VALUES.getInfoInterval;
 
   constructor(bg: Background) {
     this.bg = bg;
@@ -202,10 +205,20 @@ export default class AccountBackground {
   public onAccountLoggedIn = async () => {
     this.bg.token.initTokenList();
     this.bg.rpc.createRpcProvider();
-    await this.bg.wallet.startPolling();
+    await this.startPolling();
     await this.bg.token.startPolling();
     await this.bg.external.startPolling();
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
+  }
+
+  /*
+  * Stops polling for the periodic info updates.
+  */
+  public stopPolling = () => {
+    if (this.getInfoInterval) {
+      clearInterval(this.getInfoInterval);
+      this.getInfoInterval = undefined;
+    }
   }
 
   /*
@@ -273,6 +286,33 @@ export default class AccountBackground {
     const privateKeyHash = (await this.recoverFromMnemonic(mnemonic)).privateKeyHash;
     const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     return !!find(accounts, { privateKeyHash });
+  }
+
+  /*
+  * Fetches the wallet info from the current wallet instance.
+  */
+  private getWalletInfo = async () => {
+    if (!this.loggedInAccount || !this.loggedInAccount.wallet) {
+      console.error('Could not get wallet info.');
+      return;
+    }
+
+    await this.loggedInAccount!.wallet!.getInfo();
+    // TODO: calculate qtumBalanceUSD
+
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount!.info });
+  }
+
+  /*
+  * Starts polling for periodic info updates.
+  */
+  private startPolling = async () => {
+    await this.getWalletInfo();
+    if (!this.getInfoInterval) {
+      this.getInfoInterval = window.setInterval(() => {
+        this.getWalletInfo();
+      }, AccountBackground.GET_INFO_INTERVAL_MS);
+    }
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {

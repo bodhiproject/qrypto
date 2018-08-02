@@ -27,7 +27,7 @@ export default class SessionBackground {
   * Clears all the intervals throughout the app.
   */
   public clearAllIntervals = () => {
-    this.bg.wallet.stopPolling();
+    this.bg.account.stopPolling();
     this.bg.token.stopPolling();
     this.bg.external.stopPolling();
     this.bg.transaction.stopPolling();

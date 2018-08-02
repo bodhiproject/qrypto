@@ -10,6 +10,7 @@ export default class Account implements ISigner {
   @observable public privateKeyHash: string;
   @observable public subAccounts: SubAccount[] = [];
   @observable public wallet?: Wallet;
+  @observable public info?: Insight.IGetInfo;
 
   constructor(name: string, privateKeyHash: string) {
     this.name = name;
@@ -19,6 +20,14 @@ export default class Account implements ISigner {
   @action
   public addSubAccount(account: SubAccount) {
     this.subAccounts.push(account);
+  }
+
+  @action
+  public getInfo = async () => {
+    if (!this.wallet) {
+      console.error('Cannot getInfo. Wallet instance is not defined.');
+    }
+    this.info = await this.wallet!.getInfo();
   }
 
   public send = async (to: string, amount: number): Promise<Insight.ISendRawTxResult> => {

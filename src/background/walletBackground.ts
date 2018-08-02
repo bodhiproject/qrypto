@@ -6,17 +6,13 @@ import { MESSAGE_TYPE } from '../constants';
 const INIT_VALUES = {
   wallet: undefined,
   info: undefined,
-  getInfoInterval: undefined,
 };
 
 export default class WalletBackground {
-  private static GET_INFO_INTERVAL_MS: number = 30000;
-
   public wallet?: Wallet = INIT_VALUES.wallet;
   public info?: Insight.IGetInfo = INIT_VALUES.info;
 
   private bg: Background;
-  private getInfoInterval?: number = INIT_VALUES.getInfoInterval;
 
   constructor(bg: Background) {
     this.bg = bg;
@@ -33,28 +29,6 @@ export default class WalletBackground {
   }
 
   /*
-  * Starts polling for periodic info updates.
-  */
-  public startPolling = async () => {
-    await this.getWalletInfo();
-    if (!this.getInfoInterval) {
-      this.getInfoInterval = window.setInterval(() => {
-        this.getWalletInfo();
-      }, WalletBackground.GET_INFO_INTERVAL_MS);
-    }
-  }
-
-  /*
-  * Stops polling for the periodic info updates.
-  */
-  public stopPolling = () => {
-    if (this.getInfoInterval) {
-      clearInterval(this.getInfoInterval);
-      this.getInfoInterval = undefined;
-    }
-  }
-
-  /*
   * Executes a sendtoaddress.
   * @param receiverAddress The address to send Qtum to.
   * @param amount The amount to send.
@@ -68,14 +42,6 @@ export default class WalletBackground {
       console.log(err);
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
     }
-  }
-
-  /*
-  * Fetches the wallet info from the current wallet instance.
-  */
-  private getWalletInfo = async () => {
-    this.info = await this.wallet!.getInfo();
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.info });
   }
 
   private callRpc = async (id: number, method: string, args: any[]) => {
@@ -96,9 +62,6 @@ export default class WalletBackground {
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
-      case MESSAGE_TYPE.GET_WALLET_INFO:
-        sendResponse(this.info);
-        break;
       case MESSAGE_TYPE.SEND_TOKENS:
         this.sendTokens(request.receiverAddress, request.amount);
         break;
