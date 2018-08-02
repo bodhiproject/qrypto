@@ -38,7 +38,6 @@ export default class SessionBackground {
   */
   public clearSession = () => {
     this.bg.account.resetAccount();
-    this.bg.wallet.resetWallet();
     this.bg.token.resetTokenList();
     this.bg.rpc.reset();
   }
@@ -68,7 +67,7 @@ export default class SessionBackground {
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.RESTORE_SESSION:
-        if (this.bg.wallet.wallet && this.bg.account.loggedInAccount) {
+        if (this.bg.account.loggedInAccount) {
           sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
           this.bg.account.onAccountLoggedIn();
         } else if (this.bg.crypto.hasValidPasswordHash()) {

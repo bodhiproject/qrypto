@@ -84,11 +84,12 @@ export default class TransactionBackground {
   * @return The Transactions array.
   */
   private fetchTransactions = async (pageNum: number = 0): Promise<Transaction[]> => {
-    const wallet = this.bg.wallet.wallet;
-    if (!wallet) {
-      throw Error('Trying to fetch transactions with undefined wallet instance.');
+    if (!this.bg.account.loggedInAccount || !this.bg.account.loggedInAccount.wallet) {
+      console.error('Cannot get transactions without wallet instance.');
+      return [];
     }
 
+    const wallet = this.bg.account.loggedInAccount.wallet;
     const { pagesTotal, txs } =  await wallet.getTransactions(pageNum);
     this.pagesTotal = pagesTotal;
 

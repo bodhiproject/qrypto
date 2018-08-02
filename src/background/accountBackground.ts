@@ -317,6 +317,25 @@ export default class AccountBackground {
     }
   }
 
+  /*
+  * Executes a sendtoaddress.
+  * @param receiverAddress The address to send Qtum to.
+  * @param amount The amount to send.
+  */
+  private sendTokens = async (receiverAddress: string, amount: number) => {
+    if (!this.loggedInAccount || !this.loggedInAccount.wallet) {
+      throw Error('Cannot send with no wallet instance.');
+    }
+
+    try {
+      this.loggedInAccount.send(receiverAddress, amount);
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
+    } catch (err) {
+      console.log(err);
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
+    }
+  }
+
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.LOGIN:
@@ -333,6 +352,9 @@ export default class AccountBackground {
         break;
       case MESSAGE_TYPE.ACCOUNT_LOGIN:
         this.loginAccount(request.selectedWalletName);
+        break;
+      case MESSAGE_TYPE.SEND_TOKENS:
+        this.sendTokens(request.receiverAddress, request.amount);
         break;
       case MESSAGE_TYPE.LOGOUT:
         this.logoutAccount();

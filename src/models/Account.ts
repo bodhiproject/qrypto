@@ -26,14 +26,14 @@ export default class Account implements ISigner {
   @action
   public getInfo = async () => {
     if (!this.wallet) {
-      console.error('Cannot getInfo. Wallet instance is not defined.');
+      console.error('Cannot getInfo without wallet instance.');
     }
     this.info = await this.wallet!.getInfo();
   }
 
   public send = async (to: string, amount: number): Promise<Insight.ISendRawTxResult> => {
     if (!this.wallet) {
-      throw Error('Cannot send. Wallet instance is not defined.');
+      throw Error('Cannot send without wallet instance.');
     }
     return await this.wallet!.send(to, amount * 1e8, { feeRate: 4000 });
   }

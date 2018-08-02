@@ -3,6 +3,7 @@ import { find } from 'lodash';
 const { Contract, Decoder } = require('qweb3');
 
 import Background from '.';
+import { MESSAGE_TYPE } from '../constants';
 
 const INIT_VALUES = {
   rpcProvider: undefined,
@@ -14,6 +15,7 @@ export default class RPCBackground {
 
   constructor(bg: Background) {
     this.bg = bg;
+    chrome.runtime.onMessage.addListener(this.handleMessage);
     this.bg.onInitFinished('rpc');
   }
 
@@ -21,9 +23,8 @@ export default class RPCBackground {
   * Creates the RPC provider instance. This should be initialized after the wallet instance has been created.
   */
   public createRpcProvider = async () => {
-    const wallet = this.bg.wallet.wallet;
-    if (wallet) {
-      this.rpcProvider = new WalletRPCProvider(wallet);
+    if (this.bg.account.loggedInAccount && this.bg.account.loggedInAccount.wallet) {
+      this.rpcProvider = new WalletRPCProvider(this.bg.account.loggedInAccount.wallet);
     }
   }
 
@@ -86,5 +87,32 @@ export default class RPCBackground {
       dataHex,
     ]) as Insight.ISendRawTxResult;
     return res;
+  }
+
+  private callRpc = async (id: number, method: string, args: any[]) => {
+    if (!this.rpcProvider) {
+      console.error('Tried to callRpc with no RPC provider.');
+      return;
+    }
+
+    const result = await this.rpcProvider.rawCall(method, args);
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, result });
+    });
+  }
+
+  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+    switch (request.type) {
+      case MESSAGE_TYPE.RPC_CALL:
+        if (this.rpcProvider) {
+          this.callRpc(request.id, request.method, request.args);
+          sendResponse(true);
+        } else {
+          sendResponse(false);
+        }
+        break;
+      default:
+        break;
+    }
   }
 }

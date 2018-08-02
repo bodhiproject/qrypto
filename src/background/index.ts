@@ -1,7 +1,6 @@
 import { every } from 'lodash';
 
 import CryptoBackground from './cryptoBackground';
-import WalletBackground from './walletBackground';
 import TokenBackground from './tokenBackground';
 import AccountBackground from './accountBackground';
 import NetworkBackground from './networkBackground';
@@ -13,7 +12,6 @@ import { MESSAGE_TYPE } from '../constants';
 
 export default class Background {
   public crypto: CryptoBackground;
-  public wallet: WalletBackground;
   public token: TokenBackground;
   public account: AccountBackground;
   public network: NetworkBackground;
@@ -23,7 +21,6 @@ export default class Background {
   public session: SessionBackground;
   public initFinished: object = {
     crypto: false,
-    wallet: false,
     token: false,
     account: false,
     network: false,
@@ -35,7 +32,6 @@ export default class Background {
 
   constructor() {
     this.crypto = new CryptoBackground(this);
-    this.wallet = new WalletBackground(this);
     this.token = new TokenBackground(this);
     this.account = new AccountBackground(this);
     this.network = new NetworkBackground(this);
