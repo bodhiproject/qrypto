@@ -1,5 +1,5 @@
 import { observable, action } from 'mobx';
-import { Wallet } from 'qtumjs-wallet';
+import { Wallet, Insight } from 'qtumjs-wallet';
 
 import SubAccount from './SubAccount';
 import Transaction from './Transaction';
@@ -19,6 +19,13 @@ export default class Account implements ISigner {
   @action
   public addSubAccount(account: SubAccount) {
     this.subAccounts.push(account);
+  }
+
+  public send = async (to: string, amount: number): Promise<Insight.ISendRawTxResult> => {
+    if (!this.wallet) {
+      throw Error('Cannot send. Wallet instance is not defined.');
+    }
+    return await this.wallet!.send(to, amount * 1e8, { feeRate: 4000 });
   }
 
   public signTransaction(address: string, transaction: Transaction): Transaction {

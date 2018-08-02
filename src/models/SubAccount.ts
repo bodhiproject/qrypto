@@ -1,15 +1,11 @@
 import { observable, action } from 'mobx';
 import { findIndex } from 'lodash';
-import { Wallet } from 'qtumjs-wallet';
 
 import Permission from './Permission';
-import Transaction from './Transaction';
-import { ISigner } from '../types';
 
-export default class SubAccount implements ISigner {
+export default class SubAccount {
   @observable public name: string;
   @observable public permissions: Permission[] = [];
-  @observable public wallet?: Wallet;
 
   constructor(name: string, permissions: Permission[]) {
     this.name = name;
@@ -25,11 +21,5 @@ export default class SubAccount implements ISigner {
     } else {
       this.permissions.push(permission);
     }
-  }
-
-  public signTransaction(address: string, transaction: Transaction): Transaction {
-    // TODO: implement signing logic
-    console.log(address, transaction);
-    return null;
   }
 }

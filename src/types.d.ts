@@ -1,5 +1,6 @@
 import { utils } from 'ethers';
 import { Insight } from 'qtumjs-wallet';
+import { ISendTxOptions } from 'qtumjs-wallet/lib/tx';
 
 import { API_TYPE, TARGET_NAME, INTERNAL_API_TYPE } from './constants';
 import Transaction from './models/Transaction';
@@ -39,6 +40,6 @@ export interface IRPCCallResponsePayload {
 }
 
 export interface ISigner {
+  send(to: string, amount: number, options: ISendTxOptions): Promise<Insight.ISendRawTxResult>;
   signTransaction(address: string, transaction: Transaction): Transaction;
-  // signMessage(address: string, message: Transaction): Transaction;
 }
