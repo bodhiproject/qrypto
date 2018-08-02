@@ -4,6 +4,7 @@ import { TARGET_NAME, API_TYPE } from '../constants';
 import { handleRpcCallResponse } from './utils';
 import { QryptoRpcProvider } from './QryptoRPCProvider';
 import { showModal, closeModal } from './modal';
+import { showWindow } from './window';
 import { isMessageNotValid } from '../utils';
 
 window.addEventListener('message', handleInpageMessage, false);
@@ -21,6 +22,15 @@ Object.assign(window, {
     modal.contentDocument!.write(content());
     modal.contentDocument!.querySelector('button')!.addEventListener('click', closeModal);
     return modal;
+  },
+  testWindow: () => {
+    const win = showWindow(300, 300);
+    const content = template(`
+      <p>I'm a test window!</p>
+      <button>close me</button>
+    `);
+    win.document.write(content());
+    win.document.querySelector('button')!.addEventListener('click', win.close.bind(win));
   },
 });
 
