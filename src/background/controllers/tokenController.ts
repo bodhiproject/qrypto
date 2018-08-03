@@ -1,30 +1,31 @@
 import { each, findIndex } from 'lodash';
 import BN from 'bn.js';
 
-import Background from '.';
-import { MESSAGE_TYPE } from '../constants';
-import QRCToken from '../models/QRCToken';
-import qrc20TokenABI from '../contracts/qrc20TokenABI';
-import mainnetTokenList from '../contracts/mainnetTokenList';
-import testnetTokenList from '../contracts/testnetTokenList';
+import QryptoController from '.';
+import IController from './iController';
+import { MESSAGE_TYPE } from '../../constants';
+import QRCToken from '../../models/QRCToken';
+import qrc20TokenABI from '../../contracts/qrc20TokenABI';
+import mainnetTokenList from '../../contracts/mainnetTokenList';
+import testnetTokenList from '../../contracts/testnetTokenList';
 
 const INIT_VALUES = {
   tokens: undefined,
   getBalancesInterval: undefined,
 };
 
-export default class TokenBackground {
+export default class TokenController extends IController {
   private static GET_BALANCES_INTERVAL_MS: number = 60000;
 
   public tokens?: QRCToken[] = INIT_VALUES.tokens;
 
-  private bg: Background;
   private getBalancesInterval?: number = INIT_VALUES.getBalancesInterval;
 
-  constructor(bg: Background) {
-    this.bg = bg;
+  constructor(main: QryptoController) {
+    super('token', main);
+
     chrome.runtime.onMessage.addListener(this.handleMessage);
-    this.bg.onInitFinished('token');
+    this.initFinished();
   }
 
   public resetTokenList = () => {
@@ -39,7 +40,7 @@ export default class TokenBackground {
       return;
     }
 
-    if (this.bg.network.isMainNet) {
+    if (this.main.network.isMainNet) {
       this.tokens = mainnetTokenList;
     } else {
       this.tokens = testnetTokenList;
@@ -54,7 +55,7 @@ export default class TokenBackground {
     if (!this.getBalancesInterval) {
       this.getBalancesInterval = window.setInterval(() => {
         this.getBalances();
-      }, TokenBackground.GET_BALANCES_INTERVAL_MS);
+      }, TokenController.GET_BALANCES_INTERVAL_MS);
     }
   }
 
@@ -82,19 +83,19 @@ export default class TokenBackground {
   * @param token The QRCToken to get the balance of.
   */
   private getQRCTokenBalance = async (token: QRCToken) => {
-    if (!this.bg.account.loggedInAccount
-      || !this.bg.account.loggedInAccount.wallet
-      || !this.bg.account.loggedInAccount.wallet.qjsWallet
+    if (!this.main.account.loggedInAccount
+      || !this.main.account.loggedInAccount.wallet
+      || !this.main.account.loggedInAccount.wallet.qjsWallet
     ) {
       console.error('Cannot getQRCTokenBalance without wallet instance.');
       return;
     }
 
-    const res = await this.bg.rpc.callContract({
+    const res = await this.main.rpc.callContract({
       contractAddress: token.address,
       abi: qrc20TokenABI,
       methodName: 'balanceOf',
-      args: [this.bg.account.loggedInAccount.wallet.qjsWallet.address],
+      args: [this.main.account.loggedInAccount.wallet.qjsWallet.address],
     });
 
     let balance = res.executionResult.formattedOutput[0]; // Returns as a BN instance
@@ -118,7 +119,7 @@ export default class TokenBackground {
   private sendQRCToken = async (receiverAddress: string, amount: number, token: QRCToken) => {
     try {
       const bnAmount = new BN(amount).mul(new BN(10 ** token.decimals));
-      await this.bg.rpc.sendToContract({
+      await this.main.rpc.sendToContract({
         contractAddress: token.address,
         abi: qrc20TokenABI,
         methodName: 'transfer',

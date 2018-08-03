@@ -2,33 +2,34 @@ import { WalletRPCProvider, Insight } from 'qtumjs-wallet';
 import { find } from 'lodash';
 const { Contract, Decoder } = require('qweb3');
 
-import Background from '.';
-import { MESSAGE_TYPE } from '../constants';
-import { IRPCRequestPayload } from '../types';
+import QryptoController from '.';
+import IController from './iController';
+import { MESSAGE_TYPE } from '../../constants';
+import { IRPCRequestPayload } from '../../types';
 
 const INIT_VALUES = {
   rpcProvider: undefined,
 };
 
-export default class RPCBackground {
-  private bg: Background;
+export default class RPCController extends IController {
   private rpcProvider?: WalletRPCProvider = INIT_VALUES.rpcProvider;
 
-  constructor(bg: Background) {
-    this.bg = bg;
+  constructor(main: QryptoController) {
+    super('rpc', main);
+
     chrome.runtime.onMessage.addListener(this.handleMessage);
-    this.bg.onInitFinished('rpc');
+    this.initFinished();
   }
 
   /*
   * Creates the RPC provider instance. This should be initialized after the wallet instance has been created.
   */
   public createRpcProvider = async () => {
-    if (this.bg.account.loggedInAccount
-      && this.bg.account.loggedInAccount.wallet
-      && this.bg.account.loggedInAccount.wallet.qjsWallet
+    if (this.main.account.loggedInAccount
+      && this.main.account.loggedInAccount.wallet
+      && this.main.account.loggedInAccount.wallet.qjsWallet
     ) {
-      this.rpcProvider = new WalletRPCProvider(this.bg.account.loggedInAccount.wallet.qjsWallet);
+      this.rpcProvider = new WalletRPCProvider(this.main.account.loggedInAccount.wallet.qjsWallet);
     }
   }
 

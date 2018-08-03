@@ -1,23 +1,23 @@
 import axios from 'axios';
 
-import Background from '.';
-import { MESSAGE_TYPE } from '../constants';
+import QryptoController from '.';
+import IController from './iController';
+import { MESSAGE_TYPE } from '../../constants';
 
 const INIT_VALUES = {
   getPriceInterval: undefined,
   qtumPriceUSD: 0,
 };
 
-export default class ExternalBackground {
+export default class ExternalController extends IController {
   private static GET_PRICE_INTERVAL_MS: number = 60000;
 
-  private bg: Background;
   private getPriceInterval?: number = INIT_VALUES.getPriceInterval;
   private qtumPriceUSD: number = INIT_VALUES.qtumPriceUSD;
 
-  constructor(bg: Background) {
-    this.bg = bg;
-    this.bg.onInitFinished('external');
+  constructor(main: QryptoController) {
+    super('external', main);
+    this.initFinished();
   }
 
   public calculateQtumToUSD = (balance: number): number => {
@@ -32,7 +32,7 @@ export default class ExternalBackground {
     if (!this.getPriceInterval) {
       this.getPriceInterval = window.setInterval(() => {
         this.getQtumPrice();
-      }, ExternalBackground.GET_PRICE_INTERVAL_MS);
+      }, ExternalController.GET_PRICE_INTERVAL_MS);
     }
   }
 
@@ -54,12 +54,12 @@ export default class ExternalBackground {
       const jsonObj = await axios.get('https://api.coinmarketcap.com/v2/ticker/1684/');
       this.qtumPriceUSD = jsonObj.data.data.quotes.USD.price;
 
-      if (this.bg.account.loggedInAccount
-        && this.bg.account.loggedInAccount.wallet
-        && this.bg.account.loggedInAccount.wallet.info
+      if (this.main.account.loggedInAccount
+        && this.main.account.loggedInAccount.wallet
+        && this.main.account.loggedInAccount.wallet.info
       ) {
-        const qtumUSD = this.calculateQtumToUSD(this.bg.account.loggedInAccount.wallet.info.balance);
-        this.bg.account.loggedInAccount.wallet.qtumUSD = qtumUSD;
+        const qtumUSD = this.calculateQtumToUSD(this.main.account.loggedInAccount.wallet.info.balance);
+        this.main.account.loggedInAccount.wallet.qtumUSD = qtumUSD;
 
         chrome.runtime.sendMessage({
           type: MESSAGE_TYPE.GET_QTUM_USD_RETURN,

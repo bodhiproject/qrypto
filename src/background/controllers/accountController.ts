@@ -1,10 +1,11 @@
 import { isEmpty, find, cloneDeep } from 'lodash';
 import { Wallet as QtumWallet } from 'qtumjs-wallet';
 
-import Background from '.';
-import { MESSAGE_TYPE, STORAGE } from '../constants';
-import Account from '../models/Account';
-import Wallet from '../models/Wallet';
+import QryptoController from '.';
+import IController from './iController';
+import { MESSAGE_TYPE, STORAGE } from '../../constants';
+import Account from '../../models/Account';
+import Wallet from '../../models/Wallet';
 
 const INIT_VALUES = {
   mainnetAccounts: [],
@@ -13,25 +14,25 @@ const INIT_VALUES = {
   getInfoInterval: undefined,
 };
 
-export default class AccountBackground {
+export default class AccountController extends IController {
   private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 30000;
 
   public get accounts(): Account[] {
-    return this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    return this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
   }
   public get hasAccounts(): boolean {
     return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts);
   }
   public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
 
-  private bg: Background;
   private mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
   private testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
   private getInfoInterval?: number = INIT_VALUES.getInfoInterval;
 
-  constructor(bg: Background) {
-    this.bg = bg;
+  constructor(main: QryptoController) {
+    super('account', main);
+
     chrome.runtime.onMessage.addListener(this.handleMessage);
 
     const { MAINNET_ACCOUNTS, TESTNET_ACCOUNTS } = STORAGE;
@@ -44,7 +45,7 @@ export default class AccountBackground {
         this.testnetAccounts = testnetAccounts;
       }
 
-      this.bg.onInitFinished('account');
+      this.initFinished();
     });
   }
 
@@ -68,10 +69,10 @@ export default class AccountBackground {
   * Initial login with the master password and routing to the correct account login page.
   */
   public login = async (password: string) => {
-    this.bg.crypto.generateAppSaltIfNecessary();
+    this.main.crypto.generateAppSaltIfNecessary();
 
     try {
-      await this.bg.crypto.derivePasswordHash(password);
+      await this.main.crypto.derivePasswordHash(password);
     } catch (err) {
       throw err;
     }
@@ -106,7 +107,7 @@ export default class AccountBackground {
     prunedAcct.wallet = undefined;
 
     // Add account to storage
-    if (this.bg.network.isMainNet) {
+    if (this.main.network.isMainNet) {
       this.mainnetAccounts.push(prunedAcct);
       chrome.storage.local.set({
         [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
@@ -165,7 +166,7 @@ export default class AccountBackground {
   * @param accountName {string} The account name to search by.
   */
   public loginAccount = async (accountName: string) => {
-    const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    const accounts = this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     const account = find(accounts, { name: accountName });
     this.loggedInAccount = cloneDeep(account);
 
@@ -188,8 +189,8 @@ export default class AccountBackground {
   * Logs out of the current account and routes back to the account login.
   */
   public logoutAccount = () => {
-    this.bg.session.clearAllIntervals();
-    this.bg.session.clearSession();
+    this.main.session.clearAllIntervals();
+    this.main.session.clearSession();
     this.routeToAccountPage();
   }
 
@@ -197,7 +198,7 @@ export default class AccountBackground {
   * Routes to the CreateWallet or AccountLogin page after unlocking with the password.
   */
   public routeToAccountPage = () => {
-    const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    const accounts = this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     if (isEmpty(accounts)) {
       // Account not found, route to Create Wallet page
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS });
@@ -211,11 +212,11 @@ export default class AccountBackground {
   * Actions after adding a new account or logging into an existing account.
   */
   public onAccountLoggedIn = async () => {
-    this.bg.token.initTokenList();
-    this.bg.rpc.createRpcProvider();
+    this.main.token.initTokenList();
+    this.main.rpc.createRpcProvider();
     await this.startPolling();
-    await this.bg.token.startPolling();
-    await this.bg.external.startPolling();
+    await this.main.token.startPolling();
+    await this.main.external.startPolling();
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 
@@ -236,11 +237,11 @@ export default class AccountBackground {
   private recoverFromMnemonic = async (mnemonic: string): Promise<any> => {
     return new Promise<any>((resolve, reject) => {
       try {
-        const network = this.bg.network.network;
+        const network = this.main.network.network;
         const wallet = network.fromMnemonic(mnemonic);
         const privateKeyHash = wallet.toEncryptedPrivateKey(
-          this.bg.crypto.validPasswordHash,
-          AccountBackground.SCRYPT_PARAMS_PRIV_KEY,
+          this.main.crypto.validPasswordHash,
+          AccountController.SCRYPT_PARAMS_PRIV_KEY,
         );
         resolve({ privateKeyHash, wallet });
       } catch (e) {
@@ -254,11 +255,11 @@ export default class AccountBackground {
   * @param privateKeyHash The private key hash to recover the wallet from.
   */
   private recoverFromPrivateKeyHash(privateKeyHash: string): QtumWallet {
-    const network = this.bg.network.network;
+    const network = this.main.network.network;
     return network.fromEncryptedPrivateKey(
       privateKeyHash,
-      this.bg.crypto.validPasswordHash,
-      AccountBackground.SCRYPT_PARAMS_PRIV_KEY,
+      this.main.crypto.validPasswordHash,
+      AccountController.SCRYPT_PARAMS_PRIV_KEY,
     );
   }
 
@@ -292,7 +293,7 @@ export default class AccountBackground {
   */
   private isWalletMnemonicTaken = async (mnemonic: string): Promise<boolean> => {
     const privateKeyHash = (await this.recoverFromMnemonic(mnemonic)).privateKeyHash;
-    const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    const accounts = this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     return !!find(accounts, { privateKeyHash });
   }
 
@@ -317,7 +318,7 @@ export default class AccountBackground {
     if (!this.getInfoInterval) {
       this.getInfoInterval = window.setInterval(() => {
         this.getWalletInfo();
-      }, AccountBackground.GET_INFO_INTERVAL_MS);
+      }, AccountController.GET_INFO_INTERVAL_MS);
     }
   }
 
