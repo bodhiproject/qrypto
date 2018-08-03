@@ -28,9 +28,15 @@ export default class Wallet implements ISigner {
     return await this.qjsWallet!.send(to, amount * 1e8, { feeRate: 4000 });
   }
 
+  // TODO: IMPLEMENT
   public signTransaction(address: string, transaction: Transaction): Transaction {
-    // TODO: implement signing logic
     console.log(address, transaction);
-    return null;
+    return new Transaction();
+  }
+
+  // TODO: IMPLEMENT
+  public signMessage(address: string, data: string): string {
+    console.log(address, data);
+    return '';
   }
 }

@@ -9,9 +9,10 @@ export default class Account {
   @observable public subAccounts: SubAccount[] = [];
   public wallet?: Wallet;
 
-  constructor(name: string, privateKeyHash: string) {
+  constructor(name: string, privateKeyHash: string, subAccounts: SubAccount[] = []) {
     this.name = name;
     this.privateKeyHash = privateKeyHash;
+    this.subAccounts = subAccounts;
   }
 
   @action

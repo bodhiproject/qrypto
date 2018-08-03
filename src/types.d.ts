@@ -52,4 +52,5 @@ export interface IRPCRequestPayload {
 export interface ISigner {
   send(to: string, amount: number, options: ISendTxOptions): Promise<Insight.ISendRawTxResult>;
   signTransaction(address: string, transaction: Transaction): Transaction;
+  signMessage(address: string, data: string): string;
 }
