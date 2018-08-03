@@ -37,6 +37,7 @@ export enum MESSAGE_TYPE {
   SEND_QRC_TOKENS,
   QRC_TOKEN_BALANCES_RETURN,
   ADD_TOKEN,
+  REMOVE_TOKEN_AT_INDEX,
   LOGOUT,
   CHANGE_NETWORK,
   CHANGE_NETWORK_SUCCESS,
@@ -71,6 +72,7 @@ export enum STORAGE {
   MAINNET_ACCOUNTS = 'mainnetAccounts',
   LOGGED_IN_ACCOUNT = 'loggedInAccount',
   NETWORK_INDEX = 'networkIndex',
+  ACCOUNT_TOKEN_LIST = 'accountTokenList',
 }
 
 export enum SEND_STATE {

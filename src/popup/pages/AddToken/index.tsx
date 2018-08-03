@@ -37,6 +37,9 @@ class AddToken extends Component<WithStyles & IProps, {}> {
             </div>)
             }
           </div>
+          {!!addTokenStore.tokenAlreadyInListError && (
+            <Typography className={classes.errorText}>{addTokenStore.tokenAlreadyInListError}</Typography>
+          )}
           <AddButton {...this.props} />
         </div>
       </div>

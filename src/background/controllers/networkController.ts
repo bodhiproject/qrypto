@@ -20,6 +20,9 @@ export default class NetworkController extends IController {
   public get explorerUrl(): string {
     return NetworkController.NETWORKS[this.networkIndex].explorerUrl;
   }
+  public get networkName(): string {
+    return NetworkBackground.NETWORKS[this.networkIndex].name;
+  }
 
   private networkIndex: number = 1;
 

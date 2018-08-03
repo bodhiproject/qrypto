@@ -10,6 +10,7 @@ const INIT_VALUES = {
   tokens: [],
   hasMore: false,
   shouldScrollToBottom: false,
+  editTokenMode: false,
 };
 
 export default class AccountDetailStore {
@@ -18,6 +19,7 @@ export default class AccountDetailStore {
   @observable public tokens: QRCToken[] = INIT_VALUES.tokens;
   @observable public hasMore: boolean = INIT_VALUES.hasMore;
   @observable public shouldScrollToBottom: boolean = INIT_VALUES.shouldScrollToBottom;
+  @observable public editTokenMode: boolean = INIT_VALUES.editTokenMode;
 
   constructor() {
     reaction(
@@ -44,6 +46,14 @@ export default class AccountDetailStore {
   public onTransactionClick = (txid: string) => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_NETWORK_EXPLORER_URL }, (response: any) => {
       chrome.tabs.create({ url: `${response}/${txid}` });
+    });
+  }
+
+  public removeTokenAtIndex = (index: number) => {
+    this.tokens.splice(index, 1);
+    chrome.runtime.sendMessage({
+      type: MESSAGE_TYPE.REMOVE_TOKEN_AT_INDEX,
+      index,
     });
   }
 

@@ -1,9 +1,9 @@
-import { each, findIndex } from 'lodash';
+import { each, findIndex, isEmpty } from 'lodash';
 import BN from 'bn.js';
 
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE } from '../../constants';
+import { MESSAGE_TYPE, STORAGE } from '../../constants';
 import QRCToken from '../../models/QRCToken';
 import qrc20TokenABI from '../../contracts/qrc20TokenABI';
 import mainnetTokenList from '../../contracts/mainnetTokenList';
@@ -45,6 +45,13 @@ export default class TokenController extends IController {
     } else {
       this.tokens = testnetTokenList;
     }
+
+    chrome.storage.local.get([this.chromeStorageAccountTokenListKey()], (res: any) => {
+      console.log('chrome storage tokens', res);
+      if (!isEmpty(res)) {
+        this.tokens = res[this.chromeStorageAccountTokenListKey()];
+      }
+    });
   }
 
   /*
@@ -190,7 +197,23 @@ export default class TokenController extends IController {
   private addToken = async (contractAddress: string, name: string, symbol: string, decimals: number) => {
     const newToken = new QRCToken(name, symbol, decimals, contractAddress);
     this.tokens!.push(newToken);
+    this.setTokenListInChromeStorage();
     await this.getQRCTokenBalance(newToken);
+  }
+
+  private removeTokenAtIndex = (index: number) => {
+    this.tokens!.splice(index, 1);
+    this.setTokenListInChromeStorage();
+  }
+
+  private setTokenListInChromeStorage = () => {
+    chrome.storage.local.set({
+      [this.chromeStorageAccountTokenListKey()]: this.tokens,
+    }, () => console.log('accountTokenList', this.tokens));
+  }
+
+  private chromeStorageAccountTokenListKey = () => {
+    return STORAGE.ACCOUNT_TOKEN_LIST.concat(this.bg.account.loggedInAccount!.name).concat(this.bg.network.networkName);
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
@@ -206,6 +229,9 @@ export default class TokenController extends IController {
         break;
       case MESSAGE_TYPE.GET_QRC_TOKEN_DETAILS:
         this.getQRCTokenDetails(request.contractAddress);
+        break;
+      case MESSAGE_TYPE.REMOVE_TOKEN_AT_INDEX:
+        this.removeTokenAtIndex(request.index);
         break;
       default:
         break;

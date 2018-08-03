@@ -3,6 +3,7 @@ import { Paper, Tabs, Tab, List, ListItem, Typography, Button, withStyles, WithS
 import { KeyboardArrowRight } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
+import ReactSVG from 'react-svg';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
@@ -114,10 +115,21 @@ const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailSto
   </div>
 ));
 
-const TokenList: SFC<any> = observer(({ history, classes, store: { accountDetailStore: { tokens } } }: any) => (
+const TokenList: SFC<any> = observer(({ history, classes,
+  store: { accountDetailStore, accountDetailStore: { tokens } } }: any) => (
   <div>
-    {tokens.map(({ name, symbol, balance }: QRCToken) => (
-      <ListItem divider key={symbol} className={classes.listItem}>
+    {tokens.map(({ name, symbol, balance }: QRCToken, index: number) => (
+      <ListItem divider key={symbol} className={classes.listItem}
+        onClick = {() => accountDetailStore.editTokenMode && accountDetailStore.removeTokenAtIndex(index)}
+      >
+        {accountDetailStore.editTokenMode &&
+          <Button
+            className={classes.deleteButton}
+            id="removeTokenButton"
+          >
+            <ReactSVG path="images/Ic_detele.svg" />
+          </Button>
+        }
         <div className={classes.tokenInfoContainer}>
           <Typography className={classes.tokenName}>{name}</Typography>
         </div>
@@ -126,17 +138,26 @@ const TokenList: SFC<any> = observer(({ history, classes, store: { accountDetail
     ))}
     <div className={classes.bottomButtonWrap}>
       <Button
+        className={classes.bottomButton}
+        id="editTokenButton"
+        color="primary"
+        size="small"
+        onClick={() => accountDetailStore.editTokenMode = !accountDetailStore.editTokenMode }
+        >
+        {accountDetailStore.editTokenMode ? 'Done' : 'Edit'}
+      </Button>
+      <Button
+        className={classes.bottomButton}
         id="addTokenButton"
         color="primary"
         size="small"
         onClick={() => history.push('/add-token')}
         >
-        Add New Token
+        Add Token
       </Button>
-
     </div>
   </div>
-  ));
+));
 
 const AmountInfo: SFC<any> = ({ classes, amount, token }: any) => (
   <div>
