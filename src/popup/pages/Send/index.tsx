@@ -24,9 +24,9 @@ class Send extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { loggedInAccount } = this.props.store.sessionStore;
+    const { loggedInAccountName } = this.props.store.sessionStore;
 
-    if (!loggedInAccount || !loggedInAccount.info) {
+    if (!loggedInAccountName) {
       return null;
     }
 
@@ -71,7 +71,7 @@ const FromField = observer(({ classes, store: { sendStore, sessionStore } }: any
         onChange={(event) => sendStore.senderAddress = event.target.value}
       >
         <MenuItem value={sessionStore.info.addrStr}>
-          <Typography className={classes.fromAddress}>{sessionStore.loggedInAccount.name}</Typography>
+          <Typography className={classes.fromAddress}>{sessionStore.loggedInAccountName}</Typography>
         </MenuItem>
       </Select>
     </div>

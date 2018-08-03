@@ -1,21 +1,24 @@
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import { Insight } from 'qtumjs-wallet';
 
 import { MESSAGE_TYPE } from '../../constants';
-import Account from '../../models/Account';
 
 const INIT_VALUES = {
   networkIndex: 1,
-  loggedInAccount: undefined,
+  loggedInAccountName: undefined,
   info: undefined,
   qtumUSD: undefined,
 };
 
 export default class SessionStore {
   @observable public networkIndex: number = INIT_VALUES.networkIndex;
-  @observable public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
+  @observable public loggedInAccountName?: string = INIT_VALUES.loggedInAccountName;
   @observable public info?: Insight.IGetInfo = INIT_VALUES.info;
-  @observable public qtumUSD?: string = INIT_VALUES.qtumUSD;
+  @computed public get qtumBalanceUSD() {
+    return this.qtumUSD ? `$${this.qtumUSD} USD` : 'Loading...';
+  }
+
+  private qtumUSD?: number = INIT_VALUES.qtumUSD;
 
   constructor() {
     chrome.runtime.onMessage.addListener(this.handleMessage);
@@ -28,8 +31,14 @@ export default class SessionStore {
 
   @action
   public init = () => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT }, (response: any) => {
-      this.loggedInAccount = response;
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME }, (response: any) => {
+      this.loggedInAccountName = response;
+    });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO }, (response: any) => {
+      this.info = response;
+    });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QTUM_USD }, (response: any) => {
+      this.qtumUSD = response;
     });
   }
 
@@ -44,6 +53,9 @@ export default class SessionStore {
         break;
       case MESSAGE_TYPE.GET_WALLET_INFO_RETURN:
         this.info = request.info;
+        break;
+      case MESSAGE_TYPE.GET_QTUM_USD_RETURN:
+        this.qtumUSD = request.qtumUSD;
         break;
       default:
         break;

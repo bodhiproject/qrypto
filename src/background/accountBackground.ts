@@ -3,6 +3,7 @@ import { isEmpty, find, cloneDeep } from 'lodash';
 import Background from '.';
 import { MESSAGE_TYPE, STORAGE } from '../constants';
 import Account from '../models/Account';
+import Wallet from '../models/Wallet';
 
 const INIT_VALUES = {
   mainnetAccounts: [],
@@ -97,7 +98,7 @@ export default class AccountBackground {
   public addAccountAndLogin = async (accountName: string, mnemonic: string) => {
     const walletObj = await this.recoverFromMnemonic(mnemonic);
     this.loggedInAccount = new Account(accountName, walletObj.privateKeyHash);
-    this.loggedInAccount.qjsWallet = walletObj.wallet;
+    this.loggedInAccount.wallet = new Wallet(walletObj.wallet);
 
     this.storeNewAccount(this.loggedInAccount);
     await this.onAccountLoggedIn();
@@ -156,7 +157,7 @@ export default class AccountBackground {
 
     try {
       this.loggedInAccount = foundAccount;
-      this.loggedInAccount.qjsWallet = this.recoverFromPrivateKeyHash(this.loggedInAccount.privateKeyHash);
+      this.loggedInAccount.wallet!.qjsWallet = this.recoverFromPrivateKeyHash(this.loggedInAccount.privateKeyHash);
       await this.onAccountLoggedIn();
     } catch (err) {
       this.loggedInAccount = INIT_VALUES.loggedInAccount;
@@ -190,7 +191,6 @@ export default class AccountBackground {
   * Actions after adding a new account or logging into an existing account.
   */
   public onAccountLoggedIn = async () => {
-    console.log(this.loggedInAccount);
     this.bg.token.initTokenList();
     this.bg.rpc.createRpcProvider();
     await this.startPolling();
@@ -277,24 +277,20 @@ export default class AccountBackground {
   }
 
   private storeNewAccount = (account: Account) => {
-    const saveAcct = cloneDeep(account);
-    Object.assign(saveAcct, {
-      qjsWallet: undefined,
-      info: undefined,
-      qtumUSD: undefined,
-    });
+    const prunedAcct = cloneDeep(account);
+    Object.assign(prunedAcct, { wallet: undefined });
 
     // Add account if not existing
     if (this.bg.network.isMainNet) {
-      this.mainnetAccounts.push(saveAcct);
+      this.mainnetAccounts.push(prunedAcct);
       chrome.storage.local.set({
         [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
-      }, () => console.log('Mainnet Account added', saveAcct));
+      }, () => console.log('Mainnet Account added', prunedAcct));
     } else {
-      this.testnetAccounts.push(saveAcct);
+      this.testnetAccounts.push(prunedAcct);
       chrome.storage.local.set({
         [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
-      }, () => console.log('Testnet Account added', saveAcct));
+      }, () => console.log('Testnet Account added', prunedAcct));
     }
   }
 
@@ -302,17 +298,13 @@ export default class AccountBackground {
   * Fetches the wallet info from the current wallet instance.
   */
   private getWalletInfo = async () => {
-    if (!this.loggedInAccount || !this.loggedInAccount.qjsWallet) {
+    if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
       console.error('Could not get wallet info.');
       return;
     }
 
-    await this.loggedInAccount!.qjsWallet!.getInfo();
-    if (this.loggedInAccount!.info) {
-      this.loggedInAccount!.qtumUSD = this.bg.external.calculateQtumToUSD(this.loggedInAccount!.info!.balance);
-    }
-
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.info });
+    await this.loggedInAccount.wallet.getInfo();
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.wallet.info });
   }
 
   /*
@@ -333,12 +325,12 @@ export default class AccountBackground {
   * @param amount The amount to send.
   */
   private sendTokens = async (receiverAddress: string, amount: number) => {
-    if (!this.loggedInAccount || !this.loggedInAccount.qjsWallet) {
+    if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
       throw Error('Cannot send with no wallet instance.');
     }
 
     try {
-      this.loggedInAccount.send(receiverAddress, amount);
+      this.loggedInAccount.wallet.send(receiverAddress, amount);
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
     } catch (err) {
       console.log(err);
@@ -375,8 +367,16 @@ export default class AccountBackground {
       case MESSAGE_TYPE.GET_ACCOUNTS:
         sendResponse(this.accounts);
         break;
-      case MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT:
-        sendResponse(this.loggedInAccount);
+      case MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME:
+        sendResponse(this.loggedInAccount ? this.loggedInAccount.name : undefined);
+        break;
+      case MESSAGE_TYPE.GET_WALLET_INFO:
+        sendResponse(this.loggedInAccount && this.loggedInAccount.wallet
+          ? this.loggedInAccount.wallet.info : undefined);
+        break;
+      case MESSAGE_TYPE.GET_QTUM_USD:
+        sendResponse(this.loggedInAccount && this.loggedInAccount.wallet
+          ? this.loggedInAccount.wallet.qtumUSD : undefined);
         break;
       case MESSAGE_TYPE.VALIDATE_WALLET_NAME:
         sendResponse(this.isWalletNameTaken(request.name));

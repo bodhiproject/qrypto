@@ -23,8 +23,11 @@ export default class RPCBackground {
   * Creates the RPC provider instance. This should be initialized after the wallet instance has been created.
   */
   public createRpcProvider = async () => {
-    if (this.bg.account.loggedInAccount && this.bg.account.loggedInAccount.qjsWallet) {
-      this.rpcProvider = new WalletRPCProvider(this.bg.account.loggedInAccount.qjsWallet);
+    if (this.bg.account.loggedInAccount
+      && this.bg.account.loggedInAccount.wallet
+      && this.bg.account.loggedInAccount.wallet.qjsWallet
+    ) {
+      this.rpcProvider = new WalletRPCProvider(this.bg.account.loggedInAccount.wallet.qjsWallet);
     }
   }
 

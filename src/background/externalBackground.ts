@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import Background from '.';
+import { MESSAGE_TYPE } from '../constants';
 
 const INIT_VALUES = {
   getPriceInterval: undefined,
@@ -52,6 +53,18 @@ export default class ExternalBackground {
     try {
       const jsonObj = await axios.get('https://api.coinmarketcap.com/v2/ticker/1684/');
       this.qtumPriceUSD = jsonObj.data.data.quotes.USD.price;
+
+      if (this.bg.account.loggedInAccount
+        && this.bg.account.loggedInAccount.wallet
+        && this.bg.account.loggedInAccount.wallet.info
+      ) {
+        this.bg.account.loggedInAccount.wallet.qtumUSD =
+          this.bg.external.calculateQtumToUSD(this.bg.account.loggedInAccount.wallet.info.balance);
+        chrome.runtime.sendMessage({
+          type: MESSAGE_TYPE.GET_QTUM_USD_RETURN,
+          qtumUSD: this.bg.account.loggedInAccount.wallet.qtumUSD,
+        });
+      }
     } catch (err) {
       console.log(err);
     }
