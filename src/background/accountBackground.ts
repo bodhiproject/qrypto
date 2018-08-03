@@ -1,4 +1,5 @@
 import { isEmpty, find, cloneDeep } from 'lodash';
+import { Wallet as QtumWallet } from 'qtumjs-wallet';
 
 import Background from '.';
 import { MESSAGE_TYPE, STORAGE } from '../constants';
@@ -60,6 +61,7 @@ export default class AccountBackground {
   * Resets the account vars back to initial state.
   */
   public resetAccount = () => {
+    console.log('resetAccount()');
     this.loggedInAccount = INIT_VALUES.loggedInAccount;
   }
 
@@ -149,17 +151,19 @@ export default class AccountBackground {
   */
   public loginAccount = async (accountName: string) => {
     const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
-    const foundAccount = find(accounts, { name: accountName });
+    this.loggedInAccount = find(accounts, { name: accountName });
 
-    if (!foundAccount) {
+    if (!this.loggedInAccount) {
       throw Error('Account should not be undefined');
     }
 
     try {
-      this.loggedInAccount = foundAccount;
-      this.loggedInAccount.wallet!.qjsWallet = this.recoverFromPrivateKeyHash(this.loggedInAccount.privateKeyHash);
+      const wallet = this.recoverFromPrivateKeyHash(this.loggedInAccount.privateKeyHash);
+      this.loggedInAccount.wallet = new Wallet(wallet);
+
       await this.onAccountLoggedIn();
     } catch (err) {
+      console.error(err);
       this.loggedInAccount = INIT_VALUES.loggedInAccount;
     }
   }
@@ -233,7 +237,7 @@ export default class AccountBackground {
   * Recovers the wallet instance from an encrypted private key.
   * @param privateKeyHash The private key hash to recover the wallet from.
   */
-  private recoverFromPrivateKeyHash(privateKeyHash: string) {
+  private recoverFromPrivateKeyHash(privateKeyHash: string): QtumWallet {
     const network = this.bg.network.network;
     return network.fromEncryptedPrivateKey(
       privateKeyHash,
