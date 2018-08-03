@@ -75,16 +75,8 @@ const SettingsButton: React.SFC<IProps> =
       open={Boolean(navBarStore.settingsMenuAnchor)}
       onClose={() => navBarStore.settingsMenuAnchor = undefined}
     >
-      <MenuItem
-        onClick={navBarStore.logout}
-      >
-        Logout
-      </MenuItem>
-      <MenuItem
-        onClick={() => routerStore.push('/settings')}
-      >
-        Settings
-      </MenuItem>
+      <MenuItem onClick={() => routerStore.push('/settings')}>Settings</MenuItem>
+      <MenuItem onClick={navBarStore.logout}>Logout</MenuItem>
     </Menu>
   </Fragment>
 ));
