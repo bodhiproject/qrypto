@@ -9,7 +9,7 @@ export default class Account implements ISigner {
   @observable public name: string;
   @observable public privateKeyHash: string;
   @observable public subAccounts: SubAccount[] = [];
-  @observable public wallet?: Wallet;
+  @observable public qjsWallet?: Wallet;
   @observable public info?: Insight.IGetInfo;
   @observable public qtumUSD?: number;
 
@@ -25,17 +25,17 @@ export default class Account implements ISigner {
 
   @action
   public getInfo = async () => {
-    if (!this.wallet) {
+    if (!this.qjsWallet) {
       console.error('Cannot getInfo without wallet instance.');
     }
-    this.info = await this.wallet!.getInfo();
+    this.info = await this.qjsWallet!.getInfo();
   }
 
   public send = async (to: string, amount: number): Promise<Insight.ISendRawTxResult> => {
-    if (!this.wallet) {
+    if (!this.qjsWallet) {
       throw Error('Cannot send without wallet instance.');
     }
-    return await this.wallet!.send(to, amount * 1e8, { feeRate: 4000 });
+    return await this.qjsWallet!.send(to, amount * 1e8, { feeRate: 4000 });
   }
 
   public signTransaction(address: string, transaction: Transaction): Transaction {

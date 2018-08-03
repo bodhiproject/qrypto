@@ -82,7 +82,7 @@ export default class TokenBackground {
   * @param token The QRCToken to get the balance of.
   */
   private getQRCTokenBalance = async (token: QRCToken) => {
-    if (!this.bg.account.loggedInAccount || !this.bg.account.loggedInAccount.wallet) {
+    if (!this.bg.account.loggedInAccount || !this.bg.account.loggedInAccount.qjsWallet) {
       console.error('Cannot getQRCTokenBalance without wallet instance.');
       return;
     }
@@ -91,7 +91,7 @@ export default class TokenBackground {
       token.address,
       qrc20TokenABI,
       'balanceOf',
-      [this.bg.account.loggedInAccount.wallet.address],
+      [this.bg.account.loggedInAccount.qjsWallet.address],
     );
 
     let balance = res.executionResult.formattedOutput[0]; // Returns as a BN instance

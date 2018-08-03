@@ -1,4 +1,4 @@
-import { isEmpty, find } from 'lodash';
+import { isEmpty, find, cloneDeep } from 'lodash';
 
 import Background from '.';
 import { MESSAGE_TYPE, STORAGE } from '../constants';
@@ -96,23 +96,10 @@ export default class AccountBackground {
   */
   public addAccountAndLogin = async (accountName: string, mnemonic: string) => {
     const walletObj = await this.recoverFromMnemonic(mnemonic);
-    const account = new Account(accountName, walletObj.privateKeyHash);
+    this.loggedInAccount = new Account(accountName, walletObj.privateKeyHash);
+    this.loggedInAccount.qjsWallet = walletObj.wallet;
 
-    // Add account if not existing
-    if (this.bg.network.isMainNet) {
-      this.mainnetAccounts.push(account);
-      chrome.storage.local.set({
-        [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
-      }, () => console.log('Mainnet Account added', account));
-    } else {
-      this.testnetAccounts.push(account);
-      chrome.storage.local.set({
-        [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
-      }, () => console.log('Testnet Account added', account));
-    }
-
-    account.wallet = walletObj.wallet;
-    this.loggedInAccount = account;
+    this.storeNewAccount(this.loggedInAccount);
     await this.onAccountLoggedIn();
   }
 
@@ -128,7 +115,7 @@ export default class AccountBackground {
       return;
     }
 
-    this.addAccountAndLogin(accountName, mnemonic);
+    await this.addAccountAndLogin(accountName, mnemonic);
   }
 
   /*
@@ -169,7 +156,7 @@ export default class AccountBackground {
 
     try {
       this.loggedInAccount = foundAccount;
-      this.loggedInAccount.wallet = this.recoverFromPrivateKeyHash(this.loggedInAccount.privateKeyHash);
+      this.loggedInAccount.qjsWallet = this.recoverFromPrivateKeyHash(this.loggedInAccount.privateKeyHash);
       await this.onAccountLoggedIn();
     } catch (err) {
       this.loggedInAccount = INIT_VALUES.loggedInAccount;
@@ -203,6 +190,7 @@ export default class AccountBackground {
   * Actions after adding a new account or logging into an existing account.
   */
   public onAccountLoggedIn = async () => {
+    console.log(this.loggedInAccount);
     this.bg.token.initTokenList();
     this.bg.rpc.createRpcProvider();
     await this.startPolling();
@@ -288,21 +276,43 @@ export default class AccountBackground {
     return !!find(accounts, { privateKeyHash });
   }
 
+  private storeNewAccount = (account: Account) => {
+    const saveAcct = cloneDeep(account);
+    Object.assign(saveAcct, {
+      qjsWallet: undefined,
+      info: undefined,
+      qtumUSD: undefined,
+    });
+
+    // Add account if not existing
+    if (this.bg.network.isMainNet) {
+      this.mainnetAccounts.push(saveAcct);
+      chrome.storage.local.set({
+        [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
+      }, () => console.log('Mainnet Account added', saveAcct));
+    } else {
+      this.testnetAccounts.push(saveAcct);
+      chrome.storage.local.set({
+        [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
+      }, () => console.log('Testnet Account added', saveAcct));
+    }
+  }
+
   /*
   * Fetches the wallet info from the current wallet instance.
   */
   private getWalletInfo = async () => {
-    if (!this.loggedInAccount || !this.loggedInAccount.wallet) {
+    if (!this.loggedInAccount || !this.loggedInAccount.qjsWallet) {
       console.error('Could not get wallet info.');
       return;
     }
 
-    await this.loggedInAccount!.wallet!.getInfo();
+    await this.loggedInAccount!.qjsWallet!.getInfo();
     if (this.loggedInAccount!.info) {
       this.loggedInAccount!.qtumUSD = this.bg.external.calculateQtumToUSD(this.loggedInAccount!.info!.balance);
     }
 
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.info });
   }
 
   /*
@@ -323,7 +333,7 @@ export default class AccountBackground {
   * @param amount The amount to send.
   */
   private sendTokens = async (receiverAddress: string, amount: number) => {
-    if (!this.loggedInAccount || !this.loggedInAccount.wallet) {
+    if (!this.loggedInAccount || !this.loggedInAccount.qjsWallet) {
       throw Error('Cannot send with no wallet instance.');
     }
 

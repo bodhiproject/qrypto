@@ -24,9 +24,9 @@ class Send extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { loggedInAccount, info } = this.props.store.sessionStore;
+    const { loggedInAccount } = this.props.store.sessionStore;
 
-    if (!loggedInAccount || !info) {
+    if (!loggedInAccount || !loggedInAccount.info) {
       return null;
     }
 
