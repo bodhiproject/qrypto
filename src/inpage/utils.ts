@@ -23,7 +23,7 @@ export function handleRpcCallResponse(response: IRPCCallResponsePayload) {
   if (response.error) {
     return request.reject(response.error);
   }
-  console.log('call rpc method success!');
+
   request.resolve(response.result);
 }
 
