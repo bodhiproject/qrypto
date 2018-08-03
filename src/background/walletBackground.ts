@@ -114,17 +114,18 @@ export default class WalletBackground {
 
   private callRpc = async (id: number, method: string, args: any[]) => {
     const provider = new WalletRPCProvider(this.wallet!);
-    try {
-      const result = await provider.rawCall(method, args);
+    let result: any;
+    let error: string;
 
-      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, result });
-      });
+    try {
+      result = await provider.rawCall(method, args);
     } catch (e) {
-      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, error: e.message });
-      });
+      error = e.message;
     }
+
+    chrome.tabs.query({active: true, currentWindow: true}, ([{ id: tabID }]) => {
+      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, result, error });
+    });
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
