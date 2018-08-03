@@ -7,15 +7,18 @@ import QryNetwork from '../../models/QryNetwork';
 
 export default class NetworkController extends IController {
   public static NETWORKS: QryNetwork[] = [
-    new QryNetwork(NETWORK_NAMES.MAINNET, networks.mainnet),
-    new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet),
+    new QryNetwork(NETWORK_NAMES.MAINNET, networks.mainnet, 'https://explorer.qtum.org/tx'),
+    new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet, 'https://testnet.qtum.org/tx'),
   ];
 
   public get isMainNet(): boolean {
     return this.networkIndex === 0;
   }
-  public get network(): Network  {
+  public get network(): Network {
     return NetworkController.NETWORKS[this.networkIndex].network;
+  }
+  public get explorerUrl(): string {
+    return NetworkController.NETWORKS[this.networkIndex].explorerUrl;
   }
 
   private networkIndex: number = 1;
@@ -60,6 +63,9 @@ export default class NetworkController extends IController {
         break;
       case MESSAGE_TYPE.GET_NETWORK_INDEX:
         sendResponse(this.networkIndex);
+        break;
+      case MESSAGE_TYPE.GET_NETWORK_EXPLORER_URL:
+        sendResponse(this.explorerUrl);
         break;
       case MESSAGE_TYPE.IS_MAINNET:
         sendResponse(this.isMainNet);
