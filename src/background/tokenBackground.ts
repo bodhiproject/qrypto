@@ -90,12 +90,12 @@ export default class TokenBackground {
       return;
     }
 
-    const res = await this.bg.rpc.callContract(
-      token.address,
-      qrc20TokenABI,
-      'balanceOf',
-      [this.bg.account.loggedInAccount.wallet.qjsWallet.address],
-    );
+    const res = await this.bg.rpc.callContract({
+      contractAddress: token.address,
+      abi: qrc20TokenABI,
+      methodName: 'balanceOf',
+      args: [this.bg.account.loggedInAccount.wallet.qjsWallet.address],
+    });
 
     let balance = res.executionResult.formattedOutput[0]; // Returns as a BN instance
     balance = balance.div(new BN(10 ** token.decimals)).toNumber(); // Convert to regular denomination
@@ -118,7 +118,12 @@ export default class TokenBackground {
   private sendQRCToken = async (receiverAddress: string, amount: number, token: QRCToken) => {
     try {
       const bnAmount = new BN(amount).mul(new BN(10 ** token.decimals));
-      await this.bg.rpc.sendToContract(token.address, qrc20TokenABI, 'transfer', [receiverAddress, bnAmount]);
+      await this.bg.rpc.sendToContract({
+        contractAddress: token.address,
+        abi: qrc20TokenABI,
+        methodName: 'transfer',
+        args: [receiverAddress, bnAmount],
+      });
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
     } catch (err) {
       console.log(err);

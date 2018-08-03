@@ -4,6 +4,7 @@ const { Contract, Decoder } = require('qweb3');
 
 import Background from '.';
 import { MESSAGE_TYPE } from '../constants';
+import { IRPCRequestPayload } from '../types';
 
 const INIT_VALUES = {
   rpcProvider: undefined,
@@ -39,28 +40,37 @@ export default class RPCBackground {
   }
 
   /*
-  * Executes a callcontract on the blockchain.
-  * @param contractAddress The contract address of the contract.
+  * Constructs the encoded data hex for a sendtocontract or callcontract.
   * @param abi The ABI of the contract.
   * @param methodName The method to call that is in the ABI.
   * @param args The arguments that are needed when calling the method.
+  * @return The constructed data hex.
+  */
+  public encodeDataHex = (abi: any[], methodName: string, args: any[]) => {
+    const contract = new Contract('', '', abi);
+    const methodObj = find(contract.abi, { name: methodName });
+    return contract.constructDataHex(methodObj, args);
+  }
+
+  /*
+  * Executes a callcontract on the blockchain.
+  * @param payload The RPC request payload.
   * @return The result of the callcontract.
   */
-  public callContract = async (contractAddress: string, abi: any[], methodName: string, args: any[]): Promise<any> => {
+  public callContract = async (payload: IRPCRequestPayload): Promise<any> => {
     if (!this.rpcProvider) {
       throw Error('Tried to callContract with no RPC provider.');
     }
 
-    const contract = new Contract('', contractAddress, abi);
-    const methodObj = find(contract.abi, { name: methodName });
-    const dataHex = contract.constructDataHex(methodObj, args);
-
-    let res: Insight.IContractCall = await this.rpcProvider.rawCall('callContract', [
-      contract.address,
-      dataHex,
+    const data = this.encodeDataHex(payload.abi, payload.methodName, payload.args);
+    const res = await this.rpcProvider.rawCall('callContract', [
+      payload.contractAddress,
+      data,
+      payload.amount,
+      payload.gasLimit,
+      payload.gasPrice,
     ]) as Insight.IContractCall;
-    res = Decoder.decodeCall(res, contract.abi, methodName);
-    return res;
+    return Decoder.decodeCall(res, payload.abi, payload.methodName);
   }
 
   /*
@@ -71,23 +81,18 @@ export default class RPCBackground {
   * @param args The arguments that are needed when calling the method.
   * @return The result of the callcontract.
   */
-  public sendToContract = async (
-    contractAddress: string,
-    abi: any[],
-    methodName: string,
-    args: any[],
-  ): Promise<Insight.ISendRawTxResult> => {
+  public sendToContract = async (payload: IRPCRequestPayload): Promise<Insight.ISendRawTxResult> => {
     if (!this.rpcProvider) {
       throw Error('Tried to sendToContract with no RPC provider.');
     }
 
-    const contract = new Contract('', contractAddress, abi);
-    const methodObj = find(contract.abi, { name: methodName });
-    const dataHex = contract.constructDataHex(methodObj, args);
-
+    const data = this.encodeDataHex(payload.abi, payload.methodName, payload.args);
     const res: Insight.ISendRawTxResult = await this.rpcProvider.rawCall('sendToContract', [
-      contract.address,
-      dataHex,
+      payload.contractAddress,
+      data,
+      payload.amount,
+      payload.gasLimit,
+      payload.gasPrice,
     ]) as Insight.ISendRawTxResult;
     return res;
   }
