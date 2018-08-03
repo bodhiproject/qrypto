@@ -61,7 +61,6 @@ export default class AccountBackground {
   * Resets the account vars back to initial state.
   */
   public resetAccount = () => {
-    console.log('resetAccount()');
     this.loggedInAccount = INIT_VALUES.loggedInAccount;
   }
 
@@ -102,7 +101,23 @@ export default class AccountBackground {
     this.loggedInAccount = new Account(accountName, walletObj.privateKeyHash);
     this.loggedInAccount.wallet = new Wallet(walletObj.wallet);
 
-    this.storeNewAccount(this.loggedInAccount);
+    // Prune the wallet object before storing it
+    const prunedAcct = cloneDeep(this.loggedInAccount);
+    prunedAcct.wallet = undefined;
+
+    // Add account to storage
+    if (this.bg.network.isMainNet) {
+      this.mainnetAccounts.push(prunedAcct);
+      chrome.storage.local.set({
+        [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
+      }, () => console.log('Mainnet Account added', prunedAcct));
+    } else {
+      this.testnetAccounts.push(prunedAcct);
+      chrome.storage.local.set({
+        [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
+      }, () => console.log('Testnet Account added', prunedAcct));
+    }
+
     await this.onAccountLoggedIn();
   }
 
@@ -151,7 +166,8 @@ export default class AccountBackground {
   */
   public loginAccount = async (accountName: string) => {
     const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
-    this.loggedInAccount = find(accounts, { name: accountName });
+    const account = find(accounts, { name: accountName });
+    this.loggedInAccount = cloneDeep(account);
 
     if (!this.loggedInAccount) {
       throw Error('Account should not be undefined');
@@ -164,7 +180,7 @@ export default class AccountBackground {
       await this.onAccountLoggedIn();
     } catch (err) {
       console.error(err);
-      this.loggedInAccount = INIT_VALUES.loggedInAccount;
+      this.resetAccount();
     }
   }
 
@@ -278,24 +294,6 @@ export default class AccountBackground {
     const privateKeyHash = (await this.recoverFromMnemonic(mnemonic)).privateKeyHash;
     const accounts = this.bg.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     return !!find(accounts, { privateKeyHash });
-  }
-
-  private storeNewAccount = (account: Account) => {
-    const prunedAcct = cloneDeep(account);
-    Object.assign(prunedAcct, { wallet: undefined });
-
-    // Add account if not existing
-    if (this.bg.network.isMainNet) {
-      this.mainnetAccounts.push(prunedAcct);
-      chrome.storage.local.set({
-        [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
-      }, () => console.log('Mainnet Account added', prunedAcct));
-    } else {
-      this.testnetAccounts.push(prunedAcct);
-      chrome.storage.local.set({
-        [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
-      }, () => console.log('Testnet Account added', prunedAcct));
-    }
   }
 
   /*
