@@ -87,12 +87,13 @@ function handleRPCCallMessage(message: IRPCCallRequestPayload) {
 function handBackgroundScriptMessage(message: any) {
   switch (message.type) {
     case MESSAGE_TYPE.RPC_CALL_RETURN:
-      const { id, result } = message;
+      const { id, error, result } = message;
 
       responseExtensionAPI({
         type: API_TYPE.RPC_RESONSE,
         payload: {
           id,
+          error,
           result,
         },
       });
