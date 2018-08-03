@@ -104,14 +104,17 @@ export default class RPCController extends IController {
   }
 
   private callRpc = async (id: number, method: string, args: any[]) => {
-    if (!this.rpcProvider) {
-      console.error('Tried to callRpc with no RPC provider.');
-      return;
+    let result: any;
+    let error: string;
+
+    try {
+      result = await this.rpcProvider!.rawCall(method, args);
+    } catch (e) {
+      error = e.message;
     }
 
-    const result = await this.rpcProvider.rawCall(method, args);
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, result });
+    chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
+      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, result, error });
     });
   }
 
