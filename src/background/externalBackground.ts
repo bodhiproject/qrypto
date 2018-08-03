@@ -58,11 +58,12 @@ export default class ExternalBackground {
         && this.bg.account.loggedInAccount.wallet
         && this.bg.account.loggedInAccount.wallet.info
       ) {
-        this.bg.account.loggedInAccount.wallet.qtumUSD =
-          this.bg.external.calculateQtumToUSD(this.bg.account.loggedInAccount.wallet.info.balance);
+        const qtumUSD = this.calculateQtumToUSD(this.bg.account.loggedInAccount.wallet.info.balance);
+        this.bg.account.loggedInAccount.wallet.qtumUSD = qtumUSD;
+
         chrome.runtime.sendMessage({
           type: MESSAGE_TYPE.GET_QTUM_USD_RETURN,
-          qtumUSD: this.bg.account.loggedInAccount.wallet.qtumUSD,
+          qtumUSD,
         });
       }
     } catch (err) {

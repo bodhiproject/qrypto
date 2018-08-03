@@ -1,5 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { Insight } from 'qtumjs-wallet';
+import { isUndefined } from 'lodash';
 
 import { MESSAGE_TYPE } from '../../constants';
 
@@ -15,7 +16,7 @@ export default class SessionStore {
   @observable public loggedInAccountName?: string = INIT_VALUES.loggedInAccountName;
   @observable public info?: Insight.IGetInfo = INIT_VALUES.info;
   @computed public get qtumBalanceUSD() {
-    return this.qtumUSD ? `$${this.qtumUSD} USD` : 'Loading...';
+    return isUndefined(this.qtumUSD) ? 'Loading...' : `$${this.qtumUSD} USD`;
   }
 
   private qtumUSD?: number = INIT_VALUES.qtumUSD;
@@ -34,12 +35,8 @@ export default class SessionStore {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME }, (response: any) => {
       this.loggedInAccountName = response;
     });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO }, (response: any) => {
-      this.info = response;
-    });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QTUM_USD }, (response: any) => {
-      this.qtumUSD = response;
-    });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO }, (response: any) => this.info = response);
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QTUM_USD }, (response: any) => this.qtumUSD = response);
   }
 
   @action
