@@ -5,12 +5,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-@font-face {
-  font-family: 'Montserrat', sans-serif;
-  src: local('Montserrat'), url(../fonts/Montserrat/Montserrat-Regular.ttf) format('ttf');
-  src: local('Roboto Mono'), url(../fonts/Roboto_Mono/RobotoMono-Regular.ttf) format('ttf');
-}
-
 :global #root {
   width: 350px;
   height: 550px;

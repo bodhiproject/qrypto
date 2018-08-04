@@ -30,9 +30,9 @@ class MainAccount extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes } = this.props;
-    const { info } = this.props.store!.sessionStore;
+    const { loggedInAccountName, info } = this.props.store!.sessionStore;
 
-    if (!info) {
+    if (!loggedInAccountName || !info) {
       return null;
     }
 

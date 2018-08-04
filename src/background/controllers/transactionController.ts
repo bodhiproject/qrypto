@@ -2,11 +2,12 @@ import { Insight } from 'qtumjs-wallet';
 import { map, find, partition, sumBy, includes } from 'lodash';
 import moment from 'moment';
 
-import Background from '.';
-import { MESSAGE_TYPE } from '../constants';
-import Transaction from '../models/Transaction';
+import QryptoController from '.';
+import IController from './iController';
+import { MESSAGE_TYPE } from '../../constants';
+import Transaction from '../../models/Transaction';
 
-export default class TransactionBackground {
+export default class TransactionController extends IController {
   private static GET_TX_INTERVAL_MS: number = 60000;
 
   public transactions: Transaction[] = [];
@@ -16,13 +17,13 @@ export default class TransactionBackground {
     return !!this.pagesTotal && (this.pagesTotal > this.pageNum + 1);
   }
 
-  private bg: Background;
   private getTransactionsInterval?: number = undefined;
 
-  constructor(bg: Background) {
-    this.bg = bg;
+  constructor(main: QryptoController) {
+    super('transaction', main);
+
     chrome.runtime.onMessage.addListener(this.handleMessage);
-    this.bg.onInitFinished('transaction');
+    this.initFinished();
   }
 
   /*
@@ -74,7 +75,7 @@ export default class TransactionBackground {
     if (!this.getTransactionsInterval) {
       this.getTransactionsInterval = window.setInterval(() => {
         this.refreshTransactions();
-      }, TransactionBackground.GET_TX_INTERVAL_MS);
+      }, TransactionController.GET_TX_INTERVAL_MS);
     }
   }
 
@@ -84,11 +85,15 @@ export default class TransactionBackground {
   * @return The Transactions array.
   */
   private fetchTransactions = async (pageNum: number = 0): Promise<Transaction[]> => {
-    const wallet = this.bg.wallet.wallet;
-    if (!wallet) {
-      throw Error('Trying to fetch transactions with undefined wallet instance.');
+    if (!this.main.account.loggedInAccount
+      || !this.main.account.loggedInAccount.wallet
+      || !this.main.account.loggedInAccount.wallet.qjsWallet
+    ) {
+      console.error('Cannot get transactions without wallet instance.');
+      return [];
     }
 
+    const wallet = this.main.account.loggedInAccount.wallet.qjsWallet;
     const { pagesTotal, txs } =  await wallet.getTransactions(pageNum);
     this.pagesTotal = pagesTotal;
 

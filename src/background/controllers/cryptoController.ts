@@ -1,15 +1,16 @@
 import scrypt from 'scryptsy';
 import { isEmpty, split } from 'lodash';
 
-import Background from '.';
-import { STORAGE } from '../constants';
+import QryptoController from '.';
+import IController from './iController';
+import { STORAGE } from '../../constants';
 
 const INIT_VALUES = {
   appSalt: undefined,
   passwordHash: undefined,
 };
 
-export default class CryptoBackground {
+export default class CryptoController extends IController {
   private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
 
   public get validPasswordHash(): string {
@@ -19,19 +20,19 @@ export default class CryptoBackground {
     return this.passwordHash!;
   }
 
-  private bg: Background;
   private appSalt?: Uint8Array = INIT_VALUES.appSalt;
   private passwordHash?: string = INIT_VALUES.passwordHash;
 
-  constructor(bg: Background) {
-    this.bg = bg;
+  constructor(main: QryptoController) {
+    super('crypto', main);
+
     chrome.storage.local.get([STORAGE.APP_SALT], ({ appSalt }: any) => {
       if (!isEmpty(appSalt)) {
         const array = split(appSalt, ',').map((str) => parseInt(str, 10));
         this.appSalt =  Uint8Array.from(array);
       }
 
-      this.bg.onInitFinished('crypto');
+      this.initFinished();
     });
   }
 
@@ -74,7 +75,7 @@ export default class CryptoBackground {
           }
 
           const saltBuffer = Buffer.from(this.appSalt!);
-          const { N, r, p } = CryptoBackground.SCRYPT_PARAMS_PW;
+          const { N, r, p } = CryptoController.SCRYPT_PARAMS_PW;
           const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
           this.passwordHash = derivedKey.toString('hex');
 

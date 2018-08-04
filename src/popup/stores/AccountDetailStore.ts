@@ -39,6 +39,12 @@ export default class AccountDetailStore {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MORE_TXS });
   }
 
+  public onTransactionClick = (txid: string) => {
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_NETWORK_EXPLORER_URL }, (response: any) => {
+      chrome.tabs.create({ url: `${response}/${txid}` });
+    });
+  }
+
   private onTransactionTabSelected = () => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.START_TX_POLLING });
   }

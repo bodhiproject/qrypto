@@ -1,6 +1,9 @@
 import { utils } from 'ethers';
 import { Insight } from 'qtumjs-wallet';
+import { ISendTxOptions } from 'qtumjs-wallet/lib/tx';
+
 import { API_TYPE, TARGET_NAME, INTERNAL_API_TYPE } from './constants';
+import Transaction from './models/Transaction';
 
 export interface IExtensionMessageData<T> {
   target: TARGET_NAME;
@@ -34,4 +37,20 @@ export interface IRPCCallResponsePayload {
   id: string;
   result?: Insight.IContractCall | Insight.ISendRawTxResult;
   error?: string;
+}
+
+export interface IRPCRequestPayload {
+  contractAddress: string;
+  abi: any[];
+  methodName: string;
+  args: any[];
+  amount?: number;
+  gasLimit?: number;
+  gasPrice?: number;
+}
+
+export interface ISigner {
+  send(to: string, amount: number, options: ISendTxOptions): Promise<Insight.ISendRawTxResult>;
+  signTransaction(address: string, transaction: Transaction): Transaction;
+  signMessage(address: string, data: string): string;
 }

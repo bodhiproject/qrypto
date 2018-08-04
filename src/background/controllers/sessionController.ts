@@ -1,15 +1,15 @@
-import Background from '.';
-import { MESSAGE_TYPE, RESPONSE_TYPE } from '../constants';
+import QryptoController from '.';
+import IController from './iController';
+import { MESSAGE_TYPE, RESPONSE_TYPE } from '../../constants';
 
-export default class SessionBackground {
-
+export default class SessionController extends IController {
   public sessionTimeout?: number = undefined;
 
-  private bg: Background;
   private sessionLogoutInterval: number = 600000; // in ms
 
-  constructor(bg: Background) {
-    this.bg = bg;
+  constructor(main: QryptoController) {
+    super('session', main);
+
     chrome.runtime.onMessage.addListener(this.handleMessage);
 
     // When popup is opened
@@ -20,27 +20,26 @@ export default class SessionBackground {
       port.onDisconnect.addListener(() => this.onPopupClosed());
     });
 
-    this.bg.onInitFinished('session');
+    this.initFinished();
   }
 
   /*
   * Clears all the intervals throughout the app.
   */
   public clearAllIntervals = () => {
-    this.bg.wallet.stopPolling();
-    this.bg.token.stopPolling();
-    this.bg.external.stopPolling();
-    this.bg.transaction.stopPolling();
+    this.main.account.stopPolling();
+    this.main.token.stopPolling();
+    this.main.external.stopPolling();
+    this.main.transaction.stopPolling();
   }
 
   /*
   * Closes the current session and resets all the necessary session values.
   */
   public clearSession = () => {
-    this.bg.account.resetAccount();
-    this.bg.wallet.resetWallet();
-    this.bg.token.resetTokenList();
-    this.bg.rpc.reset();
+    this.main.account.resetAccount();
+    this.main.token.resetTokenList();
+    this.main.rpc.reset();
   }
 
   /*
@@ -60,7 +59,7 @@ export default class SessionBackground {
     // Logout from bgp after interval
     this.sessionTimeout = window.setTimeout(() => {
       this.clearSession();
-      this.bg.crypto.resetPasswordHash();
+      this.main.crypto.resetPasswordHash();
       console.log('Session cleared');
     },  this.sessionLogoutInterval);
   }
@@ -68,12 +67,12 @@ export default class SessionBackground {
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.RESTORE_SESSION:
-        if (this.bg.wallet.wallet && this.bg.account.loggedInAccount) {
+        if (this.main.account.loggedInAccount) {
           sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
-          this.bg.account.onAccountLoggedIn();
-        } else if (this.bg.crypto.hasValidPasswordHash()) {
+          this.main.account.onAccountLoggedIn();
+        } else if (this.main.crypto.hasValidPasswordHash()) {
           sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
-          this.bg.account.routeToAccountPage();
+          this.main.account.routeToAccountPage();
         }
         break;
       case MESSAGE_TYPE.GET_SESSION_LOGOUT_INTERVAL:

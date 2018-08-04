@@ -1,27 +1,31 @@
 import { networks, Network } from 'qtumjs-wallet';
 
-import Background from '.';
-import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES } from '../constants';
-import QryNetwork from '../models/QryNetwork';
+import QryptoController from '.';
+import IController from './iController';
+import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES } from '../../constants';
+import QryNetwork from '../../models/QryNetwork';
 
-export default class NetworkBackground {
+export default class NetworkController extends IController {
   public static NETWORKS: QryNetwork[] = [
-    new QryNetwork(NETWORK_NAMES.MAINNET, networks.mainnet),
-    new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet),
+    new QryNetwork(NETWORK_NAMES.MAINNET, networks.mainnet, 'https://explorer.qtum.org/tx'),
+    new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet, 'https://testnet.qtum.org/tx'),
   ];
 
   public get isMainNet(): boolean {
     return this.networkIndex === 0;
   }
-  public get network(): Network  {
-    return NetworkBackground.NETWORKS[this.networkIndex].network;
+  public get network(): Network {
+    return NetworkController.NETWORKS[this.networkIndex].network;
+  }
+  public get explorerUrl(): string {
+    return NetworkController.NETWORKS[this.networkIndex].explorerUrl;
   }
 
-  private bg: Background;
   private networkIndex: number = 1;
 
-  constructor(bg: Background) {
-    this.bg = bg;
+  constructor(main: QryptoController) {
+    super('network', main);
+
     chrome.runtime.onMessage.addListener(this.handleMessage);
     chrome.storage.local.get([STORAGE.NETWORK_INDEX], ({ networkIndex }: any) => {
       if (networkIndex !== undefined) {
@@ -29,7 +33,7 @@ export default class NetworkBackground {
         chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex: this.networkIndex });
       }
 
-      this.bg.onInitFinished('network');
+      this.initFinished();
     });
   }
 
@@ -45,7 +49,7 @@ export default class NetworkBackground {
       }, () => console.log('networkIndex changed', networkIndex));
 
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex });
-      this.bg.account.logoutAccount();
+      this.main.account.logoutAccount();
     }
   }
 
@@ -55,10 +59,13 @@ export default class NetworkBackground {
         this.changeNetwork(request.networkIndex);
         break;
       case MESSAGE_TYPE.GET_NETWORKS:
-        sendResponse(NetworkBackground.NETWORKS);
+        sendResponse(NetworkController.NETWORKS);
         break;
       case MESSAGE_TYPE.GET_NETWORK_INDEX:
         sendResponse(this.networkIndex);
+        break;
+      case MESSAGE_TYPE.GET_NETWORK_EXPLORER_URL:
+        sendResponse(this.explorerUrl);
         break;
       case MESSAGE_TYPE.IS_MAINNET:
         sendResponse(this.isMainNet);

@@ -70,7 +70,7 @@ const shortenTxid = (txid?: string) => {
 const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailStore } }: any) => (
   <div>
     {accountDetailStore.transactions.map(({ id, pending, confirmations, timestamp, amount }: Transaction) => (
-      <ListItem divider key={id} className={classes.listItem}>
+      <ListItem divider key={id} className={classes.listItem} onClick={() => accountDetailStore.onTransactionClick(id)}>
         <div className={classes.txInfoContainer}>
           {pending ? (
             <Typography className={cx(classes.txState, 'pending')}>pending</Typography>

@@ -55,11 +55,11 @@ export default class SendStore {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_LIST }, (response: any) => {
       this.tokens = response;
       this.tokens.unshift(new QRCToken('Qtum Token', 'QTUM', 8, ''));
-      this.tokens[0].balance = this.app.sessionStore.info ? this.app.sessionStore.info!.balance : undefined;
+      this.tokens[0].balance = this.app.sessionStore.info ? this.app.sessionStore.info.balance : undefined;
       this.token = this.tokens[0];
       this.maxAmount = this.token!.balance;
     });
-    this.senderAddress = this.app.sessionStore.info ? this.app.sessionStore.info!.addrStr : undefined;
+    this.senderAddress = this.app.sessionStore.info ? this.app.sessionStore.info.addrStr : undefined;
   }
 
   @action
