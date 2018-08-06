@@ -11,6 +11,7 @@ import mainnetTokenList from '../../contracts/mainnetTokenList';
 import testnetTokenList from '../../contracts/testnetTokenList';
 import { IRPCRequestPayload } from '../../types';
 import { generateRequestId, encodeDataHex } from '../../utils';
+import Config from '../../config';
 
 const INIT_VALUES = {
   tokens: undefined,
@@ -187,7 +188,8 @@ export default class TokenController extends IController {
   private sendQRCToken = async (receiverAddress: string, amount: number, token: QRCToken) => {
     const bnAmount = new BN(amount).mul(new BN(10 ** token.decimals));
     const data = encodeDataHex(qrc20TokenABI, 'transfer', [receiverAddress, bnAmount]);
-    const args = [token.address, data];
+    const { DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE } = Config.TRANSACTION;
+    const args = [token.address, data, DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE];
     const { error } = await this.main.rpc.sendToContract(generateRequestId(), args);
 
     if (error) {
