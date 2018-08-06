@@ -185,19 +185,18 @@ export default class TokenController extends IController {
   * @param token The QRC token being sent.
   */
   private sendQRCToken = async (receiverAddress: string, amount: number, token: QRCToken) => {
-    try {
-      const bnAmount = new BN(amount).mul(new BN(10 ** token.decimals));
-      await this.main.rpc.sendToContract({
-        contractAddress: token.address,
-        abi: qrc20TokenABI,
-        methodName: 'transfer',
-        args: [receiverAddress, bnAmount],
-      });
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
-    } catch (err) {
-      console.log(err);
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
+    const bnAmount = new BN(amount).mul(new BN(10 ** token.decimals));
+    const data = encodeDataHex(qrc20TokenABI, 'transfer', [receiverAddress, bnAmount]);
+    const args = [token.address, data];
+    const { error } = await this.main.rpc.sendToContract(generateRequestId(), args);
+
+    if (error) {
+      console.error(error);
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error });
+      return;
     }
+
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
   }
 
   private addToken = async (contractAddress: string, name: string, symbol: string, decimals: number) => {

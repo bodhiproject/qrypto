@@ -44,16 +44,6 @@ export interface IRPCCallResponsePayload {
   error?: string;
 }
 
-export interface IRPCRequestPayload {
-  contractAddress: string;
-  abi: any[];
-  methodName: string;
-  args: any[];
-  amount?: number;
-  gasLimit?: number;
-  gasPrice?: number;
-}
-
 export interface ISigner {
   send(to: string, amount: number, options: ISendTxOptions): Promise<Insight.ISendRawTxResult>;
   sendTransaction(args: any[]): any;

@@ -3,8 +3,7 @@ import { WalletRPCProvider, Insight } from 'qtumjs-wallet';
 import QryptoController from '.';
 import IController from './iController';
 import { MESSAGE_TYPE } from '../../constants';
-import { IRPCRequestPayload, IRPCCallResponsePayload } from '../../types';
-import Config from '../../config';
+import { IRPCCallResponsePayload } from '../../types';
 
 export default class RPCController extends IController {
   constructor(main: QryptoController) {
@@ -22,23 +21,25 @@ export default class RPCController extends IController {
   * @param args The arguments that are needed when calling the method.
   * @return The result of the callcontract.
   */
-  public sendToContract = async (payload: IRPCRequestPayload): Promise<Insight.ISendRawTxResult> => {
-    const rpcProvider = this.rpcProvider();
-    if (!rpcProvider) {
-      throw Error('Tried to sendToContract with no RPC provider.');
+  public sendToContract = async (id: string, args: any[]): Promise<IRPCCallResponsePayload> => {
+    let result: any;
+    let error: string | undefined;
+    try {
+      const rpcProvider = this.rpcProvider();
+      if (!rpcProvider) {
+        throw Error('Cannot sendToContract without RPC provider.');
+      }
+      if (args.length < 2) {
+        throw Error('Requires first two arguments: contractAddress and data.');
+      }
+
+      result = await this.main.account.loggedInAccount!.wallet!.sendTransaction(args) as Insight.ISendRawTxResult;
+    } catch (err) {
+      error = err.message;
+      console.error(error);
     }
 
-    const { DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE } = Config.TRANSACTION;
-    const { contractAddress, abi, methodName, args, amount, gasLimit, gasPrice } = payload;
-    const data = this.encodeDataHex(abi, methodName, args);
-    const res: Insight.ISendRawTxResult = await rpcProvider.rawCall('sendToContract', [
-      contractAddress,
-      data,
-      amount || DEFAULT_AMOUNT,
-      gasLimit || DEFAULT_GAS_LIMIT,
-      gasPrice || DEFAULT_GAS_PRICE,
-    ]) as Insight.ISendRawTxResult;
-    return res;
+    return { id, result, error };
   }
 
   /*
@@ -52,7 +53,7 @@ export default class RPCController extends IController {
     try {
       const rpcProvider = this.rpcProvider();
       if (!rpcProvider) {
-        throw Error('Cannot callContract without wallet.');
+        throw Error('Cannot callContract without RPC provider.');
       }
       if (args.length < 2) {
         throw Error('Requires first two arguments: contractAddress and data.');
@@ -117,15 +118,7 @@ export default class RPCController extends IController {
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
   private externalSendToContract = async (id: string, args: any[]) => {
-    let result: any;
-    let error: string | undefined;
-    try {
-      result = await this.main.account.loggedInAccount!.wallet!.sendTransaction(args);
-    } catch (err) {
-      error = err.message;
-      console.error(error);
-    }
-
+    const { result, error } = await this.sendToContract(id, args);
     this.sendRpcResponseToActiveTab(id, result, error);
   }
 
