@@ -29,7 +29,7 @@ export default class Wallet implements ISigner {
     return await this.qjsWallet!.send(to, amount * 1e8, { feeRate: 4000 });
   }
 
-  public signTransaction = async (args: any[]): Promise<any> => {
+  public sendTransaction = async (args: any[]): Promise<any> => {
     if (!this.rpcProvider) {
       throw Error('Cannot sign transaction without RPC provider.');
     }

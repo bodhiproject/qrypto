@@ -131,7 +131,7 @@ export default class RPCController extends IController {
     let result: any;
     let error: string | undefined;
     try {
-      result = await this.main.account.loggedInAccount!.wallet!.signTransaction(args);
+      result = await this.main.account.loggedInAccount!.wallet!.sendTransaction(args);
     } catch (err) {
       error = err.message;
       console.error(error);
