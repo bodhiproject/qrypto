@@ -4,6 +4,7 @@ import { KeyboardArrowRight } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
 import ReactSVG from 'react-svg';
+import { isUndefined } from 'lodash';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
@@ -162,7 +163,7 @@ const TokenList: SFC<any> = observer(({ classes,
 const AmountInfo: SFC<any> = ({ classes, amount, token }: any) => (
   <div>
     <div className={classes.tokenContainer}>
-      <Typography className={classes.tokenAmount}>{amount || '...'}</Typography>
+      <Typography className={classes.tokenAmount}>{isUndefined(amount) ? '...' : amount}</Typography>
       <div className={classes.tokenTypeContainer}>
         <Typography className={classes.tokenType}>{token}</Typography>
       </div>
