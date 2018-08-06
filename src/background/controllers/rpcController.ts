@@ -117,11 +117,11 @@ export default class RPCController extends IController {
   }
 
   /*
-  * Signs a transaction, transmits it to the blockchain, and sends the response back to the active tab.
+  * Handles an external sendToContract call and sends the response back to the active tab.
   * @param id Request ID.
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
-  private signTransaction = async (id: number, args: any[]) => {
+  private externalSendToContract = async (id: number, args: any[]) => {
     let result: any;
     let error: string;
     try {
@@ -162,9 +162,9 @@ export default class RPCController extends IController {
           sendResponse(false);
         }
         break;
-      case MESSAGE_TYPE.SEND_TO_CONTRACT:
+      case MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT:
         if (this.hasRpcProvider()) {
-          this.signTransaction(request.id, request.args);
+          this.externalSendToContract(request.id, request.args);
           sendResponse(true);
         } else {
           sendResponse(false);
