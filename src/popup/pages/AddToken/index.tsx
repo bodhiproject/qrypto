@@ -29,13 +29,13 @@ class AddToken extends Component<WithStyles & IProps, {}> {
         <div className={classes.contentContainer}>
           <div className={classes.fieldsContainer}>
             <ContractAddressField onEnterPress={this.onEnterPress} {...this.props} />
-            {addTokenStore.name &&
-            (<div>
-              <DetailField fieldName={'Token Name'} value={addTokenStore.name || ''} classes={classes} />
-              <DetailField fieldName={'Token Symbol'} value={addTokenStore.symbol || ''} {...this.props} />
-              <DetailField fieldName={'Decimals'} value={addTokenStore.decimals || ''} {...this.props} />
-            </div>)
-            }
+            {addTokenStore.name && (
+            <div>
+              <DetailField fieldName={'Token Name'} value={addTokenStore.name} classes={classes} />
+              <DetailField fieldName={'Token Symbol'} value={addTokenStore.symbol} {...this.props} />
+              <DetailField fieldName={'Decimals'} value={addTokenStore.decimals} {...this.props} />
+            </div>
+            )}
           </div>
           {!!addTokenStore.tokenAlreadyInListError && (
             <Typography className={classes.errorText}>{addTokenStore.tokenAlreadyInListError}</Typography>
@@ -73,7 +73,7 @@ const ContractAddressField = observer(({ classes, store: { addTokenStore }, onEn
         onKeyPress={onEnterPress}
       />
     </div>
-    {!!addTokenStore.contractAddress && addTokenStore.contractAddressFieldError && (
+    {addTokenStore.contractAddressFieldError && (
       <Typography className={classes.errorText}>{addTokenStore.contractAddressFieldError}</Typography>
     )}
   </div>
@@ -85,7 +85,7 @@ const DetailField = ({ classes, fieldName, value }: any) => (
       <Typography className={cx(classes.detailLabel)}>{fieldName}</Typography>
     </div>
     <div className={classes.valueContainer}>
-      <Typography className={classes.detailValue}>{value}</Typography>
+      <Typography className={classes.detailValue}>{value || ''}</Typography>
     </div>
   </div>
 );

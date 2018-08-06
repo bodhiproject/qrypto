@@ -115,19 +115,19 @@ const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailSto
   </div>
 ));
 
-const TokenList: SFC<any> = observer(({ history, classes,
+const TokenList: SFC<any> = observer(({ classes,
   store: { accountDetailStore, accountDetailStore: { tokens } } }: any) => (
   <div>
-    {tokens.map(({ name, symbol, balance }: QRCToken, index: number) => (
+    {tokens && tokens.map(({ name, symbol, balance, address }: QRCToken) => (
       <ListItem divider key={symbol} className={classes.listItem}
-        onClick = {() => accountDetailStore.editTokenMode && accountDetailStore.removeTokenAtIndex(index)}
+        onClick = {() => accountDetailStore.editTokenMode && accountDetailStore.removeToken(address)}
       >
         {accountDetailStore.editTokenMode &&
           <Button
             className={classes.deleteButton}
             id="removeTokenButton"
           >
-            <ReactSVG path="images/Ic_detele.svg" />
+            <ReactSVG path="images/ic_delete.svg" />
           </Button>
         }
         <div className={classes.tokenInfoContainer}>
@@ -151,7 +151,7 @@ const TokenList: SFC<any> = observer(({ history, classes,
         id="addTokenButton"
         color="primary"
         size="small"
-        onClick={() => history.push('/add-token')}
+        onClick={() => accountDetailStore.routeToAddToken()}
         >
         Add Token
       </Button>

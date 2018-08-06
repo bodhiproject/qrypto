@@ -27,7 +27,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     marginBottom: theme.padding.custom(8),
   },
   detailContainer: {
-    width: '100%',
+    flex: 1,
     borderBottom: theme.border.root,
     display: 'flex',
     flexDirection: 'row',

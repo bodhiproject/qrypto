@@ -36,7 +36,7 @@ export default class AppStore {
     this.accountLoginStore = new AccountLoginStore(this);
     this.importStore = new ImportStore(this);
     this.settingsStore = new SettingsStore();
-    this.accountDetailStore = new AccountDetailStore();
+    this.accountDetailStore = new AccountDetailStore(this);
     this.sendStore = new SendStore(this);
     this.addTokenStore = new AddTokenStore(this);
   }

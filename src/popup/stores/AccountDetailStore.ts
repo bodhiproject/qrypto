@@ -1,5 +1,6 @@
 import { observable, action, reaction } from 'mobx';
 
+import AppStore from './AppStore';
 import { MESSAGE_TYPE } from '../../constants';
 import Transaction from '../../models/Transaction';
 import QRCToken from '../../models/QRCToken';
@@ -21,7 +22,10 @@ export default class AccountDetailStore {
   @observable public shouldScrollToBottom: boolean = INIT_VALUES.shouldScrollToBottom;
   @observable public editTokenMode: boolean = INIT_VALUES.editTokenMode;
 
-  constructor() {
+  private app: AppStore;
+
+  constructor(app: AppStore) {
+    this.app = app;
     reaction(
       () => this.activeTabIdx,
       () => this.activeTabIdx === 0 ? this.onTransactionTabSelected() : this.onTokenTabSelected(),
@@ -49,12 +53,15 @@ export default class AccountDetailStore {
     });
   }
 
-  public removeTokenAtIndex = (index: number) => {
-    this.tokens.splice(index, 1);
+  public removeToken = (contractAddress: string) => {
     chrome.runtime.sendMessage({
-      type: MESSAGE_TYPE.REMOVE_TOKEN_AT_INDEX,
-      index,
+      type: MESSAGE_TYPE.REMOVE_TOKEN,
+      contractAddress,
     });
+  }
+
+  public routeToAddToken = () => {
+    this.app.routerStore.push('/add-token');
   }
 
   private onTransactionTabSelected = () => {
@@ -76,6 +83,9 @@ export default class AccountDetailStore {
         this.hasMore = request.hasMore;
         break;
       case MESSAGE_TYPE.QRC_TOKEN_BALANCES_RETURN:
+        this.tokens = request.tokens;
+        break;
+      case MESSAGE_TYPE.REMOVE_TOKEN_RETURN:
         this.tokens = request.tokens;
         break;
       default:

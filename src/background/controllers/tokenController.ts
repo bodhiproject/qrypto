@@ -40,16 +40,13 @@ export default class TokenController extends IController {
       return;
     }
 
-    if (this.main.network.isMainNet) {
-      this.tokens = mainnetTokenList;
-    } else {
-      this.tokens = testnetTokenList;
-    }
-
     chrome.storage.local.get([this.chromeStorageAccountTokenListKey()], (res: any) => {
-      console.log('chrome storage tokens', res);
       if (!isEmpty(res)) {
         this.tokens = res[this.chromeStorageAccountTokenListKey()];
+      } else if (this.main.network.isMainNet) {
+        this.tokens = mainnetTokenList;
+      } else {
+        this.tokens = testnetTokenList;
       }
     });
   }
@@ -125,29 +122,29 @@ export default class TokenController extends IController {
     * qrc20TokenContractAddr
     */
     try {
-      const nameRes = await this.bg.rpc.callContract(
+      let res = await this.bg.rpc.callContract(
         contractAddress,
         qrc20TokenABI,
         'name',
         [],
       );
-      const name = nameRes.executionResult.formattedOutput[0];
+      const name = res.executionResult.formattedOutput[0];
 
-      const symbolRes = await this.bg.rpc.callContract(
+      res = await this.bg.rpc.callContract(
         contractAddress,
         qrc20TokenABI,
         'symbol',
         [],
       );
-      const symbol = symbolRes.executionResult.formattedOutput[0];
+      const symbol = res.executionResult.formattedOutput[0];
 
-      const decimalsRes = await this.bg.rpc.callContract(
+      res = await this.bg.rpc.callContract(
         contractAddress,
         qrc20TokenABI,
         'decimals',
         [],
       );
-      const decimals = decimalsRes.executionResult.formattedOutput[0];
+      const decimals = res.executionResult.formattedOutput[0];
 
       if (name && symbol && decimals) {
         const token = new QRCToken(name, symbol, decimals, contractAddress);
@@ -201,7 +198,8 @@ export default class TokenController extends IController {
     await this.getQRCTokenBalance(newToken);
   }
 
-  private removeTokenAtIndex = (index: number) => {
+  private removeToken = (contractAddress: string) => {
+    const index = findIndex(this.tokens, { address: contractAddress });
     this.tokens!.splice(index, 1);
     this.setTokenListInChromeStorage();
   }
@@ -209,11 +207,16 @@ export default class TokenController extends IController {
   private setTokenListInChromeStorage = () => {
     chrome.storage.local.set({
       [this.chromeStorageAccountTokenListKey()]: this.tokens,
-    }, () => console.log('accountTokenList', this.tokens));
+    }, () => {
+      chrome.runtime.sendMessage({
+        type: MESSAGE_TYPE.REMOVE_TOKEN_RETURN,
+        tokens: this.tokens,
+      });
+    });
   }
 
   private chromeStorageAccountTokenListKey = () => {
-    return STORAGE.ACCOUNT_TOKEN_LIST.concat(this.bg.account.loggedInAccount!.name).concat(this.bg.network.networkName);
+    return `${STORAGE.ACCOUNT_TOKEN_LIST}-${this.bg.account.loggedInAccount!.name}-${this.bg.network.networkName}`;
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
@@ -230,8 +233,8 @@ export default class TokenController extends IController {
       case MESSAGE_TYPE.GET_QRC_TOKEN_DETAILS:
         this.getQRCTokenDetails(request.contractAddress);
         break;
-      case MESSAGE_TYPE.REMOVE_TOKEN_AT_INDEX:
-        this.removeTokenAtIndex(request.index);
+      case MESSAGE_TYPE.REMOVE_TOKEN:
+        this.removeToken(request.contractAddress);
         break;
       default:
         break;

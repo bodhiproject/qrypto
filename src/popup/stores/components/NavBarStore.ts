@@ -19,6 +19,10 @@ export default class NavBarStore {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_NETWORKS }, (response: any) => this.networks = response);
   }
 
+  public routeToSettings = () => {
+    this.app.routerStore.push('/settings');
+  }
+
   @action
   public changeNetwork = (index: number) => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK, networkIndex: index });

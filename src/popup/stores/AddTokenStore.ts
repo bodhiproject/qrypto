@@ -14,25 +14,26 @@ const INIT_VALUES = {
 };
 
 export default class AddTokenStore {
-  @observable public contractAddress?: string;
-  @observable public name?: string;
-  @observable public symbol?: string;
-  @observable public decimals?: number;
-  @observable public getQRCTokenDetailsFailed?: boolean;
+  @observable public contractAddress?: string = INIT_VALUES.contractAddress;
+  @observable public name?: string = INIT_VALUES.name;
+  @observable public symbol?: string = INIT_VALUES.symbol;
+  @observable public decimals?: number = INIT_VALUES.decimals;
+  @observable public getQRCTokenDetailsFailed?: boolean = INIT_VALUES.getQRCTokenDetailsFailed;
   @computed public get contractAddressFieldError(): string | undefined {
-    return (isValidContractAddressLength(this.contractAddress) && !this.getQRCTokenDetailsFailed)
-    ? undefined : 'Not a valid contract address';
+    return (!!this.contractAddress
+      && isValidContractAddressLength(this.contractAddress)
+      && !this.getQRCTokenDetailsFailed)
+      ? undefined : 'Not a valid contract address';
   }
   @computed public get buttonDisabled(): boolean {
     return !this.contractAddress
-    || !this.name
-    || !this.symbol
-    || !this.decimals
-    || !!this.contractAddressFieldError
-    || !!this.tokenAlreadyInListError;
+      || !this.name
+      || !this.symbol
+      || !this.decimals
+      || !!this.contractAddressFieldError
+      || !!this.tokenAlreadyInListError;
   }
   @computed public get tokenAlreadyInListError(): string | undefined {
-
     // Check if the token is already in the list
     const index = findIndex(this.app.accountDetailStore.tokens, { address: this.contractAddress });
     return (index !== -1 ? 'Token already in token list' : undefined );
@@ -47,7 +48,7 @@ export default class AddTokenStore {
     reaction(
       () => this.contractAddress,
       () => {
-        this.setInitValuesOtherThanContractAddr();
+        this.resetTokenDetails();
         // If valid contract address, send rpc call to fetch other contract details
         if (this.contractAddress && !this.contractAddressFieldError) {
           chrome.runtime.sendMessage(
@@ -79,11 +80,11 @@ export default class AddTokenStore {
   @action
   private setInitValues = () => {
     this.contractAddress = INIT_VALUES.contractAddress;
-    this.setInitValuesOtherThanContractAddr();
+    this.resetTokenDetails();
   }
 
   @action
-  private setInitValuesOtherThanContractAddr = () => {
+  private resetTokenDetails = () => {
     this.name = INIT_VALUES.name;
     this.symbol = INIT_VALUES.symbol;
     this.decimals = INIT_VALUES.decimals;
@@ -95,9 +96,10 @@ export default class AddTokenStore {
     switch (request.type) {
       case MESSAGE_TYPE.QRC_TOKEN_DETAILS_RETURN:
         if (request.isValid) {
-          this.name = request.token.name;
-          this.symbol = request.token.symbol;
-          this.decimals = request.token.decimals;
+          const { name, symbol, decimals } = request.token;
+          this.name = name;
+          this.symbol = symbol;
+          this.decimals = decimals;
         } else {
           this.getQRCTokenDetailsFailed = true;
         }

@@ -44,13 +44,7 @@ export const isValidAddress = (isTestnet: boolean, address?: string) => {
 };
 
 export const isValidContractAddressLength = (address?: string) => {
-  if (!address) {
-    return false;
-  }
-  if (address.length !== 40) {
-    return false;
-  }
-  return true;
+  return address && address.length === 40;
 };
 
 /*

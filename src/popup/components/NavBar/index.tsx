@@ -58,7 +58,7 @@ const BackButton: React.SFC<IProps> = ({ classes, isDarkTheme, store: { routerSt
 );
 
 const SettingsButton: React.SFC<IProps> =
-  observer(({ classes, store: { navBarStore, routerStore }, isDarkTheme }: any) => (
+  observer(({ classes, store: { navBarStore }, isDarkTheme }: any) => (
   <Fragment>
     <IconButton
       aria-owns={navBarStore.settingsMenuAnchor ? 'settingsMenu' : undefined}
@@ -75,7 +75,7 @@ const SettingsButton: React.SFC<IProps> =
       open={Boolean(navBarStore.settingsMenuAnchor)}
       onClose={() => navBarStore.settingsMenuAnchor = undefined}
     >
-      <MenuItem onClick={() => routerStore.push('/settings')}>Settings</MenuItem>
+      <MenuItem onClick={() => navBarStore.routeToSettings()}>Settings</MenuItem>
       <MenuItem onClick={navBarStore.logout}>Logout</MenuItem>
     </Menu>
   </Fragment>

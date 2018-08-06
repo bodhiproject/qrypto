@@ -106,7 +106,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     flexDirection: 'row',
     display: 'flex',
     justifyContent: 'space-between',
-    padding: '10px 0px',
+    padding: `${theme.padding.md} 0px`,
   },
   bottomButton: {
     padding: '0px',
