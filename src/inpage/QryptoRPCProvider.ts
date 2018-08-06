@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash';
+
 import { IRPCCallRequest, IRPCCallRequestPayload, IExtensionAPIMessage, IExtensionMessageData, IRPCCallResponsePayload } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 import Config from '../config';
@@ -30,6 +32,13 @@ export class QryptoRPCProvider {
     gasLimit = DEFAULT_GAS_LIMIT,
     gasPrice = DEFAULT_GAS_PRICE,
   ) => {
+    if (isEmpty(contractAddress)) {
+      throw Error('contractAddress cannot be empty');
+    }
+    if (isEmpty(data)) {
+      throw Error('data cannot be empty');
+    }
+
     return new Promise((resolve, reject) => {
       const id = QryptoRPCProvider.generateRequestId();
       this.requests[id] = { resolve, reject };
