@@ -8,6 +8,7 @@ import QRCToken from '../../models/QRCToken';
 import qrc20TokenABI from '../../contracts/qrc20TokenABI';
 import mainnetTokenList from '../../contracts/mainnetTokenList';
 import testnetTokenList from '../../contracts/testnetTokenList';
+import { IRPCRequestPayload } from '../../types';
 
 const INIT_VALUES = {
   tokens: undefined,
@@ -122,28 +123,24 @@ export default class TokenController extends IController {
     * qrc20TokenContractAddr
     */
     try {
-      let res = await this.bg.rpc.callContract(
+      const payload: IRPCRequestPayload = {
         contractAddress,
-        qrc20TokenABI,
-        'name',
-        [],
+        abi: qrc20TokenABI,
+        methodName: 'name',
+        args: [],
+      };
+
+      let res = await this.main.rpc.callContract(
+        payload,
       );
       const name = res.executionResult.formattedOutput[0];
 
-      res = await this.bg.rpc.callContract(
-        contractAddress,
-        qrc20TokenABI,
-        'symbol',
-        [],
-      );
+      payload.methodName = 'symbol';
+      res = await this.main.rpc.callContract(payload);
       const symbol = res.executionResult.formattedOutput[0];
 
-      res = await this.bg.rpc.callContract(
-        contractAddress,
-        qrc20TokenABI,
-        'decimals',
-        [],
-      );
+      payload.methodName = 'decimals';
+      res = await this.main.rpc.callContract(payload);
       const decimals = res.executionResult.formattedOutput[0];
 
       if (name && symbol && decimals) {
@@ -216,7 +213,7 @@ export default class TokenController extends IController {
   }
 
   private chromeStorageAccountTokenListKey = () => {
-    return `${STORAGE.ACCOUNT_TOKEN_LIST}-${this.bg.account.loggedInAccount!.name}-${this.bg.network.networkName}`;
+    return `${STORAGE.ACCOUNT_TOKEN_LIST}-${this.main.account.loggedInAccount!.name}-${this.main.network.networkName}`;
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
