@@ -1,7 +1,7 @@
 import { IRPCCallRequest, IRPCCallRequestPayload, IExtensionAPIMessage, IExtensionMessageData, IRPCCallResponsePayload } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 
-export class QryptoRpcProvider {
+export class QryptoRPCProvider {
   private static generateRequestId = () => {
     return Math.random().toString().slice(-8);
   }
@@ -10,7 +10,7 @@ export class QryptoRpcProvider {
 
   public rawCall = (method: string, args: any[]) => {
     return new Promise((resolve, reject) => {
-      const id = QryptoRpcProvider.generateRequestId();
+      const id = QryptoRPCProvider.generateRequestId();
       this.requests[id] = { resolve, reject };
 
       this.postMessageToContentscript({

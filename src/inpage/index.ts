@@ -1,12 +1,12 @@
 import { template } from 'lodash';
 import { IExtensionAPIMessage } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
-import { QryptoRpcProvider } from './QryptoRPCProvider';
+import { QryptoRPCProvider } from './QryptoRPCProvider';
 import { showModal, closeModal } from './modal';
 import { showWindow } from './window';
 import { isMessageNotValid } from '../utils';
 
-const qryptoRpcProvider = new QryptoRpcProvider();
+const qryptoRpcProvider = new QryptoRPCProvider();
 
 window.addEventListener('message', handleInpageMessage, false);
 
