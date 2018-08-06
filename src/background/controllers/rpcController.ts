@@ -124,17 +124,20 @@ export default class RPCController extends IController {
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
   private signTransaction = async (id: number, args: any[]) => {
-    if (!this.hasRpcProvider()) {
-      console.log('Cannot sign transaction without wallet.');
-      return;
-    }
-
     let result: any;
     let error: string;
     try {
+      if (!this.hasRpcProvider()) {
+        throw Error('Cannot sign transaction without wallet.');
+      }
+      if (args.length < 2) {
+        throw Error('Requires first two arguments: contractAddress and data.');
+      }
+
       result = await this.main.account.loggedInAccount!.wallet!.signTransaction(args);
     } catch (err) {
       error = err.message;
+      console.error(error);
     }
 
     chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
