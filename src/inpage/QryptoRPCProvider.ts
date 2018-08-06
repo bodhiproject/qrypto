@@ -20,6 +20,18 @@ export class QryptoRPCProvider {
     });
   }
 
+  public sendToContract = (method: string, args: any[]) => {
+    return new Promise((resolve, reject) => {
+      const id = QryptoRPCProvider.generateRequestId();
+      this.requests[id] = { resolve, reject };
+
+      this.postMessageToContentscript({
+        type: API_TYPE.RPC_SEND_TO_CONTRACT,
+        payload: { method, args, id },
+      });
+    });
+  }
+
   public handleRpcCallResponse = (response: IRPCCallResponsePayload) => {
     const request = this.requests[response.id];
     if (!request) {

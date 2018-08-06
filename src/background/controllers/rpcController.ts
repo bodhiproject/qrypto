@@ -164,7 +164,7 @@ export default class RPCController extends IController {
           sendResponse(false);
         }
         break;
-      case MESSAGE_TYPE.SIGN_TRANSACTION:
+      case MESSAGE_TYPE.SEND_TO_CONTRACT:
         if (this.hasRpcProvider()) {
           this.signTransaction(request.id, request.args);
           sendResponse(true);

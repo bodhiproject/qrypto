@@ -16,8 +16,7 @@ injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
 injectStylesheet(chrome.extension.getURL('css/modal.css'));
 
 window.addEventListener('message', handleContentScriptMessage, false);
-
-chrome.runtime.onMessage.addListener(handBackgroundScriptMessage);
+chrome.runtime.onMessage.addListener(handleBackgroundScriptMessage);
 
 // const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
 // port.onMessage.addListener(responseExtensionAPI);
@@ -45,6 +44,32 @@ function injectStylesheet(src: string) {
   });
 }
 
+function postMessageToInpage<T>(message: IExtensionAPIMessage<T>) {
+  const messagePayload: IExtensionMessageData<typeof message> = {
+    target: TARGET_NAME.INPAGE,
+    message,
+  };
+  window.postMessage(messagePayload, '*');
+}
+
+function handleRPCCallMessage(messageType: MESSAGE_TYPE, message: IRPCCallRequestPayload) {
+  const { method, args, id } = message;
+
+  // Background handles messageType if logged in
+  chrome.runtime.sendMessage({ type: messageType, id, method, args }, (hasWallet) => {
+    if (!hasWallet) {
+      // Not logged in, send error response to Inpage
+      postMessageToInpage({
+        type: API_TYPE.RPC_RESONSE,
+        payload: {
+          id,
+          error: 'Cannot find logged in account',
+        },
+      });
+    }
+  });
+}
+
 function handleContentScriptMessage(event: MessageEvent) {
   if (isMessageNotValid(event, TARGET_NAME.CONTENTSCRIPT)) {
     return;
@@ -53,43 +78,22 @@ function handleContentScriptMessage(event: MessageEvent) {
   const message: IExtensionAPIMessage<any> = event.data.message;
   switch (message.type) {
     case API_TYPE.RPC_REQUEST:
-      handleRPCCallMessage(message.payload);
+      handleRPCCallMessage(MESSAGE_TYPE.RPC_CALL, message.payload);
+      break;
+    case API_TYPE.RPC_SEND_TO_CONTRACT:
+      handleRPCCallMessage(MESSAGE_TYPE.SEND_TO_CONTRACT, message.payload);
       break;
     default:
       throw Error(`Contentscript processing invalid type: ${message}`);
   }
 }
 
-function responseExtensionAPI<T>(message: IExtensionAPIMessage<T>) {
-  const messagePayload: IExtensionMessageData<typeof message> = {
-    target: TARGET_NAME.INPAGE,
-    message,
-  };
-  window.postMessage(messagePayload, '*');
-}
-
-function handleRPCCallMessage(message: IRPCCallRequestPayload) {
-  const { method, args, id } = message;
-
-  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.RPC_CALL, id, method, args }, (hasWallet) => {
-    if (!hasWallet) {
-      responseExtensionAPI({
-        type: API_TYPE.RPC_RESONSE,
-        payload: {
-          id,
-          error: 'can not find logged in account',
-        },
-      });
-    }
-  });
-}
-
-function handBackgroundScriptMessage(message: any) {
+function handleBackgroundScriptMessage(message: any) {
   switch (message.type) {
     case MESSAGE_TYPE.RPC_CALL_RETURN:
       const { id, error, result } = message;
 
-      responseExtensionAPI({
+      postMessageToInpage({
         type: API_TYPE.RPC_RESONSE,
         payload: {
           id,
