@@ -27,6 +27,11 @@ export interface ISendQtumResponsePayload {
   error?: string;
 }
 
+export interface IRPCCallRequest {
+  resolve: (result?: any) => void;
+  reject: (reason?: any) => void;
+}
+
 export interface IRPCCallRequestPayload {
   id: string;
   method: string;
