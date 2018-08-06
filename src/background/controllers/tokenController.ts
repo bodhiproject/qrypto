@@ -1,5 +1,6 @@
 import { each, findIndex, isEmpty } from 'lodash';
 import BN from 'bn.js';
+const { Decoder } = require('qweb3');
 
 import QryptoController from '.';
 import IController from './iController';
@@ -9,6 +10,7 @@ import qrc20TokenABI from '../../contracts/qrc20TokenABI';
 import mainnetTokenList from '../../contracts/mainnetTokenList';
 import testnetTokenList from '../../contracts/testnetTokenList';
 import { IRPCRequestPayload } from '../../types';
+import { generateRequestId, encodeDataHex } from '../../utils';
 
 const INIT_VALUES = {
   tokens: undefined,
@@ -96,14 +98,23 @@ export default class TokenController extends IController {
       return;
     }
 
-    const res = await this.main.rpc.callContract({
-      contractAddress: token.address,
-      abi: qrc20TokenABI,
-      methodName: 'balanceOf',
-      args: [this.main.account.loggedInAccount.wallet.qjsWallet.address],
-    });
+    const methodName = 'balanceOf';
+    const data = encodeDataHex(
+      qrc20TokenABI,
+      methodName,
+      [this.main.account.loggedInAccount.wallet.qjsWallet.address],
+    );
+    const args = [token.address, data];
+    const { result, error } = await this.main.rpc.callContract(generateRequestId(), args);
 
-    let balance = res.executionResult.formattedOutput[0]; // Returns as a BN instance
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    // Decode result
+    const decodedRes = Decoder.decodeCall(result, qrc20TokenABI, methodName);
+    let balance = decodedRes!.executionResult.formattedOutput[0]; // Returns as a BN instance
     balance = balance.div(new BN(10 ** token.decimals)).toNumber(); // Convert to regular denomination
 
     // Update token balance in place
@@ -115,6 +126,7 @@ export default class TokenController extends IController {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKENS_RETURN, tokens: this.tokens });
   }
 
+  // TODO: refactor
   private getQRCTokenDetails = async (contractAddress: string) => {
     let msg;
     /*

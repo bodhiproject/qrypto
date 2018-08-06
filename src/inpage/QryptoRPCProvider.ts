@@ -3,21 +3,16 @@ import { isEmpty } from 'lodash';
 import { IRPCCallRequest, IRPCCallRequestPayload, IExtensionAPIMessage, IExtensionMessageData, IRPCCallResponsePayload } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 import Config from '../config';
+import { generateRequestId } from '../utils';
 
 const { DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE } = Config.TRANSACTION;
 
 export class QryptoRPCProvider {
-  private static generateRequestId = () => {
-    return Math.random().toString().slice(-8);
-  }
-
   private requests: { [id: string]: IRPCCallRequest } = {};
 
   public rawCall = (method: string, args: any[]) => {
     return new Promise((resolve, reject) => {
-      const id = QryptoRPCProvider.generateRequestId();
-      this.requests[id] = { resolve, reject };
-
+      const id = this.trackRequest(resolve, reject);
       this.postMessageToContentscript({
         type: API_TYPE.RPC_REQUEST,
         payload: { method, args, id },
@@ -83,7 +78,7 @@ export class QryptoRPCProvider {
   }
 
   private trackRequest = (resolve: any, reject: any): string => {
-    const id = QryptoRPCProvider.generateRequestId();
+    const id = generateRequestId();
     this.requests[id] = { resolve, reject };
     return id;
   }

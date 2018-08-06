@@ -1,11 +1,9 @@
 import { WalletRPCProvider, Insight } from 'qtumjs-wallet';
-import { find } from 'lodash';
-const { Contract, Decoder } = require('qweb3');
 
 import QryptoController from '.';
 import IController from './iController';
 import { MESSAGE_TYPE } from '../../constants';
-import { IRPCRequestPayload } from '../../types';
+import { IRPCRequestPayload, IRPCCallResponsePayload } from '../../types';
 import Config from '../../config';
 
 export default class RPCController extends IController {
@@ -14,28 +12,6 @@ export default class RPCController extends IController {
 
     chrome.runtime.onMessage.addListener(this.handleMessage);
     this.initFinished();
-  }
-
-  /*
-  * Executes a callcontract on the blockchain.
-  * @param payload The RPC request payload.
-  * @return The result of the callcontract.
-  */
-  public callContract = async (payload: IRPCRequestPayload): Promise<any> => {
-    const rpcProvider = this.rpcProvider();
-    if (!rpcProvider) {
-      throw Error('Tried to callContract with no RPC provider.');
-    }
-
-    const data = this.encodeDataHex(payload.abi, payload.methodName, payload.args);
-    const res = await rpcProvider.rawCall('callContract', [
-      payload.contractAddress,
-      data,
-      payload.amount,
-      payload.gasLimit,
-      payload.gasPrice,
-    ]) as Insight.IContractCall;
-    return Decoder.decodeCall(res, payload.abi, payload.methodName);
   }
 
   /*
@@ -66,16 +42,29 @@ export default class RPCController extends IController {
   }
 
   /*
-  * Constructs the encoded data hex for a sendtocontract or callcontract.
-  * @param abi The ABI of the contract.
-  * @param methodName The method to call that is in the ABI.
-  * @param args The arguments that are needed when calling the method.
-  * @return The constructed data hex.
+  * Executes a callContract request.
+  * @param id Request ID.
+  * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
-  private encodeDataHex = (abi: any[], methodName: string, args: any[]) => {
-    const contract = new Contract('', '', abi);
-    const methodObj = find(contract.abi, { name: methodName });
-    return contract.constructDataHex(methodObj, args);
+  public callContract = async (id: string, args: any[]): Promise<IRPCCallResponsePayload> => {
+    let result: any;
+    let error: string | undefined;
+    try {
+      const rpcProvider = this.rpcProvider();
+      if (!rpcProvider) {
+        throw Error('Cannot callContract without wallet.');
+      }
+      if (args.length < 2) {
+        throw Error('Requires first two arguments: contractAddress and data.');
+      }
+
+      result = await rpcProvider.rawCall('callContract', args) as Insight.IContractCall;
+    } catch (err) {
+      error = err.message;
+      console.error(error);
+    }
+
+    return { id, result, error };
   }
 
   /*
@@ -146,23 +135,7 @@ export default class RPCController extends IController {
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
   private externalCallContract = async (id: string, args: any[]) => {
-    let result: any;
-    let error: string | undefined;
-    try {
-      const rpcProvider = this.rpcProvider();
-      if (!rpcProvider) {
-        throw Error('Cannot callContract without wallet.');
-      }
-      if (args.length < 2) {
-        throw Error('Requires first two arguments: contractAddress and data.');
-      }
-
-      result = await rpcProvider.rawCall('callContract', args) as Insight.IContractCall;
-    } catch (err) {
-      error = err.message;
-      console.error(error);
-    }
-
+    const { result, error } = await this.callContract(id, args);
     this.sendRpcResponseToActiveTab(id, result, error);
   }
 
