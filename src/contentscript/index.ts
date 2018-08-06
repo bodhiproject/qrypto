@@ -78,7 +78,7 @@ function handleContentScriptMessage(event: MessageEvent) {
   const message: IExtensionAPIMessage<any> = event.data.message;
   switch (message.type) {
     case API_TYPE.RPC_REQUEST:
-      handleRPCCallMessage(MESSAGE_TYPE.RPC_CALL, message.payload);
+      handleRPCCallMessage(MESSAGE_TYPE.EXTERNAL_RAW_CALL, message.payload);
       break;
     case API_TYPE.RPC_SEND_TO_CONTRACT:
       handleRPCCallMessage(MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT, message.payload);
@@ -93,7 +93,7 @@ function handleContentScriptMessage(event: MessageEvent) {
 
 function handleBackgroundScriptMessage(message: any) {
   switch (message.type) {
-    case MESSAGE_TYPE.RPC_CALL_RETURN:
+    case MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN:
       const { id, error, result } = message;
 
       postMessageToInpage({

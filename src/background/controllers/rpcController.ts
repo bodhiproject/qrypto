@@ -87,7 +87,7 @@ export default class RPCController extends IController {
     return acct && acct.wallet && acct.wallet.rpcProvider;
   }
 
-  private callRpc = async (id: number, method: string, args: any[]) => {
+  private externalRawCall = async (id: number, method: string, args: any[]) => {
     let result: any;
     let error: string;
 
@@ -103,7 +103,7 @@ export default class RPCController extends IController {
     }
 
     chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
-      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, result, error });
+      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN, id, result, error });
     });
   }
 
@@ -123,7 +123,7 @@ export default class RPCController extends IController {
     }
 
     chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
-      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, result, error });
+      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN, id, result, error });
     });
   }
 
@@ -151,15 +151,15 @@ export default class RPCController extends IController {
     }
 
     chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
-      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, result, error });
+      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN, id, result, error });
     });
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
-      case MESSAGE_TYPE.RPC_CALL:
+      case MESSAGE_TYPE.EXTERNAL_RAW_CALL:
         if (this.rpcProvider()) {
-          this.callRpc(request.id, request.method, request.args);
+          this.externalRawCall(request.id, request.method, request.args);
           sendResponse(true);
         } else {
           sendResponse(false);
