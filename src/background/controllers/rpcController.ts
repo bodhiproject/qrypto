@@ -17,19 +17,6 @@ export default class RPCController extends IController {
   }
 
   /*
-  * Constructs the encoded data hex for a sendtocontract or callcontract.
-  * @param abi The ABI of the contract.
-  * @param methodName The method to call that is in the ABI.
-  * @param args The arguments that are needed when calling the method.
-  * @return The constructed data hex.
-  */
-  public encodeDataHex = (abi: any[], methodName: string, args: any[]) => {
-    const contract = new Contract('', '', abi);
-    const methodObj = find(contract.abi, { name: methodName });
-    return contract.constructDataHex(methodObj, args);
-  }
-
-  /*
   * Executes a callcontract on the blockchain.
   * @param payload The RPC request payload.
   * @return The result of the callcontract.
@@ -76,6 +63,19 @@ export default class RPCController extends IController {
       gasPrice || DEFAULT_GAS_PRICE,
     ]) as Insight.ISendRawTxResult;
     return res;
+  }
+
+  /*
+  * Constructs the encoded data hex for a sendtocontract or callcontract.
+  * @param abi The ABI of the contract.
+  * @param methodName The method to call that is in the ABI.
+  * @param args The arguments that are needed when calling the method.
+  * @return The constructed data hex.
+  */
+  private encodeDataHex = (abi: any[], methodName: string, args: any[]) => {
+    const contract = new Contract('', '', abi);
+    const methodObj = find(contract.abi, { name: methodName });
+    return contract.constructDataHex(methodObj, args);
   }
 
   /*
