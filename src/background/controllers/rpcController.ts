@@ -6,16 +6,13 @@ import QryptoController from '.';
 import IController from './iController';
 import { MESSAGE_TYPE } from '../../constants';
 import { IRPCRequestPayload } from '../../types';
+import Config from '../../config';
 
 const INIT_VALUES = {
   rpcProvider: undefined,
 };
 
 export default class RPCController extends IController {
-  private static DEFAULT_AMOUNT = 0;
-  private static DEFAULT_GAS_LIMIT = 200000;
-  private static DEFAULT_GAS_PRICE = 40;
-
   private rpcProvider?: WalletRPCProvider = INIT_VALUES.rpcProvider;
 
   constructor(main: QryptoController) {
@@ -91,14 +88,15 @@ export default class RPCController extends IController {
       throw Error('Tried to sendToContract with no RPC provider.');
     }
 
+    const { DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE } = Config.TRANSACTION;
     const { contractAddress, abi, methodName, args, amount, gasLimit, gasPrice } = payload;
     const data = this.encodeDataHex(abi, methodName, args);
     const res: Insight.ISendRawTxResult = await this.rpcProvider.rawCall('sendToContract', [
       contractAddress,
       data,
-      amount || RPCController.DEFAULT_AMOUNT,
-      gasLimit || RPCController.DEFAULT_GAS_LIMIT,
-      gasPrice || RPCController.DEFAULT_GAS_PRICE,
+      amount || DEFAULT_AMOUNT,
+      gasLimit || DEFAULT_GAS_LIMIT,
+      gasPrice || DEFAULT_GAS_PRICE,
     ]) as Insight.ISendRawTxResult;
     return res;
   }

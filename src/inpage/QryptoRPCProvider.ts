@@ -1,5 +1,8 @@
 import { IRPCCallRequest, IRPCCallRequestPayload, IExtensionAPIMessage, IExtensionMessageData, IRPCCallResponsePayload } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
+import Config from '../config';
+
+const { DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE } = Config.TRANSACTION;
 
 export class QryptoRPCProvider {
   private static generateRequestId = () => {
@@ -20,14 +23,21 @@ export class QryptoRPCProvider {
     });
   }
 
-  public sendToContract = (method: string, args: any[]) => {
+  public sendToContract = (
+    contractAddress: string,
+    data: string,
+    amount = DEFAULT_AMOUNT,
+    gasLimit = DEFAULT_GAS_LIMIT,
+    gasPrice = DEFAULT_GAS_PRICE,
+  ) => {
     return new Promise((resolve, reject) => {
       const id = QryptoRPCProvider.generateRequestId();
       this.requests[id] = { resolve, reject };
 
+      const args = [contractAddress, data, amount, gasLimit, gasPrice];
       this.postMessageToContentscript({
         type: API_TYPE.RPC_SEND_TO_CONTRACT,
-        payload: { method, args, id },
+        payload: { method: 'sendToContract', args, id },
       });
     });
   }
