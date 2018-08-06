@@ -118,11 +118,52 @@ export default class RPCController extends IController {
     });
   }
 
+  /*
+  * Signs a transaction, transmits it to the blockchain, and sends the response back to the active tab.
+  * @param id Request ID.
+  * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
+  */
+  private signTransaction = async (id: number, args: any[]) => {
+    if (!this.hasRpcProvider()) {
+      console.log('Cannot sign transaction without wallet.');
+      return;
+    }
+
+    let result: any;
+    let error: string;
+    try {
+      result = await this.main.account.loggedInAccount!.wallet!.signTransaction(args);
+    } catch (err) {
+      error = err.message;
+    }
+
+    chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
+      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.RPC_CALL_RETURN, id, result, error });
+    });
+  }
+
+  /*
+  * Checks if the current logged in account has a valid RPC provider.
+  * @return Logged in account has an RPC provider.
+  */
+  private hasRpcProvider = () => {
+    const acct = this.main.account.loggedInAccount;
+    return acct && acct.wallet && acct.wallet.rpcProvider;
+  }
+
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.RPC_CALL:
         if (this.rpcProvider) {
           this.callRpc(request.id, request.method, request.args);
+          sendResponse(true);
+        } else {
+          sendResponse(false);
+        }
+        break;
+      case MESSAGE_TYPE.SIGN_TRANSACTION:
+        if (this.hasRpcProvider()) {
+          this.signTransaction(request.id, request.args);
           sendResponse(true);
         } else {
           sendResponse(false);
