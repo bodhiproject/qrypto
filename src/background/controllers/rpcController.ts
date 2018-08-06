@@ -87,9 +87,26 @@ export default class RPCController extends IController {
     return acct && acct.wallet && acct.wallet.rpcProvider;
   }
 
-  private externalRawCall = async (id: number, method: string, args: any[]) => {
+  /*
+  * Sends the RPC response or error to the active tab that requested.
+  * @param id Request ID.
+  * @param result RPC call result.
+  * @param error RPC call error.
+  */
+  private sendRpcResponseToActiveTab = (id: string, result: any, error?: string) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
+      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN, id, result, error });
+    });
+  }
+
+  /*
+  * Handles a rawCall requested externally and sends the response back to the active tab.
+  * @param id Request ID.
+  * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
+  */
+  private externalRawCall = async (id: string, method: string, args: any[]) => {
     let result: any;
-    let error: string;
+    let error: string | undefined;
 
     try {
       const rpcProvider = this.rpcProvider();
@@ -102,9 +119,7 @@ export default class RPCController extends IController {
       error = e.message;
     }
 
-    chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
-      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN, id, result, error });
-    });
+    this.sendRpcResponseToActiveTab(id, result, error);
   }
 
   /*
@@ -112,9 +127,9 @@ export default class RPCController extends IController {
   * @param id Request ID.
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
-  private externalSendToContract = async (id: number, args: any[]) => {
+  private externalSendToContract = async (id: string, args: any[]) => {
     let result: any;
-    let error: string;
+    let error: string | undefined;
     try {
       result = await this.main.account.loggedInAccount!.wallet!.signTransaction(args);
     } catch (err) {
@@ -122,9 +137,7 @@ export default class RPCController extends IController {
       console.error(error);
     }
 
-    chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
-      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN, id, result, error });
-    });
+    this.sendRpcResponseToActiveTab(id, result, error);
   }
 
   /*
@@ -132,9 +145,9 @@ export default class RPCController extends IController {
   * @param id Request ID.
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
-  private externalCallContract = async (id: number, args: any[]) => {
+  private externalCallContract = async (id: string, args: any[]) => {
     let result: any;
-    let error: string;
+    let error: string | undefined;
     try {
       const rpcProvider = this.rpcProvider();
       if (!rpcProvider) {
@@ -150,9 +163,7 @@ export default class RPCController extends IController {
       console.error(error);
     }
 
-    chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
-      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN, id, result, error });
-    });
+    this.sendRpcResponseToActiveTab(id, result, error);
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
