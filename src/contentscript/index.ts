@@ -83,6 +83,9 @@ function handleContentScriptMessage(event: MessageEvent) {
     case API_TYPE.RPC_SEND_TO_CONTRACT:
       handleRPCCallMessage(MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT, message.payload);
       break;
+    case API_TYPE.RPC_CALL_CONTRACT:
+      handleRPCCallMessage(MESSAGE_TYPE.EXTERNAL_CALL_CONTRACT, message.payload);
+      break;
     default:
       throw Error(`Contentscript processing invalid type: ${message}`);
   }

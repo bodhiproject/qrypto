@@ -33,6 +33,9 @@ export default class Wallet implements ISigner {
     if (!this.rpcProvider) {
       throw Error('Cannot sign transaction without RPC provider.');
     }
+    if (args.length < 2) {
+      throw Error('Requires first two arguments: contractAddress and data.');
+    }
 
     try {
       return await this.rpcProvider!.rawCall('sendToContract', args);

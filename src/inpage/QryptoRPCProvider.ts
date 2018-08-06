@@ -40,13 +40,29 @@ export class QryptoRPCProvider {
     }
 
     return new Promise((resolve, reject) => {
-      const id = QryptoRPCProvider.generateRequestId();
-      this.requests[id] = { resolve, reject };
-
+      const id = this.trackRequest(resolve, reject);
       const args = [contractAddress, data, amount, gasLimit, gasPrice];
       this.postMessageToContentscript({
         type: API_TYPE.RPC_SEND_TO_CONTRACT,
         payload: { method: 'sendToContract', args, id },
+      });
+    });
+  }
+
+  public callContract = (contractAddress: string, data: string) => {
+    if (isEmpty(contractAddress)) {
+      throw Error('contractAddress cannot be empty');
+    }
+    if (isEmpty(data)) {
+      throw Error('data cannot be empty');
+    }
+
+    return new Promise((resolve, reject) => {
+      const id = this.trackRequest(resolve, reject);
+      const args = [contractAddress, data, DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE];
+      this.postMessageToContentscript({
+        type: API_TYPE.RPC_CALL_CONTRACT,
+        payload: { method: 'callContract', args, id },
       });
     });
   }
@@ -64,6 +80,12 @@ export class QryptoRPCProvider {
     }
 
     request.resolve(response.result);
+  }
+
+  private trackRequest = (resolve: any, reject: any): string => {
+    const id = QryptoRPCProvider.generateRequestId();
+    this.requests[id] = { resolve, reject };
+    return id;
   }
 
   private postMessageToContentscript = (message: IExtensionAPIMessage<IRPCCallRequestPayload>) => {
