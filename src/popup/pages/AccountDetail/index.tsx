@@ -101,9 +101,10 @@ const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailSto
         </div>
       </ListItem>
     ))}
-    <div className={classes.bottomButtonWrap}>
+    <div className={cx(classes.bottomButtonWrap, 'center')}>
       {accountDetailStore.hasMore && (
         <Button
+          className={classes.bottomButton}
           id="loadingButton"
           color="primary"
           size="small"
