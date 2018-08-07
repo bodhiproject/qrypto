@@ -9,7 +9,6 @@ import QRCToken from '../../models/QRCToken';
 import qrc20TokenABI from '../../contracts/qrc20TokenABI';
 import mainnetTokenList from '../../contracts/mainnetTokenList';
 import testnetTokenList from '../../contracts/testnetTokenList';
-import { IRPCRequestPayload } from '../../types';
 import { generateRequestId, encodeDataHex } from '../../utils';
 import Config from '../../config';
 
@@ -127,34 +126,44 @@ export default class TokenController extends IController {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKENS_RETURN, tokens: this.tokens });
   }
 
-  // TODO: refactor
   private getQRCTokenDetails = async (contractAddress: string) => {
     let msg;
+
     /*
     * Further contract address validation - if the addr provided does not have name,
     * symbol, and decimals fields, it will throw an error as it is not a valid
     * qrc20TokenContractAddr
     */
     try {
-      const payload: IRPCRequestPayload = {
-        contractAddress,
-        abi: qrc20TokenABI,
-        methodName: 'name',
-        args: [],
-      };
+      // Get name
+      let methodName = 'name';
+      let data = encodeDataHex(qrc20TokenABI, methodName, []);
+      let res = await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]);
+      if (res.error) {
+        throw Error(res.error);
+      }
+      res.result = Decoder.decodeCall(res.result, qrc20TokenABI, methodName);
+      const name = res.result!.executionResult.formattedOutput[0];
 
-      let res = await this.main.rpc.callContract(
-        payload,
-      );
-      const name = res.executionResult.formattedOutput[0];
+      // Get symbol
+      methodName = 'symbol';
+      data = encodeDataHex(qrc20TokenABI, methodName, []);
+      res = await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]);
+      if (res.error) {
+        throw Error(res.error);
+      }
+      res.result = Decoder.decodeCall(res.result, qrc20TokenABI, methodName);
+      const symbol = res.result!.executionResult.formattedOutput[0];
 
-      payload.methodName = 'symbol';
-      res = await this.main.rpc.callContract(payload);
-      const symbol = res.executionResult.formattedOutput[0];
-
-      payload.methodName = 'decimals';
-      res = await this.main.rpc.callContract(payload);
-      const decimals = res.executionResult.formattedOutput[0];
+      // Get decimals
+      methodName = 'decimals';
+      data = encodeDataHex(qrc20TokenABI, methodName, []);
+      res = await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]);
+      if (res.error) {
+        throw Error(res.error);
+      }
+      res.result = Decoder.decodeCall(res.result, qrc20TokenABI, methodName);
+      const decimals = res.result!.executionResult.formattedOutput[0];
 
       if (name && symbol && decimals) {
         const token = new QRCToken(name, symbol, decimals, contractAddress);
@@ -169,7 +178,8 @@ export default class TokenController extends IController {
           isValid: false,
         };
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       msg = {
         type: MESSAGE_TYPE.QRC_TOKEN_DETAILS_RETURN,
         isValid: false,
