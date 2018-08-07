@@ -15,6 +15,7 @@ import AccountDetail from './pages/AccountDetail';
 import Send from './pages/Send';
 import Receive from './pages/Receive';
 import SendConfirm from './pages/SendConfirm';
+import AddToken from './pages/AddToken';
 import AppStore from './stores/AppStore';
 import { MESSAGE_TYPE } from '../constants';
 
@@ -53,6 +54,7 @@ export default class MainContainer extends Component<IProps, {}> {
             <Route exact path="/send" component={Send} />
             <Route exact path="/send-confirm" component={SendConfirm} />
             <Route exact path="/receive" component={Receive} />
+            <Route exact path="/add-token" component={AddToken} />
           </Switch>
         </Router>
       </div>

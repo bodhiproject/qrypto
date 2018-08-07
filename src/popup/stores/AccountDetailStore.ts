@@ -1,5 +1,6 @@
 import { observable, action, reaction } from 'mobx';
 
+import AppStore from './AppStore';
 import { MESSAGE_TYPE } from '../../constants';
 import Transaction from '../../models/Transaction';
 import QRCToken from '../../models/QRCToken';
@@ -9,6 +10,8 @@ const INIT_VALUES = {
   transactions: [],
   tokens: [],
   hasMore: false,
+  shouldScrollToBottom: false,
+  editTokenMode: false,
 };
 
 export default class AccountDetailStore {
@@ -16,8 +19,13 @@ export default class AccountDetailStore {
   @observable public transactions: Transaction[] = INIT_VALUES.transactions;
   @observable public tokens: QRCToken[] = INIT_VALUES.tokens;
   @observable public hasMore: boolean = INIT_VALUES.hasMore;
+  @observable public shouldScrollToBottom: boolean = INIT_VALUES.shouldScrollToBottom;
+  @observable public editTokenMode: boolean = INIT_VALUES.editTokenMode;
 
-  constructor() {
+  private app: AppStore;
+
+  constructor(app: AppStore) {
+    this.app = app;
     reaction(
       () => this.activeTabIdx,
       () => this.activeTabIdx === 0 ? this.onTransactionTabSelected() : this.onTokenTabSelected(),
@@ -45,6 +53,17 @@ export default class AccountDetailStore {
     });
   }
 
+  public removeToken = (contractAddress: string) => {
+    chrome.runtime.sendMessage({
+      type: MESSAGE_TYPE.REMOVE_TOKEN,
+      contractAddress,
+    });
+  }
+
+  public routeToAddToken = () => {
+    this.app.routerStore.push('/add-token');
+  }
+
   private onTransactionTabSelected = () => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.START_TX_POLLING });
   }
@@ -63,7 +82,7 @@ export default class AccountDetailStore {
         this.transactions = request.transactions;
         this.hasMore = request.hasMore;
         break;
-      case MESSAGE_TYPE.QRC_TOKEN_BALANCES_RETURN:
+      case MESSAGE_TYPE.QRC_TOKENS_RETURN:
         this.tokens = request.tokens;
         break;
       default:

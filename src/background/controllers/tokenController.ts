@@ -1,13 +1,14 @@
-import { each, findIndex } from 'lodash';
+import { each, findIndex, isEmpty } from 'lodash';
 import BN from 'bn.js';
 
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE } from '../../constants';
+import { MESSAGE_TYPE, STORAGE } from '../../constants';
 import QRCToken from '../../models/QRCToken';
 import qrc20TokenABI from '../../contracts/qrc20TokenABI';
 import mainnetTokenList from '../../contracts/mainnetTokenList';
 import testnetTokenList from '../../contracts/testnetTokenList';
+import { IRPCRequestPayload } from '../../types';
 
 const INIT_VALUES = {
   tokens: undefined,
@@ -40,11 +41,15 @@ export default class TokenController extends IController {
       return;
     }
 
-    if (this.main.network.isMainNet) {
-      this.tokens = mainnetTokenList;
-    } else {
-      this.tokens = testnetTokenList;
-    }
+    chrome.storage.local.get([this.chromeStorageAccountTokenListKey()], (res: any) => {
+      if (!isEmpty(res)) {
+        this.tokens = res[this.chromeStorageAccountTokenListKey()];
+      } else if (this.main.network.isMainNet) {
+        this.tokens = mainnetTokenList;
+      } else {
+        this.tokens = testnetTokenList;
+      }
+    });
   }
 
   /*
@@ -107,7 +112,58 @@ export default class TokenController extends IController {
       this.tokens![index].balance = balance;
     }
 
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKEN_BALANCES_RETURN, tokens: this.tokens });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKENS_RETURN, tokens: this.tokens });
+  }
+
+  private getQRCTokenDetails = async (contractAddress: string) => {
+    let msg;
+    /*
+    * Further contract address validation - if the addr provided does not have name,
+    * symbol, and decimals fields, it will throw an error as it is not a valid
+    * qrc20TokenContractAddr
+    */
+    try {
+      const payload: IRPCRequestPayload = {
+        contractAddress,
+        abi: qrc20TokenABI,
+        methodName: 'name',
+        args: [],
+      };
+
+      let res = await this.main.rpc.callContract(
+        payload,
+      );
+      const name = res.executionResult.formattedOutput[0];
+
+      payload.methodName = 'symbol';
+      res = await this.main.rpc.callContract(payload);
+      const symbol = res.executionResult.formattedOutput[0];
+
+      payload.methodName = 'decimals';
+      res = await this.main.rpc.callContract(payload);
+      const decimals = res.executionResult.formattedOutput[0];
+
+      if (name && symbol && decimals) {
+        const token = new QRCToken(name, symbol, decimals, contractAddress);
+        msg = {
+          type: MESSAGE_TYPE.QRC_TOKEN_DETAILS_RETURN,
+          isValid: true,
+          token,
+        };
+      } else {
+        msg = {
+          type: MESSAGE_TYPE.QRC_TOKEN_DETAILS_RETURN,
+          isValid: false,
+        };
+      }
+    } catch {
+      msg = {
+        type: MESSAGE_TYPE.QRC_TOKEN_DETAILS_RETURN,
+        isValid: false,
+      };
+    }
+
+    chrome.runtime.sendMessage(msg);
   }
 
   /*
@@ -132,6 +188,34 @@ export default class TokenController extends IController {
     }
   }
 
+  private addToken = async (contractAddress: string, name: string, symbol: string, decimals: number) => {
+    const newToken = new QRCToken(name, symbol, decimals, contractAddress);
+    this.tokens!.push(newToken);
+    this.setTokenListInChromeStorage();
+    await this.getQRCTokenBalance(newToken);
+  }
+
+  private removeToken = (contractAddress: string) => {
+    const index = findIndex(this.tokens, { address: contractAddress });
+    this.tokens!.splice(index, 1);
+    this.setTokenListInChromeStorage();
+  }
+
+  private setTokenListInChromeStorage = () => {
+    chrome.storage.local.set({
+      [this.chromeStorageAccountTokenListKey()]: this.tokens,
+    }, () => {
+      chrome.runtime.sendMessage({
+        type: MESSAGE_TYPE.QRC_TOKENS_RETURN,
+        tokens: this.tokens,
+      });
+    });
+  }
+
+  private chromeStorageAccountTokenListKey = () => {
+    return `${STORAGE.ACCOUNT_TOKEN_LIST}-${this.main.account.loggedInAccount!.name}-${this.main.network.networkName}`;
+  }
+
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.GET_QRC_TOKEN_LIST:
@@ -139,6 +223,15 @@ export default class TokenController extends IController {
         break;
       case MESSAGE_TYPE.SEND_QRC_TOKENS:
         this.sendQRCToken(request.receiverAddress, request.amount, request.token);
+        break;
+      case MESSAGE_TYPE.ADD_TOKEN:
+        this.addToken(request.contractAddress, request.name, request.symbol, request.decimals);
+        break;
+      case MESSAGE_TYPE.GET_QRC_TOKEN_DETAILS:
+        this.getQRCTokenDetails(request.contractAddress);
+        break;
+      case MESSAGE_TYPE.REMOVE_TOKEN:
+        this.removeToken(request.contractAddress);
         break;
       default:
         break;

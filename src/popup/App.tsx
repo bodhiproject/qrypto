@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Provider as MobxProvider } from 'mobx-react';
-import { observer } from 'mobx-react';
+import { Provider as MobxProvider, observer } from 'mobx-react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { syncHistoryWithStore } from 'mobx-react-router';
 import { createBrowserHistory } from 'history';

@@ -72,6 +72,7 @@
     "qtumjs-wallet": "^0.0.15",
     "qweb3": "^0.8.1",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "react-svg": "^5.0.12"
   }
 }

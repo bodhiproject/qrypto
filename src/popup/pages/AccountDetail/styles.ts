@@ -96,9 +96,21 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     fontSize: theme.font.xs,
     color: theme.palette.text.secondary,
   },
-  loadingButtonWrap: {
-    textAlign: 'center',
-    padding: '10px',
+  deleteButton: {
+    minHeight: '0px',
+    minWidth: '0px',
+    paddingTop: '0px',
+    paddingBottom: '0px',
+  },
+  bottomButtonWrap: {
+    flexDirection: 'row',
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: `${theme.padding.md} 0px`,
+  },
+  bottomButton: {
+    padding: '0px',
+    minWidth: '0px',
   },
 });
 

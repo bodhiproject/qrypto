@@ -3,6 +3,7 @@ import { Paper, Tabs, Tab, List, ListItem, Typography, Button, withStyles, WithS
 import { KeyboardArrowRight } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
+import ReactSVG from 'react-svg';
 
 import styles from './styles';
 import NavBar from '../../components/NavBar';
@@ -20,12 +21,24 @@ interface IProps {
 @observer
 class AccountDetail extends Component<WithStyles & IProps, {}> {
 
+  private messagesEnd?: HTMLElement | null;
+
   public componentDidMount() {
-    this.props.store.accountDetailStore.init();
+    const { store: { accountDetailStore } } = this.props;
+    accountDetailStore.init();
+
+    if (accountDetailStore.shouldScrollToBottom === true) {
+      this.scrollToBottom();
+    }
   }
 
   public componentWillUnmount() {
     this.props.store.accountDetailStore.deinit();
+  }
+
+  public scrollToBottom() {
+    this.messagesEnd!.scrollIntoView({ behavior: 'smooth' });
+    this.props.store.accountDetailStore.shouldScrollToBottom = false;
   }
 
   public render() {
@@ -53,6 +66,7 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
           </Paper>
           <List className={classes.list}>
             {activeTabIdx === 0 ? <TransactionList {...this.props} /> : <TokenList {...this.props} />}
+            <div ref={(el) => { this.messagesEnd = el; }}></div>
           </List>
         </div>
       </div>
@@ -86,7 +100,7 @@ const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailSto
         </div>
       </ListItem>
     ))}
-    <div className={classes.loadingButtonWrap}>
+    <div className={classes.bottomButtonWrap}>
       {accountDetailStore.hasMore && (
         <Button
           id="loadingButton"
@@ -101,15 +115,49 @@ const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailSto
   </div>
 ));
 
-const TokenList: SFC<any> = observer(({ classes, store: { accountDetailStore: { tokens } } }: any) =>
-  tokens.map(({ name, symbol, balance }: QRCToken) => (
-    <ListItem divider key={symbol} className={classes.listItem}>
-      <div className={classes.tokenInfoContainer}>
-        <Typography className={classes.tokenName}>{name}</Typography>
-      </div>
-      <AmountInfo classes={classes} amount={balance} token={symbol} convertedValue={0} />
-    </ListItem>
-  )));
+const TokenList: SFC<any> = observer(({ classes,
+  store: { accountDetailStore, accountDetailStore: { tokens } } }: any) => (
+  <div>
+    {tokens && tokens.map(({ name, symbol, balance, address }: QRCToken) => (
+      <ListItem divider key={symbol} className={classes.listItem}
+        onClick = {() => accountDetailStore.editTokenMode && accountDetailStore.removeToken(address)}
+      >
+        {accountDetailStore.editTokenMode &&
+          <Button
+            className={classes.deleteButton}
+            id="removeTokenButton"
+          >
+            <ReactSVG path="images/ic_delete.svg" />
+          </Button>
+        }
+        <div className={classes.tokenInfoContainer}>
+          <Typography className={classes.tokenName}>{name}</Typography>
+        </div>
+        <AmountInfo classes={classes} amount={balance} token={symbol} convertedValue={0} />
+      </ListItem>
+    ))}
+    <div className={classes.bottomButtonWrap}>
+      <Button
+        className={classes.bottomButton}
+        id="editTokenButton"
+        color="primary"
+        size="small"
+        onClick={() => accountDetailStore.editTokenMode = !accountDetailStore.editTokenMode }
+        >
+        {accountDetailStore.editTokenMode ? 'Done' : 'Edit'}
+      </Button>
+      <Button
+        className={classes.bottomButton}
+        id="addTokenButton"
+        color="primary"
+        size="small"
+        onClick={() => accountDetailStore.routeToAddToken()}
+        >
+        Add Token
+      </Button>
+    </div>
+  </div>
+));
 
 const AmountInfo: SFC<any> = ({ classes, amount, token }: any) => (
   <div>
