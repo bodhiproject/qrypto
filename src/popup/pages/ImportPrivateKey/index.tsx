@@ -19,7 +19,7 @@ interface IState {
 
 @inject('store')
 @observer
-class ImportMnemonic extends Component<WithStyles & IProps, IState> {
+class ImportPrivateKey extends Component<WithStyles & IProps, IState> {
   public componentWillUnmount() {
     this.props.store.importStore.reset();
   }
@@ -31,21 +31,21 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
       <div className={classes.root}>
         <NavBar hasNetworkSelector title="" />
         <div className={classes.contentContainer}>
-          <Typography className={classes.headerText}>Import Wallet</Typography>
+          <Typography className={classes.headerText}>Import Private Key</Typography>
           <div className={classes.inputContainer}>
             <div className={classes.fieldContainer}>
               <TextField
-                className={classes.mnemonicTextField}
+                className={classes.privateKeyTextField}
                 autoFocus
                 required
                 multiline
-                rows={5}
+                rows={2}
                 type="text"
-                placeholder="Enter your seed phrase here to import your wallet."
-                onChange={(e) => importStore.mnemonic = e.target.value}
+                placeholder="Enter your private key here to import your wallet."
+                onChange={(e) => importStore.privateKey = e.target.value}
                 InputProps={{
                   disableUnderline: true,
-                  classes: { input: classes.mnemonicFieldInput },
+                  classes: { input: classes.privateKeyFieldInput },
                 }}
               />
               <BorderTextField
@@ -53,7 +53,7 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
                 error={importStore.walletNameTaken}
                 errorText={importStore.walletNameError}
                 onChange={(e: any) => importStore.accountName = e.target.value}
-                onEnterPress={importStore.importMnemonic}
+                onEnterPress={importStore.importPrivateKey}
               />
             </div>
           </div>
@@ -63,8 +63,8 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={importStore.importMnemonic}
-              disabled={importStore.mnemonicPageError}
+              onClick={importStore.importPrivateKey}
+              disabled={importStore.privateKeyPageError}
             >
               Import
             </Button>
@@ -78,26 +78,28 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
             </Button>
           </div>
         </div>
-        <ErrorDialog {...this.props} />
+         {/* <ErrorDialog {...this.props} /> */}
       </div>
     );
   }
 }
 
-const ErrorDialog: React.SFC<any> = observer(({ store: { importStore }}: any) => (
-  <Dialog
-    disableBackdropClick
-    open={!!importStore.invalidMnemonic}
-    onClose={() => importStore.invalidMnemonic = false}
-  >
-    <DialogTitle>Invalid Seed Phrase</DialogTitle>
-    <DialogContent>
-      <DialogContentText>This seed phrase has been used already.</DialogContentText>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={() => importStore.invalidMnemonic = false} color="primary">Close</Button>
-    </DialogActions>
-  </Dialog>
-));
+// TODO1 - validation on private key length
+// TODO2
+// const ErrorDialog: React.SFC<any> = observer(({ store: { importStore }}: any) => (
+//   <Dialog
+//     disableBackdropClick
+//     open={!!importStore.invalidMnemonic}
+//     onClose={() => importStore.invalidMnemonic = false}
+//   >
+//     <DialogTitle>Invalid Seed Phrase</DialogTitle>
+//     <DialogContent>
+//       <DialogContentText>This seed phrase has been used already.</DialogContentText>
+//     </DialogContent>
+//     <DialogActions>
+//       <Button onClick={() => importStore.invalidMnemonic = false} color="primary">Close</Button>
+//     </DialogActions>
+//   </Dialog>
+// ));
 
-export default withStyles(styles)(ImportMnemonic);
+export default withStyles(styles)(ImportPrivateKey);

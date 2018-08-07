@@ -63,9 +63,18 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
             fullWidth
             disableRipple
             color="primary"
-            onClick={createWalletStore.routeToImportWallet}
+            onClick={createWalletStore.routeToImportMnemonic}
           >
-            Import Existing Wallet
+            Import Existing Mnemonic
+          </Button>
+          <Button
+            className={classes.importButton}
+            fullWidth
+            disableRipple
+            color="primary"
+            onClick={createWalletStore.routeToImportPrivateKey}
+          >
+            Import Existing Private Key
           </Button>
         </div>
       </div>
