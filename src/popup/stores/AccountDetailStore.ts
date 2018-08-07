@@ -82,10 +82,7 @@ export default class AccountDetailStore {
         this.transactions = request.transactions;
         this.hasMore = request.hasMore;
         break;
-      case MESSAGE_TYPE.QRC_TOKEN_BALANCES_RETURN:
-        this.tokens = request.tokens;
-        break;
-      case MESSAGE_TYPE.REMOVE_TOKEN_RETURN:
+      case MESSAGE_TYPE.QRC_TOKENS_RETURN:
         this.tokens = request.tokens;
         break;
       default:

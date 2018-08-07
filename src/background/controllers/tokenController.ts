@@ -112,7 +112,7 @@ export default class TokenController extends IController {
       this.tokens![index].balance = balance;
     }
 
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKEN_BALANCES_RETURN, tokens: this.tokens });
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKENS_RETURN, tokens: this.tokens });
   }
 
   private getQRCTokenDetails = async (contractAddress: string) => {
@@ -206,7 +206,7 @@ export default class TokenController extends IController {
       [this.chromeStorageAccountTokenListKey()]: this.tokens,
     }, () => {
       chrome.runtime.sendMessage({
-        type: MESSAGE_TYPE.REMOVE_TOKEN_RETURN,
+        type: MESSAGE_TYPE.QRC_TOKENS_RETURN,
         tokens: this.tokens,
       });
     });
