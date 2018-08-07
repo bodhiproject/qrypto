@@ -213,7 +213,6 @@ export default class AccountController extends IController {
   */
   public onAccountLoggedIn = async () => {
     this.main.token.initTokenList();
-    this.main.rpc.createRpcProvider();
     await this.startPolling();
     await this.main.token.startPolling();
     await this.main.external.startPolling();

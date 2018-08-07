@@ -5,12 +5,12 @@ import QryNetwork from '../../../models/QryNetwork';
 import AppStore from '../AppStore';
 
 const INIT_VALUES = {
-  networks: [],
+  settingsMenuAnchor: undefined,
 };
 
 export default class NavBarStore {
-  @observable public networks: QryNetwork[] = INIT_VALUES.networks;
-  @observable public settingsMenuAnchor?: string = undefined;
+  @observable public networks: QryNetwork[] = [];
+  @observable public settingsMenuAnchor?: string = INIT_VALUES.settingsMenuAnchor;
 
   private app: AppStore;
 
@@ -19,8 +19,9 @@ export default class NavBarStore {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_NETWORKS }, (response: any) => this.networks = response);
   }
 
-  public routeToSettings = () => {
-    this.app.routerStore.push('/settings');
+  @action
+  public reset = () => {
+    Object.assign(this, INIT_VALUES);
   }
 
   @action
@@ -29,7 +30,14 @@ export default class NavBarStore {
   }
 
   @action
+  public routeToSettings = () => {
+    this.reset();
+    this.app.routerStore.push('/settings');
+  }
+
+  @action
   public logout = () => {
+    this.reset();
     this.app.routerStore.push('/loading');
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGOUT });
   }

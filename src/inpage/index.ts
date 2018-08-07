@@ -1,17 +1,18 @@
 import { template } from 'lodash';
 import { IExtensionAPIMessage } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
-import { handleRpcCallResponse } from './utils';
-import { QryptoRpcProvider } from './QryptoRPCProvider';
+import { QryptoRPCProvider } from './QryptoRPCProvider';
 import { showModal, closeModal } from './modal';
 import { showWindow } from './window';
 import { isMessageNotValid } from '../utils';
+
+const qryptoRpcProvider = new QryptoRPCProvider();
 
 window.addEventListener('message', handleInpageMessage, false);
 
 // expose apis
 Object.assign(window, {
-  qryptoRpcProvider: new QryptoRpcProvider(),
+  qryptoRpcProvider,
   testModal: async () => {
     const modal = await showModal(300, 300, {background: '#FFF'});
     const content = template(`
@@ -42,7 +43,7 @@ function handleInpageMessage(event: MessageEvent) {
   const message: IExtensionAPIMessage<any> = event.data.message;
   switch (message.type) {
     case API_TYPE.RPC_RESONSE:
-      return handleRpcCallResponse(message.payload);
+      return qryptoRpcProvider.handleRpcCallResponse(message.payload);
     default:
       throw Error(`Inpage processing invalid type: ${message}`);
   }

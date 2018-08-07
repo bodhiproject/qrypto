@@ -36,9 +36,9 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     flex: 1,
   },
   txState: {
-    'fontSize': theme.font.sm,
-    'textTransform': 'uppercase',
-    'marginBottom': theme.padding.unit,
+    fontSize: theme.font.sm,
+    textTransform: 'uppercase',
+    marginBottom: theme.padding.unit,
     '&.pending': {
       color: theme.color.orange,
     },
@@ -107,10 +107,14 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: `${theme.padding.md} 0px`,
+    '&.center': {
+      justifyContent: 'center',
+    },
   },
   bottomButton: {
-    padding: '0px',
-    minWidth: '0px',
+    minWidth: 0,
+    minHeight: 0,
+    padding: `0px ${theme.padding.unit}`,
   },
 });
 

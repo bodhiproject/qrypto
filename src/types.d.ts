@@ -27,6 +27,11 @@ export interface ISendQtumResponsePayload {
   error?: string;
 }
 
+export interface IRPCCallRequest {
+  resolve: (result?: any) => void;
+  reject: (reason?: any) => void;
+}
+
 export interface IRPCCallRequestPayload {
   id: string;
   method: string;
@@ -39,18 +44,7 @@ export interface IRPCCallResponsePayload {
   error?: string;
 }
 
-export interface IRPCRequestPayload {
-  contractAddress: string;
-  abi: any[];
-  methodName: string;
-  args: any[];
-  amount?: number;
-  gasLimit?: number;
-  gasPrice?: number;
-}
-
 export interface ISigner {
   send(to: string, amount: number, options: ISendTxOptions): Promise<Insight.ISendRawTxResult>;
-  signTransaction(address: string, transaction: Transaction): Transaction;
-  signMessage(address: string, data: string): string;
+  sendTransaction(args: any[]): any;
 }
