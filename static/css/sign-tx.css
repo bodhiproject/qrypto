@@ -1,0 +1,15 @@
+@font-face {
+  font-family: 'Montserrat', sans-serif;
+  src: local('Montserrat'), url(../fonts/Montserrat/Montserrat-Regular.ttf) format('ttf');
+  src: local('Roboto Mono'), url(../fonts/Roboto_Mono/RobotoMono-Regular.ttf) format('ttf');
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.heading {
+  font-size: 12px;
+  font-weight: 'bold';
+  color: rgba(0, 0, 0, 0.8);
+}
