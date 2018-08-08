@@ -6,13 +6,14 @@ import { showModal, closeModal } from './modal';
 import { showSignTxWindow } from './window';
 import { isMessageNotValid } from '../utils';
 
-const qryptoRpcProvider = new QryptoRPCProvider();
+const qryptoProvider: QryptoRPCProvider = new QryptoRPCProvider();
+let signTxUrl: string;
 
 window.addEventListener('message', handleInpageMessage, false);
 
 // expose apis
 Object.assign(window, {
-  qryptoRpcProvider,
+  qryptoProvider,
   testModal: async () => {
     const modal = await showModal(300, 300, {background: '#FFF'});
     const content = template(`
@@ -24,7 +25,7 @@ Object.assign(window, {
     modal.contentDocument!.querySelector('button')!.addEventListener('click', closeModal);
     return modal;
   },
-  testWindow: () => showSignTxWindow(),
+  testWindow: () => showSignTxWindow(signTxUrl),
 });
 
 function handleInpageMessage(event: MessageEvent) {
@@ -35,7 +36,10 @@ function handleInpageMessage(event: MessageEvent) {
   const message: IExtensionAPIMessage<any> = event.data.message;
   switch (message.type) {
     case API_TYPE.RPC_RESONSE:
-      return qryptoRpcProvider.handleRpcCallResponse(message.payload);
+      return qryptoProvider.handleRpcCallResponse(message.payload);
+    case API_TYPE.SIGN_TX_URL_RESOLVED:
+      signTxUrl = message.payload.url;
+      break;
     default:
       throw Error(`Inpage processing invalid type: ${message}`);
   }

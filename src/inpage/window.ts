@@ -16,6 +16,9 @@ function showWindow(width: number, height: number, url: string = '', name: strin
   return window.open(url, name, options)!;
 }
 
-export function showSignTxWindow() {
-  showWindow(350, 550, 'chrome-extension://dinkholgplhfbmnnjaahkjlbponanlmc/sign-tx.html', 'Confirm Transaction');
+export function showSignTxWindow(url: string) {
+  if (!url) {
+    throw Error('Cannot resolve Sign Transaction Dialog URL.');
+  }
+  showWindow(350, 550, url, 'Confirm Transaction');
 }
