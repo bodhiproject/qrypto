@@ -1,5 +1,12 @@
+const onConfirmed = () => {
+  console.log('confirmed');
+};
+
+const onCancelled = () => {
+  console.log('cancelled');
+};
+
 window.onload = () => {
-  document.getElementById('button').addEventListener('click', function() {
-    console.log('clicked', this);
-  });
+  document.getElementById('button-confirm').addEventListener('click', onConfirmed);
+  document.getElementById('button-cancel').addEventListener('click', onCancelled);
 }

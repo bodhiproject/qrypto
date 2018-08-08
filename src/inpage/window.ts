@@ -1,7 +1,7 @@
 function showWindow(width: number, height: number, url: string = '', name: string = 'qrypto-window'): Window {
   const top = (screen.availHeight / 2) - (height / 2);
   const left = (screen.availWidth / 2) - (width / 2);
-  const option = `
+  const options = `
     height=${height},
     width=${width},
     screenX=${left},
@@ -13,9 +13,9 @@ function showWindow(width: number, height: number, url: string = '', name: strin
     location=no,
     status=no
   `;
-  return window.open(url, name, option)!;
+  return window.open(url, name, options)!;
 }
 
 export function showSignTxWindow() {
-  showWindow(350, 550, 'chrome-extension://dinkholgplhfbmnnjaahkjlbponanlmc/sign-tx.html');
+  showWindow(350, 550, 'chrome-extension://dinkholgplhfbmnnjaahkjlbponanlmc/sign-tx.html', 'Confirm Transaction');
 }
