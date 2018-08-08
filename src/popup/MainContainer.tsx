@@ -88,7 +88,7 @@ export default class MainContainer extends Component<IProps, {}> {
         break;
 
       case MESSAGE_TYPE.IMPORT_MNEMONIC_FAILURE:
-        importStore.invalidMnemonic = true;
+        importStore.importMnemonicFailed = true;
         history.push('/import-mnemonic');
         break;
 

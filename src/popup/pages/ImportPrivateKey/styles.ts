@@ -28,14 +28,16 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   privateKeyTextField: {
     flex: 1,
-    marginBottom: theme.padding.md,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
   privateKeyFieldInput: {
     padding: theme.padding.sm,
-    fontSize: theme.font.lg,
+    fontSize: theme.font.md,
     lineHeight: '20px',
+  },
+  borderTextFieldContainer: {
+    marginTop: theme.padding.md,
   },
   importButton: {
     height: theme.button.lg.height,
@@ -46,6 +48,11 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   cancelButton: {
     minHeight: 0,
     padding: 0,
+  },
+  errorText: {
+    fontSize: theme.font.xs,
+    color: theme.color.red,
+    marginTop: theme.padding.unit,
   },
 });
 

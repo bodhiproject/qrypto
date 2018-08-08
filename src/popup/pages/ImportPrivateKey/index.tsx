@@ -48,13 +48,18 @@ class ImportPrivateKey extends Component<WithStyles & IProps, IState> {
                   classes: { input: classes.privateKeyFieldInput },
                 }}
               />
-              <BorderTextField
-                placeholder="Wallet name"
-                error={importStore.walletNameTaken}
-                errorText={importStore.walletNameError}
-                onChange={(e: any) => importStore.accountName = e.target.value}
-                onEnterPress={importStore.importPrivateKey}
-              />
+              {!!importStore.privateKey && importStore.privateKeyError && (
+                <Typography className={classes.errorText}>{importStore.privateKeyError}</Typography>
+              )}
+              <div className={classes.borderTextFieldContainer}>
+                <BorderTextField
+                  placeholder="Wallet name"
+                  error={importStore.walletNameTaken}
+                  errorText={importStore.walletNameError}
+                  onChange={(e: any) => importStore.accountName = e.target.value}
+                  onEnterPress={importStore.importPrivateKey}
+                />
+              </div>
             </div>
           </div>
           <div>
@@ -78,28 +83,26 @@ class ImportPrivateKey extends Component<WithStyles & IProps, IState> {
             </Button>
           </div>
         </div>
-         {/* <ErrorDialog {...this.props} /> */}
+         <ErrorDialog {...this.props} />
       </div>
     );
   }
 }
 
-// TODO1 - validation on private key length
-// TODO2
-// const ErrorDialog: React.SFC<any> = observer(({ store: { importStore }}: any) => (
-//   <Dialog
-//     disableBackdropClick
-//     open={!!importStore.invalidMnemonic}
-//     onClose={() => importStore.invalidMnemonic = false}
-//   >
-//     <DialogTitle>Invalid Seed Phrase</DialogTitle>
-//     <DialogContent>
-//       <DialogContentText>This seed phrase has been used already.</DialogContentText>
-//     </DialogContent>
-//     <DialogActions>
-//       <Button onClick={() => importStore.invalidMnemonic = false} color="primary">Close</Button>
-//     </DialogActions>
-//   </Dialog>
-// ));
+const ErrorDialog: React.SFC<any> = observer(({ store: { importStore }}: any) => (
+  <Dialog
+    disableBackdropClick
+    open={importStore.importPrivateKeyFailed}
+    onClose={() => importStore.importPrivateKeyFailed = false}
+  >
+    <DialogTitle>Invalid Private Key</DialogTitle>
+    <DialogContent>
+      <DialogContentText>This wallet has already been imported.</DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => importStore.importPrivateKeyFailed = false} color="primary">Close</Button>
+    </DialogActions>
+  </Dialog>
+));
 
 export default withStyles(styles)(ImportPrivateKey);

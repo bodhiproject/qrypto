@@ -31,7 +31,7 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
       <div className={classes.root}>
         <NavBar hasNetworkSelector title="" />
         <div className={classes.contentContainer}>
-          <Typography className={classes.headerText}>Import Wallet</Typography>
+          <Typography className={classes.headerText}>Import Mnemonic</Typography>
           <div className={classes.inputContainer}>
             <div className={classes.fieldContainer}>
               <TextField
@@ -87,15 +87,15 @@ class ImportMnemonic extends Component<WithStyles & IProps, IState> {
 const ErrorDialog: React.SFC<any> = observer(({ store: { importStore }}: any) => (
   <Dialog
     disableBackdropClick
-    open={!!importStore.invalidMnemonic}
-    onClose={() => importStore.invalidMnemonic = false}
+    open={importStore.importMnemonicFailed}
+    onClose={() => importStore.importMnemonicFailed = false}
   >
     <DialogTitle>Invalid Seed Phrase</DialogTitle>
     <DialogContent>
-      <DialogContentText>This seed phrase has been used already.</DialogContentText>
+      <DialogContentText>This wallet has already been imported.</DialogContentText>
     </DialogContent>
     <DialogActions>
-      <Button onClick={() => importStore.invalidMnemonic = false} color="primary">Close</Button>
+      <Button onClick={() => importStore.importMnemonicFailed = false} color="primary">Close</Button>
     </DialogActions>
   </Dialog>
 ));

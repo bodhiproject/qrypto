@@ -97,7 +97,7 @@ export default class AccountController extends IController {
   * @param accountName The account name for the new wallet account.
   * @param mnemonic The mnemonic to derive the wallet from.
   */
-  public addAccountAndLogin = async (accountName: string, wallet: QtumWallet, privateKeyHash: string) => {
+  public addAccountAndLogin = async (accountName: string, privateKeyHash: string, wallet: QtumWallet) => {
     this.loggedInAccount = new Account(accountName, privateKeyHash);
     this.loggedInAccount.wallet = new Wallet(wallet);
 
@@ -132,15 +132,16 @@ export default class AccountController extends IController {
       const wallet = network.fromMnemonic(mnemonic);
       const privateKeyHash = this.getPrivateKeyHash(wallet);
 
-      // validate that we don't already have the wallet in our accountList accountList
+      // Validate that we don't already have the wallet in our accountList
       const exists = await this.walletAlreadyExists(privateKeyHash);
       if (exists) {
         chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_FAILURE });
         return;
       }
 
-      await this.addAccountAndLogin(accountName, wallet, privateKeyHash);
+      await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
     } catch (e) {
+      // TODO - Create error handling on ui side
       console.log(e);
     }
   }
@@ -151,8 +152,8 @@ export default class AccountController extends IController {
   * @param privateKey The private key to derive the wallet from.
   */
   public importPrivateKey = async (accountName: string, privateKey: string) => {
-    // recover wallet and privateKeyHash
     try {
+      // recover wallet and privateKeyHash
       const network = this.main.network.network;
       const wallet = network.fromWIF(privateKey);
       const privateKeyHash = this.getPrivateKeyHash(wallet);
@@ -164,7 +165,7 @@ export default class AccountController extends IController {
         return;
       }
 
-      await this.addAccountAndLogin(accountName, wallet, privateKeyHash);
+      await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
     } catch (e) {
       console.log(e);
     }
@@ -233,7 +234,7 @@ export default class AccountController extends IController {
   public routeToAccountPage = () => {
     const accounts = this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     if (isEmpty(accounts)) {
-      // Account not found, route to Create Wallet page
+      // Accounts not found, route to Create Wallet page
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS });
     } else {
       // Accounts found, route to Account Login page
@@ -307,7 +308,7 @@ export default class AccountController extends IController {
 
   /*
   * Checks if a wallet is already in the mainnet or testnet accounts list.
-  * @param privateKeyHash, unique and deterministic for each wallet.
+  * @param privateKeyHash Unique and deterministic for each wallet.
   * @return does the wallet already exist.
   */
   private walletAlreadyExists = async (privateKeyHash: string): Promise<boolean> => {
@@ -369,9 +370,6 @@ export default class AccountController extends IController {
         break;
       case MESSAGE_TYPE.IMPORT_PRIVATE_KEY:
         this.importPrivateKey(request.accountName, request.privateKey);
-        break;
-      case MESSAGE_TYPE.CREATE_WALLET:
-        this.importMnemonic(request.accountName, request.mnemonic);
         break;
       case MESSAGE_TYPE.SAVE_TO_FILE:
         this.saveToFile(request.accountName, request.mnemonic);

@@ -39,7 +39,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   mnemonicFieldInput: {
     padding: theme.padding.sm,
-    fontSize: theme.font.lg,
+    fontSize: theme.font.md,
     lineHeight: '20px',
   },
   importButton: {

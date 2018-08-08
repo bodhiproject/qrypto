@@ -28,21 +28,34 @@ export const generateRandomId = (): string => {
 
 /*
 * Validates the Qtum address based on length and starting character.
-* @param isTestnet {boolean} Flag if is a testnet address (or else mainnet address).
+* @param isMainnet {boolean} Flag if is a mainnet address (or else testnet address).
 * @param address {string} The Qtum address to validate.
 * @return {boolean} Returns if it is a valid Qtum address.
 */
-export const isValidAddress = (isTestnet: boolean, address?: string) => {
+export const isValidAddress = (isMainnet: boolean, address?: string) => {
   if (!address) {
     return false;
   }
   if (address.length !== 34) {
     return false;
   }
-  if (isTestnet) {
-    return address.startsWith('q');
+  if (isMainnet) {
+    return address.startsWith('Q');
   }
-  return address.startsWith('Q');
+  return address.startsWith('q');
+};
+
+export const isValidPrivateKey = (isMainnet: boolean, address?: string) => {
+  if (!address) {
+    return false;
+  }
+  if (address.length !== 52) {
+    return false;
+  }
+  if (isMainnet) {
+    return address.startsWith('K');
+  }
+  return address.startsWith('c');
 };
 
 export const isValidContractAddressLength = (address?: string) => {

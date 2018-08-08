@@ -1,7 +1,8 @@
 import { observable, action, computed, reaction } from 'mobx';
 import { isEmpty } from 'lodash';
 
-import AppStore from './AppStore';
+import AppStore, { store } from './AppStore';
+import { isValidPrivateKey } from '../../utils';
 import { MESSAGE_TYPE } from '../../constants';
 
 const INIT_VALUES = {
@@ -9,8 +10,8 @@ const INIT_VALUES = {
   privateKey: '',
   accountName: '',
   walletNameTaken: false,
-  invalidMnemonic: false,
-  invalidPrivateKey: false,
+  importMnemonicFailed: false,
+  importPrivateKeyFailed: false,
 };
 
 export default class ImportStore {
@@ -18,8 +19,8 @@ export default class ImportStore {
   @observable public privateKey: string = INIT_VALUES.privateKey;
   @observable public accountName: string = INIT_VALUES.accountName;
   @observable public walletNameTaken: boolean = INIT_VALUES.walletNameTaken;
-  @observable public invalidMnemonic: boolean = INIT_VALUES.invalidMnemonic;
-  @observable public invalidPrivateKey: boolean = INIT_VALUES.invalidPrivateKey;
+  @observable public importMnemonicFailed: boolean = INIT_VALUES.importMnemonicFailed;
+  @observable public importPrivateKeyFailed: boolean = INIT_VALUES.importPrivateKeyFailed;
   @computed public get walletNameError(): string | undefined {
     return this.walletNameTaken ? 'Wallet name is taken' : undefined;
   }
@@ -28,6 +29,9 @@ export default class ImportStore {
   }
   @computed public get privateKeyPageError(): boolean {
     return [this.privateKey, this.accountName].some(isEmpty) || !!this.walletNameError;
+  }
+  @computed public get privateKeyError(): string | undefined {
+    return isValidPrivateKey(store.sessionStore.isMainNet, this.privateKey) ? undefined : 'Not a valid private key';
   }
 
   private app: AppStore;

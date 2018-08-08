@@ -18,6 +18,9 @@ export default class SessionStore {
   @computed public get qtumBalanceUSD() {
     return isUndefined(this.qtumUSD) ? 'Loading...' : `$${this.qtumUSD} USD`;
   }
+  @computed public get isMainNet(): boolean {
+    return this.networkIndex === 0 ? true : false;
+  }
 
   private qtumUSD?: number = INIT_VALUES.qtumUSD;
 
