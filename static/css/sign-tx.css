@@ -6,7 +6,30 @@
 
 body {
   font-family: 'Montserrat', sans-serif;
-  padding: 12px;
+  padding: 16px;
+  overflow-y: scroll;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+}
+
+.bottom-16 {
+  margin-bottom: 16px !important;
+}
+
+.bottom-32 {
+  margin-bottom: 32px;
+}
+
+.left-16 {
+  margin-left: 16px;
 }
 
 .field-container {
@@ -49,28 +72,32 @@ body {
 
 .transaction-container {
   border: 1px solid #CCCCCC;
-  padding: 16px;
+  border-radius: 4px;
+  padding: 12px;
   word-wrap: break-word;
 }
 
-.row {
-  display: flex;
-  flex-direction: row;
+.button {
+  height: 48px;
+  flex: 1;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  border-radius: 24px;
+  cursor: pointer;
 }
 
-.bottom-12 {
-  margin-bottom: 8px;
+.button:focus {
+  outline: none;
 }
 
-.bottom-16 {
-  margin-bottom: 16px;
+.button-white {
+  color: #5539DF;
+  background: #FFFFFF;
 }
 
-.bottom-32 {
-  margin-bottom: 32px;
-}
-
-.center {
-  display: flex;
-  align-items: center;
+.button-blue {
+  color: #FFFFFF;
+  background: #5539DF;
 }
