@@ -6,11 +6,7 @@
 
 body {
   font-family: 'Montserrat', sans-serif;
-  padding: 16px;
-}
-
-h5 p {
-  margin: 0 !important;
+  padding: 12px;
 }
 
 .field-container {
@@ -26,12 +22,9 @@ h5 p {
 
 .address {
   font-size: 12px;
+  line-height: 24px;
   color: rgba(0, 0, 0, 0.5);
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
+  margin: 0;
 }
 
 .amount-container {
@@ -42,9 +35,9 @@ h5 p {
 }
 
 .amount {
-  font-size: 20px;
+  font-size: 16px;
+  line-height: 20px;
   color: rgba(0, 0, 0, 0.8);
-  margin-bottom: 4px;
 }
 
 .unit {
@@ -52,6 +45,21 @@ h5 p {
   color: rgba(0, 0, 0, 0.5);
   text-transform: uppercase;
   margin-left: 4px;
+}
+
+.transaction-container {
+  border: 1px solid #CCCCCC;
+  padding: 16px;
+  word-wrap: break-word;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.bottom-12 {
+  margin-bottom: 8px;
 }
 
 .bottom-16 {
