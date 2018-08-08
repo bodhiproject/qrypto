@@ -20,16 +20,20 @@ body {
   align-items: center;
 }
 
+.bottom-8 {
+  margin-bottom: 8px !important;
+}
+
 .bottom-16 {
   margin-bottom: 16px !important;
 }
 
 .bottom-32 {
-  margin-bottom: 32px;
+  margin-bottom: 32px !important;
 }
 
 .left-16 {
-  margin-left: 16px;
+  margin-left: 16px !important;
 }
 
 .field-container {
@@ -71,10 +75,13 @@ body {
 }
 
 .transaction-container {
-  border: 1px solid #CCCCCC;
-  border-radius: 4px;
-  padding: 12px;
   word-wrap: break-word;
+}
+
+.raw-tx {
+  font-size: 10px;
+  line-height: 16px;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .button {
@@ -99,5 +106,5 @@ body {
 
 .button-blue {
   color: #FFFFFF;
-  background: #5539DF;
+  background: linear-gradient(300.29deg, #8E6BF1 -9.7%, #5539DF 85.28%);
 }
