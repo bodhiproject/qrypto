@@ -6,10 +6,30 @@
 
 body {
   font-family: 'Montserrat', sans-serif;
+  padding: 16px;
+}
+
+.field-container {
+  border-bottom: 1px solid #CCCCCC;
 }
 
 .heading {
   font-size: 12px;
   font-weight: 'bold';
   color: rgba(0, 0, 0, 0.8);
+  margin: 0 0 16px 0;
+}
+
+.address {
+  font-size: 12px;
+  /* line-height: 24px; */
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.margin-small {
+  margin-bottom: 16px;
+}
+
+.margin-big {
+  margin-bottom: 32px;
 }

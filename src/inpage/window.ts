@@ -17,5 +17,5 @@ function showWindow(width: number, height: number, url: string = '', name: strin
 }
 
 export function showSignTxWindow() {
-  showWindow(300, 300, 'chrome-extension://dinkholgplhfbmnnjaahkjlbponanlmc/sign-tx.html');
+  showWindow(350, 550, 'chrome-extension://dinkholgplhfbmnnjaahkjlbponanlmc/sign-tx.html');
 }
