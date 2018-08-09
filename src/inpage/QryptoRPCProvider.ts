@@ -10,7 +10,7 @@ export class QryptoRPCProvider {
     return new Promise((resolve, reject) => {
       const id = this.trackRequest(resolve, reject);
       postWindowMessage<IRPCCallRequest>(TARGET_NAME.CONTENTSCRIPT, {
-        type: API_TYPE.RPC_RESONSE,
+        type: API_TYPE.RPC_REQUEST,
         payload: { id, method, args },
       });
     });
