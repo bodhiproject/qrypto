@@ -128,6 +128,10 @@ export default class TokenController extends IController {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKENS_RETURN, tokens: this.tokens });
   }
 
+  /**
+   * Gets the QRC token details (name, symbol, decimals) given a contract address.
+   * @param {string} contractAddress QRC token contract address.
+   */
   private getQRCTokenDetails = async (contractAddress: string) => {
     let msg;
 
