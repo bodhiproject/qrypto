@@ -1,8 +1,7 @@
-export function showWindow(width: number, height: number, name: string = 'qrypto-window'): Window {
+function showWindow(width: number, height: number, url: string = '', name: string = 'qrypto-window'): Window {
   const top = (screen.availHeight / 2) - (height / 2);
   const left = (screen.availWidth / 2) - (width / 2);
-
-  const option = `
+  const options = `
     height=${height},
     width=${width},
     screenX=${left},
@@ -14,5 +13,12 @@ export function showWindow(width: number, height: number, name: string = 'qrypto
     location=no,
     status=no
   `;
-  return window.open('', name, option)!;
+  return window.open(url, name, options)!;
+}
+
+export function showSignTxWindow(url: string) {
+  if (!url) {
+    throw Error('Cannot resolve Sign Transaction Dialog URL.');
+  }
+  showWindow(350, 550, url, 'Confirm Transaction');
 }

@@ -11,6 +11,13 @@ injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
   await injectScript(chrome.extension.getURL('commons.contentscript-inpage.js'));
   await injectScript(chrome.extension.getURL('commons.popup-inpage.js'));
   await injectScript(chrome.extension.getURL('inpage.js'));
+
+  // Pass the Chrome extension absolute URL of the Sign Transaction dialog to the Inpage
+  const signTxUrl = chrome.extension.getURL('sign-tx.html');
+  postMessageToInpage({
+    type: API_TYPE.SIGN_TX_URL_RESOLVED,
+    payload: { url: signTxUrl },
+  });
 });
 
 injectStylesheet(chrome.extension.getURL('css/modal.css'));

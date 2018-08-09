@@ -59,6 +59,7 @@
     "commons.contentscript-inpage.js",
     "commons.popup-inpage.js",
     "inpage.js",
+    "sign-tx.html",
     "images/logo.png",
     "css/modal.css"
   ],
