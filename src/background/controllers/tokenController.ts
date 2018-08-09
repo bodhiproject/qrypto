@@ -1,5 +1,6 @@
 import { each, findIndex, isEmpty } from 'lodash';
 import BN from 'bn.js';
+import { Insight } from 'qtumjs-wallet';
 const { Decoder } = require('qweb3');
 
 import QryptoController from '.';
@@ -11,6 +12,7 @@ import mainnetTokenList from '../../contracts/mainnetTokenList';
 import testnetTokenList from '../../contracts/testnetTokenList';
 import { generateRequestId, encodeDataHex } from '../../utils';
 import Config from '../../config';
+import { IRPCCallResponsePayload } from '../../types';
 
 const INIT_VALUES = {
   tokens: undefined,
@@ -136,34 +138,35 @@ export default class TokenController extends IController {
     */
     try {
       // Get name
-      let methodName = 'name';
-      let data = encodeDataHex(qrc20TokenABI, methodName, []);
-      let res = await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]);
-      if (res.error) {
-        throw Error(res.error);
+      let methodName: string = 'name';
+      let data: string = encodeDataHex(qrc20TokenABI, methodName, []);
+      let { result, error }: IRPCCallResponsePayload =
+        await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]);
+      if (error) {
+        throw Error(error);
       }
-      res.result = Decoder.decodeCall(res.result, qrc20TokenABI, methodName);
-      const name = res.result!.executionResult.formattedOutput[0];
+      result = Decoder.decodeCall(result, qrc20TokenABI, methodName) as Insight.IContractCall;
+      const name = result.executionResult.formattedOutput[0];
 
       // Get symbol
       methodName = 'symbol';
       data = encodeDataHex(qrc20TokenABI, methodName, []);
-      res = await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]);
-      if (res.error) {
-        throw Error(res.error);
+      ({ result, error } = await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]));
+      if (error) {
+        throw Error(error);
       }
-      res.result = Decoder.decodeCall(res.result, qrc20TokenABI, methodName);
-      const symbol = res.result!.executionResult.formattedOutput[0];
+      result = Decoder.decodeCall(result, qrc20TokenABI, methodName) as Insight.IContractCall;
+      const symbol = result.executionResult.formattedOutput[0];
 
       // Get decimals
       methodName = 'decimals';
       data = encodeDataHex(qrc20TokenABI, methodName, []);
-      res = await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]);
-      if (res.error) {
-        throw Error(res.error);
+      ({ result, error } = await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]));
+      if (error) {
+        throw Error(error);
       }
-      res.result = Decoder.decodeCall(res.result, qrc20TokenABI, methodName);
-      const decimals = res.result!.executionResult.formattedOutput[0];
+      result = Decoder.decodeCall(result, qrc20TokenABI, methodName) as Insight.IContractCall;
+      const decimals = result.executionResult.formattedOutput[0];
 
       if (name && symbol && decimals) {
         const token = new QRCToken(name, symbol, decimals, contractAddress);

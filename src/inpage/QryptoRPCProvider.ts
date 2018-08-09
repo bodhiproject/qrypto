@@ -1,11 +1,6 @@
-import { isEmpty } from 'lodash';
-
 import { IRPCCallRequest, IRPCCallRequestPayload, IExtensionAPIMessage, IExtensionMessageData, IRPCCallResponsePayload } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
-import Config from '../config';
 import { generateRequestId } from '../utils';
-
-const { DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE } = Config.TRANSACTION;
 
 export class QryptoRPCProvider {
   private requests: { [id: string]: IRPCCallRequest } = {};
@@ -20,47 +15,49 @@ export class QryptoRPCProvider {
     });
   }
 
-  public sendToContract = (
-    contractAddress: string,
-    data: string,
-    amount = DEFAULT_AMOUNT,
-    gasLimit = DEFAULT_GAS_LIMIT,
-    gasPrice = DEFAULT_GAS_PRICE,
-  ) => {
-    if (isEmpty(contractAddress)) {
-      throw Error('contractAddress cannot be empty');
-    }
-    if (isEmpty(data)) {
-      throw Error('data cannot be empty');
-    }
+  // TODO: move to qweb3
+  // public sendToContract = (
+  //   contractAddress: string,
+  //   data: string,
+  //   amount = DEFAULT_AMOUNT,
+  //   gasLimit = DEFAULT_GAS_LIMIT,
+  //   gasPrice = DEFAULT_GAS_PRICE,
+  // ) => {
+  //   if (isEmpty(contractAddress)) {
+  //     throw Error('contractAddress cannot be empty');
+  //   }
+  //   if (isEmpty(data)) {
+  //     throw Error('data cannot be empty');
+  //   }
 
-    return new Promise((resolve, reject) => {
-      const id = this.trackRequest(resolve, reject);
-      const args = [contractAddress, data, amount, gasLimit, gasPrice];
-      this.postMessageToContentscript({
-        type: API_TYPE.RPC_SEND_TO_CONTRACT,
-        payload: { method: 'sendToContract', args, id },
-      });
-    });
-  }
+  //   return new Promise((resolve, reject) => {
+  //     const id = this.trackRequest(resolve, reject);
+  //     const args = [contractAddress, data, amount, gasLimit, gasPrice];
+  //     this.postMessageToContentscript({
+  //       type: API_TYPE.RPC_SEND_TO_CONTRACT,
+  //       payload: { method: 'sendToContract', args, id },
+  //     });
+  //   });
+  // }
 
-  public callContract = (contractAddress: string, data: string) => {
-    if (isEmpty(contractAddress)) {
-      throw Error('contractAddress cannot be empty');
-    }
-    if (isEmpty(data)) {
-      throw Error('data cannot be empty');
-    }
+  // TODO: move to qweb3
+  // public callContract = (contractAddress: string, data: string) => {
+  //   if (isEmpty(contractAddress)) {
+  //     throw Error('contractAddress cannot be empty');
+  //   }
+  //   if (isEmpty(data)) {
+  //     throw Error('data cannot be empty');
+  //   }
 
-    return new Promise((resolve, reject) => {
-      const id = this.trackRequest(resolve, reject);
-      const args = [contractAddress, data, DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE];
-      this.postMessageToContentscript({
-        type: API_TYPE.RPC_CALL_CONTRACT,
-        payload: { method: 'callContract', args, id },
-      });
-    });
-  }
+  //   return new Promise((resolve, reject) => {
+  //     const id = this.trackRequest(resolve, reject);
+  //     const args = [contractAddress, data, DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE];
+  //     this.postMessageToContentscript({
+  //       type: API_TYPE.RPC_CALL_CONTRACT,
+  //       payload: { method: 'callContract', args, id },
+  //     });
+  //   });
+  // }
 
   public handleRpcCallResponse = (response: IRPCCallResponsePayload) => {
     const request = this.requests[response.id];
