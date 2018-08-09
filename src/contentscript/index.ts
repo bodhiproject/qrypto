@@ -13,29 +13,6 @@ chrome.runtime.onMessage.addListener(handleBackgroundScriptMessage);
 // const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
 // port.onMessage.addListener(responseExtensionAPI);
 
-function injectScript(src: string) {
-  return new Promise((resolve) => {
-    const scriptElement = document.createElement('script');
-    const headOrDocumentElement = document.head || document.documentElement;
-
-    scriptElement.onload = () => resolve();
-    scriptElement.src = src;
-    headOrDocumentElement.insertAdjacentElement('afterbegin', scriptElement);
-  });
-}
-
-function injectStylesheet(src: string) {
-  return new Promise((resolve) => {
-    const styleElement = document.createElement('link');
-    const headOrDocumentElement = document.head || document.documentElement;
-
-    styleElement.onload = () => resolve();
-    styleElement.rel = 'stylesheet';
-    styleElement.href = src;
-    headOrDocumentElement.insertAdjacentElement('afterbegin', styleElement);
-  });
-}
-
 function postMessageToInpage<T>(message: IExtensionAPIMessage<T>) {
   const messagePayload: IExtensionMessageData<typeof message> = {
     target: TARGET_NAME.INPAGE,
@@ -44,7 +21,7 @@ function postMessageToInpage<T>(message: IExtensionAPIMessage<T>) {
   window.postMessage(messagePayload, '*');
 }
 
-function handleRPCRequest(messageType: MESSAGE_TYPE, message: IRPCCallRequestPayload) {
+function handleRPCRequest(message: IRPCCallRequestPayload) {
   const { method, args, id } = message;
 
   // Check for logged in account first
@@ -87,7 +64,7 @@ function handleContentScriptMessage(event: MessageEvent) {
   const message: IExtensionAPIMessage<any> = event.data.message;
   switch (message.type) {
     case API_TYPE.RPC_REQUEST:
-      handleRPCRequest(MESSAGE_TYPE.EXTERNAL_RAW_CALL, message.payload);
+      handleRPCRequest(message.payload);
       break;
     default:
       throw Error(`Contentscript processing invalid type: ${message}`);
