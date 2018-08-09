@@ -35,6 +35,9 @@ function handleInpageMessage(event: MessageEvent) {
 
   const message: IExtensionAPIMessage<any> = event.data.message;
   switch (message.type) {
+    case API_TYPE.RPC_SEND_TO_CONTRACT:
+      showSignTxWindow(signTxUrl);
+      break;
     case API_TYPE.RPC_RESONSE:
       return qryptoProvider.handleRpcCallResponse(message.payload);
     case API_TYPE.SIGN_TX_URL_RESOLVED:
