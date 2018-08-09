@@ -29,8 +29,12 @@ Object.assign(window, {
   // testWindow: () => showSignTxWindow(signTxUrl),
 });
 
+/**
+ * Handles the sendToContract request originating from the QryptoRPCProvider and opens the sign tx window.
+ * @param request SendToContract request.
+ */
 const handleSendToContractRequest = (request: IRPCCallRequest) => {
-  showSignTxWindow(signTxUrl, request);
+  showSignTxWindow({ url: signTxUrl, request });
 };
 
 function handleInpageMessage(event: MessageEvent) {
@@ -40,14 +44,14 @@ function handleInpageMessage(event: MessageEvent) {
 
   const message: IExtensionAPIMessage<any> = event.data.message;
   switch (message.type) {
+    case API_TYPE.SIGN_TX_URL_RESOLVED:
+      signTxUrl = message.payload.url;
+      break;
     case API_TYPE.RPC_SEND_TO_CONTRACT:
       handleSendToContractRequest(message.payload);
       break;
     case API_TYPE.RPC_RESONSE:
       return qryptoProvider.handleRpcCallResponse(message.payload);
-    case API_TYPE.SIGN_TX_URL_RESOLVED:
-      signTxUrl = message.payload.url;
-      break;
     default:
       throw Error(`Inpage processing invalid type: ${message}`);
   }

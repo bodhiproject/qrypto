@@ -1,4 +1,4 @@
-import { IRPCCallRequest } from '../types';
+import { ISignExternalTxRequest } from '../types';
 
 function showWindow(width: number, height: number, url: string = '', name: string = 'qrypto-window'): Window {
   const top = (screen.availHeight / 2) - (height / 2);
@@ -18,7 +18,8 @@ function showWindow(width: number, height: number, url: string = '', name: strin
   return window.open(url, name, options)!;
 }
 
-export function showSignTxWindow(url: string, request: IRPCCallRequest) {
+export function showSignTxWindow(signTxReq: ISignExternalTxRequest) {
+  const { url, request } = signTxReq;
   if (!url) {
     throw Error('Cannot resolve Sign Transaction Dialog URL.');
   }
@@ -26,6 +27,12 @@ export function showSignTxWindow(url: string, request: IRPCCallRequest) {
     throw Error('No transaction request found.');
   }
 
+  const { account } = request;
+  if (!account) {
+    throw Error('No account found.');
+  }
+
   const reqStr = JSON.stringify(request);
-  showWindow(350, 550, `${url}?req=${reqStr}`, 'Confirm Transaction');
+  const params = `req=${reqStr}&from=${account.address}`;
+  showWindow(350, 550, `${url}?${params}`, 'Confirm Transaction');
 }

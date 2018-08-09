@@ -1,6 +1,6 @@
 
 import { injectAllScripts } from './inject';
-import { IExtensionAPIMessage, IRPCCallRequest, IRPCCallResponse } from '../types';
+import { IExtensionAPIMessage, IRPCCallRequest, IRPCCallResponse, ICurrentAccount } from '../types';
 import { TARGET_NAME, API_TYPE, MESSAGE_TYPE, RPC_METHOD } from '../constants';
 import { isMessageNotValid } from '../utils';
 import { postWindowMessage } from '../utils/messenger';
@@ -15,20 +15,24 @@ chrome.runtime.onMessage.addListener(handleBackgroundScriptMessage);
 // const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
 // port.onMessage.addListener(responseExtensionAPI);
 
+function postNotLoggedInMessage() {
+  // Not logged in, send error response to Inpage
+  postWindowMessage<IRPCCallResponse>(TARGET_NAME.INPAGE, {
+    type: API_TYPE.RPC_RESONSE,
+    payload: {
+      id: '',
+      error: 'Not logged in. Please log in to Qrypto first.',
+    },
+  });
+}
+
 function handleRPCRequest(message: IRPCCallRequest) {
   const { method, args, id } = message;
 
   // Check for logged in account first
-  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME }, (accountName: any) => {
-    if (!accountName) {
-      // Not logged in, send error response to Inpage
-      postWindowMessage<IRPCCallResponse>(TARGET_NAME.INPAGE, {
-        type: API_TYPE.RPC_RESONSE,
-        payload: {
-          id,
-          error: 'Not logged in. Please log in to Qrypto first.',
-        },
-      });
+  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT }, (account: ICurrentAccount) => {
+    if (!account) {
+      postNotLoggedInMessage();
       return;
     }
 
@@ -37,7 +41,10 @@ function handleRPCRequest(message: IRPCCallRequest) {
         // Inpage shows sign tx popup
         postWindowMessage<IRPCCallRequest>(TARGET_NAME.INPAGE, {
           type: API_TYPE.RPC_SEND_TO_CONTRACT,
-          payload: message,
+          payload: {
+            ...message,
+            account,
+          },
         });
         break;
       case RPC_METHOD.CALL_CONTRACT:

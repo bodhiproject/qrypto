@@ -369,6 +369,11 @@ export default class AccountController extends IController {
       case MESSAGE_TYPE.GET_ACCOUNTS:
         sendResponse(this.accounts);
         break;
+      case MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT:
+        sendResponse(this.loggedInAccount && this.loggedInAccount.wallet && this.loggedInAccount.wallet.info
+          ? { name: this.loggedInAccount.name, address: this.loggedInAccount!.wallet!.info!.addrStr }
+          : undefined);
+        break;
       case MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME:
         sendResponse(this.loggedInAccount ? this.loggedInAccount.name : undefined);
         break;

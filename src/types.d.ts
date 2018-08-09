@@ -24,12 +24,23 @@ export interface IRPCCallRequest {
   id: string;
   method: string;
   args: any[];
+  account?: ICurrentAccount;
 }
 
 export interface IRPCCallResponse {
   id: string;
   result?: Insight.IContractCall | Insight.ISendRawTxResult;
   error?: string;
+}
+
+export interface ICurrentAccount {
+  name: string;
+  address: string;
+}
+
+export interface ISignExternalTxRequest {
+  url: string;
+  request: IRPCCallRequest;
 }
 
 export interface ISigner {
