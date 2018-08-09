@@ -1,6 +1,6 @@
 
 import { IExtensionMessageData, IExtensionAPIMessage, IRPCCallRequestPayload } from '../types';
-import { TARGET_NAME, API_TYPE, MESSAGE_TYPE } from '../constants';
+import { TARGET_NAME, API_TYPE, MESSAGE_TYPE, RPC_METHOD } from '../constants';
 import { isMessageNotValid } from '../utils';
 
 injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
@@ -62,19 +62,33 @@ function postMessageToInpage<T>(message: IExtensionAPIMessage<T>) {
 function handleRPCCallMessage(messageType: MESSAGE_TYPE, message: IRPCCallRequestPayload) {
   const { method, args, id } = message;
 
-  // Background handles messageType if logged in
-  chrome.runtime.sendMessage({ type: messageType, id, method, args }, (hasWallet) => {
-    if (!hasWallet) {
-      // Not logged in, send error response to Inpage
+  switch (method) {
+    case RPC_METHOD.SEND_TO_CONTRACT:
       postMessageToInpage({
-        type: API_TYPE.RPC_RESONSE,
-        payload: {
-          id,
-          error: 'Cannot find logged in account',
-        },
+        type: API_TYPE.RPC_SEND_TO_CONTRACT,
+        payload: message,
       });
-    }
-  });
+      break;
+
+    case RPC_METHOD.CALL_CONTRACT:
+      // Background handles messageType if logged in
+      chrome.runtime.sendMessage({ type: messageType, id, method, args }, (hasWallet) => {
+        if (!hasWallet) {
+          // Not logged in, send error response to Inpage
+          postMessageToInpage({
+            type: API_TYPE.RPC_RESONSE,
+            payload: {
+              id,
+              error: 'Cannot find logged in account',
+            },
+          });
+        }
+      });
+      break;
+
+    default:
+      throw Error('Unhandled RPC method.');
+  }
 }
 
 function handleContentScriptMessage(event: MessageEvent) {
