@@ -1,4 +1,5 @@
-import { API_TYPE } from '../constants';
+import { API_TYPE, TARGET_NAME } from '../constants';
+import { postWindowMessage } from '../utils/messenger';
 
 function injectScript(src: string) {
   return new Promise((resolve) => {
@@ -35,7 +36,7 @@ export function injectAllScripts() {
 
     // Pass the Chrome extension absolute URL of the Sign Transaction dialog to the Inpage
     const signTxUrl = chrome.extension.getURL('sign-tx.html');
-    postMessageToInpage({
+    postWindowMessage(TARGET_NAME.INPAGE, {
       type: API_TYPE.SIGN_TX_URL_RESOLVED,
       payload: { url: signTxUrl },
     });
