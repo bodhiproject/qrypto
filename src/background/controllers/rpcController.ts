@@ -3,7 +3,7 @@ import { WalletRPCProvider, Insight } from 'qtumjs-wallet';
 import QryptoController from '.';
 import IController from './iController';
 import { MESSAGE_TYPE } from '../../constants';
-import { IRPCCallResponsePayload } from '../../types';
+import { IRPCCallResponse } from '../../types';
 
 export default class RPCController extends IController {
   constructor(main: QryptoController) {
@@ -21,7 +21,7 @@ export default class RPCController extends IController {
   * @param args The arguments that are needed when calling the method.
   * @return The result of the callcontract.
   */
-  public sendToContract = async (id: string, args: any[]): Promise<IRPCCallResponsePayload> => {
+  public sendToContract = async (id: string, args: any[]): Promise<IRPCCallResponse> => {
     let result: any;
     let error: string | undefined;
     try {
@@ -47,7 +47,7 @@ export default class RPCController extends IController {
   * @param id Request ID.
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
-  public callContract = async (id: string, args: any[]): Promise<IRPCCallResponsePayload> => {
+  public callContract = async (id: string, args: any[]): Promise<IRPCCallResponse> => {
     let result: any;
     let error: string | undefined;
     try {

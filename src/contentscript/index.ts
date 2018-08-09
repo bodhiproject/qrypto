@@ -1,6 +1,6 @@
 
 import { injectAllScripts } from './inject';
-import { IExtensionMessageData, IExtensionAPIMessage, IRPCCallRequestPayload } from '../types';
+import { IExtensionMessageData, IExtensionAPIMessage, IRPCCallRequest } from '../types';
 import { TARGET_NAME, API_TYPE, MESSAGE_TYPE, RPC_METHOD } from '../constants';
 import { isMessageNotValid } from '../utils';
 
@@ -21,7 +21,7 @@ function postMessageToInpage<T>(message: IExtensionAPIMessage<T>) {
   window.postMessage(messagePayload, '*');
 }
 
-function handleRPCRequest(message: IRPCCallRequestPayload) {
+function handleRPCRequest(message: IRPCCallRequest) {
   const { method, args, id } = message;
 
   // Check for logged in account first

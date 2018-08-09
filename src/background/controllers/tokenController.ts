@@ -12,7 +12,7 @@ import mainnetTokenList from '../../contracts/mainnetTokenList';
 import testnetTokenList from '../../contracts/testnetTokenList';
 import { generateRequestId, encodeDataHex } from '../../utils';
 import Config from '../../config';
-import { IRPCCallResponsePayload } from '../../types';
+import { IRPCCallResponse } from '../../types';
 
 const INIT_VALUES = {
   tokens: undefined,
@@ -144,7 +144,7 @@ export default class TokenController extends IController {
       // Get name
       let methodName: string = 'name';
       let data: string = encodeDataHex(qrc20TokenABI, methodName, []);
-      let { result, error }: IRPCCallResponsePayload =
+      let { result, error }: IRPCCallResponse =
         await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]);
       if (error) {
         throw Error(error);

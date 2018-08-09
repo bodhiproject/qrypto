@@ -1,9 +1,9 @@
-import { IRPCCallRequest, IRPCCallRequestPayload, IExtensionAPIMessage, IExtensionMessageData, IRPCCallResponsePayload } from '../types';
+import { IRPCCallPendingRequest, IRPCCallRequest, IExtensionAPIMessage, IExtensionMessageData, IRPCCallResponse } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 import { generateRequestId } from '../utils';
 
 export class QryptoRPCProvider {
-  private requests: { [id: string]: IRPCCallRequest } = {};
+  private requests: { [id: string]: IRPCCallPendingRequest } = {};
 
   public rawCall = (method: string, args: any[]) => {
     return new Promise((resolve, reject) => {
@@ -59,7 +59,7 @@ export class QryptoRPCProvider {
   //   });
   // }
 
-  public handleRpcCallResponse = (response: IRPCCallResponsePayload) => {
+  public handleRpcCallResponse = (response: IRPCCallResponse) => {
     const request = this.requests[response.id];
     if (!request) {
       return;
@@ -80,7 +80,7 @@ export class QryptoRPCProvider {
     return id;
   }
 
-  private postMessageToContentscript = (message: IExtensionAPIMessage<IRPCCallRequestPayload>) => {
+  private postMessageToContentscript = (message: IExtensionAPIMessage<IRPCCallRequest>) => {
     const messagePayload: IExtensionMessageData<typeof message> = {
       target: TARGET_NAME.CONTENTSCRIPT,
       message,
