@@ -1,6 +1,3 @@
-// import { postWindowMessage } from '../../src/utils/messenger';
-// import { TARGET_NAME } from '../../src/constants';
-
 let fromAddress;
 let request;
 
@@ -42,15 +39,18 @@ const extractReqParams = () => {
 };
 
 const confirmTransaction = () => {
-  console.log('confirmed', this);
-  // postWindowMessage(TARGET_NAME.INPAGE, {
-  //   type: API_TYPE.TRANSACTION_APPROVED,
-  //   payload: message,
-  // });
+  const { id, args } = request;
+  chrome.runtime.sendMessage({
+    type: 27, // MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT
+    id,
+    args,
+  });
+
+  window.close();
 };
 
 const cancelTransaction = () => {
-  console.log('cancelled');
+  window.close();
 };
 
 window.onload = () => {

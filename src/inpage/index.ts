@@ -5,6 +5,7 @@ import { QryptoRPCProvider } from './QryptoRPCProvider';
 import { showModal, closeModal } from './modal';
 import { showSignTxWindow } from './window';
 import { isMessageNotValid } from '../utils';
+import { postWindowMessage } from '../utils/messenger';
 
 const qryptoProvider: QryptoRPCProvider = new QryptoRPCProvider();
 let signTxUrl: string;
@@ -37,6 +38,13 @@ const handleSendToContractRequest = (request: IRPCCallRequest) => {
   showSignTxWindow({ url: signTxUrl, request });
 };
 
+const handleSendToContractApproved = (payload: IRPCCallRequest) => {
+  postWindowMessage<IRPCCallRequest>(TARGET_NAME.CONTENTSCRIPT, {
+    type: API_TYPE.RPC_SEND_TO_CONTRACT_APPROVED,
+    payload,
+  });
+};
+
 function handleInpageMessage(event: MessageEvent) {
   if (isMessageNotValid(event, TARGET_NAME.INPAGE)) {
     return;
@@ -49,6 +57,9 @@ function handleInpageMessage(event: MessageEvent) {
       break;
     case API_TYPE.RPC_SEND_TO_CONTRACT:
       handleSendToContractRequest(message.payload);
+      break;
+    case API_TYPE.RPC_SEND_TO_CONTRACT_APPROVED:
+      handleSendToContractApproved(message.payload);
       break;
     case API_TYPE.RPC_RESONSE:
       return qryptoProvider.handleRpcCallResponse(message.payload);

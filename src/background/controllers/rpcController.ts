@@ -4,6 +4,7 @@ import QryptoController from '.';
 import IController from './iController';
 import { MESSAGE_TYPE } from '../../constants';
 import { IRPCCallResponse } from '../../types';
+import Config from '../../config';
 
 export default class RPCController extends IController {
   constructor(main: QryptoController) {
@@ -33,7 +34,17 @@ export default class RPCController extends IController {
         throw Error('Requires first two arguments: contractAddress and data.');
       }
 
-      result = await this.main.account.loggedInAccount!.wallet!.sendTransaction(args) as Insight.ISendRawTxResult;
+      // Set default values for amount, gasLimit, and gasPrice if needed
+      const { DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE } = Config.TRANSACTION;
+      const [address, data, amount, gasLimit, gasPrice] = args;
+      const newArgs = [
+        address,
+        data,
+        amount || DEFAULT_AMOUNT,
+        gasLimit || DEFAULT_GAS_LIMIT,
+        gasPrice || DEFAULT_GAS_PRICE,
+      ];
+      result = await this.main.account.loggedInAccount!.wallet!.sendTransaction(newArgs) as Insight.ISendRawTxResult;
     } catch (err) {
       error = err.message;
       console.error(error);

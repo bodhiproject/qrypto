@@ -15,24 +15,20 @@ chrome.runtime.onMessage.addListener(handleBackgroundScriptMessage);
 // const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
 // port.onMessage.addListener(responseExtensionAPI);
 
-function postNotLoggedInMessage() {
-  // Not logged in, send error response to Inpage
-  postWindowMessage<IRPCCallResponse>(TARGET_NAME.INPAGE, {
-    type: API_TYPE.RPC_RESONSE,
-    payload: {
-      id: '',
-      error: 'Not logged in. Please log in to Qrypto first.',
-    },
-  });
-}
-
 function handleRPCRequest(message: IRPCCallRequest) {
   const { method, args, id } = message;
 
   // Check for logged in account first
   chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT }, (account: ICurrentAccount) => {
     if (!account) {
-      postNotLoggedInMessage();
+      // Not logged in, send error response to Inpage
+      postWindowMessage<IRPCCallResponse>(TARGET_NAME.INPAGE, {
+        type: API_TYPE.RPC_RESONSE,
+        payload: {
+          id,
+          error: 'Not logged in. Please log in to Qrypto first.',
+        },
+      });
       return;
     }
 
@@ -57,6 +53,11 @@ function handleRPCRequest(message: IRPCCallRequest) {
   });
 }
 
+function handleSendToContractApproved(payload: IRPCCallRequest) {
+  const { args, id } = payload;
+  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT, id, args });
+}
+
 function handleContentScriptMessage(event: MessageEvent) {
   if (isMessageNotValid(event, TARGET_NAME.CONTENTSCRIPT)) {
     return;
@@ -66,6 +67,9 @@ function handleContentScriptMessage(event: MessageEvent) {
   switch (message.type) {
     case API_TYPE.RPC_REQUEST:
       handleRPCRequest(message.payload);
+      break;
+    case API_TYPE.RPC_SEND_TO_CONTRACT_APPROVED:
+      handleSendToContractApproved(message.payload);
       break;
     default:
       throw Error(`Contentscript processing invalid type: ${message}`);
