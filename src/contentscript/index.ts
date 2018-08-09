@@ -53,11 +53,6 @@ function handleRPCRequest(message: IRPCCallRequest) {
   });
 }
 
-function handleSendToContractApproved(payload: IRPCCallRequest) {
-  const { args, id } = payload;
-  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT, id, args });
-}
-
 function handleContentScriptMessage(event: MessageEvent) {
   if (isMessageNotValid(event, TARGET_NAME.CONTENTSCRIPT)) {
     return;
@@ -67,9 +62,6 @@ function handleContentScriptMessage(event: MessageEvent) {
   switch (message.type) {
     case API_TYPE.RPC_REQUEST:
       handleRPCRequest(message.payload);
-      break;
-    case API_TYPE.RPC_SEND_TO_CONTRACT_APPROVED:
-      handleSendToContractApproved(message.payload);
       break;
     default:
       throw Error(`Contentscript processing invalid type: ${message}`);
