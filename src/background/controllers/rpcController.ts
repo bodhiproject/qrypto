@@ -40,7 +40,7 @@ export default class RPCController extends IController {
       const newArgs = [
         address,
         data,
-        amount || DEFAULT_AMOUNT,
+        (amount || DEFAULT_AMOUNT) * 1e8, // Satoshi format
         gasLimit || DEFAULT_GAS_LIMIT,
         gasPrice || DEFAULT_GAS_PRICE,
       ];
