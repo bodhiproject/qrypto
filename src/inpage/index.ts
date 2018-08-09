@@ -1,5 +1,5 @@
 import { template } from 'lodash';
-import { IExtensionAPIMessage } from '../types';
+import { IExtensionAPIMessage, IRPCCallRequest } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 import { QryptoRPCProvider } from './QryptoRPCProvider';
 import { showModal, closeModal } from './modal';
@@ -26,8 +26,12 @@ Object.assign(window, {
     modal.contentDocument!.querySelector('button')!.addEventListener('click', closeModal);
     return modal;
   },
-  testWindow: () => showSignTxWindow(signTxUrl),
+  // testWindow: () => showSignTxWindow(signTxUrl),
 });
+
+const handleSendToContractRequest = (request: IRPCCallRequest) => {
+  showSignTxWindow(signTxUrl, request);
+};
 
 function handleInpageMessage(event: MessageEvent) {
   if (isMessageNotValid(event, TARGET_NAME.INPAGE)) {
@@ -37,7 +41,7 @@ function handleInpageMessage(event: MessageEvent) {
   const message: IExtensionAPIMessage<any> = event.data.message;
   switch (message.type) {
     case API_TYPE.RPC_SEND_TO_CONTRACT:
-      showSignTxWindow(signTxUrl);
+      handleSendToContractRequest(message.payload);
       break;
     case API_TYPE.RPC_RESONSE:
       return qryptoProvider.handleRpcCallResponse(message.payload);
