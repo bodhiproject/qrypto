@@ -8,6 +8,7 @@ import { postWindowMessage } from '../utils/messenger';
 // Inject scripts
 injectAllScripts();
 
+// Add message listeners
 window.addEventListener('message', handleContentScriptMessage, false);
 chrome.runtime.onMessage.addListener(handleBackgroundScriptMessage);
 

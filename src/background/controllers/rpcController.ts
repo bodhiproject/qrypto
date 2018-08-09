@@ -140,7 +140,7 @@ export default class RPCController extends IController {
     this.sendRpcResponseToActiveTab(id, result, error);
   }
 
-  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+  private handleMessage = (request: any, _: chrome.runtime.MessageSender) => {
     switch (request.type) {
       case MESSAGE_TYPE.EXTERNAL_RAW_CALL:
         this.externalRawCall(request.id, request.method, request.args);

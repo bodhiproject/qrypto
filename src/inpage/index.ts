@@ -9,6 +9,7 @@ import { isMessageNotValid } from '../utils';
 const qryptoProvider: QryptoRPCProvider = new QryptoRPCProvider();
 let signTxUrl: string;
 
+// Add message listeners
 window.addEventListener('message', handleInpageMessage, false);
 
 // expose apis
