@@ -1,8 +1,9 @@
 
 import { injectAllScripts } from './inject';
-import { IExtensionMessageData, IExtensionAPIMessage, IRPCCallRequest } from '../types';
+import { IExtensionAPIMessage, IRPCCallRequest, IRPCCallResponse } from '../types';
 import { TARGET_NAME, API_TYPE, MESSAGE_TYPE, RPC_METHOD } from '../constants';
 import { isMessageNotValid } from '../utils';
+import { postWindowMessage } from '../utils/messenger';
 
 // Inject scripts
 injectAllScripts();
@@ -13,14 +14,6 @@ chrome.runtime.onMessage.addListener(handleBackgroundScriptMessage);
 // const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
 // port.onMessage.addListener(responseExtensionAPI);
 
-function postMessageToInpage<T>(message: IExtensionAPIMessage<T>) {
-  const messagePayload: IExtensionMessageData<typeof message> = {
-    target: TARGET_NAME.INPAGE,
-    message,
-  };
-  window.postMessage(messagePayload, '*');
-}
-
 function handleRPCRequest(message: IRPCCallRequest) {
   const { method, args, id } = message;
 
@@ -28,7 +21,7 @@ function handleRPCRequest(message: IRPCCallRequest) {
   chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME }, (accountName: any) => {
     if (!accountName) {
       // Not logged in, send error response to Inpage
-      postMessageToInpage({
+      postWindowMessage<IRPCCallResponse>(TARGET_NAME.INPAGE, {
         type: API_TYPE.RPC_RESONSE,
         payload: {
           id,
@@ -41,7 +34,7 @@ function handleRPCRequest(message: IRPCCallRequest) {
     switch (method) {
       case RPC_METHOD.SEND_TO_CONTRACT:
         // Inpage shows sign tx popup
-        postMessageToInpage({
+        postWindowMessage<IRPCCallRequest>(TARGET_NAME.INPAGE, {
           type: API_TYPE.RPC_SEND_TO_CONTRACT,
           payload: message,
         });
@@ -74,15 +67,9 @@ function handleContentScriptMessage(event: MessageEvent) {
 function handleBackgroundScriptMessage(message: any) {
   switch (message.type) {
     case MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN:
-      const { id, error, result } = message;
-
-      postMessageToInpage({
+      postWindowMessage<IRPCCallResponse>(TARGET_NAME.INPAGE, {
         type: API_TYPE.RPC_RESONSE,
-        payload: {
-          id,
-          error,
-          result,
-        },
+        payload: message,
       });
       break;
     default:
