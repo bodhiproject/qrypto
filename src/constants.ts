@@ -9,6 +9,11 @@ export enum PORT_NAME {
   CONTENTSCRIPT = 'qrypto-contentscript',
 }
 
+export enum RPC_METHOD {
+  SEND_TO_CONTRACT = 'sendToContract',
+  CALL_CONTRACT = 'callContract',
+}
+
 export enum API_TYPE {
   RPC_REQUEST,
   RPC_RESONSE,
