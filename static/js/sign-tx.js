@@ -1,6 +1,7 @@
 // import { postWindowMessage } from '../../src/utils/messenger';
 // import { TARGET_NAME } from '../../src/constants';
 
+let fromAddress;
 let request;
 
 const updateFields = () => {
@@ -11,6 +12,7 @@ const updateFields = () => {
   const gasPrice = args[4] ? args[4] / 10e8 : 0.0000004;
   const maxTxFee = Math.round(gasLimit * gasPrice * 1000) / 1000;
 
+  document.getElementById('from-field').innerText = fromAddress;
   document.getElementById('to-field').innerText = to;
   document.getElementById('amount-field').innerText = amount;
   document.getElementById('gas-limit-field').innerText = gasLimit;
@@ -23,14 +25,20 @@ const extractReqParams = () => {
   const urlParams = window.location.search.substr(1).split('&');
   urlParams.forEach((param) => {
     const keyValue = param.split('=');
-    if (keyValue.length === 2 && keyValue[0] === 'req') {
-      request = JSON.parse(decodeURIComponent(keyValue[1]));
-      updateFields();
+    if (keyValue.length !== 2) {
       return;
     }
 
-    // TODO: close window cause no request found
+    const key = keyValue[0];
+    if (key === 'req') {
+      request = JSON.parse(decodeURIComponent(keyValue[1]));
+      delete request.account; // Remove the account obj from the raw request
+    } else if (key === 'from') {
+      fromAddress = keyValue[1];
+    }
   });
+
+  updateFields();
 };
 
 const confirmTransaction = () => {
