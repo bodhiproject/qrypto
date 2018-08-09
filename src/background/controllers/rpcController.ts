@@ -118,6 +118,10 @@ export default class RPCController extends IController {
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
   private externalSendToContract = async (id: string, args: any[]) => {
+    if (!this.rpcProvider()) {
+      throw Error('Cannot call RPC without provider.');
+    }
+
     const { result, error } = await this.sendToContract(id, args);
     this.sendRpcResponseToActiveTab(id, result, error);
   }
@@ -128,6 +132,10 @@ export default class RPCController extends IController {
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
   private externalCallContract = async (id: string, args: any[]) => {
+    if (!this.rpcProvider()) {
+      throw Error('Cannot call RPC without provider.');
+    }
+
     const { result, error } = await this.callContract(id, args);
     this.sendRpcResponseToActiveTab(id, result, error);
   }
@@ -135,28 +143,13 @@ export default class RPCController extends IController {
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.EXTERNAL_RAW_CALL:
-        if (this.rpcProvider()) {
-          this.externalRawCall(request.id, request.method, request.args);
-          sendResponse(true);
-        } else {
-          sendResponse(false);
-        }
+        this.externalRawCall(request.id, request.method, request.args);
         break;
       case MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT:
-        if (this.rpcProvider()) {
-          this.externalSendToContract(request.id, request.args);
-          sendResponse(true);
-        } else {
-          sendResponse(false);
-        }
+        this.externalSendToContract(request.id, request.args);
         break;
       case MESSAGE_TYPE.EXTERNAL_CALL_CONTRACT:
-        if (this.rpcProvider()) {
-          this.externalCallContract(request.id, request.args);
-          sendResponse(true);
-        } else {
-          sendResponse(false);
-        }
+        this.externalCallContract(request.id, request.args);
         break;
       default:
         break;

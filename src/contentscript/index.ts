@@ -59,47 +59,39 @@ function postMessageToInpage<T>(message: IExtensionAPIMessage<T>) {
   window.postMessage(messagePayload, '*');
 }
 
-// Not logged in, send error response to Inpage
-function postNotLoggedInMessage(id: string) {
-  postMessageToInpage({
-    type: API_TYPE.RPC_RESONSE,
-    payload: {
-      id,
-      error: 'Not logged in. Please log in to Qrypto first.',
-    },
-  });
-}
-
-function handleRPCCallMessage(messageType: MESSAGE_TYPE, message: IRPCCallRequestPayload) {
+function handleRPCRequest(messageType: MESSAGE_TYPE, message: IRPCCallRequestPayload) {
   const { method, args, id } = message;
 
-  switch (method) {
-    case RPC_METHOD.SEND_TO_CONTRACT:
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME }, (accountName: any) => {
-        if (!accountName) {
-          postNotLoggedInMessage(id);
-          return;
-        }
+  // Check for logged in account first
+  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME }, (accountName: any) => {
+    if (!accountName) {
+      // Not logged in, send error response to Inpage
+      postMessageToInpage({
+        type: API_TYPE.RPC_RESONSE,
+        payload: {
+          id,
+          error: 'Not logged in. Please log in to Qrypto first.',
+        },
+      });
+      return;
+    }
 
+    switch (method) {
+      case RPC_METHOD.SEND_TO_CONTRACT:
+        // Inpage shows sign tx popup
         postMessageToInpage({
           type: API_TYPE.RPC_SEND_TO_CONTRACT,
           payload: message,
         });
-      });
-      break;
-    case RPC_METHOD.CALL_CONTRACT:
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME }, (accountName: any) => {
-        if (!accountName) {
-          postNotLoggedInMessage(id);
-          return;
-        }
-
-        chrome.runtime.sendMessage({ type: messageType, id, method, args });
-      });
-      break;
-    default:
-      throw Error('Unhandled RPC method.');
-  }
+        break;
+      case RPC_METHOD.CALL_CONTRACT:
+        // Background executes callcontract
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.EXTERNAL_CALL_CONTRACT, id, args });
+        break;
+      default:
+        throw Error('Unhandled RPC method.');
+    }
+  });
 }
 
 function handleContentScriptMessage(event: MessageEvent) {
@@ -110,7 +102,7 @@ function handleContentScriptMessage(event: MessageEvent) {
   const message: IExtensionAPIMessage<any> = event.data.message;
   switch (message.type) {
     case API_TYPE.RPC_REQUEST:
-      handleRPCCallMessage(MESSAGE_TYPE.EXTERNAL_RAW_CALL, message.payload);
+      handleRPCRequest(MESSAGE_TYPE.EXTERNAL_RAW_CALL, message.payload);
       break;
     default:
       throw Error(`Contentscript processing invalid type: ${message}`);
