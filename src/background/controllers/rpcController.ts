@@ -3,7 +3,8 @@ import { WalletRPCProvider, Insight } from 'qtumjs-wallet';
 import QryptoController from '.';
 import IController from './iController';
 import { MESSAGE_TYPE } from '../../constants';
-import { IRPCCallResponsePayload } from '../../types';
+import { IRPCCallResponse } from '../../types';
+import Config from '../../config';
 
 export default class RPCController extends IController {
   constructor(main: QryptoController) {
@@ -21,7 +22,7 @@ export default class RPCController extends IController {
   * @param args The arguments that are needed when calling the method.
   * @return The result of the callcontract.
   */
-  public sendToContract = async (id: string, args: any[]): Promise<IRPCCallResponsePayload> => {
+  public sendToContract = async (id: string, args: any[]): Promise<IRPCCallResponse> => {
     let result: any;
     let error: string | undefined;
     try {
@@ -33,7 +34,17 @@ export default class RPCController extends IController {
         throw Error('Requires first two arguments: contractAddress and data.');
       }
 
-      result = await this.main.account.loggedInAccount!.wallet!.sendTransaction(args) as Insight.ISendRawTxResult;
+      // Set default values for amount, gasLimit, and gasPrice if needed
+      const { DEFAULT_AMOUNT, DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE } = Config.TRANSACTION;
+      const [address, data, amount, gasLimit, gasPrice] = args;
+      const newArgs = [
+        address,
+        data,
+        (amount || DEFAULT_AMOUNT) * 1e8, // Satoshi format
+        gasLimit || DEFAULT_GAS_LIMIT,
+        gasPrice || DEFAULT_GAS_PRICE,
+      ];
+      result = await this.main.account.loggedInAccount!.wallet!.sendTransaction(newArgs) as Insight.ISendRawTxResult;
     } catch (err) {
       error = err.message;
       console.error(error);
@@ -47,7 +58,7 @@ export default class RPCController extends IController {
   * @param id Request ID.
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
-  public callContract = async (id: string, args: any[]): Promise<IRPCCallResponsePayload> => {
+  public callContract = async (id: string, args: any[]): Promise<IRPCCallResponse> => {
     let result: any;
     let error: string | undefined;
     try {
@@ -118,6 +129,10 @@ export default class RPCController extends IController {
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
   private externalSendToContract = async (id: string, args: any[]) => {
+    if (!this.rpcProvider()) {
+      throw Error('Cannot call RPC without provider.');
+    }
+
     const { result, error } = await this.sendToContract(id, args);
     this.sendRpcResponseToActiveTab(id, result, error);
   }
@@ -128,35 +143,24 @@ export default class RPCController extends IController {
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
   private externalCallContract = async (id: string, args: any[]) => {
+    if (!this.rpcProvider()) {
+      throw Error('Cannot call RPC without provider.');
+    }
+
     const { result, error } = await this.callContract(id, args);
     this.sendRpcResponseToActiveTab(id, result, error);
   }
 
-  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+  private handleMessage = (request: any, _: chrome.runtime.MessageSender) => {
     switch (request.type) {
       case MESSAGE_TYPE.EXTERNAL_RAW_CALL:
-        if (this.rpcProvider()) {
-          this.externalRawCall(request.id, request.method, request.args);
-          sendResponse(true);
-        } else {
-          sendResponse(false);
-        }
+        this.externalRawCall(request.id, request.method, request.args);
         break;
       case MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT:
-        if (this.rpcProvider()) {
-          this.externalSendToContract(request.id, request.args);
-          sendResponse(true);
-        } else {
-          sendResponse(false);
-        }
+        this.externalSendToContract(request.id, request.args);
         break;
       case MESSAGE_TYPE.EXTERNAL_CALL_CONTRACT:
-        if (this.rpcProvider()) {
-          this.externalCallContract(request.id, request.args);
-          sendResponse(true);
-        } else {
-          sendResponse(false);
-        }
+        this.externalCallContract(request.id, request.args);
         break;
       default:
         break;
