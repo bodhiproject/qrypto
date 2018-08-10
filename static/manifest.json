@@ -1,7 +1,7 @@
 {
   "name": "Qrypto",
   "description": "Qtum light wallet and transaction signing client.",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "manifest_version": 2,
   "icons": {
     "16": "images/qrypto_logo_16.png",
