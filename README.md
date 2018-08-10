@@ -1,9 +1,9 @@
 [![Build Status](https://travis-ci.org/bodhiproject/qrypto.svg?branch=master)](https://travis-ci.org/bodhiproject/qrypto)
 
-# Get Qrypto
+## Get Qrypto
 Chome Web Store: https://chrome.google.com/webstore/detail/qrypto/hdmjdgjbehedbnjmljikggbmmbnbmlnd
 
-# Connecting Qrypto to your Web Dapp
+## Connecting Qrypto to your Web Dapp
 RPC calls can be directly made via our `QryptoProvider` which is injected into every webpage if you have Qrypto installed and running.
 
 **Make sure that `qryptoProvider` is defined before using it.**
@@ -55,7 +55,7 @@ window.qryptoProvider.rawCall(
 ).then((res) => console.log(res));
 ```
 
-# Running Dev Version
+## Running Dev Version
 ### Chrome
 1. `yarn start` in the project folder to build the dev version and wait for it to be built
 2. Open Chrome and load URL: `chrome://extensions`
@@ -65,7 +65,7 @@ window.qryptoProvider.rawCall(
 6. Click `Select`. The extension should now be loaded
 7. Click on the Qrypto logo in your Chrome extensions bar to open
 
-# Security Flow
+## Security Flow
 **First Time Flow**
 1. `appSalt` is generated on a per-install basis
 2. User enters `password` in Login page
