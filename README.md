@@ -1,5 +1,60 @@
 [![Build Status](https://travis-ci.org/bodhiproject/qrypto.svg?branch=master)](https://travis-ci.org/bodhiproject/qrypto)
 
+# Get Qrypto
+Chome Web Store: https://chrome.google.com/webstore/detail/qrypto/hdmjdgjbehedbnjmljikggbmmbnbmlnd
+
+# Connecting Qrypto to your Web Dapp
+RPC calls can be directly made via our `QryptoProvider` which is injected into every webpage if you have Qrypto installed and running.
+
+**Make sure that `qryptoProvider` is defined before using it.**
+
+### Send To Contract
+```
+// sendtocontract
+const contractAddress = '49a941c5259e4e6ef9ac4a2a6716c1717ce0ffb6';
+const data = 'd0821b0e0000000000000000000000000000000000000000000000000000000000000001';
+const qtumAmt = 1; // optional. defaults to 0.
+const gasLimit = 200000; // optional. defaults to 200000.
+const gasPrice = 40; // optional. defaults to 40 (satoshi).
+window.qryptoProvider.rawCall(
+  'sendToContract',
+  [contractAddress, data, qtumAmt, gasLimit, gasPrice],
+);
+
+// Handle incoming messages
+function handleMessage(message) {
+  if (message.data.target == 'qrypto-inpage') {
+    // result: object
+    // error: string
+    const { result, error } = message.data.message.payload;
+    
+    if (error) {
+      if (error === 'Not logged in. Please log in to Qrypto first.') {
+        // Show an alert dialog that the user needs to login first
+        alert(error);
+      } else {
+        // Handle different error than not logged in...
+      }
+      return;
+    }
+
+    // Do something with the message result...
+  }
+}
+window.addEventListener('message', handleMessage, false);
+```
+
+### Call Contract
+```
+// callcontract
+const contractAddress = 'a6dd0b0399dc6162cedde85ed50c6fa4a0dd44f1';
+const data = '06fdde03';
+window.qryptoProvider.rawCall(
+  'callContract',
+  [contractAddress, data]
+).then((res) => console.log(res));
+```
+
 # Running Dev Version
 ### Chrome
 1. `yarn start` in the project folder to build the dev version and wait for it to be built
