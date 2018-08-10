@@ -10,6 +10,7 @@
     "128": "images/qrypto_logo_128.png"
   },
   "browser_action": {
+    "default_title": "Qrypto",
     "default_icon": "images/qrypto_logo_128.png",
     "default_popup": "popup.html"
   },
