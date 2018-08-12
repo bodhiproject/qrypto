@@ -12,6 +12,7 @@ import Transaction from '../../../models/Transaction';
 import AccountInfo from '../../components/AccountInfo';
 import AppStore from '../../stores/AppStore';
 import QRCToken from '../../../models/QRCToken';
+import { shortenTxid } from '../../../utils';
 
 interface IProps {
   classes: Record<string, string>;
@@ -74,13 +75,6 @@ class AccountDetail extends Component<WithStyles & IProps, {}> {
     );
   }
 }
-
-const shortenTxid = (txid?: string) => {
-  if (!txid) {
-    return '';
-  }
-  return `${txid.substr(0, 6)}...${txid.substr(txid.length - 6, txid.length)}`;
-};
 
 const TransactionList: SFC<any> = observer(({ classes, store: { accountDetailStore } }: any) => (
   <div>

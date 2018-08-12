@@ -100,3 +100,16 @@ export const encodeDataHex = (abi: any[], methodName: string, args: any[]): stri
   const methodObj = find(contract.abi, { name: methodName });
   return contract.constructDataHex(methodObj, args);
 };
+
+/*
+* Formats and returns an ellipsized txid.
+* @param txid Transaction ID.
+* @return Ellipsized transaction ID.
+*/
+export const shortenTxid = (txid?: string) => {
+  if (!txid) {
+    return '';
+  }
+  const charToShow = 5;
+  return `${txid.substr(0, charToShow)}...${txid.substr(txid.length - charToShow, txid.length)}`;
+};
