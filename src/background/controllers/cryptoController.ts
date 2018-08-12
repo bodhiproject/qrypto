@@ -11,8 +11,6 @@ const INIT_VALUES = {
 };
 
 export default class CryptoController extends IController {
-  private static SCRYPT_PARAMS_PW: any = { N: 131072, r: 8, p: 1 };
-
   public get validPasswordHash(): string {
     if (!this.passwordHash) {
       throw Error('passwordHash should be defined');

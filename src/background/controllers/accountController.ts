@@ -4,6 +4,7 @@ import { Wallet as QtumWallet } from 'qtumjs-wallet';
 import QryptoController from '.';
 import IController from './iController';
 import { MESSAGE_TYPE, STORAGE } from '../../constants';
+import Config from '../../config';
 import Account from '../../models/Account';
 import Wallet from '../../models/Wallet';
 
@@ -15,7 +16,6 @@ const INIT_VALUES = {
 };
 
 export default class AccountController extends IController {
-  private static SCRYPT_PARAMS_PRIV_KEY: any = { N: 8192, r: 8, p: 1 };
   private static GET_INFO_INTERVAL_MS: number = 30000;
 
   public get accounts(): Account[] {
@@ -240,7 +240,7 @@ export default class AccountController extends IController {
         const wallet = network.fromMnemonic(mnemonic);
         const privateKeyHash = wallet.toEncryptedPrivateKey(
           this.main.crypto.validPasswordHash,
-          AccountController.SCRYPT_PARAMS_PRIV_KEY,
+          Config.SCRYPT_PARAMS.PRIVATE_KEY,
         );
         resolve({ privateKeyHash, wallet });
       } catch (e) {
@@ -258,7 +258,7 @@ export default class AccountController extends IController {
     return network.fromEncryptedPrivateKey(
       privateKeyHash,
       this.main.crypto.validPasswordHash,
-      AccountController.SCRYPT_PARAMS_PRIV_KEY,
+      Config.SCRYPT_PARAMS.PRIVATE_KEY,
     );
   }
 
