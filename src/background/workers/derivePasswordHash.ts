@@ -11,7 +11,7 @@ const derivePasswordHash = async (appSalt: string, password: string): Promise<an
   const passwordHash = derivedKey.toString('hex');
   postMessage({
 
-  }, TARGET_NAME.DERIVE_PW_HASH_WORKER);
+  }, TARGET_NAME.PASSWORD_HASH_WORKER);
 };
 
 self.addEventListener('message', (event) => {
