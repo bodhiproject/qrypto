@@ -2,6 +2,7 @@ export enum TARGET_NAME {
   INPAGE = 'qrypto-inpage',
   CONTENTSCRIPT = 'qrypto-contentscript',
   BACKGROUND = 'qrypto-background',
+  DERIVE_PW_HASH_WORKER = 'qrypto-derive-pw-hash-worker',
 }
 
 export enum PORT_NAME {
