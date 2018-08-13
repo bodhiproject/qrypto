@@ -45,7 +45,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   mnemonicPrKeyTextField: {
     flex: 1,
-    marginBottom: theme.padding.md,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
@@ -53,6 +52,9 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     padding: theme.padding.sm,
     fontSize: theme.font.md,
     lineHeight: theme.lineHeight.md,
+  },
+  borderTextFieldContainer: {
+    marginTop: theme.padding.md,
   },
   importButton: {
     height: theme.button.lg.height,

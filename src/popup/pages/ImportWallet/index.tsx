@@ -53,13 +53,14 @@ class ImportWallet extends Component<WithStyles & IProps, IState> {
               {!!importStore.mnemonicPrivateKey && importStore.privateKeyError && (
                 <Typography className={classes.errorText}>{importStore.privateKeyError}</Typography>
               )}
-              <BorderTextField
-                placeholder="Wallet name"
-                error={importStore.walletNameTaken}
-                errorText={importStore.walletNameError}
-                onChange={(e: any) => importStore.accountName = e.target.value}
-                onEnterPress={importStore.importMnemonicOrPrKey}
-              />
+                <BorderTextField
+                  classNames = {classes.borderTextFieldContainer}
+                  placeholder="Wallet name"
+                  error={importStore.walletNameTaken}
+                  errorText={importStore.walletNameError}
+                  onChange={(e: any) => importStore.accountName = e.target.value}
+                  onEnterPress={importStore.importMnemonicOrPrKey}
+                />
             </div>
           </div>
           <div>
