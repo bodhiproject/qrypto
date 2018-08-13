@@ -1,6 +1,9 @@
 import { isFinite, find } from 'lodash';
 const { Contract } = require('qweb3');
 
+import * as WifLib from 'wif';
+import * as secp256k1 from 'secp256k1';
+
 import { TARGET_NAME } from '../constants';
 import { IExtensionMessageData } from '../types';
 
@@ -28,34 +31,39 @@ export const generateRandomId = (): string => {
 
 /*
 * Validates the Qtum address based on length and starting character.
-* @param isMainnet {boolean} Flag if is a mainnet address (or else testnet address).
+* @param isMainNet {boolean} Flag if is a mainnet address (or else testnet address).
 * @param address {string} The Qtum address to validate.
 * @return {boolean} Returns if it is a valid Qtum address.
 */
-export const isValidAddress = (isMainnet: boolean, address?: string) => {
+export const isValidAddress = (isMainNet: boolean, address?: string) => {
   if (!address) {
     return false;
   }
   if (address.length !== 34) {
     return false;
   }
-  if (isMainnet) {
+  if (isMainNet) {
     return address.startsWith('Q');
   }
   return address.startsWith('q');
 };
 
-export const isValidPrivateKey = (isMainnet: boolean, address?: string) => {
+export const isValidPrivateKey = (address?: string) => {
   if (!address) {
     return false;
   }
   if (address.length !== 52) {
     return false;
   }
-  if (isMainnet) {
-    return address.startsWith('K');
+
+  try {
+    const decoded = WifLib.decode(address);
+    const isValid = secp256k1.privateKeyVerify(decoded.privateKey);
+    return isValid;
+  } catch (e) {
+    console.log('Private Key Invalid', e);
+    return false;
   }
-  return address.startsWith('c');
 };
 
 export const isValidContractAddressLength = (address?: string) => {

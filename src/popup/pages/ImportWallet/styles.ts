@@ -22,22 +22,37 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     flex: 1,
   },
   fieldContainer: {
-    width: '100%',
+    flex: 1,
     display: 'flex',
     flexDirection: 'column',
+    marginBottom: theme.padding.md,
   },
-  privateKeyTextField: {
-    flex: 1,
+  fieldHeading: {
+    marginBottom: theme.padding.unit,
+    fontSize: theme.font.sm,
+    fontWeight: 'bold',
+  },
+  fieldContentContainer: {
+    padding: theme.padding.sm,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
-  privateKeyFieldInput: {
+  typeSelect: {
+    width: '100%',
+  },
+  menuItemTypography: {
+    fontSize: theme.font.md,
+  },
+  mnemonicPrKeyTextField: {
+    flex: 1,
+    marginBottom: theme.padding.md,
+    border: theme.border.root,
+    borderRadius: theme.border.radius,
+  },
+  mnemonicPrKeyFieldInput: {
     padding: theme.padding.sm,
     fontSize: theme.font.md,
-    lineHeight: '20px',
-  },
-  borderTextFieldContainer: {
-    marginTop: theme.padding.md,
+    lineHeight: theme.lineHeight.md,
   },
   importButton: {
     height: theme.button.lg.height,

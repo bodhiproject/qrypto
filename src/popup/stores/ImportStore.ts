@@ -1,37 +1,38 @@
 import { observable, action, computed, reaction } from 'mobx';
 import { isEmpty } from 'lodash';
 
-import AppStore, { store } from './AppStore';
+import AppStore from './AppStore';
 import { isValidPrivateKey } from '../../utils';
-import { MESSAGE_TYPE } from '../../constants';
+import { MESSAGE_TYPE, IMPORT_TYPE } from '../../constants';
 
 const INIT_VALUES = {
-  mnemonic: '',
-  privateKey: '',
+  mnemonicPrivateKey: '',
   accountName: '',
   walletNameTaken: false,
-  importMnemonicFailed: false,
-  importPrivateKeyFailed: false,
+  importMnemonicPrKeyFailed: false,
+  importType: IMPORT_TYPE.MNEMONIC,
 };
 
 export default class ImportStore {
-  @observable public mnemonic: string = INIT_VALUES.mnemonic;
-  @observable public privateKey: string = INIT_VALUES.privateKey;
+  // User input field, could be mnemonic or privateKey, depending on importType
+  @observable public mnemonicPrivateKey: string = INIT_VALUES.mnemonicPrivateKey;
   @observable public accountName: string = INIT_VALUES.accountName;
   @observable public walletNameTaken: boolean = INIT_VALUES.walletNameTaken;
-  @observable public importMnemonicFailed: boolean = INIT_VALUES.importMnemonicFailed;
-  @observable public importPrivateKeyFailed: boolean = INIT_VALUES.importPrivateKeyFailed;
+  @observable public importMnemonicPrKeyFailed: boolean = INIT_VALUES.importMnemonicPrKeyFailed;
+  @observable public importType: string = INIT_VALUES.importType;
+
   @computed public get walletNameError(): string | undefined {
     return this.walletNameTaken ? 'Wallet name is taken' : undefined;
   }
-  @computed public get mnemonicPageError(): boolean {
-    return [this.mnemonic, this.accountName].some(isEmpty) || !!this.walletNameError;
-  }
-  @computed public get privateKeyPageError(): boolean {
-    return [this.privateKey, this.accountName].some(isEmpty) || !!this.walletNameError;
+  @computed public get mnemonicPrKeyPageError(): boolean {
+      return [this.mnemonicPrivateKey, this.accountName].some(isEmpty) || !!this.walletNameError;
   }
   @computed public get privateKeyError(): string | undefined {
-    return isValidPrivateKey(store.sessionStore.isMainNet, this.privateKey) ? undefined : 'Not a valid private key';
+    if (this.importType === IMPORT_TYPE.PRIVATE_KEY) {
+      return isValidPrivateKey(this.mnemonicPrivateKey) ? undefined : 'Not a valid private key';
+    } else {
+      return undefined;
+    }
   }
 
   private app: AppStore;
@@ -49,31 +50,33 @@ export default class ImportStore {
   }
 
   @action
-  public reset = () => Object.assign(this, INIT_VALUES)
+  public changeImportType = (type: string) => {
+    this.importType = type;
+  }
 
   @action
-  public importMnemonic = () => {
-    if (!this.mnemonicPageError) {
+  public reset = () => {
+    const tempImportType = this.importType;
+    Object.assign(this, INIT_VALUES);
+    this.importType = tempImportType;
+  }
+
+  @action
+  public importMnemonicOrPrKey = () => {
+    if (!this.mnemonicPrKeyPageError) {
       this.app.routerStore.push('/loading');
+      const msgType = this.importType === IMPORT_TYPE.MNEMONIC
+        ? MESSAGE_TYPE.IMPORT_MNEMONIC : MESSAGE_TYPE.IMPORT_PRIVATE_KEY;
       chrome.runtime.sendMessage({
-        type: MESSAGE_TYPE.IMPORT_MNEMONIC,
+        type: msgType,
         accountName: this.accountName,
-        mnemonic: this.mnemonic,
+        mnemonicPrivateKey: this.mnemonicPrivateKey,
       });
     }
   }
 
-  public importPrivateKey = () => {
-    if (!this.privateKeyPageError) {
-      this.app.routerStore.push('/loading');
-      chrome.runtime.sendMessage({
-        type: MESSAGE_TYPE.IMPORT_PRIVATE_KEY,
-        accountName: this.accountName,
-        privateKey: this.privateKey,
-      });
-    }
-  }
-
   @action
-  public cancelImport = () => this.app.routerStore.goBack()
+  public cancelImport = () => {
+    this.app.routerStore.push('/create-wallet');
+  }
 }

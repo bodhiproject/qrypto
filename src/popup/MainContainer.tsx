@@ -7,8 +7,7 @@ import Loading from './components/Loading';
 import Login from './pages/Login';
 import CreateWallet from './pages/CreateWallet';
 import SaveMnemonic from './pages/SaveMnemonic';
-import ImportMnemonic from './pages/ImportMnemonic';
-import ImportPrivateKey from './pages/ImportPrivateKey';
+import ImportWallet from './pages/ImportWallet';
 import AccountLogin from './pages/AccountLogin';
 import Settings from './pages/Settings';
 import Home from './pages/Home';
@@ -47,8 +46,7 @@ export default class MainContainer extends Component<IProps, {}> {
             <Route exact path="/login" component={Login} />
             <Route exact path="/create-wallet" component={CreateWallet} />
             <Route exact path="/save-mnemonic" component={SaveMnemonic} />
-            <Route exact path="/import-mnemonic" component={ImportMnemonic} />
-            <Route exact path="/import-private-key" component={ImportPrivateKey} />
+            <Route exact path="/import-wallet" component={ImportWallet} />
             <Route exact path="/account-login" component={AccountLogin} />
             <Route exact path="/settings" component={Settings} />
             <Route exact path="/home" component={Home} />
@@ -87,14 +85,9 @@ export default class MainContainer extends Component<IProps, {}> {
         history.push('/create-wallet');
         break;
 
-      case MESSAGE_TYPE.IMPORT_MNEMONIC_FAILURE:
-        importStore.importMnemonicFailed = true;
-        history.push('/import-mnemonic');
-        break;
-
-        case MESSAGE_TYPE.IMPORT_PRIVATE_KEY_FAILURE:
-        importStore.invalidPrivateKey = true;
-        history.push('/import-private-key');
+      case MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE:
+        importStore.importMnemonicPrKeyFailed = true;
+        history.push('/import-wallet');
         break;
 
       default:

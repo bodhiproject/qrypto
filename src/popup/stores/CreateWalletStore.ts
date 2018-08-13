@@ -44,12 +44,7 @@ export default class CreateWalletStore {
   }
 
   @action
-  public routeToImportMnemonic = () => {
-    this.app.routerStore.push('/import-mnemonic');
-  }
-
-  @action
-  public routeToImportPrivateKey = () => {
-    this.app.routerStore.push('/import-private-key');
+  public routeToImportWallet = () => {
+    this.app.routerStore.push('/import-wallet');
   }
 }

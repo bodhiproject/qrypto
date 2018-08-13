@@ -30,9 +30,8 @@ export enum MESSAGE_TYPE {
   LOGIN_FAILURE,
   SAVE_TO_FILE,
   IMPORT_MNEMONIC,
-  IMPORT_MNEMONIC_FAILURE,
   IMPORT_PRIVATE_KEY,
-  IMPORT_PRIVATE_KEY_FAILURE,
+  IMPORT_MNEMONIC_PRKEY_FAILURE,
   ACCOUNT_LOGIN,
   ACCOUNT_LOGIN_SUCCESS,
   START_TX_POLLING,
@@ -84,6 +83,11 @@ export enum STORAGE {
   LOGGED_IN_ACCOUNT = 'loggedInAccount',
   NETWORK_INDEX = 'networkIndex',
   ACCOUNT_TOKEN_LIST = 'accountTokenList',
+}
+
+export enum IMPORT_TYPE {
+  MNEMONIC = 'seed phrase',
+  PRIVATE_KEY = 'private key',
 }
 
 export enum SEND_STATE {

@@ -135,7 +135,7 @@ export default class AccountController extends IController {
       // Validate that we don't already have the wallet in our accountList
       const exists = await this.walletAlreadyExists(privateKeyHash);
       if (exists) {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_FAILURE });
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
         return;
       }
 
@@ -161,7 +161,7 @@ export default class AccountController extends IController {
       // validate that we don't already have the wallet in our accountList accountList
       const exists = await this.walletAlreadyExists(privateKeyHash);
       if (exists) {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_PRIVATE_KEY_FAILURE });
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
         return;
       }
 
@@ -366,10 +366,10 @@ export default class AccountController extends IController {
         this.login(request.password);
         break;
       case MESSAGE_TYPE.IMPORT_MNEMONIC:
-        this.importMnemonic(request.accountName, request.mnemonic);
+        this.importMnemonic(request.accountName, request.mnemonicPrivateKey);
         break;
       case MESSAGE_TYPE.IMPORT_PRIVATE_KEY:
-        this.importPrivateKey(request.accountName, request.privateKey);
+        this.importPrivateKey(request.accountName, request.mnemonicPrivateKey);
         break;
       case MESSAGE_TYPE.SAVE_TO_FILE:
         this.saveToFile(request.accountName, request.mnemonic);
