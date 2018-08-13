@@ -3,8 +3,9 @@ import { isEmpty, split } from 'lodash';
 
 import QryptoController from '.';
 import IController from './iController';
-import { STORAGE } from '../../constants';
+import { STORAGE, TARGET_NAME } from '../../constants';
 import Config from '../../config';
+import Worker from '../workers/passwordHash.worker.js';
 
 const INIT_VALUES = {
   appSalt: undefined,
@@ -66,23 +67,33 @@ export default class CryptoController extends IController {
   * @return Undefined or error.
   */
   public derivePasswordHash = async (password: string): Promise<any> => {
-    return new Promise((resolve: any, reject: any) => {
-      setTimeout(() => {
-        try {
-          if (!this.appSalt) {
-            throw Error('appSalt should not be empty');
-          }
-
-          const saltBuffer = Buffer.from(this.appSalt!);
-          const { N, r, p } = Config.SCRYPT_PARAMS.PASSWORD;
-          const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
-          this.passwordHash = derivedKey.toString('hex');
-
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      }, 100);
+    const worker = new Worker();
+    worker.onmessage = (event) => {
+      console.log(event);
+    };
+    worker.postMessage({
+      target: TARGET_NAME.PASSWORD_HASH_WORKER,
+      appSalt: this.appSalt,
+      password,
     });
+
+    // return new Promise((resolve: any, reject: any) => {
+    //   setTimeout(() => {
+    //     try {
+    //       if (!this.appSalt) {
+    //         throw Error('appSalt should not be empty');
+    //       }
+
+    //       const saltBuffer = Buffer.from(this.appSalt!);
+    //       const { N, r, p } = Config.SCRYPT_PARAMS.PASSWORD;
+    //       const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
+    //       this.passwordHash = derivedKey.toString('hex');
+
+    //       resolve();
+    //     } catch (err) {
+    //       reject(err);
+    //     }
+    //   }, 100);
+    // });
   }
 }

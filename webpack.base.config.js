@@ -98,6 +98,14 @@ module.exports = {
             ),
           },
           {
+            test: /\.worker\.js$/,
+            // use: { loader: 'worker-loader' },
+            loader: 'worker-loader',
+            options: {
+              name: 'worker.js',
+            },
+          },
+          {
             loader: require.resolve('file-loader'),
             exclude: [/\.js$/, /\.html$/, /\.json$/],
             options: {
