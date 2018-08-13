@@ -117,6 +117,11 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     minHeight: 0,
     padding: `0px ${theme.padding.unit}`,
   },
+  amountInfo: {
+    display: 'flex',
+    width: '100px',
+    justifyContent: 'flex-end',
+  },
 });
 
 export default styles;

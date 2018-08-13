@@ -156,7 +156,7 @@ const TokenList: SFC<any> = observer(({ classes,
 ));
 
 const AmountInfo: SFC<any> = ({ classes, amount, token }: any) => (
-  <div>
+  <div className={classes.amountInfo}>
     <div className={classes.tokenContainer}>
       <Typography className={classes.tokenAmount}>{isUndefined(amount) ? '...' : amount}</Typography>
       <div className={classes.tokenTypeContainer}>
