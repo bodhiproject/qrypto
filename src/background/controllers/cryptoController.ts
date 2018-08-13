@@ -4,6 +4,7 @@ import { isEmpty, split } from 'lodash';
 import QryptoController from '.';
 import IController from './iController';
 import { STORAGE } from '../../constants';
+import Config from '../../config';
 
 const INIT_VALUES = {
   appSalt: undefined,
@@ -73,7 +74,7 @@ export default class CryptoController extends IController {
           }
 
           const saltBuffer = Buffer.from(this.appSalt!);
-          const { N, r, p } = CryptoController.SCRYPT_PARAMS_PW;
+          const { N, r, p } = Config.SCRYPT_PARAMS.PASSWORD;
           const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
           this.passwordHash = derivedKey.toString('hex');
 
