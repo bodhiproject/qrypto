@@ -11,7 +11,7 @@ export enum PORT_NAME {
 
 export enum RPC_METHOD {
   SEND_TO_CONTRACT = 'sendToContract',
-  CALL_CONTRACT = 'callContract',
+  CALL_CONTRACT = 'callcontract',
 }
 
 export enum API_TYPE {

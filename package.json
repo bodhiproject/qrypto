@@ -71,7 +71,7 @@
     "moment": "^2.22.2",
     "qrcode.react": "^0.8.0",
     "qtumjs-wallet": "^0.0.15",
-    "qweb3": "^0.8.1",
+    "qweb3": "^1.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-svg": "^5.0.12",
