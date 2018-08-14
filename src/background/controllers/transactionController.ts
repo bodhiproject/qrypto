@@ -1,5 +1,5 @@
 import { Insight } from 'qtumjs-wallet';
-import { map, find, partition, sumBy, includes } from 'lodash';
+import { map, find, partition, sumBy, includes, round } from 'lodash';
 import moment from 'moment';
 
 import QryptoController from '.';
@@ -117,7 +117,7 @@ export default class TransactionController extends IController {
         id: txid,
         timestamp: moment(new Date(time * 1000)).format('MM-DD-YYYY, HH:mm'),
         confirmations,
-        amount,
+        amount: round(amount, 8),
       });
     });
   }

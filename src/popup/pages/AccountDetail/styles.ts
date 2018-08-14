@@ -24,6 +24,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   list: {
     flex: 1,
     padding: `0 ${theme.padding.md}`,
+    overflowX: 'hidden',
     overflowY: 'auto',
   },
   listItem: {
