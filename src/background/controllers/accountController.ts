@@ -135,7 +135,7 @@ export default class AccountController extends IController {
       // Validate that we don't already have the wallet in our accountList
       const exists = await this.walletAlreadyExists(privateKeyHash);
       if (exists) {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_WALLET_FAILURE });
         return;
       }
 
@@ -161,7 +161,7 @@ export default class AccountController extends IController {
       // validate that we don't already have the wallet in our accountList accountList
       const exists = await this.walletAlreadyExists(privateKeyHash);
       if (exists) {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_WALLET_FAILURE });
         return;
       }
 

@@ -1,8 +1,8 @@
 import { isFinite, find } from 'lodash';
 const { Contract } = require('qweb3');
 
-import * as WifLib from 'wif';
-import * as secp256k1 from 'secp256k1';
+import { decode } from 'wif';
+import { privateKeyVerify } from 'secp256k1';
 
 import { TARGET_NAME } from '../constants';
 import { IExtensionMessageData } from '../types';
@@ -57,11 +57,11 @@ export const isValidPrivateKey = (address?: string) => {
   }
 
   try {
-    const decoded = WifLib.decode(address);
-    const isValid = secp256k1.privateKeyVerify(decoded.privateKey);
+    const decoded = decode(address);
+    const isValid = privateKeyVerify(decoded.privateKey);
     return isValid;
   } catch (e) {
-    console.log('Private Key Invalid', e);
+    console.error('Private Key Invalid', e);
     return false;
   }
 };
