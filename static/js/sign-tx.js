@@ -6,7 +6,7 @@ const updateFields = () => {
   const to = args[0];
   const amount = args[2] || 0;
   const gasLimit = args[3] || 200000;
-  const gasPrice = args[4] ? args[4] / 10e8 : 0.0000004;
+  const gasPrice = args[4] ? args[4] : 0.0000004;
   const maxTxFee = Math.round(gasLimit * gasPrice * 1000) / 1000;
 
   document.getElementById('from-field').innerText = fromAddress;
@@ -40,6 +40,7 @@ const extractReqParams = () => {
 
 const confirmTransaction = () => {
   const { id, args } = request;
+  // TODO: change to use string instead of enum number for type
   chrome.runtime.sendMessage({
     type: 27, // MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT
     id,

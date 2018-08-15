@@ -21,6 +21,7 @@ export enum API_TYPE {
   RPC_SEND_TO_CONTRACT,
 }
 
+// TODO: change to string enums
 export enum MESSAGE_TYPE {
   ROUTE_LOGIN,
   RESTORE_SESSION,
