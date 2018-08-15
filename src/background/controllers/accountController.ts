@@ -97,10 +97,9 @@ export default class AccountController extends IController {
   * @param accountName The account name for the new wallet account.
   * @param mnemonic The mnemonic to derive the wallet from.
   */
-  public addAccountAndLogin = async (accountName: string, mnemonic: string) => {
-    const walletObj = await this.recoverFromMnemonic(mnemonic);
-    this.loggedInAccount = new Account(accountName, walletObj.privateKeyHash);
-    this.loggedInAccount.wallet = new Wallet(walletObj.wallet);
+  public addAccountAndLogin = async (accountName: string, privateKeyHash: string, wallet: QtumWallet) => {
+    this.loggedInAccount = new Account(accountName, privateKeyHash);
+    this.loggedInAccount.wallet = new Wallet(wallet);
 
     // Prune the wallet object before storing it
     const prunedAcct = cloneDeep(this.loggedInAccount);
@@ -128,13 +127,48 @@ export default class AccountController extends IController {
   * @param mnemonic The mnemonic to derive the wallet from.
   */
   public importMnemonic = async (accountName: string, mnemonic: string) => {
-    const isTaken = await this.isWalletMnemonicTaken(mnemonic);
-    if (isTaken) {
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_FAILURE });
-      return;
-    }
+    try {
+      const network = this.main.network.network;
+      const wallet = network.fromMnemonic(mnemonic);
+      const privateKeyHash = this.getPrivateKeyHash(wallet);
 
-    await this.addAccountAndLogin(accountName, mnemonic);
+      // Validate that we don't already have the wallet in our accountList
+      const exists = await this.walletAlreadyExists(privateKeyHash);
+      if (exists) {
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
+        return;
+      }
+
+      await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
+    } catch (e) {
+      // TODO - Create error handling on ui side
+      console.log(e);
+    }
+  }
+
+  /*
+  * Imports a new wallet from private key.
+  * @param accountName The account name for the new wallet account.
+  * @param privateKey The private key to derive the wallet from.
+  */
+  public importPrivateKey = async (accountName: string, privateKey: string) => {
+    try {
+      // recover wallet and privateKeyHash
+      const network = this.main.network.network;
+      const wallet = network.fromWIF(privateKey);
+      const privateKeyHash = this.getPrivateKeyHash(wallet);
+
+      // validate that we don't already have the wallet in our accountList accountList
+      const exists = await this.walletAlreadyExists(privateKeyHash);
+      if (exists) {
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
+        return;
+      }
+
+      await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   /*
@@ -158,7 +192,7 @@ export default class AccountController extends IController {
     element.download = `qrypto_${accountName}_${timestamp}.bak`;
     element.click();
 
-    this.addAccountAndLogin(accountName, mnemonic);
+    this.importMnemonic(accountName, mnemonic);
   }
 
   /*
@@ -200,7 +234,7 @@ export default class AccountController extends IController {
   public routeToAccountPage = () => {
     const accounts = this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     if (isEmpty(accounts)) {
-      // Account not found, route to Create Wallet page
+      // Accounts not found, route to Create Wallet page
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS });
     } else {
       // Accounts found, route to Account Login page
@@ -230,26 +264,6 @@ export default class AccountController extends IController {
   }
 
   /*
-  * Recovers the wallet from mnemonic.
-  * @return Private key hash and wallet instance or exception thrown.
-  */
-  private recoverFromMnemonic = async (mnemonic: string): Promise<any> => {
-    return new Promise<any>((resolve, reject) => {
-      try {
-        const network = this.main.network.network;
-        const wallet = network.fromMnemonic(mnemonic);
-        const privateKeyHash = wallet.toEncryptedPrivateKey(
-          this.main.crypto.validPasswordHash,
-          AccountController.SCRYPT_PARAMS_PRIV_KEY,
-        );
-        resolve({ privateKeyHash, wallet });
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-
-  /*
   * Recovers the wallet instance from an encrypted private key.
   * @param privateKeyHash The private key hash to recover the wallet from.
   */
@@ -257,6 +271,13 @@ export default class AccountController extends IController {
     const network = this.main.network.network;
     return network.fromEncryptedPrivateKey(
       privateKeyHash,
+      this.main.crypto.validPasswordHash,
+      AccountController.SCRYPT_PARAMS_PRIV_KEY,
+    );
+  }
+
+  private getPrivateKeyHash(wallet: QtumWallet) {
+    return wallet.toEncryptedPrivateKey(
       this.main.crypto.validPasswordHash,
       AccountController.SCRYPT_PARAMS_PRIV_KEY,
     );
@@ -286,12 +307,11 @@ export default class AccountController extends IController {
   }
 
   /*
-  * Checks if a wallet mnemonic has already been taken.
-  * @param mnemonic The wallet mnemonic to check.
-  * @return Has the mnemonic been used.
+  * Checks if a wallet is already in the mainnet or testnet accounts list.
+  * @param privateKeyHash Unique and deterministic for each wallet.
+  * @return does the wallet already exist.
   */
-  private isWalletMnemonicTaken = async (mnemonic: string): Promise<boolean> => {
-    const privateKeyHash = (await this.recoverFromMnemonic(mnemonic)).privateKeyHash;
+  private walletAlreadyExists = async (privateKeyHash: string): Promise<boolean> => {
     const accounts = this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
     return !!find(accounts, { privateKeyHash });
   }
@@ -346,10 +366,10 @@ export default class AccountController extends IController {
         this.login(request.password);
         break;
       case MESSAGE_TYPE.IMPORT_MNEMONIC:
-        this.importMnemonic(request.accountName, request.mnemonic);
+        this.importMnemonic(request.accountName, request.mnemonicPrivateKey);
         break;
-      case MESSAGE_TYPE.CREATE_WALLET:
-        this.addAccountAndLogin(request.accountName, request.mnemonic);
+      case MESSAGE_TYPE.IMPORT_PRIVATE_KEY:
+        this.importPrivateKey(request.accountName, request.mnemonicPrivateKey);
         break;
       case MESSAGE_TYPE.SAVE_TO_FILE:
         this.saveToFile(request.accountName, request.mnemonic);

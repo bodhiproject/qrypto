@@ -13,8 +13,7 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     borderRadius: theme.border.radius,
   },
   textFieldInput: {
-    fontSize: theme.font.sm,
-    fontWeight: theme.fontWeight.bold,
+    fontSize: theme.font.md,
   },
   errorText: {
     fontSize: theme.font.xs,

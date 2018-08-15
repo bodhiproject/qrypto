@@ -21,26 +21,40 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   inputContainer: {
     flex: 1,
   },
-  importHeading: {
-    fontSize: 20,
-    fontWeight: theme.fontWeight.bold,
-    marginBottom: theme.padding.sm,
-  },
   fieldContainer: {
-    width: '100%',
+    flex: 1,
     display: 'flex',
     flexDirection: 'column',
-  },
-  mnemonicTextField: {
-    flex: 1,
     marginBottom: theme.padding.md,
+  },
+  fieldHeading: {
+    marginBottom: theme.padding.unit,
+    fontSize: theme.font.sm,
+    fontWeight: 'bold',
+  },
+  fieldContentContainer: {
+    padding: theme.padding.sm,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
-  mnemonicFieldInput: {
+  typeSelect: {
+    width: '100%',
+  },
+  menuItemTypography: {
+    fontSize: theme.font.md,
+  },
+  mnemonicPrKeyTextField: {
+    flex: 1,
+    border: theme.border.root,
+    borderRadius: theme.border.radius,
+  },
+  mnemonicPrKeyFieldInput: {
     padding: theme.padding.sm,
-    fontSize: theme.font.lg,
-    lineHeight: '20px',
+    fontSize: theme.font.md,
+    lineHeight: theme.lineHeight.md,
+  },
+  borderTextFieldContainer: {
+    marginTop: theme.padding.md,
   },
   importButton: {
     height: theme.button.lg.height,
@@ -51,6 +65,11 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   cancelButton: {
     minHeight: 0,
     padding: 0,
+  },
+  errorText: {
+    fontSize: theme.font.xs,
+    color: theme.color.red,
+    marginTop: theme.padding.unit,
   },
 });
 

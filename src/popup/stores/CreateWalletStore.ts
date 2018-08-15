@@ -45,6 +45,6 @@ export default class CreateWalletStore {
 
   @action
   public routeToImportWallet = () => {
-    this.app.routerStore.push('/import');
+    this.app.routerStore.push('/import-wallet');
   }
 }

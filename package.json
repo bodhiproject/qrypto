@@ -61,6 +61,7 @@
     "@types/lodash": "^4.14.110",
     "@types/qrcode.react": "^0.8.0",
     "@types/scryptsy": "^2.0.0",
+    "@types/secp256k1": "^3.5.0",
     "axios": "^0.18.0",
     "chrome-call": "^3.0.0",
     "classnames": "^2.2.6",
@@ -73,6 +74,8 @@
     "qweb3": "^0.8.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-svg": "^5.0.12"
+    "react-svg": "^5.0.12",
+    "secp256k1": "^3.5.0",
+    "wif": "^2.0.6"
   }
 }

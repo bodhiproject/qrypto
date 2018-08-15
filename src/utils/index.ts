@@ -1,6 +1,9 @@
 import { isFinite, find } from 'lodash';
 const { Contract } = require('qweb3');
 
+import { decode } from 'wif';
+import { privateKeyVerify } from 'secp256k1';
+
 import { TARGET_NAME } from '../constants';
 import { IExtensionMessageData } from '../types';
 
@@ -28,21 +31,39 @@ export const generateRandomId = (): string => {
 
 /*
 * Validates the Qtum address based on length and starting character.
-* @param isTestnet {boolean} Flag if is a testnet address (or else mainnet address).
+* @param isMainNet {boolean} Flag if is a mainnet address (or else testnet address).
 * @param address {string} The Qtum address to validate.
 * @return {boolean} Returns if it is a valid Qtum address.
 */
-export const isValidAddress = (isTestnet: boolean, address?: string) => {
+export const isValidAddress = (isMainNet: boolean, address?: string) => {
   if (!address) {
     return false;
   }
   if (address.length !== 34) {
     return false;
   }
-  if (isTestnet) {
-    return address.startsWith('q');
+  if (isMainNet) {
+    return address.startsWith('Q');
   }
-  return address.startsWith('Q');
+  return address.startsWith('q');
+};
+
+export const isValidPrivateKey = (address?: string) => {
+  if (!address) {
+    return false;
+  }
+  if (address.length !== 52) {
+    return false;
+  }
+
+  try {
+    const decoded = decode(address);
+    const isValid = privateKeyVerify(decoded.privateKey);
+    return isValid;
+  } catch (e) {
+    console.error('Private Key Invalid', e);
+    return false;
+  }
 };
 
 export const isValidContractAddressLength = (address?: string) => {

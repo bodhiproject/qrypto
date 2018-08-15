@@ -15,7 +15,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   },
   input: {
     fontSize: theme.font.sm,
-    fontWeight: theme.fontWeight.bold,
   },
   errorText: {
     fontSize: theme.font.xs,

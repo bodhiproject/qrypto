@@ -27,7 +27,8 @@ export default class SendStore {
   @observable public sendState: SEND_STATE = INIT_VALUES.sendState;
   @observable public errorMessage?: string = INIT_VALUES.errorMessage;
   @computed public get receiverFieldError(): string | undefined {
-    return isValidAddress(!this.isMainNet, this.receiverAddress) ? undefined : 'Not a valid Qtum address';
+    return isValidAddress(this.isMainNet, this.receiverAddress)
+      ? undefined : 'Not a valid Qtum address';
   }
   @computed public get amountFieldError(): string | undefined {
     return this.maxAmount && isValidAmount(Number(this.amount), this.maxAmount) ? undefined : 'Not a valid amount';

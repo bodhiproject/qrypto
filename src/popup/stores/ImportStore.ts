@@ -2,25 +2,37 @@ import { observable, action, computed, reaction } from 'mobx';
 import { isEmpty } from 'lodash';
 
 import AppStore from './AppStore';
-import { MESSAGE_TYPE } from '../../constants';
+import { isValidPrivateKey } from '../../utils';
+import { MESSAGE_TYPE, IMPORT_TYPE } from '../../constants';
 
 const INIT_VALUES = {
-  mnemonic: '',
+  mnemonicPrivateKey: '',
   accountName: '',
   walletNameTaken: false,
-  invalidMnemonic: false,
+  importMnemonicPrKeyFailed: false,
+  importType: IMPORT_TYPE.MNEMONIC,
 };
 
 export default class ImportStore {
-  @observable public mnemonic: string = INIT_VALUES.mnemonic;
+  // User input field, could be mnemonic or privateKey, depending on importType
+  @observable public mnemonicPrivateKey: string = INIT_VALUES.mnemonicPrivateKey;
   @observable public accountName: string = INIT_VALUES.accountName;
   @observable public walletNameTaken: boolean = INIT_VALUES.walletNameTaken;
-  @observable public invalidMnemonic: boolean = INIT_VALUES.invalidMnemonic;
+  @observable public importMnemonicPrKeyFailed: boolean = INIT_VALUES.importMnemonicPrKeyFailed;
+  @observable public importType: string = INIT_VALUES.importType;
+
   @computed public get walletNameError(): string | undefined {
     return this.walletNameTaken ? 'Wallet name is taken' : undefined;
   }
-  @computed public get error(): boolean {
-    return [this.mnemonic, this.accountName].some(isEmpty) || !!this.walletNameError;
+  @computed public get mnemonicPrKeyPageError(): boolean {
+      return [this.mnemonicPrivateKey, this.accountName].some(isEmpty) || !!this.walletNameError;
+  }
+  @computed public get privateKeyError(): string | undefined {
+    if (this.importType === IMPORT_TYPE.PRIVATE_KEY) {
+      return isValidPrivateKey(this.mnemonicPrivateKey) ? undefined : 'Not a valid private key';
+    } else {
+      return undefined;
+    }
   }
 
   private app: AppStore;
@@ -38,20 +50,33 @@ export default class ImportStore {
   }
 
   @action
-  public reset = () => Object.assign(this, INIT_VALUES)
+  public changeImportType = (type: string) => {
+    this.importType = type;
+  }
 
   @action
-  public importMnemonic = () => {
-    if (!this.error) {
+  public reset = () => {
+    const tempImportType = this.importType;
+    Object.assign(this, INIT_VALUES);
+    this.importType = tempImportType;
+  }
+
+  @action
+  public importMnemonicOrPrKey = () => {
+    if (!this.mnemonicPrKeyPageError) {
       this.app.routerStore.push('/loading');
+      const msgType = this.importType === IMPORT_TYPE.MNEMONIC
+        ? MESSAGE_TYPE.IMPORT_MNEMONIC : MESSAGE_TYPE.IMPORT_PRIVATE_KEY;
       chrome.runtime.sendMessage({
-        type: MESSAGE_TYPE.IMPORT_MNEMONIC,
+        type: msgType,
         accountName: this.accountName,
-        mnemonic: this.mnemonic,
+        mnemonicPrivateKey: this.mnemonicPrivateKey,
       });
     }
   }
 
   @action
-  public cancelImport = () => this.app.routerStore.goBack()
+  public cancelImport = () => {
+    this.app.routerStore.push('/create-wallet');
+  }
 }

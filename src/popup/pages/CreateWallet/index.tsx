@@ -65,7 +65,7 @@ class CreateWallet extends Component<WithStyles & IProps, {}> {
             color="primary"
             onClick={createWalletStore.routeToImportWallet}
           >
-            Import Existing Wallet
+            Import Wallet
           </Button>
         </div>
       </div>
