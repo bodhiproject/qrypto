@@ -85,7 +85,7 @@ export default class MainContainer extends Component<IProps, {}> {
         history.push('/create-wallet');
         break;
 
-      case MESSAGE_TYPE.IMPORT_WALLET_FAILURE:
+      case MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE:
         importStore.importMnemonicPrKeyFailed = true;
         history.push('/import-wallet');
         break;
