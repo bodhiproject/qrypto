@@ -1,7 +1,7 @@
 import { each, findIndex, isEmpty } from 'lodash';
 import BN from 'bn.js';
 import { Insight } from 'qtumjs-wallet';
-const { Decoder } = require('qweb3');
+const { Qweb3 } = require('qweb3');
 
 import QryptoController from '.';
 import IController from './iController';
@@ -10,13 +10,14 @@ import QRCToken from '../../models/QRCToken';
 import qrc20TokenABI from '../../contracts/qrc20TokenABI';
 import mainnetTokenList from '../../contracts/mainnetTokenList';
 import testnetTokenList from '../../contracts/testnetTokenList';
-import { generateRequestId, encodeDataHex } from '../../utils';
+import { generateRequestId } from '../../utils';
 import { IRPCCallResponse } from '../../types';
 
 const INIT_VALUES = {
   tokens: undefined,
   getBalancesInterval: undefined,
 };
+const qweb3 = new Qweb3('null');
 
 export default class TokenController extends IController {
   private static GET_BALANCES_INTERVAL_MS: number = 60000;
@@ -100,7 +101,7 @@ export default class TokenController extends IController {
     }
 
     const methodName = 'balanceOf';
-    const data = encodeDataHex(
+    const data = qweb3.encoder.constructData(
       qrc20TokenABI,
       methodName,
       [this.main.account.loggedInAccount.wallet.qjsWallet.address],
@@ -114,7 +115,7 @@ export default class TokenController extends IController {
     }
 
     // Decode result
-    const decodedRes = Decoder.decodeCall(result, qrc20TokenABI, methodName);
+    const decodedRes = qweb3.decoder.decodeCall(result, qrc20TokenABI, methodName);
     let balance = decodedRes!.executionResult.formattedOutput[0]; // Returns as a BN instance
     balance = balance.div(new BN(10 ** token.decimals)).toNumber(); // Convert to regular denomination
 
@@ -141,34 +142,34 @@ export default class TokenController extends IController {
     */
     try {
       // Get name
-      let methodName: string = 'name';
-      let data: string = encodeDataHex(qrc20TokenABI, methodName, []);
+      let methodName = 'name';
+      let data = qweb3.encoder.constructData(qrc20TokenABI, methodName, []);
       let { result, error }: IRPCCallResponse =
         await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]);
       if (error) {
         throw Error(error);
       }
-      result = Decoder.decodeCall(result, qrc20TokenABI, methodName) as Insight.IContractCall;
+      result = qweb3.decoder.decodeCall(result, qrc20TokenABI, methodName) as Insight.IContractCall;
       const name = result.executionResult.formattedOutput[0];
 
       // Get symbol
       methodName = 'symbol';
-      data = encodeDataHex(qrc20TokenABI, methodName, []);
+      data = qweb3.encoder.constructData(qrc20TokenABI, methodName, []);
       ({ result, error } = await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]));
       if (error) {
         throw Error(error);
       }
-      result = Decoder.decodeCall(result, qrc20TokenABI, methodName) as Insight.IContractCall;
+      result = qweb3.decoder.decodeCall(result, qrc20TokenABI, methodName) as Insight.IContractCall;
       const symbol = result.executionResult.formattedOutput[0];
 
       // Get decimals
       methodName = 'decimals';
-      data = encodeDataHex(qrc20TokenABI, methodName, []);
+      data = qweb3.encoder.constructData(qrc20TokenABI, methodName, []);
       ({ result, error } = await this.main.rpc.callContract(generateRequestId(), [contractAddress, data]));
       if (error) {
         throw Error(error);
       }
-      result = Decoder.decodeCall(result, qrc20TokenABI, methodName) as Insight.IContractCall;
+      result = qweb3.decoder.decodeCall(result, qrc20TokenABI, methodName) as Insight.IContractCall;
       const decimals = result.executionResult.formattedOutput[0];
 
       if (name && symbol && decimals) {
@@ -203,7 +204,7 @@ export default class TokenController extends IController {
   */
   private sendQRCToken = async (receiverAddress: string, amount: number, token: QRCToken) => {
     const bnAmount = new BN(amount).mul(new BN(10 ** token.decimals));
-    const data = encodeDataHex(qrc20TokenABI, 'transfer', [receiverAddress, bnAmount]);
+    const data = qweb3.encoder.constructData(qrc20TokenABI, 'transfer', [receiverAddress, bnAmount]);
     const args = [token.address, data];
     const { error } = await this.main.rpc.sendToContract(generateRequestId(), args);
 

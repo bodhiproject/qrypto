@@ -71,7 +71,6 @@ export default class RPCController extends IController {
       }
 
       result = await rpcProvider.rawCall('callContract', args) as Insight.IContractCall;
-      console.log(result);
     } catch (err) {
       error = err.message;
       console.error(error);
