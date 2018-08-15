@@ -40,9 +40,8 @@ const extractReqParams = () => {
 
 const confirmTransaction = () => {
   const { id, args } = request;
-  // TODO: change to use string instead of enum number for type
   chrome.runtime.sendMessage({
-    type: 27, // MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT
+    type: 'EXTERNAL_SEND_TO_CONTRACT', // MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT
     id,
     args,
   });
