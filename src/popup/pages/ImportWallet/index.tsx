@@ -54,7 +54,7 @@ class ImportWallet extends Component<WithStyles & IProps, IState> {
                 <Typography className={classes.errorText}>{importStore.privateKeyError}</Typography>
               )}
                 <BorderTextField
-                  classNames = {classes.borderTextFieldContainer}
+                  classNames={classes.borderTextFieldContainer}
                   placeholder="Wallet name"
                   error={importStore.walletNameTaken}
                   errorText={importStore.walletNameError}
