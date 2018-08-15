@@ -3,7 +3,6 @@ import { Paper, Tabs, Tab, List, ListItem, Typography, Button, withStyles, WithS
 import { KeyboardArrowRight } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 import cx from 'classnames';
-import ReactSVG from 'react-svg';
 import { isUndefined } from 'lodash';
 
 import styles from './styles';
@@ -120,10 +119,10 @@ const TokenList: SFC<any> = observer(({ classes,
       >
         {accountDetailStore.editTokenMode &&
           <Button
-            className={classes.deleteButton}
+            className={classes.tokenDeleteButton}
             id="removeTokenButton"
           >
-            <ReactSVG path="images/ic_delete.svg" />
+          <img src="images/ic_delete.svg"/>
           </Button>
         }
         <div className={classes.tokenInfoContainer}>
@@ -156,7 +155,7 @@ const TokenList: SFC<any> = observer(({ classes,
 ));
 
 const AmountInfo: SFC<any> = ({ classes, amount, token }: any) => (
-  <div className={classes.amountInfo}>
+  <div>
     <div className={classes.tokenContainer}>
       <Typography className={classes.tokenAmount}>{isUndefined(amount) ? '...' : amount}</Typography>
       <div className={classes.tokenTypeContainer}>
