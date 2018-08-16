@@ -4,12 +4,52 @@
 Chome Web Store: https://chrome.google.com/webstore/detail/qrypto/hdmjdgjbehedbnjmljikggbmmbnbmlnd
 
 ## Connecting Qrypto to your Web Dapp
-RPC calls can be directly made via our `QryptoProvider` which is injected into every webpage if you have Qrypto installed and running.
+RPC calls can be directly made via `Qweb3` or `QryptoProvider` which is injected into every webpage if you have Qrypto installed and running.
 
-**Make sure that `qryptoProvider` is defined before using it.**
+**Make sure that `window.Qweb3` and/or `window.qryptoProvider` is defined before using it.**
 
-### Send To Contract
+### Using Qweb3
 ```
+// Setup Qweb3 instance
+const qweb3 = new window.Qweb3(window.qryptoProvider);
+
+// Setup Contract instance
+const contractAddress = '49a941c5259e4e6ef9ac4a2a6716c1717ce0ffb6';
+const contractAbi = [{"constant":false,"inputs":[{"name":"_eventAddress","type":"address"},{"name":"_eventName","type":"bytes32[10]"},{"name":"_eventResultNames","type":"bytes32[10]"},{"name":"_numOfResults","type":"uint8"},{"name":"_lastResultIndex","type":"uint8"},{"name":"_arbitrationEndBlock","type":"uint256"},{"name":"_consensusThreshold","type":"uint256"}],"name":"createDecentralizedOracle","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_eventAddress","type":"address"},{"name":"_eventName","type":"bytes32[10]"},{"name":"_eventResultNames","type":"bytes32[10]"},{"name":"_numOfResults","type":"uint8"},{"name":"_lastResultIndex","type":"uint8"},{"name":"_arbitrationEndBlock","type":"uint256"},{"name":"_consensusThreshold","type":"uint256"}],"name":"doesDecentralizedOracleExist","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_oracle","type":"address"},{"name":"_eventAddress","type":"address"},{"name":"_eventName","type":"bytes32[10]"},{"name":"_eventResultNames","type":"bytes32[10]"},{"name":"_numOfResults","type":"uint8"},{"name":"_bettingEndBlock","type":"uint256"},{"name":"_resultSettingEndBlock","type":"uint256"},{"name":"_consensusThreshold","type":"uint256"}],"name":"createCentralizedOracle","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_oracle","type":"address"},{"name":"_eventAddress","type":"address"},{"name":"_eventName","type":"bytes32[10]"},{"name":"_eventResultNames","type":"bytes32[10]"},{"name":"_numOfResults","type":"uint8"},{"name":"_bettingEndBlock","type":"uint256"},{"name":"_resultSettingEndBlock","type":"uint256"},{"name":"_consensusThreshold","type":"uint256"}],"name":"doesCentralizedOracleExist","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"bytes32"}],"name":"oracles","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_addressManager","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_contractAddress","type":"address"},{"indexed":true,"name":"_oracle","type":"address"},{"indexed":true,"name":"_eventAddress","type":"address"},{"indexed":false,"name":"_name","type":"bytes32[10]"},{"indexed":false,"name":"_resultNames","type":"bytes32[10]"},{"indexed":false,"name":"_numOfResults","type":"uint8"},{"indexed":false,"name":"_bettingEndBlock","type":"uint256"},{"indexed":false,"name":"_resultSettingEndBlock","type":"uint256"},{"indexed":false,"name":"_consensusThreshold","type":"uint256"}],"name":"CentralizedOracleCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_contractAddress","type":"address"},{"indexed":true,"name":"_eventAddress","type":"address"},{"indexed":false,"name":"_name","type":"bytes32[10]"},{"indexed":false,"name":"_resultNames","type":"bytes32[10]"},{"indexed":false,"name":"_numOfResults","type":"uint8"},{"indexed":false,"name":"_lastResultIndex","type":"uint8"},{"indexed":false,"name":"_arbitrationEndBlock","type":"uint256"},{"indexed":false,"name":"_consensusThreshold","type":"uint256"}],"name":"DecentralizedOracleCreated","type":"event"}]
+const contract = qweb3.Contract(contractAddress, contractAbi);
+
+// Execute callcontract
+const senderAddress = 'qMZK8FNPRm54jvTLAGEs1biTCgyCkcsmna'; // This should be the address that is currently logged in Qrypto
+let funcName = 'callFunc';
+const callRes = await contract.call(callFunc, {
+  methodArgs: [],
+  senderAddress,
+});
+// callRes contains call result
+
+// Execute sendtocontract
+funcName = 'sendFunc';
+const firstParam = 1; // 1st param of sendFunc()
+const secondParam = 'hello world'; // 2nd param of sendFunc()
+const sendRes = await contract.send('sendFunc', {
+  methodArgs: [firstParam, secondParam],
+  senderAddress,
+  gasLimit: 1000000, // setting gas limit to 1 million
+  gasPrice: 0.0000005 // setting gas price to 50 satoshi
+});
+// sendRes contains txid
+```
+
+### Using QryptoProvider
+```
+// callcontract
+const contractAddress = 'a6dd0b0399dc6162cedde85ed50c6fa4a0dd44f1';
+const data = '06fdde03';
+window.qryptoProvider.rawCall(
+  'callContract',
+  [contractAddress, data]
+).then((res) => console.log(res));
+
 // sendtocontract
 const contractAddress = '49a941c5259e4e6ef9ac4a2a6716c1717ce0ffb6';
 const data = 'd0821b0e0000000000000000000000000000000000000000000000000000000000000001';
@@ -42,17 +82,6 @@ function handleMessage(message) {
   }
 }
 window.addEventListener('message', handleMessage, false);
-```
-
-### Call Contract
-```
-// callcontract
-const contractAddress = 'a6dd0b0399dc6162cedde85ed50c6fa4a0dd44f1';
-const data = '06fdde03';
-window.qryptoProvider.rawCall(
-  'callContract',
-  [contractAddress, data]
-).then((res) => console.log(res));
 ```
 
 ## Running Dev Version
