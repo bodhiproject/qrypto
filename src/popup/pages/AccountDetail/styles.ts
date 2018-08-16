@@ -57,18 +57,6 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     color: theme.color.gray,
     marginLeft: theme.padding.xs,
   },
-  tokenListComingSoonItem: {
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: `110px ${theme.padding.lg}`,
-  },
-  tokenListComingSoonText: {
-    fontSize: theme.font.lg,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.palette.text.primary,
-  },
   tokenInfoContainer: {
     width: '100%',
     display: 'flex',
@@ -97,11 +85,10 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     fontSize: theme.font.xs,
     color: theme.palette.text.secondary,
   },
-  deleteButton: {
+  tokenDeleteButton: {
     minHeight: '0px',
     minWidth: '0px',
-    paddingTop: '0px',
-    paddingBottom: '0px',
+    flex: 'none',
   },
   bottomButtonWrap: {
     flexDirection: 'row',
