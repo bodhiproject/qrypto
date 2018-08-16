@@ -1,5 +1,4 @@
-import { isFinite, find } from 'lodash';
-const { Contract } = require('qweb3');
+import { isFinite } from 'lodash';
 
 import { decode } from 'wif';
 import { privateKeyVerify } from 'secp256k1';
@@ -107,19 +106,6 @@ export const handleEnterPress = (event: any, onEnter: any) => {
 */
 export const generateRequestId = (): string => {
   return Math.random().toString().slice(-8);
-};
-
-/*
-* Constructs the encoded data hex for a sendtocontract or callcontract.
-* @param abi The ABI of the contract.
-* @param methodName The method to call that is in the ABI.
-* @param args The arguments that are needed when calling the method.
-* @return The constructed data hex.
-*/
-export const encodeDataHex = (abi: any[], methodName: string, args: any[]): string => {
-  const contract = new Contract('', '', abi);
-  const methodObj = find(contract.abi, { name: methodName });
-  return contract.constructDataHex(methodObj, args);
 };
 
 /*

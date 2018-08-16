@@ -1,8 +1,8 @@
-import { template } from 'lodash';
+const { Qweb3 } = require('qweb3');
+
 import { IExtensionAPIMessage, IRPCCallRequest } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 import { QryptoRPCProvider } from './QryptoRPCProvider';
-import { showModal, closeModal } from './modal';
 import { showSignTxWindow } from './window';
 import { isMessageNotValid } from '../utils';
 
@@ -14,19 +14,8 @@ window.addEventListener('message', handleInpageMessage, false);
 
 // expose apis
 Object.assign(window, {
+  Qweb3,
   qryptoProvider,
-  testModal: async () => {
-    const modal = await showModal(300, 300, {background: '#FFF'});
-    const content = template(`
-      <p>I'm a test Modal!</p>
-      <button>close me</button>
-    `);
-
-    modal.contentDocument!.write(content());
-    modal.contentDocument!.querySelector('button')!.addEventListener('click', closeModal);
-    return modal;
-  },
-  // testWindow: () => showSignTxWindow(signTxUrl),
 });
 
 /**
