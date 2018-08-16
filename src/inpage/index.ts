@@ -1,5 +1,3 @@
-const { Qweb3 } = require('qweb3');
-
 import { IExtensionAPIMessage, IRPCCallRequest } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 import { QryptoRPCProvider } from './QryptoRPCProvider';
@@ -14,7 +12,6 @@ window.addEventListener('message', handleInpageMessage, false);
 
 // expose apis
 Object.assign(window, {
-  Qweb3,
   qryptoProvider,
 });
 
