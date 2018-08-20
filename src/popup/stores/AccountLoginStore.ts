@@ -53,7 +53,6 @@ export default class AccountLoginStore {
 
   @action
   public routeToCreateWallet = () => {
-    this.app.createWalletStore.showBackButton = true;
     this.app.routerStore.push('/create-wallet');
   }
 
