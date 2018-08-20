@@ -25,7 +25,8 @@ export default class ImportStore {
     return this.walletNameTaken ? 'Wallet name is taken' : undefined;
   }
   @computed public get mnemonicPrKeyPageError(): boolean {
-      return [this.mnemonicPrivateKey, this.accountName].some(isEmpty) || !!this.walletNameError;
+      return [this.mnemonicPrivateKey, this.accountName].some(isEmpty)
+        || !!this.walletNameError || !!this.privateKeyError;
   }
   @computed public get privateKeyError(): string | undefined {
     if (this.importType === IMPORT_TYPE.PRIVATE_KEY) {
