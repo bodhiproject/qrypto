@@ -7,7 +7,6 @@ import { MESSAGE_TYPE } from '../../constants';
 const INIT_VALUES = {
   walletName: '',
   walletNameTaken: false,
-  showBackButton: false,
 };
 
 export default class CreateWalletStore {
@@ -19,7 +18,9 @@ export default class CreateWalletStore {
   @computed public get error(): boolean {
     return isEmpty(this.walletName) || !!this.walletNameError;
   }
-  public showBackButton: boolean = INIT_VALUES.showBackButton;
+  @computed public get showBackButton(): boolean {
+    return !isEmpty(this.app.accountLoginStore.accounts);
+  }
 
   private app: AppStore;
 

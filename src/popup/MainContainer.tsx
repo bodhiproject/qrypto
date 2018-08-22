@@ -87,7 +87,7 @@ export default class MainContainer extends Component<IProps, {}> {
 
       case MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE:
         importStore.importMnemonicPrKeyFailed = true;
-        history.push('/import-wallet');
+        history.goBack();
         break;
 
       default:
