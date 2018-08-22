@@ -70,13 +70,10 @@ export default class AccountController extends IController {
   */
   public login = async (password: string) => {
     this.main.crypto.generateAppSaltIfNecessary();
+    this.main.crypto.derivePasswordHash(password);
+  }
 
-    try {
-      await this.main.crypto.derivePasswordHash(password);
-    } catch (err) {
-      throw err;
-    }
-
+  public finishLogin = async () => {
     if (!this.hasAccounts) {
       // New user. No created wallets yet. No need to validate.
       this.routeToAccountPage();

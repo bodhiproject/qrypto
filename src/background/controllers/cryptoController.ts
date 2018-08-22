@@ -1,4 +1,3 @@
-import scrypt from 'scryptsy';
 import { isEmpty, split } from 'lodash';
 
 import QryptoController from '.';
@@ -64,26 +63,36 @@ export default class CryptoController extends IController {
 
   /*
   * Derives the password hash with the password input.
-  * @return Undefined or error.
   */
-  public derivePasswordHash = async (password: string): Promise<any> => {
-    return new Promise((resolve: any, reject: any) => {
-      setTimeout(() => {
-        try {
-          if (!this.appSalt) {
-            throw Error('appSalt should not be empty');
-          }
+  public derivePasswordHash = async (password: string) => {
+    setTimeout(() => {
+      if (!this.appSalt) {
+        throw Error('appSalt should not be empty');
+      }
+      this.callScryptWebWorker(password, this.appSalt);
+    }, 100);
+  }
 
-          const saltBuffer = Buffer.from(this.appSalt!);
-          const { N, r, p } = CryptoController.SCRYPT_PARAMS_PW;
-          const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
-          this.passwordHash = derivedKey.toString('hex');
+  public callScryptWebWorker = (password: string, salt: Uint8Array) => {
+    let sWW;
+    if (typeof(sWW) === 'undefined') {
+      /*
+      * Create a web worker for the scrypt key derivation, so that it doesn't freeze the loading screen ui.
+      * File path relative to post bundling of webpack. worker-loader node module did not work for me,
+      * possibly a compatibility issue with chrome.
+      */
+      sWW = new Worker('./scryptworker.js');
 
-          resolve();
-        } catch (err) {
-          reject(err);
+      sWW.postMessage({password, salt, scryptParams: CryptoController.SCRYPT_PARAMS_PW});
+
+      sWW.onmessage = (e) => {
+        if (e.data.err) {
+          throw new Error('scrypt failed to calculate derivedKey');
         }
-      }, 100);
-    });
+        const derivedKey = e.data.derivedKey;
+        this.passwordHash = derivedKey.toString('hex');
+        this.main.account.finishLogin();
+      };
+    }
   }
 }

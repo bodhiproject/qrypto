@@ -38,6 +38,7 @@ module.exports = {
     contentscript: './src/contentscript/index.ts',
     inpage: './src/inpage/index.ts',
     popup: './src/popup/index.tsx',
+    scryptworker: './src/background/workers/scryptworker.js',
   },
   output: {
     path: path.join(__dirname, 'dist'),
