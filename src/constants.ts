@@ -98,6 +98,7 @@ export enum SEND_STATE {
 }
 
 export enum NETWORK_NAMES {
+  REGTEST = 'RegTest',
   TESTNET = 'TestNet',
   MAINNET = 'MainNet',
 }
