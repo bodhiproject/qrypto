@@ -62,7 +62,7 @@ class SaveMnemonic extends Component<WithStyles & IProps, {}> {
     chrome.runtime.sendMessage({
       type: saveFile ? MESSAGE_TYPE.SAVE_TO_FILE : MESSAGE_TYPE.IMPORT_MNEMONIC,
       accountName: saveMnemonicStore.walletName,
-      mnemonic: saveMnemonicStore.mnemonic,
+      mnemonicPrivateKey: saveMnemonicStore.mnemonic,
     });
   }
 }

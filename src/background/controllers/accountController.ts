@@ -372,7 +372,7 @@ export default class AccountController extends IController {
         this.importPrivateKey(request.accountName, request.mnemonicPrivateKey);
         break;
       case MESSAGE_TYPE.SAVE_TO_FILE:
-        this.saveToFile(request.accountName, request.mnemonic);
+        this.saveToFile(request.accountName, request.mnemonicPrivateKey);
         break;
       case MESSAGE_TYPE.ACCOUNT_LOGIN:
         this.loginAccount(request.selectedWalletName);
