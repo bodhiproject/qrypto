@@ -65,29 +65,27 @@ export default class CryptoController extends IController {
   * Derives the password hash with the password input.
   */
   public derivePasswordHash = async (password: string) => {
-    setTimeout(() => {
-      if (!this.appSalt) {
-        throw Error('appSalt should not be empty');
-      }
-      this.callScryptWebWorker(password, this.appSalt);
-    }, 100);
+    if (!this.appSalt) {
+      throw Error('appSalt should not be empty');
+    }
+    this.callScryptWebWorker(password, this.appSalt);
   }
 
   public callScryptWebWorker = (password: string, salt: Uint8Array) => {
-    let sWW;
-    if (typeof(sWW) === 'undefined') {
+    let sww;
+    if (typeof(sww) === 'undefined') {
       /*
       * Create a web worker for the scrypt key derivation, so that it doesn't freeze the loading screen ui.
       * File path relative to post bundling of webpack. worker-loader node module did not work for me,
       * possibly a compatibility issue with chrome.
       */
-      sWW = new Worker('./scryptworker.js');
+      sww = new Worker('./scryptworker.js');
 
-      sWW.postMessage({password, salt, scryptParams: CryptoController.SCRYPT_PARAMS_PW});
+      sww.postMessage({ password, salt, scryptParams: CryptoController.SCRYPT_PARAMS_PW });
 
-      sWW.onmessage = (e) => {
+      sww.onmessage = (e) => {
         if (e.data.err) {
-          throw new Error('scrypt failed to calculate derivedKey');
+          throw Error('scrypt failed to calculate derivedKey');
         }
         const derivedKey = e.data.derivedKey;
         this.passwordHash = derivedKey.toString('hex');
