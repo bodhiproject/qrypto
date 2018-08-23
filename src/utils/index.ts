@@ -1,7 +1,5 @@
 import { isFinite } from 'lodash';
-
-import { decode } from 'wif';
-import { privateKeyVerify } from 'secp256k1';
+import { validatePrivateKey } from 'qtumjs-wallet';
 
 import { TARGET_NAME } from '../constants';
 import { IExtensionMessageData } from '../types';
@@ -56,9 +54,7 @@ export const isValidPrivateKey = (address?: string) => {
   }
 
   try {
-    const decoded = decode(address);
-    const isValid = privateKeyVerify(decoded.privateKey);
-    return isValid;
+    return validatePrivateKey(address);
   } catch (e) {
     console.error('Private Key Invalid', e);
     return false;
