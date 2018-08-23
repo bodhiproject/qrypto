@@ -126,20 +126,48 @@ export default class AccountController extends IController {
   public importMnemonic = async (accountName: string, mnemonic: string) => {
     try {
       const network = this.main.network.network;
-      const wallet = network.fromMnemonic(mnemonic);
-      const privateKeyHash = this.getPrivateKeyHash(wallet);
-
-      // Validate that we don't already have the wallet in our accountList
-      const exists = await this.walletAlreadyExists(privateKeyHash);
-      if (exists) {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
-        return;
-      }
-
-      await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
+      console.log('2-import mnemonic');
+      this.callImportMnemonicWebWorker(network, mnemonic, accountName);
     } catch (e) {
       // TODO - Create error handling on ui side
       console.log(e);
+    }
+  }
+
+  public finishImportMnemonic = async (wallet: any, accountName: string) => {
+    const privateKeyHash = this.getPrivateKeyHash(wallet);
+    console.log('4-import mnemonic');
+
+    // Validate that we don't already have the wallet in our accountList
+    const exists = await this.walletAlreadyExists(privateKeyHash);
+    if (exists) {
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
+      return;
+    }
+    console.log('5-import mnemonic');
+    await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
+  }
+
+  public callImportMnemonicWebWorker = (network: any, mnemonic: any, accountName: string) => {
+    let imww;
+    if (typeof(imww) === 'undefined') {
+      /*
+      * Create a web worker for the scrypt key derivation, so that it doesn't freeze the loading screen ui.
+      * File path relative to post bundling of webpack. worker-loader node module did not work for me,
+      * possibly a compatibility issue with chrome.
+      */
+      imww = new Worker('./import-mnemonic-worker.js');
+
+      imww.postMessage({ network, mnemonic });
+
+      imww.onmessage = (e) => {
+        if (e.data.err) {
+          throw Error('scrypt failed to calculate derivedKey');
+        }
+        const wallet = e.data.wallet;
+        console.log('wallet nonww', wallet);
+        this.finishImportMnemonic(wallet, accountName);
+      };
     }
   }
 

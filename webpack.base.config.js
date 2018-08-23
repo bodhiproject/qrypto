@@ -39,6 +39,7 @@ module.exports = {
     inpage: './src/inpage/index.ts',
     popup: './src/popup/index.tsx',
     scryptworker: './src/background/workers/scryptworker.js',
+    "import-mnemonic-worker": './src/background/workers/import-mnemonic-worker.js',
   },
   output: {
     path: path.join(__dirname, 'dist'),
