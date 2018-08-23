@@ -79,7 +79,7 @@ export default class CryptoController extends IController {
       sww = new Worker('./scryptworker.js');
 
       sww.postMessage({
-        password,
+        password: password,
         salt: this.appSalt,
         scryptParams: CryptoController.SCRYPT_PARAMS_PW });
 
