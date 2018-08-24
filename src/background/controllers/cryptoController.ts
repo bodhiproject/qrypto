@@ -64,7 +64,7 @@ export default class CryptoController extends IController {
   /*
   * Derives the password hash with the password input.
   */
-  public derivePasswordHash = async (password: string) => {
+  public derivePasswordHash = (password: string) => {
     if (!this.appSalt) {
       throw Error('appSalt should not be empty');
     }

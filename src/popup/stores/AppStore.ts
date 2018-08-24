@@ -1,4 +1,5 @@
 import { RouterStore } from 'mobx-react-router';
+import { observable } from 'mobx';
 
 import NavBarStore from './components/NavBarStore';
 import SessionStore from './SessionStore';
@@ -13,6 +14,8 @@ import SendStore from './SendStore';
 import AddTokenStore from './AddTokenStore';
 
 export default class AppStore {
+  @observable public unexpectedError?: string = undefined;
+
   public routerStore: RouterStore;
   public sessionStore: SessionStore;
   public navBarStore: NavBarStore;

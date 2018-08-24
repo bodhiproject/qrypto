@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import { Router, Route, Switch } from 'react-router-dom';
 import { SynchronizedHistory } from 'mobx-react-router';
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@material-ui/core';
 
 import Loading from './components/Loading';
 import Login from './pages/Login';
@@ -57,12 +65,13 @@ export default class MainContainer extends Component<IProps, {}> {
             <Route exact path="/add-token" component={AddToken} />
           </Switch>
         </Router>
+        <UnexpectedErrorDialog store={ this.props.store } />
       </div>
     );
   }
 
   private handleMessage = (request: any) => {
-    const { history, store: { loginStore, importStore } }: any = this.props;
+    const { history, store, store: { loginStore, importStore, routerStore } }: any = this.props;
     switch (request.type) {
       case MESSAGE_TYPE.ROUTE_LOGIN:
         history.push('/login');
@@ -87,7 +96,14 @@ export default class MainContainer extends Component<IProps, {}> {
 
       case MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE:
         importStore.importMnemonicPrKeyFailed = true;
-        history.goBack();
+        routerStore.goBack();
+        break;
+
+      case MESSAGE_TYPE.UNEXPECTED_ERROR:
+        if (routerStore.location.pathname === '/loading') {
+          routerStore.goBack();
+        }
+        store.unexpectedError = request.error;
         break;
 
       default:
@@ -95,3 +111,19 @@ export default class MainContainer extends Component<IProps, {}> {
     }
   }
 }
+
+const UnexpectedErrorDialog: React.SFC<any> = observer(({ store }) => (
+  <Dialog
+    disableBackdropClick
+    open={!!store.unexpectedError}
+    onClose={() => store.unexpectedError = undefined}
+  >
+    <DialogTitle>Unexpected Error</DialogTitle>
+    <DialogContent>
+      <DialogContentText>{ store.unexpectedError }</DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => store.unexpectedError = undefined} color="primary">Close</Button>
+    </DialogActions>
+  </Dialog>
+));

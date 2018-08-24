@@ -69,8 +69,12 @@ export default class AccountController extends IController {
   * Initial login with the master password and routing to the correct account login page.
   */
   public login = async (password: string) => {
-    this.main.crypto.generateAppSaltIfNecessary();
-    this.main.crypto.derivePasswordHash(password);
+    try {
+      this.main.crypto.generateAppSaltIfNecessary();
+      this.main.crypto.derivePasswordHash(password);
+    } catch (err) {
+      this.displayErrorOnPopup(err);
+    }
   }
 
   public finishLogin = async () => {
@@ -141,8 +145,8 @@ export default class AccountController extends IController {
 
       await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
     } catch (e) {
-      // TODO - Create error handling on ui side
       console.log(e);
+      this.displayErrorOnPopup(e);
     }
   }
 
@@ -171,6 +175,7 @@ export default class AccountController extends IController {
       await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
     } catch (e) {
       console.log(e);
+      this.displayErrorOnPopup(e);
     }
   }
 
@@ -364,6 +369,10 @@ export default class AccountController extends IController {
       console.log(err);
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
     }
+  }
+
+  private displayErrorOnPopup = (err: Error)  => {
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
