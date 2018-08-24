@@ -129,7 +129,8 @@ export default class AccountController extends IController {
   */
   public importMnemonic = async (accountName: string, mnemonic: string) => {
     if (!mnemonic) {
-      throw Error('invalid mnemonic'); }
+      throw Error('invalid mnemonic');
+    }
 
     try {
       const network = this.main.network.network;
@@ -157,7 +158,8 @@ export default class AccountController extends IController {
   */
   public importPrivateKey = async (accountName: string, privateKey: string) => {
     if (!privateKey) {
-      throw Error('invalid privateKey'); }
+      throw Error('invalid privateKey');
+    }
 
     try {
       // recover wallet and privateKeyHash
@@ -277,7 +279,8 @@ export default class AccountController extends IController {
   */
   private recoverFromPrivateKeyHash(privateKeyHash: string): QtumWallet {
     if (!privateKeyHash) {
-      throw Error('invalid privateKeyHash'); }
+      throw Error('invalid privateKeyHash');
+    }
 
     const network = this.main.network.network;
     return network.fromEncryptedPrivateKey(

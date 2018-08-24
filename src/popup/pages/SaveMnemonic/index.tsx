@@ -57,8 +57,8 @@ class SaveMnemonic extends Component<WithStyles & IProps, {}> {
   }
 
   private createWallet = (saveFile: boolean) => {
-    const { history, store: { saveMnemonicStore } }: any = this.props;
-    history.push('/loading');
+    const { store: { saveMnemonicStore, routerStore } }: any = this.props;
+    routerStore.push('/loading');
     chrome.runtime.sendMessage({
       type: saveFile ? MESSAGE_TYPE.SAVE_TO_FILE : MESSAGE_TYPE.IMPORT_MNEMONIC,
       accountName: saveMnemonicStore.walletName,

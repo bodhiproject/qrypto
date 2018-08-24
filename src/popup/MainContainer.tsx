@@ -71,27 +71,27 @@ export default class MainContainer extends Component<IProps, {}> {
   }
 
   private handleMessage = (request: any) => {
-    const { history, store, store: { loginStore, importStore, routerStore } }: any = this.props;
+    const { store, store: { loginStore, importStore, routerStore } }: any = this.props;
     switch (request.type) {
       case MESSAGE_TYPE.ROUTE_LOGIN:
-        history.push('/login');
+        routerStore.push('/login');
         break;
 
       case MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS:
-        history.push('/home');
+        routerStore.push('/home');
         break;
 
       case MESSAGE_TYPE.LOGIN_FAILURE:
         loginStore.invalidPassword = true;
-        history.push('/login');
+        routerStore.push('/login');
         break;
 
       case MESSAGE_TYPE.LOGIN_SUCCESS_WITH_ACCOUNTS:
-        history.push('/account-login');
+        routerStore.push('/account-login');
         break;
 
       case MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS:
-        history.push('/create-wallet');
+        routerStore.push('/create-wallet');
         break;
 
       case MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE:
