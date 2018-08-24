@@ -68,20 +68,20 @@ export default class CryptoController extends IController {
     if (!this.appSalt) {
       throw Error('appSalt should not be empty');
     }
-    this.callScryptWebWorker(password, this.appSalt);
-  }
 
-  public callScryptWebWorker = (password: string, salt: Uint8Array) => {
+    /*
+    * Create a web worker for the scrypt key derivation, so that it doesn't freeze the loading screen ui.
+    * File path relative to post bundling of webpack. worker-loader node module did not work for me,
+    * possibly a compatibility issue with chrome.
+    */
     let sww;
     if (typeof(sww) === 'undefined') {
-      /*
-      * Create a web worker for the scrypt key derivation, so that it doesn't freeze the loading screen ui.
-      * File path relative to post bundling of webpack. worker-loader node module did not work for me,
-      * possibly a compatibility issue with chrome.
-      */
       sww = new Worker('./scryptworker.js');
 
-      sww.postMessage({ password, salt, scryptParams: CryptoController.SCRYPT_PARAMS_PW });
+      sww.postMessage({
+        password,
+        salt: this.appSalt,
+        scryptParams: CryptoController.SCRYPT_PARAMS_PW });
 
       sww.onmessage = (e) => {
         if (e.data.err) {
