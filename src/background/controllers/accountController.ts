@@ -128,11 +128,12 @@ export default class AccountController extends IController {
   * @param mnemonic The mnemonic to derive the wallet from.
   */
   public importMnemonic = async (accountName: string, mnemonic: string) => {
-    if (!mnemonic) {
-      throw Error('invalid mnemonic');
-    }
-
     try {
+      if (!mnemonic) {
+        // This is already validated on the popup ui, and should never hit
+        throw Error('invalid mnemonic');
+      }
+
       const network = this.main.network.network;
       const wallet = network.fromMnemonic(mnemonic);
       const privateKeyHash = this.getPrivateKeyHash(wallet);
@@ -157,11 +158,12 @@ export default class AccountController extends IController {
   * @param privateKey The private key to derive the wallet from.
   */
   public importPrivateKey = async (accountName: string, privateKey: string) => {
-    if (!privateKey) {
-      throw Error('invalid privateKey');
-    }
-
     try {
+      if (!privateKey) {
+        // This is already validated on the popup ui, and should never hit
+        throw Error('invalid privateKey');
+      }
+
       // recover wallet and privateKeyHash
       const network = this.main.network.network;
       const wallet = network.fromWIF(privateKey);
@@ -316,6 +318,7 @@ export default class AccountController extends IController {
       return true;
     } catch (err) {
       console.log(err);
+      this.displayErrorOnPopup(err);
       return false;
     }
   }
