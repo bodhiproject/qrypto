@@ -1,5 +1,6 @@
 import { isEmpty, find, cloneDeep } from 'lodash';
 import { Wallet as QtumWallet } from 'qtumjs-wallet';
+import { ECPair } from 'bitcoinjs-lib';
 
 import QryptoController from '.';
 import IController from './iController';
@@ -129,21 +130,63 @@ export default class AccountController extends IController {
 
     try {
       const network = this.main.network.network;
-      const wallet = network.fromMnemonic(mnemonic);
-      const privateKeyHash = this.getPrivateKeyHash(wallet);
+      console.log('2-import mnemonic');
 
-      // Validate that we don't already have the wallet in our accountList
-      const exists = await this.walletAlreadyExists(privateKeyHash);
-      if (exists) {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
-        return;
+      // WITHOUT WEBWORKER
+      // const wallet = network.fromMnemonic(mnemonic);
+      // console.log('3-import mnemonic');
+      // this.finishImportMnemonic(wallet, accountName);
+      // console.log('6-import mnemonic');
+
+      // WITH WEBWORKER
+      let sww;
+      if (typeof(sww) === 'undefined') {
+        /*
+        * Create a web worker for the scrypt key derivation, so that it doesn't freeze the loading screen ui.
+        * File path relative to post bundling of webpack. worker-loader node module did not work for me,
+        * possibly a compatibility issue with chrome.
+        */
+        sww = new Worker('./scryptworker.js');
       }
+      sww.postMessage({ type: 'fromMnemonic', mnemonic, info: network.info });
 
-      await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
+      sww.onmessage = (e) => {
+        if (e.data.err) {
+          throw Error('scrypt failed to calculate derivedKey');
+        }
+
+        /* This is not a true keyPair object.  The webworker is unable to send its
+        * associated methods back to us and so you cannot call methods like
+        * keyPair.getAddress(), which the QtumWallet constructor relies on.
+        */
+        const keyPairPared = e.data.keyPair;
+        const keyPair = new ECPair(keyPairPared.d, null,
+          { compressed: keyPairPared.compressed,
+            network: keyPairPared.network });
+        console.log('bg-aC  keyPair', keyPair);
+        // TODO not quite working yet because keyPair d object is missing functions, I get an error d.signum is not a function
+        const wallet = new QtumWallet(keyPair, network.info);
+        this.finishImportMnemonic(wallet, accountName);
+      };
+
     } catch (e) {
       // TODO - Create error handling on ui side
       console.log(e);
     }
+  }
+
+  public finishImportMnemonic = async (wallet: any, accountName: string) => {
+    const privateKeyHash = this.getPrivateKeyHash(wallet);
+    console.log('4-import mnemonic');
+
+    // Validate that we don't already have the wallet in our accountList
+    const exists = await this.walletAlreadyExists(privateKeyHash);
+    if (exists) {
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
+      return;
+    }
+    console.log('5-import mnemonic');
+    await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
   }
 
   /*
@@ -212,7 +255,9 @@ export default class AccountController extends IController {
     }
 
     try {
+      console.log('1-loginAccount');
       const wallet = this.recoverFromPrivateKeyHash(this.loggedInAccount.privateKeyHash);
+      console.log('2-loginAccount');
       this.loggedInAccount.wallet = new Wallet(wallet);
 
       await this.onAccountLoggedIn();
@@ -275,6 +320,7 @@ export default class AccountController extends IController {
       throw Error('invalid privateKeyHash'); }
 
     const network = this.main.network.network;
+    console.log('1-recoverFromPrivateHeHash');
     return network.fromEncryptedPrivateKey(
       privateKeyHash,
       this.main.crypto.validPasswordHash,
