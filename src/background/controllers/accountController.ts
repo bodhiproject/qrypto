@@ -1,5 +1,6 @@
 import { isEmpty, find, cloneDeep } from 'lodash';
 import { Wallet as QtumWallet } from 'qtumjs-wallet';
+import assert from 'assert';
 
 import QryptoController from '.';
 import IController from './iController';
@@ -129,10 +130,8 @@ export default class AccountController extends IController {
   */
   public importMnemonic = async (accountName: string, mnemonic: string) => {
     try {
-      if (!mnemonic) {
-        // This is already validated on the popup ui, and should never hit
-        throw Error('invalid mnemonic');
-      }
+      // Non-empty mnemonic is already validated in the popup ui
+      assert(mnemonic, 'invalid mnemonic');
 
       const network = this.main.network.network;
       const wallet = network.fromMnemonic(mnemonic);
@@ -159,10 +158,8 @@ export default class AccountController extends IController {
   */
   public importPrivateKey = async (accountName: string, privateKey: string) => {
     try {
-      if (!privateKey) {
-        // This is already validated on the popup ui, and should never hit
-        throw Error('invalid privateKey');
-      }
+      // Non-empty privateKey is already validated in the popup ui
+      assert(privateKey, 'invalid privateKey');
 
       // recover wallet and privateKeyHash
       const network = this.main.network.network;
@@ -280,9 +277,7 @@ export default class AccountController extends IController {
   * @param privateKeyHash The private key hash to recover the wallet from.
   */
   private recoverFromPrivateKeyHash(privateKeyHash: string): QtumWallet {
-    if (!privateKeyHash) {
-      throw Error('invalid privateKeyHash');
-    }
+    assert(privateKeyHash, 'invalid privateKeyHash');
 
     const network = this.main.network.network;
     return network.fromEncryptedPrivateKey(

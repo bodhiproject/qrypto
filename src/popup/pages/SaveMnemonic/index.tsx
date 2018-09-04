@@ -6,7 +6,6 @@ import cx from 'classnames';
 import styles from './styles';
 import NavBar from '../../components/NavBar';
 import AppStore from '../../stores/AppStore';
-import { MESSAGE_TYPE } from '../../../constants';
 const strings = require('../../localization/locales/en_US.json');
 
 interface IProps {
@@ -38,7 +37,7 @@ class SaveMnemonic extends Component<WithStyles & IProps, {}> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={() => this.createWallet(false)}
+              onClick={() => saveMnemonicStore.createWallet(false)}
             >
               I Copied It Somewhere Safe
             </Button>
@@ -47,23 +46,13 @@ class SaveMnemonic extends Component<WithStyles & IProps, {}> {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={() => this.createWallet(true)}
+              onClick={() => saveMnemonicStore.createWallet(true)}
             >
               Save To File
             </Button>
         </div>
       </div>
     );
-  }
-
-  private createWallet = (saveFile: boolean) => {
-    const { store: { saveMnemonicStore, routerStore } }: any = this.props;
-    routerStore.push('/loading');
-    chrome.runtime.sendMessage({
-      type: saveFile ? MESSAGE_TYPE.SAVE_TO_FILE : MESSAGE_TYPE.IMPORT_MNEMONIC,
-      accountName: saveMnemonicStore.walletName,
-      mnemonicPrivateKey: saveMnemonicStore.mnemonic,
-    });
   }
 }
 
