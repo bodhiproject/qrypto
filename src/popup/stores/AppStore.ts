@@ -11,6 +11,7 @@ import SettingsStore from './SettingsStore';
 import AccountDetailStore from './AccountDetailStore';
 import SendStore from './SendStore';
 import AddTokenStore from './AddTokenStore';
+import MainContainerStore from './MainContainerStore';
 
 export default class AppStore {
   public routerStore: RouterStore;
@@ -25,6 +26,7 @@ export default class AppStore {
   public accountDetailStore: AccountDetailStore;
   public sendStore: SendStore;
   public addTokenStore: AddTokenStore;
+  public mainContainerStore: MainContainerStore;
 
   constructor() {
     this.routerStore = new RouterStore();
@@ -32,13 +34,14 @@ export default class AppStore {
     this.navBarStore = new NavBarStore(this);
     this.loginStore = new LoginStore(this);
     this.createWalletStore = new CreateWalletStore(this);
-    this.saveMnemonicStore = new SaveMnemonicStore();
+    this.saveMnemonicStore = new SaveMnemonicStore(this);
     this.accountLoginStore = new AccountLoginStore(this);
     this.importStore = new ImportStore(this);
     this.settingsStore = new SettingsStore();
     this.accountDetailStore = new AccountDetailStore(this);
     this.sendStore = new SendStore(this);
     this.addTokenStore = new AddTokenStore(this);
+    this.mainContainerStore = new MainContainerStore(this);
   }
 }
 

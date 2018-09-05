@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import { Router, Route, Switch } from 'react-router-dom';
 import { SynchronizedHistory } from 'mobx-react-router';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 
 import Loading from './components/Loading';
 import Login from './pages/Login';
@@ -28,7 +29,7 @@ interface IProps {
 @observer
 export default class MainContainer extends Component<IProps, {}> {
   public componentDidMount() {
-    chrome.runtime.onMessage.addListener(this.handleMessage);
+    this.props.store!.mainContainerStore.init();
   }
 
   public componentWillUnmount() {
@@ -57,41 +58,24 @@ export default class MainContainer extends Component<IProps, {}> {
             <Route exact path="/add-token" component={AddToken} />
           </Switch>
         </Router>
+        <UnexpectedErrorDialog />
       </div>
     );
   }
-
-  private handleMessage = (request: any) => {
-    const { history, store: { loginStore, importStore } }: any = this.props;
-    switch (request.type) {
-      case MESSAGE_TYPE.ROUTE_LOGIN:
-        history.push('/login');
-        break;
-
-      case MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS:
-        history.push('/home');
-        break;
-
-      case MESSAGE_TYPE.LOGIN_FAILURE:
-        loginStore.invalidPassword = true;
-        history.push('/login');
-        break;
-
-      case MESSAGE_TYPE.LOGIN_SUCCESS_WITH_ACCOUNTS:
-        history.push('/account-login');
-        break;
-
-      case MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS:
-        history.push('/create-wallet');
-        break;
-
-      case MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE:
-        importStore.importMnemonicPrKeyFailed = true;
-        history.goBack();
-        break;
-
-      default:
-        break;
-    }
-  }
 }
+
+const UnexpectedErrorDialog: React.SFC<any> = inject('store')(observer(({ store: { mainContainerStore } }) => (
+  <Dialog
+    disableBackdropClick
+    open={!!mainContainerStore.unexpectedError}
+    onClose={() => mainContainerStore.unexpectedError = undefined}
+  >
+    <DialogTitle>Unexpected Error</DialogTitle>
+    <DialogContent>
+      <DialogContentText>{ mainContainerStore.unexpectedError }</DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => mainContainerStore.unexpectedError = undefined} color="primary">Close</Button>
+    </DialogActions>
+  </Dialog>
+)));

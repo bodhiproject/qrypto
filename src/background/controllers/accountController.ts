@@ -1,5 +1,6 @@
 import { isEmpty, find, cloneDeep } from 'lodash';
 import { Wallet as QtumWallet } from 'qtumjs-wallet';
+import assert from 'assert';
 
 import QryptoController from '.';
 import IController from './iController';
@@ -69,8 +70,12 @@ export default class AccountController extends IController {
   * Initial login with the master password and routing to the correct account login page.
   */
   public login = async (password: string) => {
-    this.main.crypto.generateAppSaltIfNecessary();
-    this.main.crypto.derivePasswordHash(password);
+    try {
+      this.main.crypto.generateAppSaltIfNecessary();
+      this.main.crypto.derivePasswordHash(password);
+    } catch (err) {
+      this.displayErrorOnPopup(err);
+    }
   }
 
   public finishLogin = async () => {
@@ -124,10 +129,10 @@ export default class AccountController extends IController {
   * @param mnemonic The mnemonic to derive the wallet from.
   */
   public importMnemonic = async (accountName: string, mnemonic: string) => {
-    if (!mnemonic) {
-      throw Error('invalid mnemonic'); }
-
     try {
+      // Non-empty mnemonic is already validated in the popup ui
+      assert(mnemonic, 'invalid mnemonic');
+
       const network = this.main.network.network;
       const wallet = network.fromMnemonic(mnemonic);
       const privateKeyHash = this.getPrivateKeyHash(wallet);
@@ -141,8 +146,8 @@ export default class AccountController extends IController {
 
       await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
     } catch (e) {
-      // TODO - Create error handling on ui side
       console.log(e);
+      this.displayErrorOnPopup(e);
     }
   }
 
@@ -152,10 +157,10 @@ export default class AccountController extends IController {
   * @param privateKey The private key to derive the wallet from.
   */
   public importPrivateKey = async (accountName: string, privateKey: string) => {
-    if (!privateKey) {
-      throw Error('invalid privateKey'); }
-
     try {
+      // Non-empty privateKey is already validated in the popup ui
+      assert(privateKey, 'invalid privateKey');
+
       // recover wallet and privateKeyHash
       const network = this.main.network.network;
       const wallet = network.fromWIF(privateKey);
@@ -171,6 +176,7 @@ export default class AccountController extends IController {
       await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
     } catch (e) {
       console.log(e);
+      this.displayErrorOnPopup(e);
     }
   }
 
@@ -271,8 +277,7 @@ export default class AccountController extends IController {
   * @param privateKeyHash The private key hash to recover the wallet from.
   */
   private recoverFromPrivateKeyHash(privateKeyHash: string): QtumWallet {
-    if (!privateKeyHash) {
-      throw Error('invalid privateKeyHash'); }
+    assert(privateKeyHash, 'invalid privateKeyHash');
 
     const network = this.main.network.network;
     return network.fromEncryptedPrivateKey(
@@ -308,6 +313,7 @@ export default class AccountController extends IController {
       return true;
     } catch (err) {
       console.log(err);
+      this.displayErrorOnPopup(err);
       return false;
     }
   }
@@ -364,6 +370,10 @@ export default class AccountController extends IController {
       console.log(err);
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
     }
+  }
+
+  private displayErrorOnPopup = (err: Error)  => {
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {

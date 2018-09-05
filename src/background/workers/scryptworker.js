@@ -7,8 +7,8 @@ onmessage = (e) => {
     const saltBuffer = Buffer.from(salt);
     const { N, r, p } = e.data.scryptParams;
     const derivedKey = scrypt(password, saltBuffer, N, r, p, 64);
-    postMessage({derivedKey});
+    postMessage({ derivedKey });
   } catch (err) {
-    postMessage({err});
+    postMessage({ err });
   }
 }
