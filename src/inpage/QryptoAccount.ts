@@ -29,9 +29,9 @@ export class QryptoAccount {
   when a user logs in or out of qrypto. The dapp overwrites this method.
   */
   public statusChanged() {
-    const text = dedent`window.qryptoAccount has changed.
-    Overwrite the function window.qryptoAccount.statusChanged to make this notification interact with your dapp.
-    Ex: window.qryptoAccount.statusChanged = function () { console.log('<running dapp code...>') }`;
+    const text = dedent`window.qrypto.account has changed.
+    Overwrite the function window.qrypto.account.statusChanged to make this notification interact with your dapp.
+    Ex: window.qrypto.account.statusChanged = function () { console.log('<running dapp code...>') }`;
     console.log(text);
   }
 

@@ -7,6 +7,10 @@ import { isMessageNotValid } from '../utils';
 
 const qryptoProvider: QryptoRPCProvider = new QryptoRPCProvider();
 const qryptoAccount: QryptoAccount = new QryptoAccount();
+const qrypto = {
+  'rpcProvider': qryptoProvider,
+  'account': qryptoAccount,
+};
 let signTxUrl: string;
 
 // Add message listeners
@@ -14,8 +18,7 @@ window.addEventListener('message', handleInpageMessage, false);
 
 // expose apis
 Object.assign(window, {
-  qryptoProvider,
-  qryptoAccount,
+  qrypto,
 });
 
 /**
