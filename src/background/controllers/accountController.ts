@@ -234,6 +234,7 @@ export default class AccountController extends IController {
   public logoutAccount = () => {
     this.main.session.clearAllIntervals();
     this.main.session.clearSession();
+    this.main.inpageAccount.sendQryptoAccountValuesToActiveTab();
     this.routeToAccountPage();
   }
 
@@ -259,6 +260,7 @@ export default class AccountController extends IController {
     await this.startPolling();
     await this.main.token.startPolling();
     await this.main.external.startPolling();
+    this.main.inpageAccount.sendQryptoAccountValuesToActiveTab();
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 
@@ -376,17 +378,6 @@ export default class AccountController extends IController {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
   }
     
-  private inpageQryptoAccountValues = () => {
-    const res = this.loggedInAccount ? {
-      accountIsLoggedIn: true,
-      name: this.loggedInAccount!.name,
-      network: this.main.network.networkName,
-      address: this.loggedInAccount!.wallet!.info!.addrStr,
-      balance: this.loggedInAccount!.wallet!.info!.balance,
-    } : { accountIsLoggedIn: false };
-    return res;
-  }
-
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.LOGIN:
@@ -434,9 +425,6 @@ export default class AccountController extends IController {
         break;
       case MESSAGE_TYPE.VALIDATE_WALLET_NAME:
         sendResponse(this.isWalletNameTaken(request.name));
-        break;
-      case MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES_2:
-        sendResponse(this.inpageQryptoAccountValues());
         break;
       default:
         break;

@@ -53,13 +53,9 @@ function handleRPCRequest(message: IRPCCallRequest) {
   });
 }
 
-function handleInpageQryptoAccountRequest() {
-  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES_2 }, (accountValues) => {
-      postWindowMessage(TARGET_NAME.INPAGE, {
-        type: API_TYPE.RETURN_INPAGE_QRYPTO_ACCOUNT_VALUES,
-        payload: accountValues,
-      });
-  });
+// Forwards the request to the bg script
+function forwardInpageQryptoAccountRequest() {
+  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES_2 });
 }
 
 // Handle messages sent from inpage -> content script(here) -> bg script
@@ -74,7 +70,7 @@ function handleInPageMessage(event: MessageEvent) {
       handleRPCRequest(message.payload);
       break;
     case API_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES_1:
-      handleInpageQryptoAccountRequest();
+      forwardInpageQryptoAccountRequest();
       break;
     default:
       throw Error(`Contentscript processing invalid type: ${message}`);
@@ -88,6 +84,12 @@ function handleBackgroundScriptMessage(message: any) {
       postWindowMessage<IRPCCallResponse>(TARGET_NAME.INPAGE, {
         type: API_TYPE.RPC_RESPONSE,
         payload: message,
+      });
+      break;
+    case MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES_1:
+      postWindowMessage(TARGET_NAME.INPAGE, {
+        type: API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES_2,
+        payload: message.accountValues,
       });
       break;
     default:

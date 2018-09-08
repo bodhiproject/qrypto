@@ -6,6 +6,7 @@ import AccountController from './accountController';
 import NetworkController from './networkController';
 import ExternalController from './externalController';
 import RPCController from './rpcController';
+import InpageAccountController from './inpageAccountController';
 import TransactionController from './transactionController';
 import SessionController from './sessionController';
 import { MESSAGE_TYPE } from '../../constants';
@@ -17,6 +18,7 @@ export default class QryptoController {
   public network: NetworkController;
   public external: ExternalController;
   public rpc: RPCController;
+  public inpageAccount: InpageAccountController;
   public transaction: TransactionController;
   public session: SessionController;
 
@@ -29,6 +31,7 @@ export default class QryptoController {
     this.network = new NetworkController(this);
     this.external = new ExternalController(this);
     this.rpc = new RPCController(this);
+    this.inpageAccount = new InpageAccountController(this);
     this.transaction = new TransactionController(this);
     this.session = new SessionController(this);
   }

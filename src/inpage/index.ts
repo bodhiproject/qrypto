@@ -41,7 +41,7 @@ function handleInpageMessage(event: MessageEvent) {
       break;
     case API_TYPE.RPC_RESPONSE:
       return qryptoProvider.handleRpcCallResponse(message.payload);
-    case API_TYPE.RETURN_INPAGE_QRYPTO_ACCOUNT_VALUES:
+    case API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES_2:
       qryptoAccount.setQryptoAccountValues(message.payload);
       break;
     default:
