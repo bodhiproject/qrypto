@@ -55,7 +55,7 @@ function handleRPCRequest(message: IRPCCallRequest) {
 
 // Forwards the request to the bg script
 function forwardInpageQryptoAccountRequest() {
-  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES_2 });
+  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES });
 }
 
 // Handle messages sent from inpage -> content script(here) -> bg script
@@ -69,7 +69,7 @@ function handleInPageMessage(event: MessageEvent) {
     case API_TYPE.RPC_REQUEST:
       handleRPCRequest(message.payload);
       break;
-    case API_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES_1:
+    case API_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES:
       forwardInpageQryptoAccountRequest();
       break;
     default:
@@ -86,9 +86,9 @@ function handleBackgroundScriptMessage(message: any) {
         payload: message,
       });
       break;
-    case MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES_1:
+    case MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES:
       postWindowMessage(TARGET_NAME.INPAGE, {
-        type: API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES_2,
+        type: API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES,
         payload: message.accountValues,
       });
       break;

@@ -4,12 +4,20 @@ import { QryptoRPCProvider } from './QryptoRPCProvider';
 import { QryptoAccount } from './QryptoAccount';
 import { showSignTxWindow } from './window';
 import { isMessageNotValid } from '../utils';
+import { postWindowMessage } from '../utils/messenger';
 
 const qryptoProvider: QryptoRPCProvider = new QryptoRPCProvider();
 const qryptoAccount: QryptoAccount = new QryptoAccount();
+
+// fetch qryptoAccount values from bg script
+postWindowMessage(TARGET_NAME.CONTENTSCRIPT, {
+  type: API_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES,
+  payload: {},
+});
+
 const qrypto = {
-  'rpcProvider': qryptoProvider,
-  'account': qryptoAccount,
+  rpcProvider: qryptoProvider,
+  account: qryptoAccount,
 };
 let signTxUrl: string;
 
@@ -44,7 +52,7 @@ function handleInpageMessage(event: MessageEvent) {
       break;
     case API_TYPE.RPC_RESPONSE:
       return qryptoProvider.handleRpcCallResponse(message.payload);
-    case API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES_2:
+    case API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES:
       qryptoAccount.setQryptoAccountValues(message.payload);
       break;
     default:
