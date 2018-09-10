@@ -58,6 +58,11 @@ module.exports = {
   module: {
     rules: [
       {
+        parser: {
+          amd: false,
+        }
+      },
+      {
         test: /\.(ts|tsx)$/,
         loaders: require.resolve('tslint-loader'),
         enforce: 'pre',
