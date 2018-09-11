@@ -52,6 +52,20 @@ function handleMessage(message) {
 window.addEventListener('message', handleMessage, false);
 ```
 
+### Qrypto User Account Status - Login/Logout
+You can use an event listener to get notified when a user has logged in or out of Qrypto.
+
+function qryptoAcctChanged(event){
+  if (event.data.message && event.data.message.type == "ACCOUNT_CHANGED") {
+    console.log("account:", event.data.message.payload)
+    // account: QryptoAccount { loggedIn: true, name: "2", network: "TestNet", address: "qJHp6dUSmDShpEEMmwxqHPo7sFSdydSkPM", balance: 49.10998413 }
+  }
+}
+window.addEventListener('message', qryptoAcctChanged, false);
+
+You can also access the account details from window.qrypto.account
+// QryptoAccount { loggedIn: true, name: "myAcct", network: "TestNet", address: "qJHp6dUSmDShpEEMmwxqHPo7sFSdydSkPM", balance: 49.10998413 }
+
 ### Using Qweb3
 You may also use our Qweb3 convenience library to make `sendtocontract` or `callcontract` calls. See the instructions in the Github repo here: https://github.com/bodhiproject/qweb3.js
 

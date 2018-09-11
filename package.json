@@ -65,7 +65,6 @@
     "axios": "^0.18.0",
     "chrome-call": "^3.0.0",
     "classnames": "^2.2.6",
-    "dedent-js": "^1.0.1",
     "mobx": "^5.0.3",
     "mobx-react": "^5.2.3",
     "mobx-react-router": "^4.0.4",
