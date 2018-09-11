@@ -1,15 +1,15 @@
 import { IExtensionAPIMessage, IRPCCallRequest } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 import { QryptoRPCProvider } from './QryptoRPCProvider';
-import { QryptoAccount } from './QryptoAccount';
+import { InpageAccount } from '../models/InpageAccount';
 import { showSignTxWindow } from './window';
 import { isMessageNotValid } from '../utils';
 import { postWindowMessage } from '../utils/messenger';
 
 const qryptoProvider: QryptoRPCProvider = new QryptoRPCProvider();
-const qryptoAccount: QryptoAccount = new QryptoAccount();
+const inpageAccount: InpageAccount = new InpageAccount();
 
-// fetch qryptoAccount values from bg script
+// fetch inpageAccount values from bg script
 postWindowMessage(TARGET_NAME.CONTENTSCRIPT, {
   type: API_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES,
   payload: {},
@@ -17,7 +17,7 @@ postWindowMessage(TARGET_NAME.CONTENTSCRIPT, {
 
 const qrypto = {
   rpcProvider: qryptoProvider,
-  account: qryptoAccount,
+  account: inpageAccount,
 };
 let signTxUrl: string;
 
@@ -53,7 +53,7 @@ function handleInpageMessage(event: MessageEvent) {
     case API_TYPE.RPC_RESPONSE:
       return qryptoProvider.handleRpcCallResponse(message.payload);
     case API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES:
-      qryptoAccount.setQryptoAccountValues(message.payload);
+      qrypto.account = message.payload;
       break;
     default:
       throw Error(`Inpage processing invalid type: ${message}`);

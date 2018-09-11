@@ -234,7 +234,7 @@ export default class AccountController extends IController {
   public logoutAccount = () => {
     this.main.session.clearAllIntervals();
     this.main.session.clearSession();
-    this.main.inpageAccount.sendQryptoAccountValuesToActiveTab();
+    this.main.inpageAccount.sendInpageAccountToActiveTab();
     this.routeToAccountPage();
   }
 
@@ -260,7 +260,7 @@ export default class AccountController extends IController {
     await this.startPolling();
     await this.main.token.startPolling();
     await this.main.external.startPolling();
-    this.main.inpageAccount.sendQryptoAccountValuesToActiveTab();
+    this.main.inpageAccount.sendInpageAccountToActiveTab();
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 
@@ -377,7 +377,7 @@ export default class AccountController extends IController {
   private displayErrorOnPopup = (err: Error)  => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
   }
-    
+
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.LOGIN:

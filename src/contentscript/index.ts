@@ -54,7 +54,7 @@ function handleRPCRequest(message: IRPCCallRequest) {
 }
 
 // Forwards the request to the bg script
-function forwardInpageQryptoAccountRequest() {
+function forwardInpageAccountRequest() {
   chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES });
 }
 
@@ -70,7 +70,7 @@ function handleInPageMessage(event: MessageEvent) {
       handleRPCRequest(message.payload);
       break;
     case API_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES:
-      forwardInpageQryptoAccountRequest();
+      forwardInpageAccountRequest();
       break;
     default:
       throw Error(`Contentscript processing invalid type: ${message}`);
@@ -89,7 +89,7 @@ function handleBackgroundScriptMessage(message: any) {
     case MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES:
       postWindowMessage(TARGET_NAME.INPAGE, {
         type: API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES,
-        payload: message.accountValues,
+        payload: message.account,
       });
       break;
     default:
