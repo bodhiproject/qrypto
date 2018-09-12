@@ -89,7 +89,7 @@ function handleBackgroundScriptMessage(message: any) {
     case MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES:
       postWindowMessage(TARGET_NAME.INPAGE, {
         type: API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES,
-        payload: message.account,
+        payload: message.accountWrapper,
       });
       break;
     default:

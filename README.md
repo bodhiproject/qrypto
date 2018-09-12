@@ -56,8 +56,8 @@ window.addEventListener('message', handleMessage, false);
 You can use an event listener to get notified when a user has logged in or out of Qrypto.
 
 function qryptoAcctChanged(event){
-  if (event.data.message && event.data.message.type == "ACCOUNT_CHANGED") {
-    console.log("account:", event.data.message.payload)
+  if (event.data.message && event.data.message.type == "ACCOUNT_CHANGED" && !event.data.message.payload.error) {
+    console.log("account:", event.data.message.payload.account)
     // account: InpageAccount { loggedIn: true, name: "2", network: "TestNet", address: "qJHp6dUSmDShpEEMmwxqHPo7sFSdydSkPM", balance: 49.10998413 }
   }
 }

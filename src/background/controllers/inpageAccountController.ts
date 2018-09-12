@@ -15,12 +15,12 @@ export default class InpageAccountController extends IController {
     chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
       chrome.tabs.sendMessage(tabID!, {
         type: MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES,
-        account: this.inpageAccount(),
+        accountWrapper: this.inpageAccountWrapper(),
       });
     });
   }
 
-  private inpageAccount = () => {
+  private inpageAccountWrapper = () => {
     const inpageAccount = new InpageAccount();
     if (this.main.account.loggedInAccount) {
       inpageAccount.loggedIn = true;
@@ -32,10 +32,12 @@ export default class InpageAccountController extends IController {
         inpageAccount.address = this.main.account.loggedInAccount!.wallet!.info!.addrStr;
         inpageAccount.balance = this.main.account.loggedInAccount!.wallet!.info!.balance;
       } else {
-        return { error: 'Unexpected error, user is logged in but wallet info is not defined' };
+        return {
+          account: null,
+          error: Error('Unexpected error, user is logged in but wallet info is not defined') };
       }
     }
-    return inpageAccount;
+    return { account: inpageAccount, error: null };
   }
 
   private handleMessage = (request: any) => {

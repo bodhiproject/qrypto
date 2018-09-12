@@ -5,6 +5,7 @@ import { InpageAccount } from '../models/InpageAccount';
 import { showSignTxWindow } from './window';
 import { isMessageNotValid } from '../utils';
 import { postWindowMessage } from '../utils/messenger';
+import { IInpageAccountWrapper } from '../types';
 
 const qryptoProvider: QryptoRPCProvider = new QryptoRPCProvider();
 const inpageAccount: InpageAccount = new InpageAccount();
@@ -53,7 +54,11 @@ function handleInpageMessage(event: MessageEvent) {
     case API_TYPE.RPC_RESPONSE:
       return qryptoProvider.handleRpcCallResponse(message.payload);
     case API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES:
-      qrypto.account = message.payload;
+      const accountWrapper: IInpageAccountWrapper = message.payload;
+      qrypto.account = accountWrapper.account;
+      if (accountWrapper.error) {
+        throw accountWrapper.error;
+      }
       break;
     default:
       throw Error(`Inpage processing invalid type: ${message}`);
