@@ -3,7 +3,7 @@ import { Insight } from 'qtumjs-wallet';
 import { ISendTxOptions } from 'qtumjs-wallet/lib/tx';
 
 import { API_TYPE, TARGET_NAME, INTERNAL_API_TYPE } from './constants';
-import Transaction from './models/Transaction';
+import { Transaction, InpageAccount } from './models';
 
 export interface IExtensionMessageData<T> {
   target: TARGET_NAME;
@@ -46,4 +46,9 @@ export interface ISignExternalTxRequest {
 export interface ISigner {
   send(to: string, amount: number, options: ISendTxOptions): Promise<Insight.ISendRawTxResult>;
   sendTransaction(args: any[]): any;
+}
+
+export interface IInpageAccountWrapper {
+  account: InpageAccount;
+  error: Error;
 }
