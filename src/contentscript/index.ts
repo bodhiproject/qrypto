@@ -1,9 +1,11 @@
 
 import { injectAllScripts } from './inject';
 import { IExtensionAPIMessage, IRPCCallRequest, IRPCCallResponse, ICurrentAccount } from '../types';
-import { TARGET_NAME, API_TYPE, MESSAGE_TYPE, RPC_METHOD } from '../constants';
+import { TARGET_NAME, API_TYPE, MESSAGE_TYPE, RPC_METHOD, PORT_NAME } from '../constants';
 import { isMessageNotValid } from '../utils';
 import { postWindowMessage } from '../utils/messenger';
+
+let port: any;
 
 // Inject scripts
 injectAllScripts();
@@ -11,9 +13,31 @@ injectAllScripts();
 // Add message listeners
 window.addEventListener('message', handleInPageMessage, false);
 chrome.runtime.onMessage.addListener(handleBackgroundScriptMessage);
+// Dapp developer triggers this event to set up window.qrypto
+window.addEventListener('message', setupLongLivedConnection, false);
 
-// const port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
-// port.onMessage.addListener(responseExtensionAPI);
+// Create a long-lived connection to the background page
+function setupLongLivedConnection(event: MessageEvent) {
+  if (event.data.message && event.data.message.type === API_TYPE.CONNECT_INPAGE_QRYPTO) {
+    port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
+
+    port.onMessage.addListener((msg: any) => {
+      if (msg.type === MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES) {
+        // content script -> inpage and/or Dapp event listener
+        postWindowMessage(TARGET_NAME.INPAGE, {
+          type: API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES,
+          payload: msg.accountWrapper,
+        });
+      }
+    });
+
+    // request inpageAccount values from bg script
+    postWindowMessage(TARGET_NAME.CONTENTSCRIPT, {
+      type: API_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES,
+      payload: {},
+    });
+  }
+}
 
 function handleRPCRequest(message: IRPCCallRequest) {
   const { method, args, id } = message;
@@ -55,7 +79,7 @@ function handleRPCRequest(message: IRPCCallRequest) {
 
 // Forwards the request to the bg script
 function forwardInpageAccountRequest() {
-  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES });
+  port.postMessage({ type: MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES });
 }
 
 // Handle messages sent from inpage -> content script(here) -> bg script
@@ -84,12 +108,6 @@ function handleBackgroundScriptMessage(message: any) {
       postWindowMessage<IRPCCallResponse>(TARGET_NAME.INPAGE, {
         type: API_TYPE.RPC_RESPONSE,
         payload: message,
-      });
-      break;
-    case MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES:
-      postWindowMessage(TARGET_NAME.INPAGE, {
-        type: API_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES,
-        payload: message.accountWrapper,
       });
       break;
     default:

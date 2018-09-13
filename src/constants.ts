@@ -10,8 +10,8 @@ export enum PORT_NAME {
 }
 
 export enum RPC_METHOD {
-  SEND_TO_CONTRACT = 'sendtocontract',
-  CALL_CONTRACT = 'callcontract',
+  SEND_TO_CONTRACT = 'sendToContract',
+  CALL_CONTRACT = 'callContract',
 }
 
 export enum API_TYPE {
@@ -21,6 +21,7 @@ export enum API_TYPE {
   RPC_SEND_TO_CONTRACT = 'RPC_SEND_TO_CONTRACT',
   GET_INPAGE_QRYPTO_ACCOUNT_VALUES = 'GET_INPAGE_QRYPTO_ACCOUNT_VALUES',
   SEND_INPAGE_QRYPTO_ACCOUNT_VALUES = 'ACCOUNT_CHANGED',
+  CONNECT_INPAGE_QRYPTO = 'CONNECT_QRYPTO',
 }
 
 export enum MESSAGE_TYPE {
