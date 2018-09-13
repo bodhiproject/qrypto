@@ -1,24 +1,15 @@
 import { IExtensionAPIMessage, IRPCCallRequest } from '../types';
 import { TARGET_NAME, API_TYPE } from '../constants';
 import { QryptoRPCProvider } from './QryptoRPCProvider';
-import { InpageAccount } from '../models/InpageAccount';
 import { showSignTxWindow } from './window';
 import { isMessageNotValid } from '../utils';
-import { postWindowMessage } from '../utils/messenger';
 import { IInpageAccountWrapper } from '../types';
 
 const qryptoProvider: QryptoRPCProvider = new QryptoRPCProvider();
-const inpageAccount: InpageAccount = new InpageAccount();
-
-// fetch inpageAccount values from bg script
-postWindowMessage(TARGET_NAME.CONTENTSCRIPT, {
-  type: API_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES,
-  payload: {},
-});
 
 const qrypto = {
   rpcProvider: qryptoProvider,
-  account: inpageAccount,
+  account: null,
 };
 let signTxUrl: string;
 
@@ -58,6 +49,8 @@ function handleInpageMessage(event: MessageEvent) {
       qrypto.account = accountWrapper.account;
       if (accountWrapper.error) {
         throw accountWrapper.error;
+      } else {
+        console.log('window.qrypto.account has been updated');
       }
       break;
     default:

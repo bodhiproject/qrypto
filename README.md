@@ -4,9 +4,22 @@
 Chome Web Store: https://chrome.google.com/webstore/detail/qrypto/hdmjdgjbehedbnjmljikggbmmbnbmlnd
 
 ## Connecting Qrypto to your Web Dapp
+Connect to qrypto by calling 
+window.postMessage({ message: { type: 'CONNECT_QRYPTO' }}, '*')
+<!-- //TODO - should we simplify this interface for the Dapp developer?
+ window.postMessage({ message: 'CONNECT_QRYPTO' }, '*') 
+ It would mean that we would check on data rather than type for event message type for this one spot in our app
+ /contentscript/index.ts L22
+ if (event.data.message && event.data.message.type == API_TYPE.CONNECT_INPAGE_QRYPTO)
+ becomes 
+ if (event.data.message && event.data.message == API_TYPE.CONNECT_INPAGE_QRYPTO)
+-->
+
+This will populate the window.qrypto.account object in your webpage.
+
 RPC calls can be directly made via `QryptoProvider` which is injected into every webpage if you have Qrypto installed and running.
 
-**Make sure that `window.qryptoProvider` is defined before using it.**
+**Make sure that `window.qrypto.rpcProvider` is defined before using it.**
 
 ### Using QryptoProvider
 ```
@@ -53,7 +66,7 @@ window.addEventListener('message', handleMessage, false);
 ```
 
 ### Qrypto User Account Status - Login/Logout
-You can use an event listener to get notified when a user has logged in or out of Qrypto.
+After connecting qrypto to your dapp, you can use an event listener to get notified when a user has logged in or out of Qrypto.
 
 function qryptoAcctChanged(event){
   if (event.data.message && event.data.message.type == "ACCOUNT_CHANGED" && !event.data.message.payload.error) {
