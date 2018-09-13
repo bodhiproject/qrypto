@@ -19,7 +19,7 @@ RPC calls can be directly made via `QryptoProvider` which is injected into every
 const contractAddress = 'a6dd0b0399dc6162cedde85ed50c6fa4a0dd44f1';
 const data = '06fdde03';
 window.qrypto.rpcProvider.rawCall(
-  'callContract',
+  'callcontract',
   [contractAddress, data]
 ).then((res) => console.log(res));
 
@@ -30,7 +30,7 @@ const qtumAmt = 1; // optional. defaults to 0.
 const gasLimit = 200000; // optional. defaults to 200000.
 const gasPrice = 40; // optional. defaults to 40 (satoshi).
 window.qryptoProvider.rawCall(
-  'sendToContract',
+  'sendtocontract',
   [contractAddress, data, qtumAmt, gasLimit, gasPrice],
 );
 
