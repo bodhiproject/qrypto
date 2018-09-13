@@ -6,14 +6,6 @@ Chome Web Store: https://chrome.google.com/webstore/detail/qrypto/hdmjdgjbehedbn
 ## Connecting Qrypto to your Web Dapp
 Connect to qrypto by calling 
 window.postMessage({ message: { type: 'CONNECT_QRYPTO' }}, '*')
-<!-- //TODO - should we simplify this interface for the Dapp developer?
- window.postMessage({ message: 'CONNECT_QRYPTO' }, '*') 
- It would mean that we would check on data rather than type for event message type for this one spot in our app
- /contentscript/index.ts L22
- if (event.data.message && event.data.message.type == API_TYPE.CONNECT_INPAGE_QRYPTO)
- becomes 
- if (event.data.message && event.data.message == API_TYPE.CONNECT_INPAGE_QRYPTO)
--->
 
 This will populate the window.qrypto.account object in your webpage.
 
@@ -26,7 +18,7 @@ RPC calls can be directly made via `QryptoProvider` which is injected into every
 // callcontract
 const contractAddress = 'a6dd0b0399dc6162cedde85ed50c6fa4a0dd44f1';
 const data = '06fdde03';
-window.qryptoProvider.rawCall(
+window.qrypto.rpcProvider.rawCall(
   'callContract',
   [contractAddress, data]
 ).then((res) => console.log(res));

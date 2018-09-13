@@ -12,13 +12,12 @@ injectAllScripts();
 
 // Add message listeners
 window.addEventListener('message', handleInPageMessage, false);
-// TODO remove the line below after transitioning rpc to long lived connection
 chrome.runtime.onMessage.addListener(handleBackgroundScriptMessage);
 // Dapp developer triggers this event to set up window.qrypto
-window.addEventListener('message', setupLongLivedConnectionToBP, false);
+window.addEventListener('message', setupLongLivedConnection, false);
 
 // Create a long-lived connection to the background page
-function setupLongLivedConnectionToBP(event: MessageEvent) {
+function setupLongLivedConnection(event: MessageEvent) {
   if (event.data.message && event.data.message.type === API_TYPE.CONNECT_INPAGE_QRYPTO) {
     port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
 

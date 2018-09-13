@@ -6,7 +6,7 @@ import { InpageAccount } from '../../models/InpageAccount';
 export default class InpageAccountController extends IController {
 
   // All connected ports from content script
-  private ports: any[] = [];
+  private ports: chrome.runtime.Port[] = [];
 
   constructor(main: QryptoController) {
     super('inpageAccount', main);
@@ -64,8 +64,8 @@ export default class InpageAccountController extends IController {
     });
   }
 
+  // remove disconnected port from ports array
   private handleDisconnect = (port: any) => {
-    // remove disconnected port from ports array
     const portIdx = this.ports.indexOf(port);
     if (portIdx !== -1) {
       this.ports.splice(portIdx, 1);
