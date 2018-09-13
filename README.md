@@ -3,17 +3,33 @@
 ## Get Qrypto
 Chome Web Store: https://chrome.google.com/webstore/detail/qrypto/hdmjdgjbehedbnjmljikggbmmbnbmlnd
 
-## Connecting Qrypto to your Web Dapp
-Connect to qrypto by calling 
-window.postMessage({ message: { type: 'CONNECT_QRYPTO' }}, '*')
+### Connecting Qrypto to your Web Dapp
+Connect to qrypto by calling `window.postMessage({ message: { type: 'CONNECT_QRYPTO' }}, '*')`
 
-This will populate the window.qrypto.account object in your webpage.
+This will populate the `window.qrypto.account` object in your webpage.
+
+### Qrypto User Account Status - Login/Logout
+After connecting qrypto to your dapp, you can use an event listener to get notified when a user has logged in or out of Qrypto.
+
+```
+function qryptoAcctChanged(event) {
+  if (event.data.message && event.data.message.type == "ACCOUNT_CHANGED" && !event.data.message.payload.error) {
+    console.log("account:", event.data.message.payload.account)
+    // account: { loggedIn: true, name: "2", network: "TestNet", address: "qJHp6dUSmDShpEEMmwxqHPo7sFSdydSkPM", balance: 49.10998413 }
+  }
+}
+window.addEventListener('message', qryptoAcctChanged, false);
+```
+
+You can also access the account details from `window.qrypto.account`
+
+### Using QryptoProvider
 
 RPC calls can be directly made via `QryptoProvider` which is injected into every webpage if you have Qrypto installed and running.
 
 **Make sure that `window.qrypto.rpcProvider` is defined before using it.**
 
-### Using QryptoProvider
+
 ```
 // callcontract
 const contractAddress = 'a6dd0b0399dc6162cedde85ed50c6fa4a0dd44f1';
@@ -56,20 +72,6 @@ function handleMessage(message) {
 }
 window.addEventListener('message', handleMessage, false);
 ```
-
-### Qrypto User Account Status - Login/Logout
-After connecting qrypto to your dapp, you can use an event listener to get notified when a user has logged in or out of Qrypto.
-
-function qryptoAcctChanged(event){
-  if (event.data.message && event.data.message.type == "ACCOUNT_CHANGED" && !event.data.message.payload.error) {
-    console.log("account:", event.data.message.payload.account)
-    // account: InpageAccount { loggedIn: true, name: "2", network: "TestNet", address: "qJHp6dUSmDShpEEMmwxqHPo7sFSdydSkPM", balance: 49.10998413 }
-  }
-}
-window.addEventListener('message', qryptoAcctChanged, false);
-
-You can also access the account details from window.qrypto.account
-// InpageAccount { loggedIn: true, name: "myAcct", network: "TestNet", address: "qJHp6dUSmDShpEEMmwxqHPo7sFSdydSkPM", balance: 49.10998413 }
 
 ### Using Qweb3
 You may also use our Qweb3 convenience library to make `sendtocontract` or `callcontract` calls. See the instructions in the Github repo here: https://github.com/bodhiproject/qweb3.js
