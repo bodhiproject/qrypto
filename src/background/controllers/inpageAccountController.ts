@@ -1,22 +1,32 @@
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE } from '../../constants';
+import { MESSAGE_TYPE, PORT_NAME } from '../../constants';
 import { InpageAccount } from '../../models/InpageAccount';
 
 export default class InpageAccountController extends IController {
 
+  // All connected ports from content script
+  private ports: any[] = [];
+
   constructor(main: QryptoController) {
     super('inpageAccount', main);
-    chrome.runtime.onMessage.addListener(this.handleMessage);
+    chrome.runtime.onConnect.addListener(this.handleLongLivedConnection);
+
     this.initFinished();
   }
 
-  public sendInpageAccountToActiveTab = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
-      chrome.tabs.sendMessage(tabID!, {
-        type: MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES,
-        accountWrapper: this.inpageAccountWrapper(),
-      });
+  // Send message to and update qrypto.account object of all registered ports
+  public sendInpageAccountAllPorts = () => {
+    for (const port of this.ports) {
+      this.sendInpageAccount(port);
+    }
+  }
+
+  // bg -> content script
+  public sendInpageAccount = (port: any) => {
+    port.postMessage({
+      type: MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES,
+      accountWrapper: this.inpageAccountWrapper(),
     });
   }
 
@@ -40,13 +50,25 @@ export default class InpageAccountController extends IController {
     return { account: inpageAccount, error: null };
   }
 
-  private handleMessage = (request: any) => {
-    switch (request.type) {
-      case MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES:
-        this.sendInpageAccountToActiveTab();
-        break;
-      default:
-        break;
+  // when a port connects
+  private handleLongLivedConnection = (port: any) => {
+    if (port.name !== PORT_NAME.CONTENTSCRIPT) {
+      return;
+    }
+    this.ports.push(port);
+    port.onDisconnect.addListener(this.handleDisconnect);
+    port.onMessage.addListener((msg: any) => {
+      if (msg.type === MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES) {
+        this.sendInpageAccount(port);
+      }
+    });
+  }
+
+  private handleDisconnect = (port: any) => {
+    // remove disconnected port from ports array
+    const portIdx = this.ports.indexOf(port);
+    if (portIdx !== -1) {
+      this.ports.splice(portIdx, 1);
     }
   }
 }
