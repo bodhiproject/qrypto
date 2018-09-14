@@ -3,25 +3,46 @@
 ## Get Qrypto
 Chome Web Store: https://chrome.google.com/webstore/detail/qrypto/hdmjdgjbehedbnjmljikggbmmbnbmlnd
 
-### Connecting Qrypto to your Web Dapp
-Connect to qrypto by calling `window.postMessage({ message: { type: 'CONNECT_QRYPTO' }}, '*')`
+## Web Dapp Usage
 
-This will populate the `window.qrypto.account` object in your webpage.
+Your dapp can use Qrypto to get information about a user's account status (whether they are logged into Qrypto, their account address, and balance). Qrypto also enables your dapp to listen to a window event for any changes to the user's account status.
+Your dapp can also use qrypto to make callcontract and sendtocontract calls to the blockchain. 
+
+### Connecting Qrypto
+To receive information about a user's account status, your dapp will first need to initiate a long-lived connection between Qrypto's content script and background script.
+The code to do this is already in Qrypto, your dapp just needs to trigger the function by posting a window message.
+`window.postMessage({ message: { type: 'CONNECT_QRYPTO' }}, '*')`
+
+This will populate the `window.qrypto.account` object in your webpage. The values are automatically updated when a user logs in/out or the account balance changes.
+
+```
+// window.qrypto.account
+{ 
+	loggedIn: true, 
+	name: "2", 
+	network: "TestNet", 
+	address: "qJHp6dUSmDShpEEMmwxqHPo7sFSdydSkPM", 
+	balance: 49.10998413 
+}
+```
+
 
 ### Qrypto User Account Status - Login/Logout
-After connecting qrypto to your dapp, you can use an event listener to get notified when a user has logged in or out of Qrypto.
+After connecting Qrypto to your dapp, you can use an event listener to get notified of any changes to the user's account status(logging in/out, change in account balance).
 
 ```
 function qryptoAcctChanged(event) {
-  if (event.data.message && event.data.message.type == "ACCOUNT_CHANGED" && !event.data.message.payload.error) {
+  if (event.data.message && event.data.message.type == "ACCOUNT_CHANGED") {
+  	if (event.data.message.payload.error){
+  		// handle error
+  	}
     console.log("account:", event.data.message.payload.account)
-    // account: { loggedIn: true, name: "2", network: "TestNet", address: "qJHp6dUSmDShpEEMmwxqHPo7sFSdydSkPM", balance: 49.10998413 }
   }
 }
 window.addEventListener('message', qryptoAcctChanged, false);
 ```
 
-You can also access the account details from `window.qrypto.account`
+Note that `window.qrypto.account` will still get updated even if you don't set up this event listener; your Dapp just won't be notified of the changes.
 
 ### Using QryptoProvider
 
