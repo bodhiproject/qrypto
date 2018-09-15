@@ -88,8 +88,7 @@ export default class CryptoController extends IController {
         if (e.data.err) {
           throw Error('scrypt failed to calculate derivedKey');
         }
-        const derivedKey = e.data.derivedKey;
-        this.passwordHash = derivedKey.toString('hex');
+        this.passwordHash = e.data.passwordHash;
         this.main.account.finishLogin();
       };
     }
