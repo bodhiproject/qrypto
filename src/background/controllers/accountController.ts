@@ -339,7 +339,19 @@ export default class AccountController extends IController {
       return;
     }
 
+    let existingBalance;
+    if (this.loggedInAccount.wallet.info) {
+      existingBalance = this.loggedInAccount.wallet.info!.balance;
+    }
+
     await this.loggedInAccount.wallet.getInfo();
+    const newBalance = this.loggedInAccount.wallet.info!.balance;
+
+    // if the balance has changed, update the inpageAcct for all windows
+    if (existingBalance !== newBalance) {
+      this.main.inpageAccount.sendInpageAccountAllPorts();
+    }
+
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.wallet.info });
   }
 
