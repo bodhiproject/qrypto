@@ -314,10 +314,13 @@ export default class AccountController extends IController {
       this.recoverFromPrivateKeyHash(account.privateKeyHash);
       return true;
     } catch (err) {
-      console.log(err);
-      this.displayErrorOnPopup(err);
-      return false;
+      /*
+      * If the user provides an invalid password, privateKeyHash will be invalid,
+      * and recoverFromPrivateKeyHash will throw an error. In this case it is not
+      * an unexpected error for us, so we don't do anything with the error.
+      */
     }
+    return false;
   }
 
   /*
