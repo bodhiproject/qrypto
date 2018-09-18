@@ -7,7 +7,7 @@ import { IInpageAccountWrapper } from '../types';
 
 const qryptoProvider: QryptoRPCProvider = new QryptoRPCProvider();
 
-const qrypto = {
+let qrypto: any = {
   rpcProvider: qryptoProvider,
   account: null,
 };
@@ -20,6 +20,12 @@ window.addEventListener('message', handleInpageMessage, false);
 Object.assign(window, {
   qrypto,
 });
+
+function handlePortDisconnected() {
+  qrypto = undefined;
+  Object.assign(window, { qrypto });
+  window.removeEventListener('message', handleInpageMessage, false);
+}
 
 /**
  * Handles the sendToContract request originating from the QryptoRPCProvider and opens the sign tx window.
@@ -52,6 +58,9 @@ function handleInpageMessage(event: MessageEvent) {
       } else {
         console.log('window.qrypto.account has been updated');
       }
+      break;
+    case API_TYPE.PORT_DISCONNECTED:
+      handlePortDisconnected();
       break;
     default:
       throw Error(`Inpage processing invalid type: ${message}`);

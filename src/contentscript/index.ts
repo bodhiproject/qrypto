@@ -31,12 +31,40 @@ function setupLongLivedConnection(event: MessageEvent) {
       }
     });
 
+    /*
+    * Triggers when port is disconnected from other end, such as when extension is uninstalled,
+    * but only if a long-lived connection was created first.
+    * No chrome.runtime.onUninstalled event exists.
+    * Does not trigger when user closes the tab, or navigates to another page.
+    */
+    port.onDisconnect.addListener(() => {
+      handlePortDisconnected();
+    });
+
     // request inpageAccount values from bg script
     postWindowMessage(TARGET_NAME.CONTENTSCRIPT, {
       type: API_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES,
       payload: {},
     });
   }
+}
+
+/*
+* Resetting the state of the webpage this way is a bit fragile. We can remove the
+* event listeners and reset window.qrypto, but there is no way to uninject the
+* content scripts, which means that on reinstallation, we are injecting the
+* scripts twice. So far this has been okay, but if it causes unpredictable side
+* effects we could alternatively force a reload of the page using
+* window.location.reload()
+*/
+function handlePortDisconnected() {
+  window.removeEventListener('message', handleInPageMessage, false);
+  window.removeEventListener('message', setupLongLivedConnection, false);
+
+  postWindowMessage(TARGET_NAME.INPAGE, {
+    type: API_TYPE.PORT_DISCONNECTED,
+    payload: {},
+  });
 }
 
 function handleRPCRequest(message: IRPCCallRequest) {
