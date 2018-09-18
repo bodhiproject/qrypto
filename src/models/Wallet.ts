@@ -38,7 +38,7 @@ export default class Wallet implements ISigner {
     }
 
     try {
-      return await this.rpcProvider!.rawCall('sendToContract', args);
+      return await this.rpcProvider!.rawCall('sendtocontract', args);
     } catch (err) {
       throw err;
     }
