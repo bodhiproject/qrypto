@@ -2,7 +2,7 @@ import { WalletRPCProvider, Insight } from 'qtumjs-wallet';
 
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE } from '../../constants';
+import { MESSAGE_TYPE, RPC_METHOD } from '../../constants';
 import { IRPCCallResponse } from '../../types';
 import Config from '../../config';
 
@@ -28,7 +28,7 @@ export default class RPCController extends IController {
     try {
       const rpcProvider = this.rpcProvider();
       if (!rpcProvider) {
-        throw Error('Cannot sendToContract without RPC provider.');
+        throw Error('Cannot sendtocontract without RPC provider.');
       }
       if (args.length < 2) {
         throw Error('Requires first two arguments: contractAddress and data.');
@@ -54,7 +54,7 @@ export default class RPCController extends IController {
   }
 
   /*
-  * Executes a callContract request.
+  * Executes a callcontract request.
   * @param id Request ID.
   * @param args Request arguments. [contractAddress, data, amount?, gasLimit?, gasPrice?]
   */
@@ -64,13 +64,13 @@ export default class RPCController extends IController {
     try {
       const rpcProvider = this.rpcProvider();
       if (!rpcProvider) {
-        throw Error('Cannot callContract without RPC provider.');
+        throw Error('Cannot callcontract without RPC provider.');
       }
       if (args.length < 2) {
         throw Error('Requires first two arguments: contractAddress and data.');
       }
 
-      result = await rpcProvider.rawCall('callContract', args) as Insight.IContractCall;
+      result = await rpcProvider.rawCall(RPC_METHOD.CALL_CONTRACT, args) as Insight.IContractCall;
     } catch (err) {
       error = err.message;
       console.error(error);
