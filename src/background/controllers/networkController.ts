@@ -9,6 +9,7 @@ export default class NetworkController extends IController {
   public static NETWORKS: QryNetwork[] = [
     new QryNetwork(NETWORK_NAMES.MAINNET, networks.mainnet, 'https://explorer.qtum.org/tx'),
     new QryNetwork(NETWORK_NAMES.TESTNET, networks.testnet, 'https://testnet.qtum.org/tx'),
+    new QryNetwork(NETWORK_NAMES.REGTEST, networks.regtest, 'http://localhost:3001/explorer/tx'),
   ];
 
   public get isMainNet(): boolean {
