@@ -39,6 +39,7 @@ export default class SessionController extends IController {
   public clearSession = () => {
     this.main.account.resetAccount();
     this.main.token.resetTokenList();
+    this.main.inpageAccount.sendInpageAccountAllPorts();
   }
 
   /*
