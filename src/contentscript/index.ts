@@ -7,20 +7,20 @@ import { postWindowMessage } from '../utils/messenger';
 
 let port: any;
 
-// Inject scripts
-injectAllScripts();
-
 // Add message listeners
 window.addEventListener('message', handleInPageMessage, false);
 chrome.runtime.onMessage.addListener(handleBackgroundScriptMessage);
 // Dapp developer triggers this event to set up window.qrypto
 window.addEventListener('message', setupLongLivedConnection, false);
 
-// Create a long-lived connection to the background page
-function setupLongLivedConnection(event: MessageEvent) {
+// Create a long-lived connection to the background page and inject content scripts
+async function setupLongLivedConnection(event: MessageEvent) {
   if (event.data.message && event.data.message.type === API_TYPE.CONNECT_INPAGE_QRYPTO) {
-    port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
+    // Inject scripts
+    await injectAllScripts();
 
+    // Setup port
+    port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
     port.onMessage.addListener((msg: any) => {
       if (msg.type === MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES) {
         // content script -> inpage and/or Dapp event listener
@@ -32,9 +32,8 @@ function setupLongLivedConnection(event: MessageEvent) {
     });
 
     /*
-    * Triggers when port is disconnected from other end, such as when extension is uninstalled,
-    * but only if a long-lived connection was created first.
-    * No chrome.runtime.onUninstalled event exists.
+    * Triggers when port is disconnected from other end, such as when extension is
+    * uninstalled, but only if a long-lived connection was created first.
     * Does not trigger when user closes the tab, or navigates to another page.
     */
     port.onDisconnect.addListener(() => {
@@ -50,12 +49,13 @@ function setupLongLivedConnection(event: MessageEvent) {
 }
 
 /*
-* Resetting the state of the webpage this way is a bit fragile. We can remove the
-* event listeners and reset window.qrypto, but there is no way to uninject the
-* content scripts, which means that on reinstallation, we are injecting the
-* scripts twice. So far this has been okay, but if it causes unpredictable side
-* effects we could alternatively force a reload of the page using
-* window.location.reload()
+* This only partially resets the webpage to its pre-connected state. We remove the
+* event listeners and set window.qrypto back to undefined, but there is no
+* way to uninject the content scripts. This is not a big deal though as without a
+* Qrypto installation, the content scripts won't do anything (neither will the
+* event listeners, but we can remove them so we may as well).
+* And as long as the dapp implements the handleQryptoInstalledOrUpdated event
+* listener, the page will be refreshed if Qrypto is reinstalled.
 */
 function handlePortDisconnected() {
   window.removeEventListener('message', handleInPageMessage, false);

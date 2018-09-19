@@ -24,8 +24,8 @@ function injectStylesheet(src: string) {
   });
 }
 
-export function injectAllScripts() {
-  injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
+export async function injectAllScripts() {
+  await injectScript(chrome.extension.getURL('commons.all.js')).then(async () => {
     await injectScript(chrome.extension.getURL('commons.exclude-background.js'));
     await injectScript(chrome.extension.getURL('commons.exclude-contentscript.js'));
     await injectScript(chrome.extension.getURL('commons.exclude-popup.js'));
