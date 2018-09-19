@@ -28,9 +28,9 @@ export default class OnInstallController extends IController {
     chrome.windows.getAll({
       populate: true,
     }, (windows) => {
-        for (const currentWindow of windows ) {
+        for (const currentWindow of windows) {
           if (currentWindow.tabs) {
-            for (const currentTab of currentWindow.tabs ) {
+            for (const currentTab of currentWindow.tabs) {
               // Skip chrome:// by checking for currentTab.url (chrome:// does not have a .url)
               if (currentTab.url) {
                 this.refreshTab(currentTab);
