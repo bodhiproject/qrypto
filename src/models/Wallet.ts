@@ -2,6 +2,7 @@ import { action } from 'mobx';
 import { Wallet as QtumWallet, Insight, WalletRPCProvider } from 'qtumjs-wallet';
 
 import { ISigner } from '../types';
+import { RPC_METHOD } from '../constants';
 
 export default class Wallet implements ISigner {
   public qjsWallet?: QtumWallet;
@@ -38,7 +39,7 @@ export default class Wallet implements ISigner {
     }
 
     try {
-      return await this.rpcProvider!.rawCall('sendToContract', args);
+      return await this.rpcProvider!.rawCall(RPC_METHOD.SEND_TO_CONTRACT, args);
     } catch (err) {
       throw err;
     }
