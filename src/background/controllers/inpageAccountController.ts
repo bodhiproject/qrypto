@@ -56,6 +56,11 @@ export default class InpageAccountController extends IController {
       return;
     }
     this.ports.push(port);
+
+    /*
+    * Triggers when port is disconnected from other end, such as when user closes
+    * the tab, or navigates to another page. Does not trigger when extension is uninstalled.
+    */
     port.onDisconnect.addListener(this.handleDisconnect);
     port.onMessage.addListener((msg: any) => {
       if (msg.type === MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES) {

@@ -9,6 +9,7 @@ import RPCController from './rpcController';
 import InpageAccountController from './inpageAccountController';
 import TransactionController from './transactionController';
 import SessionController from './sessionController';
+import OnInstallController from './onInstallController';
 import { MESSAGE_TYPE } from '../../constants';
 
 export default class QryptoController {
@@ -21,6 +22,7 @@ export default class QryptoController {
   public inpageAccount: InpageAccountController;
   public transaction: TransactionController;
   public session: SessionController;
+  public onInstall: OnInstallController;
 
   private initialized: object = {};
 
@@ -34,6 +36,7 @@ export default class QryptoController {
     this.inpageAccount = new InpageAccountController(this);
     this.transaction = new TransactionController(this);
     this.session = new SessionController(this);
+    this.onInstall = new OnInstallController(this);
   }
 
   /*

@@ -9,47 +9,64 @@ Your dapp can use Qrypto to get information about a user's account status (wheth
 Your dapp can also use qrypto to make callcontract and sendtocontract calls to the blockchain. 
 
 ### Connecting Qrypto
-To receive information about a user's account status, your dapp will first need to initiate a long-lived connection between Qrypto's content script and background script.
+To use any of the above functionality, your dapp will first need to initiate a long-lived connection between Qrypto's content script and background script.
 The code to do this is already in Qrypto, your dapp just needs to trigger the function by posting a window message.
 `window.postMessage({ message: { type: 'CONNECT_QRYPTO' }}, '*')`
 
-This will populate the `window.qrypto.account` object in your webpage. The values are automatically updated when a user logs in/out or the account balance changes.
+This will populate the `window.qrypto` object in your webpage. The `window.qrypto.account` values are automatically updated when a user logs in/out or the account balance changes.
 
 ```
-// window.qrypto.account
-{ 
-	loggedIn: true, 
-	name: "2", 
-	network: "TestNet", 
-	address: "qJHp6dUSmDShpEEMmwxqHPo7sFSdydSkPM", 
-	balance: 49.10998413 
+// window.qrypto
+{
+  rpcProvider: QryptoRPCProvider,
+  account: {
+    loggedIn: true, 
+    name: "2", 
+    network: "TestNet", 
+    address: "qJHp6dUSmDShpEEMmwxqHPo7sFSdydSkPM", 
+    balance: 49.10998413 
+  }
 }
 ```
 
+### Refreshing your page when Qrypto is installed or updated
+You will probably want to refresh your dapp webpage when Qrypto is installed or updated. This allows your dapp to rerun
+`window.postMessage({ message: { type: 'CONNECT_QRYPTO' }}, '*')`
+which would have previously failed to do anything while Qrypto was not yet installed. 
+When Qrypto is installed or updated it will send all existing tabs an event message. To have that event message refresh your dapp, add the following event listener.
+
+```
+function handleQryptoInstalledOrUpdated(event) {
+  if (event.data.message && event.data.message.type === 'QRYPTO_INSTALLED_OR_UPDATED') {
+      // Refresh the page
+      window.location.reload()
+  }
+}  
+window.addEventListener('message', handleQryptoInstalledOrUpdated, false);
+```
 
 ### Qrypto User Account Status - Login/Logout
 After connecting Qrypto to your dapp, you can use an event listener to get notified of any changes to the user's account status(logging in/out, change in account balance).
 
 ```
-function qryptoAcctChanged(event) {
-  if (event.data.message && event.data.message.type == "ACCOUNT_CHANGED") {
+function handleQryptoAcctChanged(event) {
+  if (event.data.message && event.data.message.type === "ACCOUNT_CHANGED") {
   	if (event.data.message.payload.error){
   		// handle error
   	}
     console.log("account:", event.data.message.payload.account)
   }
 }
-window.addEventListener('message', qryptoAcctChanged, false);
+window.addEventListener('message', handleQryptoAcctChanged, false);
 ```
 
 Note that `window.qrypto.account` will still get updated even if you don't set up this event listener; your Dapp just won't be notified of the changes.
 
 ### Using QryptoProvider
 
-RPC calls can be directly made via `QryptoProvider` which is injected into every webpage if you have Qrypto installed and running.
+RPC calls can be directly made via `QryptoProvider` which is available to any webpage that connects to Qrypto.
 
 **Make sure that `window.qrypto.rpcProvider` is defined before using it.**
-
 
 ```
 // callcontract
