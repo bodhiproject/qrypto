@@ -84,6 +84,26 @@ export const isValidAmount = (amount: number, maxAllowed: number) => {
   return true;
 };
 
+export const isValidGasLimit = (gasLimit: number) => {
+  if (!isFinite(gasLimit)) {
+    return false;
+  }
+  if (gasLimit <= 0) {
+    return false;
+  }
+  return true;
+};
+
+export const isValidGasPrice = (gasPrice: number) => {
+  if (!isFinite(gasPrice)) {
+    return false;
+  }
+  if (gasPrice <= 0) {
+    return false;
+  }
+  return true;
+};
+
 /*
 * Handles the Enter key pressed of an input field.
 * @param event The event object.

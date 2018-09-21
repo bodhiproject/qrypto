@@ -2,19 +2,26 @@ import { observable, computed, action, reaction } from 'mobx';
 import { find } from 'lodash';
 
 import AppStore from './AppStore';
-import { SEND_STATE, MESSAGE_TYPE } from '../../constants';
-import { isValidAddress, isValidAmount } from '../../utils';
+import { SEND_STATE, MESSAGE_TYPE, TRANSACTION_SPEED } from '../../constants';
+import { isValidAddress, isValidAmount, isValidGasLimit, isValidGasPrice } from '../../utils';
 import QRCToken from '../../models/QRCToken';
+import Config from '../../config';
 
 const INIT_VALUES = {
   tokens: [],
   senderAddress: undefined,
-  receiverAddress: undefined,
+  receiverAddress: 'qJGa92dZrGUsoJWXjowUunbU8nNhxznSXG',
   token: undefined,
   amount: '',
   maxAmount: undefined,
   sendState: SEND_STATE.INITIAL,
   errorMessage: undefined,
+  transactionSpeed: TRANSACTION_SPEED.NORMAL,
+  transactionSpeeds: [TRANSACTION_SPEED.SLOW, TRANSACTION_SPEED.NORMAL, TRANSACTION_SPEED.FAST],
+  gasLimit: '',
+  gasPrice: '',
+  gasLimitRecommendedAmount: Config.TRANSACTION.DEFAULT_GAS_LIMIT.toString(),
+  gasPriceRecommendedAmount: (Config.TRANSACTION.DEFAULT_GAS_PRICE * 1e8).toString(), // satoshi/gas
 };
 
 export default class SendStore {
@@ -24,14 +31,30 @@ export default class SendStore {
   @observable public token?: QRCToken = INIT_VALUES.token;
   @observable public amount: string = INIT_VALUES.amount;
   @observable public maxAmount?: number = INIT_VALUES.maxAmount;
+  public transactionSpeeds: string[] = INIT_VALUES.transactionSpeeds;
+  @observable public transactionSpeed?: string = INIT_VALUES.transactionSpeed;
+  @observable public gasLimit?: string = INIT_VALUES.gasLimitRecommendedAmount;
+  @observable public gasPrice?: string = INIT_VALUES.gasPriceRecommendedAmount;
+  public gasLimitRecommendedAmount: string = INIT_VALUES.gasLimitRecommendedAmount;
+  public gasPriceRecommendedAmount: string = INIT_VALUES.gasPriceRecommendedAmount;
   @observable public sendState: SEND_STATE = INIT_VALUES.sendState;
   @observable public errorMessage?: string = INIT_VALUES.errorMessage;
+  @computed public get maxTxFee(): string | undefined {
+    return this.gasPrice && this.gasLimit
+      ? (parseInt(this.gasLimit, 10) * parseInt(this.gasPrice, 10) * 1e-8).toString() : undefined;
+  }
   @computed public get receiverFieldError(): string | undefined {
     return isValidAddress(this.isMainNet, this.receiverAddress)
       ? undefined : 'Not a valid Qtum address';
   }
   @computed public get amountFieldError(): string | undefined {
     return this.maxAmount && isValidAmount(Number(this.amount), this.maxAmount) ? undefined : 'Not a valid amount';
+  }
+  @computed public get gasLimitFieldError(): string | undefined {
+    return isValidGasLimit(Number(this.gasLimit)) ? undefined : 'Not a valid gas limit';
+  }
+  @computed public get gasPriceFieldError(): string | undefined {
+    return isValidGasPrice(Number(this.gasPrice)) ? undefined : 'Not a valid gas price';
   }
   @computed public get buttonDisabled(): boolean {
     return !this.senderAddress || !!this.receiverFieldError || !this.token || !!this.amountFieldError;
@@ -88,6 +111,7 @@ export default class SendStore {
         type: MESSAGE_TYPE.SEND_TOKENS,
         receiverAddress: this.receiverAddress,
         amount: this.amount,
+        transactionSpeed: this.transactionSpeed,
       });
     } else {
       chrome.runtime.sendMessage({
@@ -95,6 +119,8 @@ export default class SendStore {
         receiverAddress: this.receiverAddress,
         amount: this.amount,
         token: this.token,
+        gasLimit: this.gasLimit,
+        gasPrice: this.gasPrice,
       });
     }
   }

@@ -17,17 +17,18 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
+    overflowY: 'auto',
   },
   fieldHeading: {
-    marginBottom: theme.padding.unit,
+    marginBottom: theme.padding.halfUnit,
     fontSize: theme.font.sm,
     fontWeight: 'bold',
   },
   fieldContainer: {
-    marginBottom: theme.padding.md,
+    marginBottom: theme.padding.sm,
   },
   fieldContentContainer: {
-    padding: theme.padding.sm,
+    padding: theme.padding.xs,
     border: theme.border.root,
     borderRadius: theme.border.radius,
   },
@@ -36,39 +37,37 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
     color: theme.color.red,
     marginTop: theme.padding.unit,
   },
-  fromSelect: {
+  fieldTextOrInput: {
+    fontSize: theme.font.sm,
+  },
+  fieldInput: {
+    padding: 0,
+  },
+  selectOrTextField: {
     width: '100%',
+    height: 17,
+    fontSize: theme.font.sm,
   },
-  fromAddress: {
-    fontSize: theme.font.md,
-    fontWeight: 'bold',
-  },
-  tokenSelect: {
-    width: '100%',
-  },
-  tokenText: {
-    fontSize: theme.font.md,
-    fontWeight: 'bold',
-  },
-  amountHeadingContainer: {
+  buttonFieldHeadingContainer: {
     width: '100%',
     flexDirection: 'row',
     display: 'inline-flex',
     alignItems: 'center',
   },
-  amountHeadingTextContainer: {
+  buttonFieldHeadingTextContainer: {
     flex: 1,
   },
-  maxAmountText: {
+  fieldButtonText: {
     fontSize: theme.font.sm,
   },
-  maxButton: {
+  fieldButton: {
     minWidth: 0,
     minHeight: 0,
     padding: '0 4px',
+    fontSize: 11,
   },
-  amountTokenAdornment: {
-    fontSize: theme.font.md,
+  fieldTextAdornment: {
+    fontSize: theme.font.sm,
     fontWeight: 'bold',
     marginLeft: theme.padding.sm,
     display: 'flex',

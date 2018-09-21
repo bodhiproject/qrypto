@@ -375,17 +375,17 @@ export default class AccountController extends IController {
   * @param receiverAddress The address to send Qtum to.
   * @param amount The amount to send.
   */
-  private sendTokens = async (receiverAddress: string, amount: number) => {
+  private sendTokens = async (receiverAddress: string, amount: number, transactionSpeed: string) => {
     if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
       throw Error('Cannot send with no wallet instance.');
     }
 
     try {
-      this.loggedInAccount.wallet.send(receiverAddress, amount);
+      await this.loggedInAccount.wallet.send(receiverAddress, amount, transactionSpeed);
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
     } catch (err) {
-      console.log(err);
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
+      this.displayErrorOnPopup(err);
     }
   }
 
@@ -411,7 +411,7 @@ export default class AccountController extends IController {
         this.loginAccount(request.selectedWalletName);
         break;
       case MESSAGE_TYPE.SEND_TOKENS:
-        this.sendTokens(request.receiverAddress, request.amount);
+        this.sendTokens(request.receiverAddress, request.amount, request.transactionSpeed);
         break;
       case MESSAGE_TYPE.LOGOUT:
         this.logoutAccount();

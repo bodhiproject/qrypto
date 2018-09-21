@@ -199,13 +199,16 @@ export default class TokenController extends IController {
   /*
   * Send QRC tokens.
   * @param receiverAddress The receiver of the send.
-  * @param amount The amount to send in decimal format.
+  * @param amount The amount to send in decimal format. (unit - whole token)
   * @param token The QRC token being sent.
+  * @param gasLimit (unit - gas)
+  * @param gasPrice (unit - satoshi/gas)
   */
-  private sendQRCToken = async (receiverAddress: string, amount: number, token: QRCToken) => {
+  private sendQRCToken = async (receiverAddress: string, amount: number, token: QRCToken,
+                                gasLimit: number, gasPrice: number ) => {
     const bnAmount = new BN(amount).mul(new BN(10 ** token.decimals));
     const data = qweb3.encoder.constructData(qrc20TokenABI, 'transfer', [receiverAddress, bnAmount]);
-    const args = [token.address, data];
+    const args = [token.address, data, null, gasLimit, gasPrice];
     const { error } = await this.main.rpc.sendToContract(generateRequestId(), args);
 
     if (error) {
@@ -251,7 +254,7 @@ export default class TokenController extends IController {
         sendResponse(this.tokens);
         break;
       case MESSAGE_TYPE.SEND_QRC_TOKENS:
-        this.sendQRCToken(request.receiverAddress, request.amount, request.token);
+        this.sendQRCToken(request.receiverAddress, request.amount, request.token, request.gasLimit, request.gasPrice);
         break;
       case MESSAGE_TYPE.ADD_TOKEN:
         this.addToken(request.contractAddress, request.name, request.symbol, request.decimals);

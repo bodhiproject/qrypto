@@ -19,7 +19,8 @@ class SendConfirm extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes, store: { sendStore } } = this.props;
-    const { senderAddress, receiverAddress, amount, token, sendState, errorMessage } = sendStore;
+    const { senderAddress, receiverAddress, amount, token, transactionSpeed, gasLimit,
+    gasPrice, maxTxFee, sendState, errorMessage } = sendStore;
     const { SENDING, SENT } = SEND_STATE;
 
     return (
@@ -32,9 +33,15 @@ class SendConfirm extends Component<WithStyles & IProps, {}> {
               <AddressField fieldName={'To'} address={receiverAddress} {...this.props} />
             </div>
             <CostField fieldName={'Amount'} amount={amount} unit={token!.symbol} {...this.props} />
-            <CostField fieldName={'Gas Limit'} amount={'250000'} unit={'GAS'} {...this.props} />
-            <CostField fieldName={'Gas Price'} amount={'0.0000004'} unit={'QTUM'} {...this.props} />
-            <CostField fieldName={'Max Transaction Fee'} amount={'0.01'} unit={'QTUM'} {...this.props} />
+            {this.props.store.sendStore.token && this.props.store.sendStore.token.symbol === 'QTUM' ? (
+              <CostField fieldName={'Transaction Speed'} amount={transactionSpeed} unit={''} {...this.props} />
+            ) : (
+              <div>
+                <CostField fieldName={'Gas Limit'} amount={gasLimit} unit={'GAS'} {...this.props} />
+                <CostField fieldName={'Gas Price'} amount={gasPrice} unit={'SATOSHI/GAS'} {...this.props} />
+                <CostField fieldName={'Max Transaction Fee'} amount={maxTxFee} unit={'QTUM'} {...this.props} />
+              </div>
+            )}
           </div>
           {errorMessage && <Typography className={classes.errorMessage}>{errorMessage}</Typography>}
           <Button

@@ -118,3 +118,9 @@ export enum INTERVAL_NAMES {
   TWO_HOUR = '2 hr',
   TWELVE_HOUR = '12 hr',
 }
+
+export enum TRANSACTION_SPEED {
+  SLOW = 'Slow',
+  NORMAL = 'Normal',
+  FAST = 'Fast',
+}

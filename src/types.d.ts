@@ -44,7 +44,9 @@ export interface ISignExternalTxRequest {
 }
 
 export interface ISigner {
-  send(to: string, amount: number, options: ISendTxOptions): Promise<Insight.ISendRawTxResult>;
+  send(to: string, amount: number, transactionSpeed: string): Promise<Insight.ISendRawTxResult>;
+  // TODO - ask deric how to write this using options
+  // send(to: string, amount: number, options: ISendTxOptions): Promise<Insight.ISendRawTxResult>;
   sendTransaction(args: any[]): any;
 }
 
