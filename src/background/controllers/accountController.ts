@@ -7,6 +7,7 @@ import IController from './iController';
 import { MESSAGE_TYPE, STORAGE } from '../../constants';
 import Account from '../../models/Account';
 import Wallet from '../../models/Wallet';
+import { TRANSACTION_SPEED } from '../../constants';
 
 const INIT_VALUES = {
   mainnetAccounts: [],
@@ -380,8 +381,23 @@ export default class AccountController extends IController {
       throw Error('Cannot send with no wallet instance.');
     }
 
+    /*
+    * TODO - As of 9/21/18 there is no congestion in the network and we are under
+    * capacity, so we are setting the same base fee rate for all transaction speeds.
+    * In the future if traffic changes, we will set different fee rates.
+    */
     try {
-      await this.loggedInAccount.wallet.send(receiverAddress, amount, transactionSpeed);
+      let feeRate; // satoshi/byte; 500 satoshi/byte == .005 QTUM/KB
+      if (transactionSpeed === TRANSACTION_SPEED.FAST) {
+        feeRate = 500;
+      } else if (transactionSpeed === TRANSACTION_SPEED.SLOW) {
+        feeRate = 500;
+      } else {
+        // transactionSpeed == TRANSACTION_SPEED.NORMAL
+        feeRate = 500;
+      }
+
+      await this.loggedInAccount.wallet.send(receiverAddress, amount, {feeRate});
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
     } catch (err) {
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
