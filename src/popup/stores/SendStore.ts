@@ -18,10 +18,10 @@ const INIT_VALUES = {
   errorMessage: undefined,
   transactionSpeed: TRANSACTION_SPEED.NORMAL,
   transactionSpeeds: [TRANSACTION_SPEED.SLOW, TRANSACTION_SPEED.NORMAL, TRANSACTION_SPEED.FAST],
-  gasLimit: Config.TRANSACTION.DEFAULT_GAS_LIMIT,
-  gasPrice: Config.TRANSACTION.DEFAULT_GAS_PRICE * 1e8,
-  gasLimitRecommendedAmount: Config.TRANSACTION.DEFAULT_GAS_LIMIT,
-  gasPriceRecommendedAmount: Config.TRANSACTION.DEFAULT_GAS_PRICE * 1e8, // satoshi/gas
+  gasLimit: Config.TRANSACTION.DEFAULT_GAS_LIMIT.toString(),
+  gasPrice: (Config.TRANSACTION.DEFAULT_GAS_PRICE * 1e8).toString(),
+  gasLimitRecommendedAmount: Config.TRANSACTION.DEFAULT_GAS_LIMIT.toString(),
+  gasPriceRecommendedAmount: (Config.TRANSACTION.DEFAULT_GAS_PRICE * 1e8).toString(), // satoshi/gas
 };
 
 export default class SendStore {
@@ -33,15 +33,15 @@ export default class SendStore {
   @observable public maxAmount?: number = INIT_VALUES.maxAmount;
   public transactionSpeeds: string[] = INIT_VALUES.transactionSpeeds;
   @observable public transactionSpeed?: string = INIT_VALUES.transactionSpeed;
-  @observable public gasLimit?: number = INIT_VALUES.gasLimitRecommendedAmount;
-  @observable public gasPrice?: number = INIT_VALUES.gasPriceRecommendedAmount;
-  public gasLimitRecommendedAmount: number = INIT_VALUES.gasLimitRecommendedAmount;
-  public gasPriceRecommendedAmount: number = INIT_VALUES.gasPriceRecommendedAmount;
+  @observable public gasLimit: string = INIT_VALUES.gasLimitRecommendedAmount;
+  @observable public gasPrice: string = INIT_VALUES.gasPriceRecommendedAmount;
+  public gasLimitRecommendedAmount: string = INIT_VALUES.gasLimitRecommendedAmount;
+  public gasPriceRecommendedAmount: string = INIT_VALUES.gasPriceRecommendedAmount;
   @observable public sendState: SEND_STATE = INIT_VALUES.sendState;
   @observable public errorMessage?: string = INIT_VALUES.errorMessage;
   @computed public get maxTxFee(): number | undefined {
     return this.gasPrice && this.gasLimit
-      ? this.gasLimit * this.gasPrice * 1e-8 : undefined;
+      ? Number(this.gasLimit) * Number(this.gasPrice) * 1e-8 : undefined;
   }
   @computed public get receiverFieldError(): string | undefined {
     return isValidAddress(this.isMainNet, this.receiverAddress)
@@ -110,17 +110,17 @@ export default class SendStore {
       chrome.runtime.sendMessage({
         type: MESSAGE_TYPE.SEND_TOKENS,
         receiverAddress: this.receiverAddress,
-        amount: this.amount,
+        amount: Number(this.amount),
         transactionSpeed: this.transactionSpeed,
       });
     } else {
       chrome.runtime.sendMessage({
         type: MESSAGE_TYPE.SEND_QRC_TOKENS,
         receiverAddress: this.receiverAddress,
-        amount: this.amount,
+        amount: Number(this.amount),
         token: this.token,
-        gasLimit: this.gasLimit,
-        gasPrice: this.gasPrice,
+        gasLimit: Number(this.gasLimit),
+        gasPrice: Number(this.gasPrice),
       });
     }
   }
