@@ -387,14 +387,14 @@ export default class AccountController extends IController {
     * In the future if traffic changes, we will set different fee rates.
     */
     try {
-      let feeRate; // satoshi/byte; 500 satoshi/byte == .005 QTUM/KB
-      if (transactionSpeed === TRANSACTION_SPEED.FAST) {
-        feeRate = 500;
-      } else if (transactionSpeed === TRANSACTION_SPEED.SLOW) {
-        feeRate = 500;
-      } else {
-        // transactionSpeed == TRANSACTION_SPEED.NORMAL
-        feeRate = 500;
+      const rates = {
+        [TRANSACTION_SPEED.FAST]: 500,
+        [TRANSACTION_SPEED.NORMAL]: 500,
+        [TRANSACTION_SPEED.SLOW]: 500,
+      };
+      const feeRate = rates[transactionSpeed]; // satoshi/byte; 500 satoshi/byte == .005 QTUM/KB
+      if (!feeRate) {
+        throw Error('feeRate not set');
       }
 
       await this.loggedInAccount.wallet.send(receiverAddress, amount, {feeRate});

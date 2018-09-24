@@ -85,23 +85,11 @@ export const isValidAmount = (amount: number, maxAllowed: number) => {
 };
 
 export const isValidGasLimit = (gasLimit: number) => {
-  if (!isFinite(gasLimit)) {
-    return false;
-  }
-  if (gasLimit <= 0) {
-    return false;
-  }
-  return true;
+  return isFinite(gasLimit) && gasLimit > 0;
 };
 
 export const isValidGasPrice = (gasPrice: number) => {
-  if (!isFinite(gasPrice)) {
-    return false;
-  }
-  if (gasPrice <= 0) {
-    return false;
-  }
-  return true;
+  return isFinite(gasPrice) && gasPrice > 0;
 };
 
 /*

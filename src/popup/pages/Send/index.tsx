@@ -181,7 +181,7 @@ const TransactionSpeedField = observer(({ classes, store: { sendStore } }: any) 
         className={classes.selectOrTextField}
         disableUnderline
         value={sendStore.transactionSpeed}
-        onChange={(event) => sendStore.transactionSpeed = (event.target.value)}
+        onChange={(event) => sendStore.transactionSpeed = event.target.value}
       >
         {map(sendStore.transactionSpeeds, (transactionSpeed: string) => (
           <MenuItem key={transactionSpeed} value={transactionSpeed}>
@@ -214,7 +214,7 @@ const GasLimitField = observer(({ classes, store: { sendStore }, onEnterPress }:
         fullWidth
         type="number"
         multiline={false}
-        placeholder={'sendStore.gasLimitRecommendedAmount'}
+        placeholder={sendStore.gasLimitRecommendedAmount}
         value={sendStore.gasLimit}
         InputProps={{
           classes: {
@@ -259,7 +259,7 @@ const GasPriceField = observer(({ classes, store: { sendStore }, onEnterPress }:
         fullWidth
         type="number"
         multiline={false}
-        placeholder={'sendStore.gasPriceRecommendedAmount'}
+        placeholder={sendStore.gasPriceRecommendedAmount}
         value={sendStore.gasPrice.toString()}
         InputProps={{
           classes: {

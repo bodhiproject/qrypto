@@ -10,7 +10,7 @@ import Config from '../../config';
 const INIT_VALUES = {
   tokens: [],
   senderAddress: undefined,
-  receiverAddress: 'qJGa92dZrGUsoJWXjowUunbU8nNhxznSXG',
+  receiverAddress: '',
   token: undefined,
   amount: '',
   maxAmount: undefined,
@@ -18,10 +18,10 @@ const INIT_VALUES = {
   errorMessage: undefined,
   transactionSpeed: TRANSACTION_SPEED.NORMAL,
   transactionSpeeds: [TRANSACTION_SPEED.SLOW, TRANSACTION_SPEED.NORMAL, TRANSACTION_SPEED.FAST],
-  gasLimit: '',
-  gasPrice: '',
-  gasLimitRecommendedAmount: Config.TRANSACTION.DEFAULT_GAS_LIMIT.toString(),
-  gasPriceRecommendedAmount: (Config.TRANSACTION.DEFAULT_GAS_PRICE * 1e8).toString(), // satoshi/gas
+  gasLimit: Config.TRANSACTION.DEFAULT_GAS_LIMIT,
+  gasPrice: Config.TRANSACTION.DEFAULT_GAS_PRICE * 1e8,
+  gasLimitRecommendedAmount: Config.TRANSACTION.DEFAULT_GAS_LIMIT,
+  gasPriceRecommendedAmount: Config.TRANSACTION.DEFAULT_GAS_PRICE * 1e8, // satoshi/gas
 };
 
 export default class SendStore {
@@ -33,15 +33,15 @@ export default class SendStore {
   @observable public maxAmount?: number = INIT_VALUES.maxAmount;
   public transactionSpeeds: string[] = INIT_VALUES.transactionSpeeds;
   @observable public transactionSpeed?: string = INIT_VALUES.transactionSpeed;
-  @observable public gasLimit?: string = INIT_VALUES.gasLimitRecommendedAmount;
-  @observable public gasPrice?: string = INIT_VALUES.gasPriceRecommendedAmount;
-  public gasLimitRecommendedAmount: string = INIT_VALUES.gasLimitRecommendedAmount;
-  public gasPriceRecommendedAmount: string = INIT_VALUES.gasPriceRecommendedAmount;
+  @observable public gasLimit?: number = INIT_VALUES.gasLimitRecommendedAmount;
+  @observable public gasPrice?: number = INIT_VALUES.gasPriceRecommendedAmount;
+  public gasLimitRecommendedAmount: number = INIT_VALUES.gasLimitRecommendedAmount;
+  public gasPriceRecommendedAmount: number = INIT_VALUES.gasPriceRecommendedAmount;
   @observable public sendState: SEND_STATE = INIT_VALUES.sendState;
   @observable public errorMessage?: string = INIT_VALUES.errorMessage;
-  @computed public get maxTxFee(): string | undefined {
+  @computed public get maxTxFee(): number | undefined {
     return this.gasPrice && this.gasLimit
-      ? (parseInt(this.gasLimit, 10) * parseInt(this.gasPrice, 10) * 1e-8).toString() : undefined;
+      ? this.gasLimit * this.gasPrice * 1e-8 : undefined;
   }
   @computed public get receiverFieldError(): string | undefined {
     return isValidAddress(this.isMainNet, this.receiverAddress)
