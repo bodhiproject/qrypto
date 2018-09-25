@@ -163,11 +163,12 @@ const AmountField = observer(({ classes, store: { sendStore }, onEnterPress }: a
           ),
           disableUnderline: true,
         }}
-        onChange={(event) => sendStore.amount = event.target.value}
+        onChange={(event) => event.target.value === '' ? sendStore.amount = ''
+          : sendStore.amount = Number(event.target.value)}
         onKeyPress={onEnterPress}
       />
     </div>
-    {sendStore.amount && sendStore.amountFieldError && (
+    {sendStore.amount !== '' && sendStore.amountFieldError && (
       <Typography className={classes.errorText}>{sendStore.amountFieldError}</Typography>
     )}
   </div>
@@ -214,7 +215,7 @@ const GasLimitField = observer(({ classes, store: { sendStore }, onEnterPress }:
         fullWidth
         type="number"
         multiline={false}
-        placeholder={sendStore.gasLimitRecommendedAmount}
+        placeholder={sendStore.gasLimitRecommendedAmount.toString()}
         value={sendStore.gasLimit}
         InputProps={{
           classes: {
@@ -259,7 +260,7 @@ const GasPriceField = observer(({ classes, store: { sendStore }, onEnterPress }:
         fullWidth
         type="number"
         multiline={false}
-        placeholder={sendStore.gasPriceRecommendedAmount}
+        placeholder={sendStore.gasPriceRecommendedAmount.toString()}
         value={sendStore.gasPrice.toString()}
         InputProps={{
           classes: {
