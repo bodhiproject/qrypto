@@ -15,6 +15,7 @@ const INIT_VALUES = {
   regtestAccounts: [],
   loggedInAccount: undefined,
   getInfoInterval: undefined,
+  justLoggedIn: false,
 };
 
 export default class AccountController extends IController {
@@ -39,6 +40,7 @@ export default class AccountController extends IController {
   private testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
   private regtestAccounts: Account[] = INIT_VALUES.regtestAccounts;
   private getInfoInterval?: number = INIT_VALUES.getInfoInterval;
+  private justLoggedIn: boolean = INIT_VALUES.justLoggedIn;
 
   constructor(main: QryptoController) {
     super('account', main);
@@ -249,7 +251,6 @@ export default class AccountController extends IController {
   public logoutAccount = () => {
     this.main.session.clearAllIntervals();
     this.main.session.clearSession();
-    this.main.inpageAccount.sendInpageAccountAllPorts();
     this.routeToAccountPage();
   }
 
@@ -270,6 +271,7 @@ export default class AccountController extends IController {
   * Actions after adding a new account or logging into an existing account.
   */
   public onAccountLoggedIn = async () => {
+    this.justLoggedIn = true;
     this.main.token.initTokenList();
     await this.startPolling();
     await this.main.token.startPolling();
@@ -365,8 +367,15 @@ export default class AccountController extends IController {
     await this.loggedInAccount.wallet.getInfo();
     const newBalance = this.loggedInAccount.wallet.info!.balance;
 
-    // if the balance has changed, update the inpageAcct for all windows
-    if (existingBalance !== newBalance) {
+    /**
+     * If this.justLoggedIn === true, then we only just logged in, and since we are
+     * already calling inpageAccount.sendInpageAccountAllPorts() on login, we don't want
+     * to call it a second time here.
+     * Otherwise, if the balance has changed, update the inpageAcct for all windows
+     */
+    if (this.justLoggedIn) {
+      this.justLoggedIn = false;
+    } else if (existingBalance !== newBalance) {
       this.main.inpageAccount.sendInpageAccountAllPorts();
     }
 
