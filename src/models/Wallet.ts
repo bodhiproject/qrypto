@@ -24,9 +24,7 @@ export default class Wallet implements ISigner {
     this.info = await this.qjsWallet!.getInfo();
   }
 
-  /*
-  * @param amount: (unit - whole QTUM)
-  */
+  // @param amount: (unit - whole QTUM)
   public send = async (to: string, amount: number, options: ISendTxOptions): Promise<Insight.ISendRawTxResult> => {
     if (!this.qjsWallet) {
       throw Error('Cannot send without wallet.');
