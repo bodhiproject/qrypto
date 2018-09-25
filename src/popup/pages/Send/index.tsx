@@ -39,6 +39,14 @@ class Send extends Component<WithStyles & IProps, {}> {
             <ToField onEnterPress={this.onEnterPress} {...this.props} />
             <TokenField {...this.props} />
             <AmountField onEnterPress={this.onEnterPress} {...this.props} />
+            {this.props.store.sendStore.token && this.props.store.sendStore.token.symbol === 'QTUM' ? (
+                <TransactionSpeedField {...this.props} />
+            ) : (
+              <div>
+                <GasLimitField onEnterPress={this.onEnterPress} {...this.props} />
+                <GasPriceField onEnterPress={this.onEnterPress} {...this.props} />
+              </div>
+            )}
           </div>
           <SendButton {...this.props} />
         </div>
@@ -64,14 +72,14 @@ const FromField = observer(({ classes, store: { sendStore, sessionStore } }: any
     <Heading name="From" />
     <div className={classes.fieldContentContainer}>
       <Select
-        className={classes.fromSelect}
+        className={classes.selectOrTextField}
         inputProps={{ name: 'from', id: 'from'}}
         disableUnderline
         value={sessionStore.info.addrStr}
         onChange={(event) => sendStore.senderAddress = event.target.value}
       >
         <MenuItem value={sessionStore.info.addrStr}>
-          <Typography className={classes.fromAddress}>{sessionStore.loggedInAccountName}</Typography>
+          <Typography className={classes.fieldTextOrInput}>{sessionStore.loggedInAccountName}</Typography>
         </MenuItem>
       </Select>
     </div>
@@ -83,12 +91,13 @@ const ToField = observer(({ classes, store: { sendStore, sessionStore }, onEnter
     <Heading name="To" />
     <div className={classes.fieldContentContainer}>
       <TextField
+        className={classes.selectOrTextField}
         fullWidth
         type="text"
         multiline={false}
         placeholder={sessionStore.info.addrStr}
         value={sendStore.receiverAddress || ''}
-        InputProps={{ endAdornment: <ArrowDropDown />, disableUnderline: true }}
+        InputProps={{ className: classes.fieldTextOrInput, endAdornment: <ArrowDropDown />, disableUnderline: true }}
         onChange={(event) => sendStore.receiverAddress = event.target.value}
         onKeyPress={onEnterPress}
       />
@@ -104,15 +113,14 @@ const TokenField = observer(({ classes, store: { sendStore } }: any) => (
     <Heading name="Token" />
     <div className={classes.fieldContentContainer}>
       <Select
+        className={classes.selectOrTextField}
         disableUnderline
         value={sendStore.token ? sendStore.token.symbol : ''}
-        inputProps={{ name: 'from', id: 'from' }}
-        className={classes.tokenSelect}
         onChange={(event) => sendStore.changeToken(event.target.value)}
       >
         {map(sendStore.tokens, (token: QRCToken) => (
           <MenuItem key={token.symbol} value={token.symbol}>
-            <Typography className={classes.tokenText}>{token.symbol}</Typography>
+            <Typography className={classes.fieldTextOrInput}>{token.symbol}</Typography>
           </MenuItem>
         ))}
       </Select>
@@ -121,15 +129,15 @@ const TokenField = observer(({ classes, store: { sendStore } }: any) => (
 ));
 
 const AmountField = observer(({ classes, store: { sendStore }, onEnterPress }: any) => (
-  <div className={classes.amountContainer}>
-    <div className={classes.amountHeadingContainer}>
-      <div className={classes.amountHeadingTextContainer}>
+  <div className={classes.fieldContainer}>
+    <div className={classes.buttonFieldHeadingContainer}>
+      <div className={classes.buttonFieldHeadingTextContainer}>
         <Heading name="Amount" />
       </div>
-      <Typography className={classes.maxAmountText}>{sendStore.maxAmount}</Typography>
+      <Typography className={classes.fieldButtonText}>{sendStore.maxAmount}</Typography>
       <Button
         color="primary"
-        className={classes.maxButton}
+        className={classes.fieldButton}
         onClick={() => sendStore.amount = sendStore.maxAmount}
       >
         Max
@@ -137,25 +145,141 @@ const AmountField = observer(({ classes, store: { sendStore }, onEnterPress }: a
     </div>
     <div className={classes.fieldContentContainer}>
       <TextField
+        className={classes.selectOrTextField}
         fullWidth
         type="number"
         multiline={false}
         placeholder={'0.00'}
         value={sendStore.amount}
         InputProps={{
+          classes: {
+            input: classes.fieldInput,
+          },
+          className: classes.fieldTextOrInput,
           endAdornment: (
-            <Typography className={classes.amountTokenAdornment}>
+            <Typography className={classes.fieldTextAdornment}>
               {sendStore.token && sendStore.token.symbol}
             </Typography>
           ),
           disableUnderline: true,
         }}
-        onChange={(event) => sendStore.amount = event.target.value}
+        onChange={(event) => event.target.value === '' ? sendStore.amount = ''
+          : sendStore.amount = Number(event.target.value)}
         onKeyPress={onEnterPress}
       />
     </div>
-    {sendStore.amountFieldError && (
+    {sendStore.amount !== '' && sendStore.amountFieldError && (
       <Typography className={classes.errorText}>{sendStore.amountFieldError}</Typography>
+    )}
+  </div>
+));
+
+const TransactionSpeedField = observer(({ classes, store: { sendStore } }: any) => (
+  <div className={classes.fieldContainer}>
+    <Heading name="Transaction Speed" />
+    <div className={classes.fieldContentContainer}>
+      <Select
+        className={classes.selectOrTextField}
+        disableUnderline
+        value={sendStore.transactionSpeed}
+        onChange={(event) => sendStore.transactionSpeed = event.target.value}
+      >
+        {map(sendStore.transactionSpeeds, (transactionSpeed: string) => (
+          <MenuItem key={transactionSpeed} value={transactionSpeed}>
+            <Typography className={classes.fieldTextOrInput}>{transactionSpeed}</Typography>
+          </MenuItem>
+        ))}
+      </Select>
+    </div>
+  </div>
+));
+
+const GasLimitField = observer(({ classes, store: { sendStore }, onEnterPress }: any) => (
+  <div className={classes.fieldContainer}>
+    <div className={classes.buttonFieldHeadingContainer}>
+      <div className={classes.buttonFieldHeadingTextContainer}>
+        <Heading name="Gas Limit" />
+      </div>
+      <Typography className={classes.fieldButtonText}>{sendStore.gasLimitRecommendedAmount}</Typography>
+      <Button
+        color="primary"
+        className={classes.fieldButton}
+        onClick={() => sendStore.gasLimit = sendStore.gasLimitRecommendedAmount}
+      >
+        Recommended
+      </Button>
+    </div>
+    <div className={classes.fieldContentContainer}>
+      <TextField
+        className={classes.selectOrTextField}
+        fullWidth
+        type="number"
+        multiline={false}
+        placeholder={sendStore.gasLimitRecommendedAmount.toString()}
+        value={sendStore.gasLimit}
+        InputProps={{
+          classes: {
+            input: classes.fieldInput,
+          },
+          className: classes.fieldTextOrInput,
+          endAdornment: (
+            <Typography className={classes.fieldTextAdornment}>
+              GAS
+            </Typography>
+          ),
+          disableUnderline: true,
+        }}
+        onChange={(event) => sendStore.gasLimit = event.target.value}
+        onKeyPress={onEnterPress}
+      />
+    </div>
+    {sendStore.gasLimitFieldError && (
+      <Typography className={classes.errorText}>{sendStore.gasLimitFieldError}</Typography>
+    )}
+  </div>
+));
+
+const GasPriceField = observer(({ classes, store: { sendStore }, onEnterPress }: any) => (
+  <div className={classes.fieldContainer}>
+    <div className={classes.buttonFieldHeadingContainer}>
+      <div className={classes.buttonFieldHeadingTextContainer}>
+        <Heading name="Gas Price" />
+      </div>
+      <Typography className={classes.fieldButtonText}>{sendStore.gasPriceRecommendedAmount}</Typography>
+      <Button
+        color="primary"
+        className={classes.fieldButton}
+        onClick={() => sendStore.gasPrice = sendStore.gasPriceRecommendedAmount}
+      >
+        Recommended
+      </Button>
+    </div>
+    <div className={classes.fieldContentContainer}>
+      <TextField
+        className={classes.selectOrTextField}
+        fullWidth
+        type="number"
+        multiline={false}
+        placeholder={sendStore.gasPriceRecommendedAmount.toString()}
+        value={sendStore.gasPrice.toString()}
+        InputProps={{
+          classes: {
+            input: classes.fieldInput,
+          },
+          className: classes.fieldTextOrInput,
+          endAdornment: (
+            <Typography className={classes.fieldTextAdornment}>
+              SATOSHI/GAS
+            </Typography>
+          ),
+          disableUnderline: true,
+        }}
+        onChange={(event) => sendStore.gasPrice = event.target.value}
+        onKeyPress={onEnterPress}
+      />
+    </div>
+    {sendStore.gasPriceFieldError && (
+      <Typography className={classes.errorText}>{sendStore.gasPriceFieldError}</Typography>
     )}
   </div>
 ));

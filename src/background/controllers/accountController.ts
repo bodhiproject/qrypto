@@ -7,6 +7,7 @@ import IController from './iController';
 import { MESSAGE_TYPE, STORAGE } from '../../constants';
 import Account from '../../models/Account';
 import Wallet from '../../models/Wallet';
+import { TRANSACTION_SPEED } from '../../constants';
 
 const INIT_VALUES = {
   mainnetAccounts: [],
@@ -375,17 +376,32 @@ export default class AccountController extends IController {
   * @param receiverAddress The address to send Qtum to.
   * @param amount The amount to send.
   */
-  private sendTokens = async (receiverAddress: string, amount: number) => {
+  private sendTokens = async (receiverAddress: string, amount: number, transactionSpeed: string) => {
     if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
       throw Error('Cannot send with no wallet instance.');
     }
 
+    /*
+    * TODO - As of 9/21/18 there is no congestion in the network and we are under
+    * capacity, so we are setting the same base fee rate for all transaction speeds.
+    * In the future if traffic changes, we will set different fee rates.
+    */
     try {
-      this.loggedInAccount.wallet.send(receiverAddress, amount);
+      const rates = {
+        [TRANSACTION_SPEED.FAST]: 500,
+        [TRANSACTION_SPEED.NORMAL]: 500,
+        [TRANSACTION_SPEED.SLOW]: 500,
+      };
+      const feeRate = rates[transactionSpeed]; // satoshi/byte; 500 satoshi/byte == .005 QTUM/KB
+      if (!feeRate) {
+        throw Error('feeRate not set');
+      }
+
+      await this.loggedInAccount.wallet.send(receiverAddress, amount, {feeRate});
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
     } catch (err) {
-      console.log(err);
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
+      this.displayErrorOnPopup(err);
     }
   }
 
@@ -411,7 +427,7 @@ export default class AccountController extends IController {
         this.loginAccount(request.selectedWalletName);
         break;
       case MESSAGE_TYPE.SEND_TOKENS:
-        this.sendTokens(request.receiverAddress, request.amount);
+        this.sendTokens(request.receiverAddress, request.amount, request.transactionSpeed);
         break;
       case MESSAGE_TYPE.LOGOUT:
         this.logoutAccount();

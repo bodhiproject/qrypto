@@ -20,6 +20,8 @@ export default class RPCController extends IController {
   * @param abi The ABI of the contract.
   * @param methodName The method to call that is in the ABI.
   * @param args The arguments that are needed when calling the method.
+  *   @argParam gasLimit (unit - gas)
+  *   @argParam gasPrice (unit - satoshi/gas)
   * @return The result of the callcontract.
   */
   public sendToContract = async (id: string, args: any[]): Promise<IRPCCallResponse> => {
@@ -42,7 +44,7 @@ export default class RPCController extends IController {
         data,
         amount || DEFAULT_AMOUNT,
         gasLimit || DEFAULT_GAS_LIMIT,
-        gasPrice || DEFAULT_GAS_PRICE,
+        gasPrice * 1e-8 || DEFAULT_GAS_PRICE,
       ];
       result = await this.main.account.loggedInAccount!.wallet!.sendTransaction(newArgs) as Insight.ISendRawTxResult;
     } catch (err) {

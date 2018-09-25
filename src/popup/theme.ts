@@ -38,6 +38,7 @@ const gradientPurple: ColorProperty = `linear-gradient(300.29deg, ${primaryColor
 
 /* Padding */
 const spacingMultiplier = 4;
+const spacingHalfUnit: PaddingProperty<string> | MarginProperty<string> = px(spacingMultiplier * 0.5); // 2
 const spacingUnit: PaddingProperty<string> | MarginProperty<string> = px(spacingMultiplier * 1); // 4
 const spacingXs: PaddingProperty<string> | MarginProperty<string> = px(spacingMultiplier * 2); // 8
 const spacingSm: PaddingProperty<string> | MarginProperty<string> = px(spacingMultiplier * 3); // 12
@@ -86,6 +87,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       gradientPurple: ColorProperty;
     };
     padding: {
+      halfUnit: PaddingProperty<string> | MarginProperty<string>;
       unit: PaddingProperty<string> | MarginProperty<string>;
       xs: PaddingProperty<string> | MarginProperty<string>;
       sm: PaddingProperty<string> | MarginProperty<string>;
@@ -139,6 +141,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       gradientPurple?: ColorProperty;
     };
     padding?: {
+      halfUnit?: PaddingProperty<string> | MarginProperty<string>;
       unit?: PaddingProperty<string> | MarginProperty<string>;
       xs?: PaddingProperty<string> | MarginProperty<string>;
       sm?: PaddingProperty<string> | MarginProperty<string>;
@@ -261,6 +264,7 @@ export default createMuiTheme({
     gradientPurple,
   },
   padding: {
+    halfUnit: spacingHalfUnit,
     unit: spacingUnit,
     xs: spacingXs,
     sm: spacingSm,

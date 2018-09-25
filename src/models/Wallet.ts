@@ -2,6 +2,7 @@ import { action } from 'mobx';
 import { Wallet as QtumWallet, Insight, WalletRPCProvider } from 'qtumjs-wallet';
 
 import { ISigner } from '../types';
+import { ISendTxOptions } from 'qtumjs-wallet/lib/tx';
 import { RPC_METHOD } from '../constants';
 
 export default class Wallet implements ISigner {
@@ -23,11 +24,14 @@ export default class Wallet implements ISigner {
     this.info = await this.qjsWallet!.getInfo();
   }
 
-  public send = async (to: string, amount: number): Promise<Insight.ISendRawTxResult> => {
+  // @param amount: (unit - whole QTUM)
+  public send = async (to: string, amount: number, options: ISendTxOptions): Promise<Insight.ISendRawTxResult> => {
     if (!this.qjsWallet) {
       throw Error('Cannot send without wallet.');
     }
-    return await this.qjsWallet!.send(to, amount * 1e8, { feeRate: 4000 });
+
+    // convert amount units from whole QTUM => SATOSHI QTUM
+    return await this.qjsWallet!.send(to, amount * 1e8, { feeRate: options.feeRate });
   }
 
   public sendTransaction = async (args: any[]): Promise<any> => {
