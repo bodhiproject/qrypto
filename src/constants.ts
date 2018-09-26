@@ -125,3 +125,10 @@ export enum TRANSACTION_SPEED {
   NORMAL = 'Normal',
   FAST = 'Fast',
 }
+
+export enum INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON {
+  LOGIN = 'Account Logged In',
+  LOGOUT = 'Account Logged Out',
+  BALANCE_CHANGE = 'QTUM Account Balance Changed',
+  DAPP_CONNECTION = 'Account Connected to Dapp',
+}

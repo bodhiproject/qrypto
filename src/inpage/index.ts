@@ -56,7 +56,7 @@ function handleInpageMessage(event: MessageEvent) {
       if (accountWrapper.error) {
         throw accountWrapper.error;
       } else {
-        console.log('window.qrypto.account has been updated');
+        console.log('window.qrypto.account has been updated,\n Reason:',  accountWrapper.statusChangeReason);
       }
       break;
     case API_TYPE.PORT_DISCONNECTED:

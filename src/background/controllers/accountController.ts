@@ -4,7 +4,7 @@ import assert from 'assert';
 
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES } from '../../constants';
+import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES, INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON } from '../../constants';
 import Account from '../../models/Account';
 import Wallet from '../../models/Wallet';
 import { TRANSACTION_SPEED } from '../../constants';
@@ -270,13 +270,21 @@ export default class AccountController extends IController {
   /*
   * Actions after adding a new account or logging into an existing account.
   */
-  public onAccountLoggedIn = async () => {
+  public onAccountLoggedIn = async (isSessionRestore = false) => {
     this.justLoggedIn = true;
     this.main.token.initTokenList();
     await this.startPolling();
     await this.main.token.startPolling();
     await this.main.external.startPolling();
-    this.main.inpageAccount.sendInpageAccountAllPorts();
+
+    /**
+     * if we are restoring the session, i.e. the user is already logged in and is only
+     * reopening the popup, we don't need to send the QRYPTO_ACCOUNT_CHANGED event to
+     * the inpage because window.qrypto.account has not changed.
+     */
+    if (!isSessionRestore) {
+      this.main.inpageAccount.sendInpageAccountAllPorts(INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON.LOGIN);
+    }
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 
@@ -376,7 +384,7 @@ export default class AccountController extends IController {
     if (this.justLoggedIn) {
       this.justLoggedIn = false;
     } else if (existingBalance !== newBalance) {
-      this.main.inpageAccount.sendInpageAccountAllPorts();
+      this.main.inpageAccount.sendInpageAccountAllPorts(INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON.BALANCE_CHANGE);
     }
 
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.wallet.info });

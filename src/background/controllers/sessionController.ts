@@ -1,6 +1,6 @@
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE, RESPONSE_TYPE } from '../../constants';
+import { MESSAGE_TYPE, RESPONSE_TYPE, INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON } from '../../constants';
 
 export default class SessionController extends IController {
   public sessionTimeout?: number = undefined;
@@ -28,9 +28,7 @@ export default class SessionController extends IController {
   */
   public clearAllIntervals = () => {
     this.main.account.stopPolling();
-    this.main.token.stopPolling();
-    this.main.external.stopPolling();
-    this.main.transaction.stopPolling();
+    this.clearAllIntervalsExceptAccount();
   }
 
   /*
@@ -39,7 +37,13 @@ export default class SessionController extends IController {
   public clearSession = () => {
     this.main.account.resetAccount();
     this.main.token.resetTokenList();
-    this.main.inpageAccount.sendInpageAccountAllPorts();
+    this.main.inpageAccount.sendInpageAccountAllPorts(INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON.LOGOUT);
+  }
+
+  private clearAllIntervalsExceptAccount = () => {
+    this.main.token.stopPolling();
+    this.main.external.stopPolling();
+    this.main.transaction.stopPolling();
   }
 
   /*
@@ -54,7 +58,7 @@ export default class SessionController extends IController {
   * Actions taken when the popup is closed..
   */
   private onPopupClosed = () => {
-    this.clearAllIntervals();
+    this.clearAllIntervalsExceptAccount();
 
     // Logout from bgp after interval
     this.sessionTimeout = window.setTimeout(() => {
@@ -69,7 +73,8 @@ export default class SessionController extends IController {
       case MESSAGE_TYPE.RESTORE_SESSION:
         if (this.main.account.loggedInAccount) {
           sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
-          this.main.account.onAccountLoggedIn();
+          const isSessionRestore = true;
+          this.main.account.onAccountLoggedIn(isSessionRestore);
         } else if (this.main.crypto.hasValidPasswordHash()) {
           sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
           this.main.account.routeToAccountPage();

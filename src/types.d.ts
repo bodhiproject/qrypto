@@ -51,4 +51,5 @@ export interface ISigner {
 export interface IInpageAccountWrapper {
   account: InpageAccount;
   error: Error;
+  statusChangeReason: string;
 }

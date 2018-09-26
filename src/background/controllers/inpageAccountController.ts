@@ -1,6 +1,6 @@
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE, PORT_NAME } from '../../constants';
+import { MESSAGE_TYPE, PORT_NAME, INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON } from '../../constants';
 import { InpageAccount } from '../../models/InpageAccount';
 
 export default class InpageAccountController extends IController {
@@ -16,21 +16,21 @@ export default class InpageAccountController extends IController {
   }
 
   // Send message to and update qrypto.account object of all registered ports
-  public sendInpageAccountAllPorts = () => {
+  public sendInpageAccountAllPorts = (statusChangeReason: string) => {
     for (const port of this.ports) {
-      this.sendInpageAccount(port);
+      this.sendInpageAccount(port, statusChangeReason);
     }
   }
 
   // bg -> content script
-  public sendInpageAccount = (port: any) => {
+  public sendInpageAccount = (port: any, statusChangeReason: string) => {
     port.postMessage({
       type: MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES,
-      accountWrapper: this.inpageAccountWrapper(),
+      accountWrapper: this.inpageAccountWrapper(statusChangeReason),
     });
   }
 
-  private inpageAccountWrapper = () => {
+  private inpageAccountWrapper = (statusChangeReason: string) => {
     const inpageAccount = new InpageAccount();
     if (this.main.account.loggedInAccount) {
       inpageAccount.loggedIn = true;
@@ -47,7 +47,7 @@ export default class InpageAccountController extends IController {
           error: Error('Unexpected error, user is logged in but wallet info is not defined') };
       }
     }
-    return { account: inpageAccount, error: null };
+    return { account: inpageAccount, error: null, statusChangeReason };
   }
 
   // when a port connects
@@ -64,7 +64,7 @@ export default class InpageAccountController extends IController {
     port.onDisconnect.addListener(this.handleDisconnect);
     port.onMessage.addListener((msg: any) => {
       if (msg.type === MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES) {
-        this.sendInpageAccount(port);
+        this.sendInpageAccount(port, INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON.DAPP_CONNECTION);
       }
     });
   }
