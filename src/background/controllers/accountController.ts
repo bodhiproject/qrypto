@@ -285,7 +285,7 @@ export default class AccountController extends IController {
 
     /**
      * If we are restoring the session, i.e. the user is already logged in and is only
-     * reopening the popup, we don't need to send the QRYPTO_ACCOUNT_CHANGED event to
+     * reopening the popup, we don't need to send the SEND_INPAGE_QRYPTO_ACCOUNT_VALUES event to
      * the inpage because window.qrypto.account has not changed.
      */
     if (!isSessionRestore) {
