@@ -86,6 +86,7 @@ export enum RESPONSE_TYPE {
 
 export enum STORAGE {
   APP_SALT = 'appSalt',
+  REGTEST_ACCOUNTS = 'regtestAccounts',
   TESTNET_ACCOUNTS = 'testnetAccounts',
   MAINNET_ACCOUNTS = 'mainnetAccounts',
   LOGGED_IN_ACCOUNT = 'loggedInAccount',

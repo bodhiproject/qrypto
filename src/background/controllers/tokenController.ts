@@ -6,11 +6,12 @@ const { Qweb3 } = require('qweb3');
 
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE, STORAGE } from '../../constants';
+import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES } from '../../constants';
 import QRCToken from '../../models/QRCToken';
 import qrc20TokenABI from '../../contracts/qrc20TokenABI';
 import mainnetTokenList from '../../contracts/mainnetTokenList';
 import testnetTokenList from '../../contracts/testnetTokenList';
+import regtestTokenList from '../../contracts/regtestTokenList';
 import { generateRequestId } from '../../utils';
 import { IRPCCallResponse } from '../../types';
 
@@ -49,10 +50,12 @@ export default class TokenController extends IController {
     chrome.storage.local.get([this.chromeStorageAccountTokenListKey()], (res: any) => {
       if (!isEmpty(res)) {
         this.tokens = res[this.chromeStorageAccountTokenListKey()];
-      } else if (this.main.network.isMainNet) {
+      } else if (this.main.network.networkName === NETWORK_NAMES.MAINNET) {
         this.tokens = mainnetTokenList;
-      } else {
+      } else if (this.main.network.networkName === NETWORK_NAMES.TESTNET) {
         this.tokens = testnetTokenList;
+      } else {
+        this.tokens = regtestTokenList;
       }
     });
   }
