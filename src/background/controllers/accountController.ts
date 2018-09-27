@@ -4,7 +4,7 @@ import assert from 'assert';
 
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES, INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON } from '../../constants';
+import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES, QRYPTO_ACCOUNT_CHANGE } from '../../constants';
 import Account from '../../models/Account';
 import Wallet from '../../models/Wallet';
 import { TRANSACTION_SPEED } from '../../constants';
@@ -40,7 +40,6 @@ export default class AccountController extends IController {
   private testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
   private regtestAccounts: Account[] = INIT_VALUES.regtestAccounts;
   private getInfoInterval?: number = INIT_VALUES.getInfoInterval;
-  private justLoggedIn: boolean = INIT_VALUES.justLoggedIn;
 
   constructor(main: QryptoController) {
     super('account', main);
@@ -271,19 +270,26 @@ export default class AccountController extends IController {
   * Actions after adding a new account or logging into an existing account.
   */
   public onAccountLoggedIn = async (isSessionRestore = false) => {
-    this.justLoggedIn = true;
     this.main.token.initTokenList();
+
+    /**
+     * We set sendInpageUpdate to false because we are already calling
+     * inpageAccount.sendInpageAccountAllPorts() with a LOGIN message below, and we don't
+     * want to call it a second time for the accountBalance update in getWalletInfo.
+     */
+    const sendInpageUpdate = false;
+    await this.getWalletInfo(sendInpageUpdate);
     await this.startPolling();
     await this.main.token.startPolling();
     await this.main.external.startPolling();
 
     /**
-     * if we are restoring the session, i.e. the user is already logged in and is only
+     * If we are restoring the session, i.e. the user is already logged in and is only
      * reopening the popup, we don't need to send the QRYPTO_ACCOUNT_CHANGED event to
      * the inpage because window.qrypto.account has not changed.
      */
     if (!isSessionRestore) {
-      this.main.inpageAccount.sendInpageAccountAllPorts(INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON.LOGIN);
+      this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.LOGIN);
     }
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
@@ -361,7 +367,7 @@ export default class AccountController extends IController {
   /*
   * Fetches the wallet info from the current wallet instance.
   */
-  private getWalletInfo = async () => {
+  private getWalletInfo = async (sendInpageUpdate = true) => {
     if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
       console.error('Could not get wallet info.');
       return;
@@ -375,16 +381,8 @@ export default class AccountController extends IController {
     await this.loggedInAccount.wallet.getInfo();
     const newBalance = this.loggedInAccount.wallet.info!.balance;
 
-    /**
-     * If this.justLoggedIn === true, then we only just logged in, and since we are
-     * already calling inpageAccount.sendInpageAccountAllPorts() on login, we don't want
-     * to call it a second time here.
-     * Otherwise, if the balance has changed, update the inpageAcct for all windows
-     */
-    if (this.justLoggedIn) {
-      this.justLoggedIn = false;
-    } else if (existingBalance !== newBalance) {
-      this.main.inpageAccount.sendInpageAccountAllPorts(INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON.BALANCE_CHANGE);
+    if (sendInpageUpdate && existingBalance !== newBalance) {
+      this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.BALANCE_CHANGE);
     }
 
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.wallet.info });
@@ -394,7 +392,6 @@ export default class AccountController extends IController {
   * Starts polling for periodic info updates.
   */
   private startPolling = async () => {
-    await this.getWalletInfo();
     if (!this.getInfoInterval) {
       this.getInfoInterval = window.setInterval(() => {
         this.getWalletInfo();

@@ -1,6 +1,6 @@
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE, RESPONSE_TYPE, INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON } from '../../constants';
+import { MESSAGE_TYPE, RESPONSE_TYPE, QRYPTO_ACCOUNT_CHANGE } from '../../constants';
 
 export default class SessionController extends IController {
   public sessionTimeout?: number = undefined;
@@ -37,7 +37,7 @@ export default class SessionController extends IController {
   public clearSession = () => {
     this.main.account.resetAccount();
     this.main.token.resetTokenList();
-    this.main.inpageAccount.sendInpageAccountAllPorts(INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON.LOGOUT);
+    this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.LOGOUT);
   }
 
   private clearAllIntervalsExceptAccount = () => {

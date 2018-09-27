@@ -1,6 +1,6 @@
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE, PORT_NAME, INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON } from '../../constants';
+import { MESSAGE_TYPE, PORT_NAME, QRYPTO_ACCOUNT_CHANGE } from '../../constants';
 import { InpageAccount } from '../../models/InpageAccount';
 
 export default class InpageAccountController extends IController {
@@ -64,7 +64,7 @@ export default class InpageAccountController extends IController {
     port.onDisconnect.addListener(this.handleDisconnect);
     port.onMessage.addListener((msg: any) => {
       if (msg.type === MESSAGE_TYPE.GET_INPAGE_QRYPTO_ACCOUNT_VALUES) {
-        this.sendInpageAccount(port, INPAGE_QRYPTO_ACCOUNT_STATUS_CHANGE_REASON.DAPP_CONNECTION);
+        this.sendInpageAccount(port, QRYPTO_ACCOUNT_CHANGE.DAPP_CONNECTION);
       }
     });
   }
