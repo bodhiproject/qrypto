@@ -4,7 +4,7 @@ import assert from 'assert';
 
 import QryptoController from '.';
 import IController from './iController';
-import { MESSAGE_TYPE, STORAGE } from '../../constants';
+import { MESSAGE_TYPE, STORAGE, NETWORK_NAMES } from '../../constants';
 import Account from '../../models/Account';
 import Wallet from '../../models/Wallet';
 import { TRANSACTION_SPEED } from '../../constants';
@@ -12,6 +12,7 @@ import { TRANSACTION_SPEED } from '../../constants';
 const INIT_VALUES = {
   mainnetAccounts: [],
   testnetAccounts: [],
+  regtestAccounts: [],
   loggedInAccount: undefined,
   getInfoInterval: undefined,
 };
@@ -21,15 +22,22 @@ export default class AccountController extends IController {
   private static GET_INFO_INTERVAL_MS: number = 30000;
 
   public get accounts(): Account[] {
-    return this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
+    if (this.main.network.networkName === NETWORK_NAMES.MAINNET) {
+      return this.mainnetAccounts;
+    } else if (this.main.network.networkName === NETWORK_NAMES.TESTNET) {
+      return this.testnetAccounts;
+    }
+    return this.regtestAccounts;
   }
+
   public get hasAccounts(): boolean {
-    return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts);
+    return !isEmpty(this.mainnetAccounts) || !isEmpty(this.testnetAccounts) || !isEmpty(this.regtestAccounts);
   }
   public loggedInAccount?: Account = INIT_VALUES.loggedInAccount;
 
   private mainnetAccounts: Account[] = INIT_VALUES.mainnetAccounts;
   private testnetAccounts: Account[] = INIT_VALUES.testnetAccounts;
+  private regtestAccounts: Account[] = INIT_VALUES.regtestAccounts;
   private getInfoInterval?: number = INIT_VALUES.getInfoInterval;
 
   constructor(main: QryptoController) {
@@ -37,14 +45,19 @@ export default class AccountController extends IController {
 
     chrome.runtime.onMessage.addListener(this.handleMessage);
 
-    const { MAINNET_ACCOUNTS, TESTNET_ACCOUNTS } = STORAGE;
-    chrome.storage.local.get([MAINNET_ACCOUNTS, TESTNET_ACCOUNTS], ({ mainnetAccounts, testnetAccounts }: any) => {
+    const { MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, REGTEST_ACCOUNTS } = STORAGE;
+    chrome.storage.local.get([MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, REGTEST_ACCOUNTS],
+      ({ mainnetAccounts, testnetAccounts, regtestAccounts }: any) => {
       if (!isEmpty(mainnetAccounts)) {
         this.mainnetAccounts = mainnetAccounts;
       }
 
       if (!isEmpty(testnetAccounts)) {
         this.testnetAccounts = testnetAccounts;
+      }
+
+      if (!isEmpty(regtestAccounts)) {
+        this.regtestAccounts = regtestAccounts;
       }
 
       this.initFinished();
@@ -108,18 +121,20 @@ export default class AccountController extends IController {
     const prunedAcct = cloneDeep(this.loggedInAccount);
     prunedAcct.wallet = undefined;
 
-    // Add account to storage
-    if (this.main.network.isMainNet) {
-      this.mainnetAccounts.push(prunedAcct);
-      chrome.storage.local.set({
-        [STORAGE.MAINNET_ACCOUNTS]: this.mainnetAccounts,
-      }, () => console.log('Mainnet Account added', prunedAcct));
+    let storageKey;
+    if (this.main.network.networkName === NETWORK_NAMES.MAINNET) {
+      storageKey = STORAGE.MAINNET_ACCOUNTS;
+    } else if (this.main.network.networkName === NETWORK_NAMES.TESTNET) {
+      storageKey = STORAGE.TESTNET_ACCOUNTS;
     } else {
-      this.testnetAccounts.push(prunedAcct);
-      chrome.storage.local.set({
-        [STORAGE.TESTNET_ACCOUNTS]: this.testnetAccounts,
-      }, () => console.log('Testnet Account added', prunedAcct));
+      storageKey = STORAGE.REGTEST_ACCOUNTS;
     }
+
+    // Add account to storage
+    this.accounts.push(prunedAcct);
+    chrome.storage.local.set({
+      [storageKey]: this.accounts,
+    }, () => console.log(this.main.network.networkName, 'Account added', prunedAcct));
 
     await this.onAccountLoggedIn();
   }
@@ -210,8 +225,7 @@ export default class AccountController extends IController {
   * @param accountName {string} The account name to search by.
   */
   public loginAccount = async (accountName: string) => {
-    const accounts = this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
-    const account = find(accounts, { name: accountName });
+    const account = find(this.accounts, { name: accountName });
     this.loggedInAccount = cloneDeep(account);
 
     if (!this.loggedInAccount) {
@@ -243,8 +257,7 @@ export default class AccountController extends IController {
   * Routes to the CreateWallet or AccountLogin page after unlocking with the password.
   */
   public routeToAccountPage = () => {
-    const accounts = this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
-    if (isEmpty(accounts)) {
+    if (isEmpty(this.accounts)) {
       // Accounts not found, route to Create Wallet page
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS });
     } else {
@@ -307,6 +320,8 @@ export default class AccountController extends IController {
       account = this.mainnetAccounts[0];
     } else if (!isEmpty(this.testnetAccounts)) {
       account = this.testnetAccounts[0];
+    } else if (!isEmpty(this.regtestAccounts)) {
+      account = this.regtestAccounts[0];
     } else {
       throw Error('Trying to validate password without existing account');
     }
@@ -330,8 +345,7 @@ export default class AccountController extends IController {
   * @return does the wallet already exist.
   */
   private walletAlreadyExists = async (privateKeyHash: string): Promise<boolean> => {
-    const accounts = this.main.network.isMainNet ? this.mainnetAccounts : this.testnetAccounts;
-    return !!find(accounts, { privateKeyHash });
+    return !!find(this.accounts, { privateKeyHash });
   }
 
   /*
