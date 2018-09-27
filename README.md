@@ -114,6 +114,21 @@ window.addEventListener('message', handleMessage, false);
 ### Using Qweb3
 You may also use our Qweb3 convenience library to make `sendtocontract` or `callcontract` calls. See the instructions in the Github repo here: https://github.com/bodhiproject/qweb3.js
 
+### Using RegTest
+You can connect Qrypto to regtest. You will need to set the following in your qtumcore-node.json
+
+```
+"qtum-explorer": {
+  "apiPrefix": "insight-api",
+  "routePrefix": "explorer",
+  ...
+ },
+"qtum-insight-api": {
+  "routePrefix": "insight-api",
+  ...
+}  
+```
+
 ## Running Dev Version
 ### Chrome
 1. `yarn start` in the project folder to build the dev version and wait for it to be built
