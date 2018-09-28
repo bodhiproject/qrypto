@@ -2,7 +2,7 @@ import { utils } from 'ethers';
 import { Insight } from 'qtumjs-wallet';
 import { ISendTxOptions } from 'qtumjs-wallet/lib/tx';
 
-import { API_TYPE, TARGET_NAME, INTERNAL_API_TYPE } from './constants';
+import { API_TYPE, TARGET_NAME, INTERNAL_API_TYPE, QRYPTO_ACCOUNT_CHANGE } from './constants';
 import { Transaction, InpageAccount } from './models';
 
 export interface IExtensionMessageData<T> {

@@ -16,21 +16,21 @@ export default class InpageAccountController extends IController {
   }
 
   // Send message to and update qrypto.account object of all registered ports
-  public sendInpageAccountAllPorts = (statusChangeReason: string) => {
+  public sendInpageAccountAllPorts = (statusChangeReason: QRYPTO_ACCOUNT_CHANGE) => {
     for (const port of this.ports) {
       this.sendInpageAccount(port, statusChangeReason);
     }
   }
 
   // bg -> content script
-  public sendInpageAccount = (port: any, statusChangeReason: string) => {
+  public sendInpageAccount = (port: any, statusChangeReason: QRYPTO_ACCOUNT_CHANGE) => {
     port.postMessage({
       type: MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES,
       accountWrapper: this.inpageAccountWrapper(statusChangeReason),
     });
   }
 
-  private inpageAccountWrapper = (statusChangeReason: string) => {
+  private inpageAccountWrapper = (statusChangeReason: QRYPTO_ACCOUNT_CHANGE) => {
     const inpageAccount = new InpageAccount();
     if (this.main.account.loggedInAccount) {
       inpageAccount.loggedIn = true;

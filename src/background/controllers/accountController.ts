@@ -15,7 +15,6 @@ const INIT_VALUES = {
   regtestAccounts: [],
   loggedInAccount: undefined,
   getInfoInterval: undefined,
-  justLoggedIn: false,
 };
 
 export default class AccountController extends IController {
