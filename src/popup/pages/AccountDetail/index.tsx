@@ -128,8 +128,8 @@ const TokenList: SFC<any> = observer(({ classes,
         <div className={classes.tokenInfoContainer}>
           <Typography className={classes.tokenName}>{name}</Typography>
         </div>
-        <AmountInfo classes={classes} amount={ balance === undefined || balance < 1
-          ? balance : Math.trunc(balance) } token={symbol} convertedValue={0} />
+        <AmountInfo classes={classes} amount={balance === undefined || balance < 1
+          ? balance : Math.trunc(balance)} token={symbol} convertedValue={0} />
       </ListItem>
     ))}
     <div className={classes.bottomButtonWrap}>

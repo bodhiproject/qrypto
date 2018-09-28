@@ -120,7 +120,7 @@ export default class TokenController extends IController {
     // Decode result
     const decodedRes = qweb3.decoder.decodeCall(result, qrc20TokenABI, methodName);
     const bnBal = decodedRes!.executionResult.formattedOutput[0]; // Returns as a BN instance
-    const bigNumberBal = new BigNumber(bnBal.toNumber()); // Convert to BigNumber instance
+    const bigNumberBal = new BigNumber(bnBal.toString(10)); // Convert to BigNumber instance
     const balance = bigNumberBal.dividedBy(new BigNumber(10 ** token.decimals)).toNumber(); // Convert to regular denomination
 
     // Update token balance in place
