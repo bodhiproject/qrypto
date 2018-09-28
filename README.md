@@ -50,7 +50,7 @@ After connecting Qrypto to your dapp, you can use an event listener to get notif
 
 ```
 function handleQryptoAcctChanged(event) {
-  if (event.data.message && event.data.message.type === "ACCOUNT_CHANGED") {
+  if (event.data.message && event.data.message.type === "QRYPTO_ACCOUNT_CHANGED") {
   	if (event.data.message.payload.error){
   		// handle error
   	}
