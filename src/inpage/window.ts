@@ -34,5 +34,5 @@ export function showSignTxWindow(signTxReq: ISignExternalTxRequest) {
 
   const reqStr = JSON.stringify(request);
   const params = `req=${reqStr}&from=${account.address}`;
-  showWindow(350, 550, `${url}?${params}`, 'Confirm Transaction');
+  showWindow(350, 650, `${url}?${params}`, 'Confirm Transaction');
 }

@@ -1,5 +1,4 @@
 import { each, findIndex, isEmpty } from 'lodash';
-import BN from 'bn.js';
 import BigNumber from 'bignumber.js';
 import { Insight } from 'qtumjs-wallet';
 const { Qweb3 } = require('qweb3');
@@ -120,8 +119,9 @@ export default class TokenController extends IController {
 
     // Decode result
     const decodedRes = qweb3.decoder.decodeCall(result, qrc20TokenABI, methodName);
-    let balance = decodedRes!.executionResult.formattedOutput[0]; // Returns as a BN instance
-    balance = balance.div(new BN(10 ** token.decimals)).toNumber(); // Convert to regular denomination
+    const bnBal = decodedRes!.executionResult.formattedOutput[0]; // Returns as a BN instance
+    const bigNumberBal = new BigNumber(bnBal.toString(10)); // Convert to BigNumber instance
+    const balance = bigNumberBal.dividedBy(new BigNumber(10 ** token.decimals)).toNumber(); // Convert to regular denomination
 
     // Update token balance in place
     const index = findIndex(this.tokens, { name: token.name, symbol: token.symbol });
