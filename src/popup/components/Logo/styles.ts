@@ -11,13 +11,16 @@ const styles: StyleRulesCallback = (theme: Theme) => ({
   logo: {
     width: 112,
     height: 112,
-    marginBottom: theme.padding.unit,
   },
   logoText: {
     fontSize: 32,
     fontWeight: theme.fontWeight.bold,
     color: theme.palette.primary.main,
     alignSelf: 'center',
+  },
+  version: {
+    fontSize: theme.font.sm,
+    color: theme.palette.text.secondary,
   },
 });
 
