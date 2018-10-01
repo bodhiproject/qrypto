@@ -71,9 +71,6 @@ export default class NetworkController extends IController {
       case MESSAGE_TYPE.GET_NETWORK_EXPLORER_URL:
         sendResponse(this.explorerUrl);
         break;
-      case MESSAGE_TYPE.IS_MAINNET:
-        sendResponse(this.isMainNet);
-        break;
       default:
         break;
     }

@@ -44,7 +44,7 @@ export default class SendStore {
       ? Number(this.gasLimit) * Number(this.gasPrice) * 1e-8 : undefined;
   }
   @computed public get receiverFieldError(): string | undefined {
-    return isValidAddress(this.isMainNet, this.receiverAddress)
+    return isValidAddress(this.app.sessionStore.isMainNet, this.receiverAddress)
       ? undefined : 'Not a valid Qtum address';
   }
   @computed public get amountFieldError(): string | undefined {
@@ -61,7 +61,6 @@ export default class SendStore {
   }
 
   private app: AppStore;
-  private isMainNet: boolean = false;
 
   constructor(app: AppStore) {
     this.app = app;
@@ -75,7 +74,6 @@ export default class SendStore {
   @action
   public init = () => {
     chrome.runtime.onMessage.addListener(this.handleMessage);
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IS_MAINNET }, (response: any) => this.isMainNet = response);
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_LIST }, (response: any) => {
       this.tokens = response;
       this.tokens.unshift(new QRCToken('Qtum Token', 'QTUM', 8, ''));

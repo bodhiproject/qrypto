@@ -43,7 +43,7 @@ const NavBar: React.SFC<IProps> = inject('store')(observer((props: IProps) => {
       {hasNetworkSelector && (
         <DropDownMenu
           onSelect={navBarStore.changeNetwork}
-          selections={navBarStore.networks.map((net: QryNetwork) => net.name)}
+          selections={sessionStore.networks.map((net: QryNetwork) => net.name)}
           selectedIndex={sessionStore.networkIndex}
         />
       )}

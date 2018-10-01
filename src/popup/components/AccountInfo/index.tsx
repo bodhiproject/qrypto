@@ -28,7 +28,7 @@ class AccountInfo extends Component<WithStyles & IProps, {}> {
 
   public render() {
     const { classes, hasRightArrow } = this.props;
-    const { loggedInAccountName, info, qtumBalanceUSD } = this.props.store!.sessionStore;
+    const { loggedInAccountName, info, qtumBalanceUSD, networkMarkup } = this.props.store!.sessionStore;
 
     if (!loggedInAccountName || !info) {
       return null;
@@ -43,7 +43,7 @@ class AccountInfo extends Component<WithStyles & IProps, {}> {
           <Typography className={classes.token}>QTUM</Typography>
           {hasRightArrow && <KeyboardArrowRight className={classes.rightArrow} />}
         </div>
-        <Typography className={classes.balanceUSD}>{qtumBalanceUSD}</Typography>
+        <Typography className={classes.balanceUSD}>{qtumBalanceUSD}{networkMarkup}</Typography>
         <div className={classes.actionButtonsContainer}>
           <Button
             id="sendButton"
