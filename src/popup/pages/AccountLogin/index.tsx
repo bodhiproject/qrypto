@@ -16,7 +16,8 @@ interface IProps {
 class AccountLogin extends Component<WithStyles & IProps, {}> {
 
   public componentDidMount() {
-    this.props.store.accountLoginStore.getAccounts();
+    const andValidateNetwork = true;
+    this.props.store.accountLoginStore.getAccounts(andValidateNetwork);
   }
 
   public render() {
