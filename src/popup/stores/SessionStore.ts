@@ -26,7 +26,7 @@ export default class SessionStore {
   @computed public get isMainNet() {
     return this.networkName === NETWORK_NAMES.MAINNET;
   }
-  @computed public get networkMarkup() {
+  @computed public get networkBalAnnotation() {
     return  this.isMainNet ? undefined : `(${this.networkName}, no value)`;
   }
 
