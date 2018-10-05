@@ -16,7 +16,7 @@ interface IProps {
 class AccountLogin extends Component<WithStyles & IProps, {}> {
 
   public componentDidMount() {
-    this.props.store.accountLoginStore.getAccounts();
+    this.props.store.accountLoginStore.getAccounts(true);
   }
 
   public render() {
