@@ -27,19 +27,20 @@ export default class AccountLoginStore {
     );
   }
 
-  /** @params andValidateNetwork: when set to true, disallows being on a network without
+  /**
+   * @param {boolean} andValidateNetwork: when set to true, disallows being on a network without
    * accounts. This is desirable on the accountLogin page as it ensures a valid state
    * where the displayed accounts matches the network. This is not desirable when
    * creating the first account for a network.
    */
   @action
-  public getAccounts = (andValidateNetwork: boolean = false) => {
+  public getAccounts = (validateNetwork: boolean = false) => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_ACCOUNTS }, (response: any) => {
       if (!isEmpty(response)) {
         this.accounts = response;
         this.setSelectedWallet();
       } else {
-        if (andValidateNetwork) {
+        if (validateNetwork) {
           this.validateNetwork();
         }
       }
