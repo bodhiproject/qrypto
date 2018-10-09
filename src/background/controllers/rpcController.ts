@@ -90,12 +90,13 @@ export default class RPCController extends IController {
     return acct && acct.wallet && acct.wallet.rpcProvider;
   }
 
-  /*
-  * Sends the RPC response or error to the active tab that requested.
-  * @param id Request ID.
-  * @param result RPC call result.
-  * @param error RPC call error.
-  */
+  /**
+   * Sends the RPC response or error to the active tab that requested.
+   * @param id Request ID.
+   * @param result RPC call result.
+   * @param error RPC call error.message, passed in and as a string because
+   * chrome.tabs.sendMessage does not support passing the error object type
+   */
   private sendRpcResponseToActiveTab = (id: string, result: any, error?: string) => {
     chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
       chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN, id, result, error });

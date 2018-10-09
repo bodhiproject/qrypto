@@ -16,6 +16,14 @@ export class QryptoRPCProvider {
     });
   }
 
+  /**
+   * @param response.error {string}
+   * We receive the response.error as a string, so we convert it back to an error object
+   * before we reject the promise so that rawCall can handle it as an error object.
+   * We are unable to pass the original error object all the way to this function
+   * because chrome.tabs.sendMessage and window.postMessage do not support passing the
+   * error object type.
+   */
   public handleRpcCallResponse = (response: IRPCCallResponse) => {
     const request = this.requests[response.id];
     if (!request) {
@@ -25,7 +33,7 @@ export class QryptoRPCProvider {
     delete this.requests[response.id];
 
     if (response.error) {
-      return request.reject(response.error);
+      return request.reject(Error(response.error));
     }
 
     request.resolve(response.result);
