@@ -49,7 +49,7 @@ export const isValidPrivateKey = (address?: string) => {
   if (!address) {
     return false;
   }
-  if (address.length !== 52) {
+  if (!(address.length === 51 || address.length === 52)) {
     return false;
   }
 
