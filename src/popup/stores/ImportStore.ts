@@ -1,5 +1,6 @@
 import { observable, action, computed, reaction } from 'mobx';
 import { isEmpty } from 'lodash';
+const extension = require('extensionizer');
 
 import AppStore from './AppStore';
 import { isValidPrivateKey } from '../../utils';
@@ -43,7 +44,7 @@ export default class ImportStore {
 
     reaction(
       () => this.accountName,
-      () => chrome.runtime.sendMessage({
+      () => extension.runtime.sendMessage({
         type: MESSAGE_TYPE.VALIDATE_WALLET_NAME,
         name: this.accountName,
       }, (response: any) => this.walletNameTaken = response),
@@ -68,7 +69,7 @@ export default class ImportStore {
       this.app.routerStore.push('/loading');
       const msgType = this.importType === IMPORT_TYPE.MNEMONIC
         ? MESSAGE_TYPE.IMPORT_MNEMONIC : MESSAGE_TYPE.IMPORT_PRIVATE_KEY;
-      chrome.runtime.sendMessage({
+      extension.runtime.sendMessage({
         type: msgType,
         accountName: this.accountName,
         mnemonicPrivateKey: this.mnemonicPrivateKey,

@@ -1,4 +1,5 @@
 import { isEmpty, split } from 'lodash';
+const extension = require('extensionizer');
 
 import QryptoController from '.';
 import IController from './iController';
@@ -24,8 +25,8 @@ export default class CryptoController extends IController {
 
   constructor(main: QryptoController) {
     super('crypto', main);
-
-    chrome.storage.local.get([STORAGE.APP_SALT], ({ appSalt }: any) => {
+    console.log('extensionizer used');
+    extension.storage.local.get([STORAGE.APP_SALT], ({ appSalt }: any) => {
       if (!isEmpty(appSalt)) {
         const array = split(appSalt, ',').map((str) => parseInt(str, 10));
         this.appSalt =  Uint8Array.from(array);
@@ -51,7 +52,7 @@ export default class CryptoController extends IController {
       if (!this.appSalt) {
         const appSalt: Uint8Array = window.crypto.getRandomValues(new Uint8Array(16)) as Uint8Array;
         this.appSalt = appSalt;
-        chrome.storage.local.set(
+        extension.storage.local.set(
           { [STORAGE.APP_SALT]: appSalt.toString() },
           () => console.log('appSalt set'),
         );

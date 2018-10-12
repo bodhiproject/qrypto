@@ -1,3 +1,5 @@
+const extension = require('extensionizer');
+
 import QryptoController from '.';
 import IController from './iController';
 import { MESSAGE_TYPE, PORT_NAME, QRYPTO_ACCOUNT_CHANGE } from '../../constants';
@@ -6,11 +8,11 @@ import { InpageAccount } from '../../models/InpageAccount';
 export default class InpageAccountController extends IController {
 
   // All connected ports from content script
-  private ports: chrome.runtime.Port[] = [];
+  private ports: extension.runtime.Port[] = [];
 
   constructor(main: QryptoController) {
     super('inpageAccount', main);
-    chrome.runtime.onConnect.addListener(this.handleLongLivedConnection);
+    extension.runtime.onConnect.addListener(this.handleLongLivedConnection);
 
     this.initFinished();
   }

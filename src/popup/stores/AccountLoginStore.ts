@@ -1,5 +1,6 @@
 import { observable, action, reaction } from 'mobx';
 import { isEmpty } from 'lodash';
+const extension = require('extensionizer');
 
 import AppStore from './AppStore';
 import { MESSAGE_TYPE } from '../../constants';
@@ -27,7 +28,7 @@ export default class AccountLoginStore {
 
   @action
   public getAccounts = () => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_ACCOUNTS }, (response: any) => {
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_ACCOUNTS }, (response: any) => {
       if (!isEmpty(response)) {
         this.accounts = response;
         this.setSelectedWallet();
@@ -45,7 +46,7 @@ export default class AccountLoginStore {
   @action
   public loginAccount = () => {
     this.app.routerStore.push('/loading');
-    chrome.runtime.sendMessage({
+    extension.runtime.sendMessage({
       type: MESSAGE_TYPE.ACCOUNT_LOGIN,
       selectedWalletName: this.selectedWalletName,
     });

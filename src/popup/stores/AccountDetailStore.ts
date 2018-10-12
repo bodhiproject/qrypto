@@ -1,4 +1,5 @@
 import { observable, action, reaction } from 'mobx';
+const extension = require('extensionizer');
 
 import AppStore from './AppStore';
 import { MESSAGE_TYPE } from '../../constants';
@@ -34,27 +35,27 @@ export default class AccountDetailStore {
 
   @action
   public init = () => {
-    chrome.runtime.onMessage.addListener(this.handleMessage);
+    extension.runtime.onMessage.addListener(this.handleMessage);
     this.activeTabIdx === 0 ? this.onTransactionTabSelected() : this.onTokenTabSelected();
   }
 
   public deinit = () => {
-    chrome.runtime.onMessage.removeListener(this.handleMessage);
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
+    extension.runtime.onMessage.removeListener(this.handleMessage);
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
   }
 
   public fetchMoreTxs = () => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MORE_TXS });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MORE_TXS });
   }
 
   public onTransactionClick = (txid: string) => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_NETWORK_EXPLORER_URL }, (response: any) => {
-      chrome.tabs.create({ url: `${response}/${txid}` });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_NETWORK_EXPLORER_URL }, (response: any) => {
+      extension.tabs.create({ url: `${response}/${txid}` });
     });
   }
 
   public removeToken = (contractAddress: string) => {
-    chrome.runtime.sendMessage({
+    extension.runtime.sendMessage({
       type: MESSAGE_TYPE.REMOVE_TOKEN,
       contractAddress,
     });
@@ -65,14 +66,14 @@ export default class AccountDetailStore {
   }
 
   private onTransactionTabSelected = () => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.START_TX_POLLING });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.START_TX_POLLING });
   }
 
   private onTokenTabSelected = () => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_LIST }, (response: any) => {
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_LIST }, (response: any) => {
       this.tokens = response;
     });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.STOP_TX_POLLING });
   }
 
   @action

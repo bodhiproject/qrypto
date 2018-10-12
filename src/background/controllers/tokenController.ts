@@ -3,6 +3,7 @@ import BN from 'bn.js';
 import BigNumber from 'bignumber.js';
 import { Insight } from 'qtumjs-wallet';
 const { Qweb3 } = require('qweb3');
+const extension = require('extensionizer');
 
 import QryptoController from '.';
 import IController from './iController';
@@ -31,7 +32,7 @@ export default class TokenController extends IController {
   constructor(main: QryptoController) {
     super('token', main);
 
-    chrome.runtime.onMessage.addListener(this.handleMessage);
+    extension.runtime.onMessage.addListener(this.handleMessage);
     this.initFinished();
   }
 
@@ -47,7 +48,7 @@ export default class TokenController extends IController {
       return;
     }
 
-    chrome.storage.local.get([this.chromeStorageAccountTokenListKey()], (res: any) => {
+    extension.storage.local.get([this.chromeStorageAccountTokenListKey()], (res: any) => {
       if (!isEmpty(res)) {
         this.tokens = res[this.chromeStorageAccountTokenListKey()];
       } else if (this.main.network.networkName === NETWORK_NAMES.MAINNET) {
@@ -129,7 +130,7 @@ export default class TokenController extends IController {
       this.tokens![index].balance = balance;
     }
 
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKENS_RETURN, tokens: this.tokens });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.QRC_TOKENS_RETURN, tokens: this.tokens });
   }
 
   /**
@@ -197,7 +198,7 @@ export default class TokenController extends IController {
       };
     }
 
-    chrome.runtime.sendMessage(msg);
+    extension.runtime.sendMessage(msg);
   }
 
   /*
@@ -218,11 +219,11 @@ export default class TokenController extends IController {
 
     if (error) {
       console.error(error);
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error });
+      extension.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error });
       return;
     }
 
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
   }
 
   private addToken = async (contractAddress: string, name: string, symbol: string, decimals: number) => {
@@ -239,10 +240,10 @@ export default class TokenController extends IController {
   }
 
   private setTokenListInChromeStorage = () => {
-    chrome.storage.local.set({
+    extension.storage.local.set({
       [this.chromeStorageAccountTokenListKey()]: this.tokens,
     }, () => {
-      chrome.runtime.sendMessage({
+      extension.runtime.sendMessage({
         type: MESSAGE_TYPE.QRC_TOKENS_RETURN,
         tokens: this.tokens,
       });
@@ -253,7 +254,7 @@ export default class TokenController extends IController {
     return `${STORAGE.ACCOUNT_TOKEN_LIST}-${this.main.account.loggedInAccount!.name}-${this.main.network.networkName}`;
   }
 
-  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+  private handleMessage = (request: any, _: extension.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.GET_QRC_TOKEN_LIST:
         sendResponse(this.tokens);

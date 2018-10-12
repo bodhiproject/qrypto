@@ -1,5 +1,6 @@
 import { observable, computed, action, reaction } from 'mobx';
 import { find } from 'lodash';
+const extension = require('extensionizer');
 
 import AppStore from './AppStore';
 import { SEND_STATE, MESSAGE_TYPE, TRANSACTION_SPEED } from '../../constants';
@@ -74,9 +75,9 @@ export default class SendStore {
 
   @action
   public init = () => {
-    chrome.runtime.onMessage.addListener(this.handleMessage);
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IS_MAINNET }, (response: any) => this.isMainNet = response);
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_LIST }, (response: any) => {
+    extension.runtime.onMessage.addListener(this.handleMessage);
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.IS_MAINNET }, (response: any) => this.isMainNet = response);
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QRC_TOKEN_LIST }, (response: any) => {
       this.tokens = response;
       this.tokens.unshift(new QRCToken('Qtum Token', 'QTUM', 8, ''));
       this.tokens[0].balance = this.app.sessionStore.info ? this.app.sessionStore.info.balance : undefined;
@@ -107,14 +108,14 @@ export default class SendStore {
 
     this.sendState = SEND_STATE.SENDING;
     if (this.token.symbol === 'QTUM') {
-      chrome.runtime.sendMessage({
+      extension.runtime.sendMessage({
         type: MESSAGE_TYPE.SEND_TOKENS,
         receiverAddress: this.receiverAddress,
         amount: Number(this.amount),
         transactionSpeed: this.transactionSpeed,
       });
     } else {
-      chrome.runtime.sendMessage({
+      extension.runtime.sendMessage({
         type: MESSAGE_TYPE.SEND_QRC_TOKENS,
         receiverAddress: this.receiverAddress,
         amount: Number(this.amount),

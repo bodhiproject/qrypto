@@ -1,3 +1,6 @@
+// const extension = require('extensionizer')
+const extension = require('extensionizer');
+
 import QryptoController from '.';
 import IController from './iController';
 
@@ -14,7 +17,7 @@ export default class OnInstallController extends IController {
     * To get refreshed, dapp tabs must implement the
     * handleQryptoInstallOrUpdate event listener described in the Readme.
     */
-    chrome.runtime.onInstalled.addListener((details) => {
+    extension.runtime.onInstalled.addListener((details: extension.runtime.InstalledDetails) => {
       if (details.reason === 'install' || details.reason === 'update') {
         this.refreshAllDappTabs();
       }
@@ -25,7 +28,7 @@ export default class OnInstallController extends IController {
 
   public refreshAllDappTabs = () => {
     // Get all windows
-    chrome.windows.getAll({
+    extension.windows.getAll({
       populate: true,
     }, (windows) => {
         for (const currentWindow of windows) {
@@ -41,9 +44,9 @@ export default class OnInstallController extends IController {
     });
   }
 
-  private refreshTab(tab: chrome.tabs.Tab) {
+  private refreshTab(tab: extension.tabs.Tab) {
      // Tells the content script to post a msg to the inpage window letting it know that Qrypto was installed or updated.
-     chrome.tabs.executeScript(tab.id!, {code:
+     extension.tabs.executeScript(tab.id!, {code:
       `window.postMessage(
         {
           message: { type: 'QRYPTO_INSTALLED_OR_UPDATED' }

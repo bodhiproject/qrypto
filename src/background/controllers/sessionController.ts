@@ -1,3 +1,5 @@
+const extension = require('extensionizer');
+
 import QryptoController from '.';
 import IController from './iController';
 import { MESSAGE_TYPE, RESPONSE_TYPE, QRYPTO_ACCOUNT_CHANGE } from '../../constants';
@@ -10,10 +12,10 @@ export default class SessionController extends IController {
   constructor(main: QryptoController) {
     super('session', main);
 
-    chrome.runtime.onMessage.addListener(this.handleMessage);
+    extension.runtime.onMessage.addListener(this.handleMessage);
 
     // When popup is opened
-    chrome.runtime.onConnect.addListener((port) => {
+    extension.runtime.onConnect.addListener((port) => {
       this.onPopupOpened();
 
       // Add listener for when popup is closed
@@ -68,7 +70,7 @@ export default class SessionController extends IController {
     },  this.sessionLogoutInterval);
   }
 
-  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+  private handleMessage = (request: any, _: extension.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.RESTORE_SESSION:
         if (this.main.account.loggedInAccount) {

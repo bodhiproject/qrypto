@@ -1,4 +1,5 @@
 import { action, observable } from 'mobx';
+const extension = require('extensionizer');
 
 import AppStore from './AppStore';
 import { MESSAGE_TYPE } from '../../constants';
@@ -14,7 +15,7 @@ export default class MainContainerStore {
 
   @action
   public init = () => {
-    chrome.runtime.onMessage.addListener(this.handleMessage);
+    extension.runtime.onMessage.addListener(this.handleMessage);
   }
 
   @action

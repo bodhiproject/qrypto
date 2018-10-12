@@ -1,4 +1,5 @@
 import { observable } from 'mobx';
+const extension = require('extensionizer');
 
 import { INTERVAL_NAMES, MESSAGE_TYPE } from '../../constants';
 import { SessionLogoutInterval } from '../../models/SessionLogoutInterval';
@@ -13,7 +14,7 @@ export default class SettingsStore {
   public sliArray: SessionLogoutInterval[];
 
   constructor() {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_SESSION_LOGOUT_INTERVAL }, (response: any) => {
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_SESSION_LOGOUT_INTERVAL }, (response: any) => {
       this.sessionLogoutInterval = response;
     });
 
@@ -29,7 +30,7 @@ export default class SettingsStore {
 
   public changeSessionLogoutInterval = (sliInterval: number) => {
     this.sessionLogoutInterval = sliInterval;
-    chrome.runtime.sendMessage({
+    extension.runtime.sendMessage({
       type: MESSAGE_TYPE.SAVE_SESSION_LOGOUT_INTERVAL,
       value: this.sessionLogoutInterval,
     });

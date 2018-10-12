@@ -4,12 +4,13 @@ import { IExtensionAPIMessage, IRPCCallRequest, IRPCCallResponse, ICurrentAccoun
 import { TARGET_NAME, API_TYPE, MESSAGE_TYPE, RPC_METHOD, PORT_NAME } from '../constants';
 import { isMessageNotValid } from '../utils';
 import { postWindowMessage } from '../utils/messenger';
+const extension = require('extensionizer');
 
 let port: any;
 
 // Add message listeners
 window.addEventListener('message', handleInPageMessage, false);
-chrome.runtime.onMessage.addListener(handleBackgroundScriptMessage);
+extension.runtime.onMessage.addListener(handleBackgroundScriptMessage);
 // Dapp developer triggers this event to set up window.qrypto
 window.addEventListener('message', setupLongLivedConnection, false);
 
@@ -20,7 +21,7 @@ async function setupLongLivedConnection(event: MessageEvent) {
     await injectAllScripts();
 
     // Setup port
-    port = chrome.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
+    port = extension.runtime.connect({ name: PORT_NAME.CONTENTSCRIPT });
     port.onMessage.addListener((msg: any) => {
       if (msg.type === MESSAGE_TYPE.SEND_INPAGE_QRYPTO_ACCOUNT_VALUES) {
         // content script -> inpage and/or Dapp event listener
@@ -71,7 +72,7 @@ function handleRPCRequest(message: IRPCCallRequest) {
   const { method, args, id } = message;
 
   // Check for logged in account first
-  chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT }, (account: ICurrentAccount) => {
+  extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT }, (account: ICurrentAccount) => {
     if (!account) {
       // Not logged in, send error response to Inpage
       postWindowMessage<IRPCCallResponse>(TARGET_NAME.INPAGE, {
@@ -97,7 +98,7 @@ function handleRPCRequest(message: IRPCCallRequest) {
         break;
       case RPC_METHOD.CALL_CONTRACT:
         // Background executes callcontract
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.EXTERNAL_CALL_CONTRACT, id, args });
+        extension.runtime.sendMessage({ type: MESSAGE_TYPE.EXTERNAL_CALL_CONTRACT, id, args });
         break;
       default:
         throw Error('Unhandled RPC method.');

@@ -3,6 +3,7 @@ import { inject, observer } from 'mobx-react';
 import { Router, Route, Switch } from 'react-router-dom';
 import { SynchronizedHistory } from 'mobx-react-router';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+const extension = require('extensionizer');
 
 import Loading from './components/Loading';
 import Login from './pages/Login';
@@ -33,7 +34,7 @@ export default class MainContainer extends Component<IProps, {}> {
   }
 
   public componentWillUnmount() {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGOUT });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.LOGOUT });
   }
 
   public render() {

@@ -1,6 +1,7 @@
 import { Insight } from 'qtumjs-wallet';
 import { map, find, partition, sumBy, includes, round } from 'lodash';
 import moment from 'moment';
+const extension = require('extensionizer');
 
 import QryptoController from '.';
 import IController from './iController';
@@ -22,7 +23,7 @@ export default class TransactionController extends IController {
   constructor(main: QryptoController) {
     super('transaction', main);
 
-    chrome.runtime.onMessage.addListener(this.handleMessage);
+    extension.runtime.onMessage.addListener(this.handleMessage);
     this.initFinished();
   }
 
@@ -126,7 +127,7 @@ export default class TransactionController extends IController {
   * Sends the message after fetching transactions.
   */
   private sendTransactionsMessage = () => {
-    chrome.runtime.sendMessage({
+    extension.runtime.sendMessage({
       type: MESSAGE_TYPE.GET_TXS_RETURN,
       transactions: this.transactions,
       hasMore: this.hasMore,

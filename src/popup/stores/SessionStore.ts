@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import { Insight } from 'qtumjs-wallet';
 import { isUndefined } from 'lodash';
+const extension = require('extensionizer');
 
 import { MESSAGE_TYPE } from '../../constants';
 
@@ -22,8 +23,8 @@ export default class SessionStore {
   private qtumUSD?: number = INIT_VALUES.qtumUSD;
 
   constructor() {
-    chrome.runtime.onMessage.addListener(this.handleMessage);
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_NETWORK_INDEX }, (response: any) => {
+    extension.runtime.onMessage.addListener(this.handleMessage);
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_NETWORK_INDEX }, (response: any) => {
       if (response !== undefined) {
         this.networkIndex = response;
       }
@@ -32,11 +33,11 @@ export default class SessionStore {
 
   @action
   public init = () => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME }, (response: any) => {
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME }, (response: any) => {
       this.loggedInAccountName = response;
     });
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO }, (response: any) => this.info = response);
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QTUM_USD }, (response: any) => this.qtumUSD = response);
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO }, (response: any) => this.info = response);
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_QTUM_USD }, (response: any) => this.qtumUSD = response);
   }
 
   @action

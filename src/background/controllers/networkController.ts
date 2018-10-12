@@ -1,4 +1,5 @@
 import { networks, Network } from 'qtumjs-wallet';
+const extension = require('extensionizer');
 
 import QryptoController from '.';
 import IController from './iController';
@@ -30,11 +31,11 @@ export default class NetworkController extends IController {
   constructor(main: QryptoController) {
     super('network', main);
 
-    chrome.runtime.onMessage.addListener(this.handleMessage);
-    chrome.storage.local.get([STORAGE.NETWORK_INDEX], ({ networkIndex }: any) => {
+    extension.runtime.onMessage.addListener(this.handleMessage);
+    extension.storage.local.get([STORAGE.NETWORK_INDEX], ({ networkIndex }: any) => {
       if (networkIndex !== undefined) {
         this.networkIndex = networkIndex;
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex: this.networkIndex });
+        extension.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex: this.networkIndex });
       }
 
       this.initFinished();
@@ -48,16 +49,16 @@ export default class NetworkController extends IController {
   public changeNetwork = (networkIndex: number) => {
     if (this.networkIndex !== networkIndex) {
       this.networkIndex = networkIndex;
-      chrome.storage.local.set({
+      extension.storage.local.set({
         [STORAGE.NETWORK_INDEX]: networkIndex,
       }, () => console.log('networkIndex changed', networkIndex));
 
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex });
+      extension.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK_SUCCESS, networkIndex });
       this.main.account.logoutAccount();
     }
   }
 
-  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+  private handleMessage = (request: any, _: extension.runtime.MessageSender, sendResponse: (response: any) => void) => {
     switch (request.type) {
       case MESSAGE_TYPE.CHANGE_NETWORK:
         this.changeNetwork(request.networkIndex);

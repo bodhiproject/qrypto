@@ -1,4 +1,5 @@
 import { WalletRPCProvider, Insight } from 'qtumjs-wallet';
+const extension = require('extensionizer');
 
 import QryptoController from '.';
 import IController from './iController';
@@ -10,7 +11,7 @@ export default class RPCController extends IController {
   constructor(main: QryptoController) {
     super('rpc', main);
 
-    chrome.runtime.onMessage.addListener(this.handleMessage);
+    extension.runtime.onMessage.addListener(this.handleMessage);
     this.initFinished();
   }
 
@@ -97,8 +98,8 @@ export default class RPCController extends IController {
   * @param error RPC call error.
   */
   private sendRpcResponseToActiveTab = (id: string, result: any, error?: string) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
-      chrome.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN, id, result, error });
+    extension.tabs.query({ active: true, currentWindow: true }, ([{ id: tabID }]) => {
+      extension.tabs.sendMessage(tabID!, { type: MESSAGE_TYPE.EXTERNAL_RPC_CALL_RETURN, id, result, error });
     });
   }
 
@@ -153,7 +154,7 @@ export default class RPCController extends IController {
     this.sendRpcResponseToActiveTab(id, result, error);
   }
 
-  private handleMessage = (request: any, _: chrome.runtime.MessageSender) => {
+  private handleMessage = (request: any, _: extension.runtime.MessageSender) => {
     switch (request.type) {
       case MESSAGE_TYPE.EXTERNAL_RAW_CALL:
         this.externalRawCall(request.id, request.method, request.args);

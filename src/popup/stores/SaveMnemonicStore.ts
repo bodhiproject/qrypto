@@ -1,5 +1,6 @@
 import { observable, action } from 'mobx';
 import bip39 from 'bip39';
+const extension = require('extensionizer');
 
 import AppStore from './AppStore';
 import { MESSAGE_TYPE } from '../../constants';
@@ -29,7 +30,7 @@ export default class SaveMnemonicStore {
 
   public createWallet = (saveFile: boolean) => {
     this.app.routerStore.push('/loading');
-    chrome.runtime.sendMessage({
+    extension.runtime.sendMessage({
       type: saveFile ? MESSAGE_TYPE.SAVE_TO_FILE : MESSAGE_TYPE.IMPORT_MNEMONIC,
       accountName: this.walletName,
       mnemonicPrivateKey: this.mnemonic,

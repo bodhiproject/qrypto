@@ -22,12 +22,12 @@ const timestampForFilesInDirectory = dir =>
   );
 
 const reload = () => {
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+  extension.tabs.query({ active: true, currentWindow: true }, tabs => {
     if (tabs[0]) {
-      chrome.tabs.reload(tabs[0].id);
+      extension.tabs.reload(tabs[0].id);
     }
 
-    chrome.runtime.reload();
+    extension.runtime.reload();
   });
 };
 
@@ -41,8 +41,8 @@ const watchChanges = (dir, lastTimestamp) => {
   });
 };
 
-chrome.management.getSelf(self => {
+extension.management.getSelf(self => {
   if (self.installType === "development") {
-    chrome.runtime.getPackageDirectoryEntry(dir => watchChanges(dir));
+    extension.runtime.getPackageDirectoryEntry(dir => watchChanges(dir));
   }
 });

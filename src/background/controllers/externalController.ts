@@ -1,4 +1,5 @@
 import axios from 'axios';
+const extension = require('extensionizer');
 
 import QryptoController from '.';
 import IController from './iController';
@@ -61,7 +62,7 @@ export default class ExternalController extends IController {
         const qtumUSD = this.calculateQtumToUSD(this.main.account.loggedInAccount.wallet.info.balance);
         this.main.account.loggedInAccount.wallet.qtumUSD = qtumUSD;
 
-        chrome.runtime.sendMessage({
+        extension.runtime.sendMessage({
           type: MESSAGE_TYPE.GET_QTUM_USD_RETURN,
           qtumUSD,
         });

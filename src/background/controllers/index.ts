@@ -1,4 +1,5 @@
 import { every } from 'lodash';
+const extension = require('extensionizer');
 
 import CryptoController from './cryptoController';
 import TokenController from './tokenController';
@@ -55,7 +56,7 @@ export default class QryptoController {
     this.initialized[name] = true;
 
     if (every(this.initialized)) {
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ROUTE_LOGIN });
+      extension.runtime.sendMessage({ type: MESSAGE_TYPE.ROUTE_LOGIN });
     }
   }
 }

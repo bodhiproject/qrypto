@@ -40,7 +40,7 @@ const extractReqParams = () => {
 
 const confirmTransaction = () => {
   const { id, args } = request;
-  chrome.runtime.sendMessage({
+  extension.runtime.sendMessage({
     type: 'EXTERNAL_SEND_TO_CONTRACT', // MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT
     id,
     args,

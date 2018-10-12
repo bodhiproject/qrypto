@@ -14,7 +14,7 @@ const history = syncHistoryWithStore(browserHistory, store.routerStore);
 history.push('/login');
 
 interface IProps {
-  port: chrome.runtime.Port;
+  port: extension.runtime.Port;
 }
 
 interface IState {

@@ -1,5 +1,6 @@
 import { observable, action, computed, reaction } from 'mobx';
 import { isEmpty } from 'lodash';
+const extension = require('extensionizer');
 
 import AppStore from './AppStore';
 import { MESSAGE_TYPE } from '../../constants';
@@ -29,7 +30,7 @@ export default class CreateWalletStore {
 
     reaction(
       () => this.walletName,
-      () => chrome.runtime.sendMessage({
+      () => extension.runtime.sendMessage({
         type: MESSAGE_TYPE.VALIDATE_WALLET_NAME,
         name: this.walletName,
       }, (response: any) => this.walletNameTaken = response),

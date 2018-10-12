@@ -1,4 +1,5 @@
 import { observable, action } from 'mobx';
+const extension = require('extensionizer');
 
 import { MESSAGE_TYPE } from '../../../constants';
 import QryNetwork from '../../../models/QryNetwork';
@@ -16,7 +17,7 @@ export default class NavBarStore {
 
   constructor(app: AppStore) {
     this.app = app;
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_NETWORKS }, (response: any) => this.networks = response);
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_NETWORKS }, (response: any) => this.networks = response);
   }
 
   @action
@@ -26,7 +27,7 @@ export default class NavBarStore {
 
   @action
   public changeNetwork = (index: number) => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK, networkIndex: index });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.CHANGE_NETWORK, networkIndex: index });
   }
 
   @action
@@ -39,6 +40,6 @@ export default class NavBarStore {
   public logout = () => {
     this.reset();
     this.app.routerStore.push('/loading');
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGOUT });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.LOGOUT });
   }
 }

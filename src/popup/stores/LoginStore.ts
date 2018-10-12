@@ -1,5 +1,6 @@
 import { observable, computed, action } from 'mobx';
 import { isEmpty } from 'lodash';
+const extension = require('extensionizer');
 
 import AppStore from './AppStore';
 import { MESSAGE_TYPE, RESPONSE_TYPE } from '../../constants';
@@ -28,8 +29,8 @@ export default class LoginStore {
 
   constructor(app: AppStore) {
     this.app = app;
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.HAS_ACCOUNTS }, (response: any) => this.hasAccounts = response);
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.RESTORE_SESSION }, (response: any) => {
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.HAS_ACCOUNTS }, (response: any) => this.hasAccounts = response);
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.RESTORE_SESSION }, (response: any) => {
       if (response === RESPONSE_TYPE.RESTORING_SESSION) {
         this.app.routerStore.push('/loading');
       }
@@ -45,7 +46,7 @@ export default class LoginStore {
   public login = () => {
     if (this.error === false) {
       this.app.routerStore.push('/loading');
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN, password: this.password });
+      extension.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN, password: this.password });
     }
   }
 

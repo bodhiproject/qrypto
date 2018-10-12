@@ -1,5 +1,6 @@
 import { observable, computed, action, reaction } from 'mobx';
 import { findIndex } from 'lodash';
+const extension = require('extensionizer');
 
 import AppStore from './AppStore';
 import { MESSAGE_TYPE } from '../../constants';
@@ -51,7 +52,7 @@ export default class AddTokenStore {
         this.resetTokenDetails();
         // If valid contract address, send rpc call to fetch other contract details
         if (this.contractAddress && !this.contractAddressFieldError) {
-          chrome.runtime.sendMessage(
+          extension.runtime.sendMessage(
             { type: MESSAGE_TYPE.GET_QRC_TOKEN_DETAILS,
               contractAddress: this.contractAddress});
         }
@@ -60,7 +61,7 @@ export default class AddTokenStore {
   }
 
   public addToken = () => {
-    chrome.runtime.sendMessage({
+    extension.runtime.sendMessage({
       type: MESSAGE_TYPE.ADD_TOKEN,
       contractAddress: this.contractAddress,
       name: this.name,
@@ -74,7 +75,7 @@ export default class AddTokenStore {
 
   @action
   public init = () => {
-    chrome.runtime.onMessage.addListener(this.handleMessage);
+    extension.runtime.onMessage.addListener(this.handleMessage);
   }
 
   @action

@@ -1,6 +1,7 @@
 import { isEmpty, find, cloneDeep } from 'lodash';
 import { Wallet as QtumWallet } from 'qtumjs-wallet';
 import assert from 'assert';
+const extension = require('extensionizer');
 
 import QryptoController from '.';
 import IController from './iController';
@@ -43,10 +44,10 @@ export default class AccountController extends IController {
   constructor(main: QryptoController) {
     super('account', main);
 
-    chrome.runtime.onMessage.addListener(this.handleMessage);
+    extension.runtime.onMessage.addListener(this.handleMessage);
 
     const { MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, REGTEST_ACCOUNTS } = STORAGE;
-    chrome.storage.local.get([MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, REGTEST_ACCOUNTS],
+    extension.storage.local.get([MAINNET_ACCOUNTS, TESTNET_ACCOUNTS, REGTEST_ACCOUNTS],
       ({ mainnetAccounts, testnetAccounts, regtestAccounts }: any) => {
       if (!isEmpty(mainnetAccounts)) {
         this.mainnetAccounts = mainnetAccounts;
@@ -105,7 +106,7 @@ export default class AccountController extends IController {
       return;
     }
 
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_FAILURE });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_FAILURE });
   }
 
   /*
@@ -132,7 +133,7 @@ export default class AccountController extends IController {
 
     // Add account to storage
     this.accounts.push(prunedAcct);
-    chrome.storage.local.set({
+    extension.storage.local.set({
       [storageKey]: this.accounts,
     }, () => console.log(this.main.network.networkName, 'Account added', prunedAcct));
 
@@ -156,7 +157,7 @@ export default class AccountController extends IController {
       // Validate that we don't already have the wallet in our accountList
       const exists = await this.walletAlreadyExists(privateKeyHash);
       if (exists) {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
+        extension.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
         return;
       }
 
@@ -185,7 +186,7 @@ export default class AccountController extends IController {
       // validate that we don't already have the wallet in our accountList accountList
       const exists = await this.walletAlreadyExists(privateKeyHash);
       if (exists) {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
+        extension.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
         return;
       }
 
@@ -258,10 +259,10 @@ export default class AccountController extends IController {
   public routeToAccountPage = () => {
     if (isEmpty(this.accounts)) {
       // Accounts not found, route to Create Wallet page
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS });
+      extension.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_NO_ACCOUNTS });
     } else {
       // Accounts found, route to Account Login page
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_WITH_ACCOUNTS });
+      extension.runtime.sendMessage({ type: MESSAGE_TYPE.LOGIN_SUCCESS_WITH_ACCOUNTS });
     }
   }
 
@@ -290,7 +291,7 @@ export default class AccountController extends IController {
     if (!isSessionRestore) {
       this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.LOGIN);
     }
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.ACCOUNT_LOGIN_SUCCESS });
   }
 
   /*
@@ -384,7 +385,8 @@ export default class AccountController extends IController {
       this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.BALANCE_CHANGE);
     }
 
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.wallet.info });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN,
+      info: this.loggedInAccount.wallet.info });
   }
 
   /*
@@ -425,18 +427,19 @@ export default class AccountController extends IController {
       }
 
       await this.loggedInAccount.wallet.send(receiverAddress, amount, {feeRate});
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
+      extension.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
     } catch (err) {
-      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
+      extension.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
       this.displayErrorOnPopup(err);
     }
   }
 
   private displayErrorOnPopup = (err: Error)  => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
+    extension.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
   }
 
-  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+  private handleMessage = (request: any, _: extension.runtime.MessageSender, sendResponse: (response: any) => void) => {
+    console.log('extensionizer handleMessage ');
     switch (request.type) {
       case MESSAGE_TYPE.LOGIN:
         this.login(request.password);
