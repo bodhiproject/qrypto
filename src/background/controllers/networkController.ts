@@ -25,7 +25,7 @@ export default class NetworkController extends IController {
     return NetworkController.NETWORKS[this.networkIndex].name;
   }
 
-  private networkIndex: number = 1;
+  private networkIndex: number = 0;
 
   constructor(main: QryptoController) {
     super('network', main);

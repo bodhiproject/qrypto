@@ -6,7 +6,7 @@ import { MESSAGE_TYPE, NETWORK_NAMES } from '../../constants';
 import QryNetwork from '../../models/QryNetwork';
 
 const INIT_VALUES = {
-  networkIndex: 1,
+  networkIndex: 0,
   loggedInAccountName: undefined,
   info: undefined,
   qtumUSD: undefined,
