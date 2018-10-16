@@ -380,8 +380,18 @@ export default class AccountController extends IController {
     await this.loggedInAccount.wallet.getInfo();
     const newBalance = this.loggedInAccount.wallet.info!.balance;
 
-    if (sendInpageUpdate && existingBalance !== newBalance) {
-      this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.BALANCE_CHANGE);
+    if (existingBalance !== newBalance) {
+      if (sendInpageUpdate) {
+        this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.BALANCE_CHANGE);
+      }
+
+      /**
+       * FeeRate for TRANSACTION_SPEED.FAST, TRANSACTION_SPEED.NORMAL,
+       * TRANSACTION_SPEED.SLOW are all presently 500, so we just calculate the
+       * maxSendAmount once for a given account balance. If in the future we have variable
+       * feeRates, we will have to calculate maxSendAmount for each feeRate.
+       */
+      this.sendMaxQtumSendToPopup(TRANSACTION_SPEED.NORMAL);
     }
 
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.wallet.info });
@@ -403,7 +413,7 @@ export default class AccountController extends IController {
   * @param receiverAddress The address to send Qtum to.
   * @param amount The amount to send.
   */
-  private sendTokens = async (receiverAddress: string, amount: number, transactionSpeed: string) => {
+  private sendTokens = async (receiverAddress: string, amount: number, transactionSpeed: TRANSACTION_SPEED) => {
     if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
       throw Error('Cannot send with no wallet instance.');
     }
@@ -434,6 +444,43 @@ export default class AccountController extends IController {
 
   private displayErrorOnPopup = (err: Error)  => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
+  }
+
+  private sendMaxQtumSendToPopup = async (transactionSpeed: TRANSACTION_SPEED) => {
+    if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
+      throw Error('Cannot calculate max balance with no wallet instance.');
+    }
+
+    // TODO - DRY w/ sendTokens
+    const rates = {
+      [TRANSACTION_SPEED.FAST]: 500,
+      [TRANSACTION_SPEED.NORMAL]: 500,
+      [TRANSACTION_SPEED.SLOW]: 500,
+    };
+    const feeRate = rates[transactionSpeed]; // satoshi/byte; 500 satoshi/byte == .005 QTUM/KB
+    if (!feeRate) {
+      throw Error('feeRate not set');
+    }
+
+    const cMSAPromise = this.loggedInAccount.wallet.calcMaxSendAmount(feeRate);
+    cMSAPromise.then((maxQtumSend) => {
+        console.log('accountController mqs', maxQtumSend);
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MAX_QTUM_SEND_RETURN, maxQtumSend });
+      },
+    );
+    // cMSAPromise.reject(
+
+    // )
+
+    // try{
+    //   console.log("accountController")
+    //   let maxQtumSend = await this.loggedInAccount.wallet.calcMaxSendAmount(feeRate);
+    //   console.log("accountController mqs", maxQtumSend)
+    //   chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MAX_QTUM_SEND_RETURN, maxQtumSend: maxQtumSend });
+    // }catch(err){
+    //   //TODO - just display the error on pop-up?or also send another error message?look into what the differences for these other methods in this class
+    //   this.displayErrorOnPopup(err);
+    // }
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
@@ -483,6 +530,9 @@ export default class AccountController extends IController {
         break;
       case MESSAGE_TYPE.VALIDATE_WALLET_NAME:
         sendResponse(this.isWalletNameTaken(request.name));
+        break;
+      case MESSAGE_TYPE.GET_MAX_QTUM_SEND:
+        this.getMaxQtumSend(request.transactionSpeed);
         break;
       default:
         break;

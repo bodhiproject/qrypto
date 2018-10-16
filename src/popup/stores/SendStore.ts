@@ -89,6 +89,13 @@ export default class SendStore {
     const token = find(this.tokens, { symbol: tokenSymbol });
     if (token) {
       this.token = token;
+
+      if (token.symbol === 'QTUM') {
+        chrome.runtime.sendMessage({
+          type: MESSAGE_TYPE.GET_MAX_QTUM_SEND,
+          transactionSpeed: this.transactionSpeed,
+        });
+      }
     }
   }
 
@@ -134,6 +141,12 @@ export default class SendStore {
       case MESSAGE_TYPE.SEND_TOKENS_FAILURE:
         this.sendState = SEND_STATE.INITIAL;
         this.errorMessage = request.error.message;
+        break;
+      case MESSAGE_TYPE.GET_MAX_QTUM_SEND_RETURN:
+        // TODO - MAKE SURE THIS DOESN'T overwrite when we aren't sending qtum
+        console.log('maxQtumSend SendStore', request.maxQtumSend);
+        window.mqs = request.maxQtumSend;
+        this.maxAmount = request.maxQtumSend;
         break;
       default:
         break;
