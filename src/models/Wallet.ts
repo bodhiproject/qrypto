@@ -3,13 +3,14 @@ import { Wallet as QtumWallet, Insight, WalletRPCProvider } from 'qtumjs-wallet'
 
 import { ISigner } from '../types';
 import { ISendTxOptions } from 'qtumjs-wallet/lib/tx';
-import { RPC_METHOD } from '../constants';
+import { RPC_METHOD, NETWORK_NAMES } from '../constants';
 
 export default class Wallet implements ISigner {
   public qjsWallet?: QtumWallet;
   public rpcProvider?: WalletRPCProvider;
   public info?: Insight.IGetInfo;
   public qtumUSD?: number;
+  public maxQtumSend?: number;
 
   constructor(qjsWallet: QtumWallet) {
     this.qjsWallet = qjsWallet;
@@ -34,6 +35,14 @@ export default class Wallet implements ISigner {
     return await this.qjsWallet!.send(to, amount * 1e8, { feeRate: options.feeRate });
   }
 
+  public calcMaxQtumSend = async (networkName: string) => {
+    if (!this.qjsWallet || !this.info) {
+      throw Error('Cannot calculate max send amount without wallet or this.info.');
+    }
+    this.maxQtumSend = await this.qjsWallet.sendEstimateMaxValue(this.maxQtumSendToAddress(networkName));
+    return this.maxQtumSend;
+  }
+
   public sendTransaction = async (args: any[]): Promise<any> => {
     if (!this.rpcProvider) {
       throw Error('Cannot sign transaction without RPC provider.');
@@ -47,5 +56,19 @@ export default class Wallet implements ISigner {
     } catch (err) {
       throw err;
     }
+  }
+
+  /**
+   * We just need to pass a valid sendTo address belonging to that network for the
+   * qtumjs-wallet library to calculate the maxQtumSend amount.  It does not matter what
+   * the specific address is, as that does not affect the value of the
+   * maxQtumSend amount
+   */
+  private maxQtumSendToAddress = (networkName: string) => {
+    if (networkName === NETWORK_NAMES.MAINNET) {
+      return 'QN8HYBmMxVyf7MQaDvBNtneBN8np5dZwoW';
+    }
+    // TestNet or RegTest
+    return 'qLJsx41F8Uv1KFF3RbrZfdLnyWQzvPdeF9';
   }
 }

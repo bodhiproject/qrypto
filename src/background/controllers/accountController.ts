@@ -380,8 +380,11 @@ export default class AccountController extends IController {
     await this.loggedInAccount.wallet.getInfo();
     const newBalance = this.loggedInAccount.wallet.info!.balance;
 
-    if (sendInpageUpdate && existingBalance !== newBalance) {
-      this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.BALANCE_CHANGE);
+    if (existingBalance !== newBalance) {
+      if (sendInpageUpdate) {
+        this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.BALANCE_CHANGE);
+      }
+      this.sendMaxQtumSendToPopup();
     }
 
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.wallet.info });
@@ -403,7 +406,7 @@ export default class AccountController extends IController {
   * @param receiverAddress The address to send Qtum to.
   * @param amount The amount to send.
   */
-  private sendTokens = async (receiverAddress: string, amount: number, transactionSpeed: string) => {
+  private sendTokens = async (receiverAddress: string, amount: number, transactionSpeed: TRANSACTION_SPEED) => {
     if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
       throw Error('Cannot send with no wallet instance.');
     }
@@ -434,6 +437,18 @@ export default class AccountController extends IController {
 
   private displayErrorOnPopup = (err: Error)  => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
+  }
+
+  private sendMaxQtumSendToPopup = async () => {
+    if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
+      throw Error('Cannot calculate max balance with no wallet instance.');
+    }
+
+    const mqsaPromise = this.loggedInAccount.wallet.calcMaxQtumSend(this.main.network.networkName);
+    mqsaPromise.then((maxQtumSend) => {
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MAX_QTUM_SEND_RETURN, maxQtumSend });
+      },
+    );
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
@@ -483,6 +498,9 @@ export default class AccountController extends IController {
         break;
       case MESSAGE_TYPE.VALIDATE_WALLET_NAME:
         sendResponse(this.isWalletNameTaken(request.name));
+        break;
+      case MESSAGE_TYPE.GET_MAX_QTUM_SEND:
+        this.sendMaxQtumSendToPopup();
         break;
       default:
         break;

@@ -1,4 +1,4 @@
-import { observable, computed, action, reaction } from 'mobx';
+import { observable, computed, action } from 'mobx';
 import { find } from 'lodash';
 
 import AppStore from './AppStore';
@@ -14,6 +14,7 @@ const INIT_VALUES = {
   token: undefined,
   amount: '',
   maxAmount: undefined,
+  maxQtumSend: undefined,
   sendState: SEND_STATE.INITIAL,
   errorMessage: undefined,
   transactionSpeed: TRANSACTION_SPEED.NORMAL,
@@ -30,7 +31,7 @@ export default class SendStore {
   @observable public receiverAddress?: string = INIT_VALUES.receiverAddress;
   @observable public token?: QRCToken = INIT_VALUES.token;
   @observable public amount: number | string = INIT_VALUES.amount;
-  @observable public maxAmount?: number = INIT_VALUES.maxAmount;
+  @observable public maxQtumSend?: number = INIT_VALUES.maxQtumSend;
   public transactionSpeeds: string[] = INIT_VALUES.transactionSpeeds;
   @observable public transactionSpeed?: string = INIT_VALUES.transactionSpeed;
   @observable public gasLimit: number = INIT_VALUES.gasLimitRecommendedAmount;
@@ -59,16 +60,20 @@ export default class SendStore {
   @computed public get buttonDisabled(): boolean {
     return !this.senderAddress || !!this.receiverFieldError || !this.token || !!this.amountFieldError;
   }
+  @computed public get maxAmount(): number | undefined {
+    if (this.token) {
+      if (this.token.symbol === 'QTUM') {
+        return this.maxQtumSend;
+      }
+      return this.token!.balance;
+    }
+    return undefined;
+  }
 
   private app: AppStore;
 
   constructor(app: AppStore) {
     this.app = app;
-
-    reaction(
-      () => this.token,
-      () => this.maxAmount = this.token!.balance,
-    );
   }
 
   @action
@@ -79,9 +84,11 @@ export default class SendStore {
       this.tokens.unshift(new QRCToken('Qtum Token', 'QTUM', 8, ''));
       this.tokens[0].balance = this.app.sessionStore.info ? this.app.sessionStore.info.balance : undefined;
       this.token = this.tokens[0];
-      this.maxAmount = this.token!.balance;
     });
     this.senderAddress = this.app.sessionStore.info ? this.app.sessionStore.info.addrStr : undefined;
+    chrome.runtime.sendMessage({
+      type: MESSAGE_TYPE.GET_MAX_QTUM_SEND,
+    });
   }
 
   @action
@@ -134,6 +141,10 @@ export default class SendStore {
       case MESSAGE_TYPE.SEND_TOKENS_FAILURE:
         this.sendState = SEND_STATE.INITIAL;
         this.errorMessage = request.error.message;
+        break;
+      case MESSAGE_TYPE.GET_MAX_QTUM_SEND_RETURN:
+        const qtumToken = this.tokens[0];
+        this.maxQtumSend = request.maxQtumSend / (10 ** qtumToken.decimals);
         break;
       default:
         break;
