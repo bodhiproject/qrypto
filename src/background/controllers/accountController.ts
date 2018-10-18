@@ -384,7 +384,7 @@ export default class AccountController extends IController {
       if (sendInpageUpdate) {
         this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.BALANCE_CHANGE);
       }
-      this.sendMaxQtumSendToPopup();
+      this.sendMaxQtumAmountToPopup();
     }
 
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.wallet.info });
@@ -439,16 +439,17 @@ export default class AccountController extends IController {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
   }
 
-  private sendMaxQtumSendToPopup = async () => {
+  private sendMaxQtumAmountToPopup = async () => {
     if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
       throw Error('Cannot calculate max balance with no wallet instance.');
     }
 
-    const mqsaPromise = this.loggedInAccount.wallet.calcMaxQtumSend(this.main.network.networkName);
-    mqsaPromise.then((maxQtumSend) => {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MAX_QTUM_SEND_RETURN, maxQtumSend });
-      },
-    );
+    try {
+      const maxQtumAmount = await this.loggedInAccount.wallet.calcMaxQtumSend(this.main.network.networkName);
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MAX_QTUM_SEND_RETURN, maxQtumAmount });
+    } catch (err) {
+      this.displayErrorOnPopup(err);
+    }
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
@@ -500,7 +501,7 @@ export default class AccountController extends IController {
         sendResponse(this.isWalletNameTaken(request.name));
         break;
       case MESSAGE_TYPE.GET_MAX_QTUM_SEND:
-        this.sendMaxQtumSendToPopup();
+        this.sendMaxQtumAmountToPopup();
         break;
       default:
         break;

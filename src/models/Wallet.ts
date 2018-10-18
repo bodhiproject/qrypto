@@ -65,10 +65,7 @@ export default class Wallet implements ISigner {
    * maxQtumSend amount
    */
   private maxQtumSendToAddress = (networkName: string) => {
-    if (networkName === NETWORK_NAMES.MAINNET) {
-      return 'QN8HYBmMxVyf7MQaDvBNtneBN8np5dZwoW';
-    }
-    // TestNet or RegTest
-    return 'qLJsx41F8Uv1KFF3RbrZfdLnyWQzvPdeF9';
+    return networkName === NETWORK_NAMES.MAINNET ?
+      'QN8HYBmMxVyf7MQaDvBNtneBN8np5dZwoW' : 'qLJsx41F8Uv1KFF3RbrZfdLnyWQzvPdeF9';
   }
 }
