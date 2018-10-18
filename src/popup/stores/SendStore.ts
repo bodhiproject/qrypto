@@ -144,7 +144,7 @@ export default class SendStore {
         break;
       case MESSAGE_TYPE.GET_MAX_QTUM_SEND_RETURN:
         const qtumToken = this.tokens[0];
-        this.maxQtumSend = request.maxQtumSend / (10 ** qtumToken.decimals);
+        this.maxQtumSend = request.maxQtumAmount / (10 ** qtumToken.decimals);
         break;
       default:
         break;
