@@ -58,21 +58,26 @@ export default class NetworkController extends IController {
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
-    switch (request.type) {
-      case MESSAGE_TYPE.CHANGE_NETWORK:
-        this.changeNetwork(request.networkIndex);
-        break;
-      case MESSAGE_TYPE.GET_NETWORKS:
-        sendResponse(NetworkController.NETWORKS);
-        break;
-      case MESSAGE_TYPE.GET_NETWORK_INDEX:
-        sendResponse(this.networkIndex);
-        break;
-      case MESSAGE_TYPE.GET_NETWORK_EXPLORER_URL:
-        sendResponse(this.explorerUrl);
-        break;
-      default:
-        break;
+    try {
+      switch (request.type) {
+        case MESSAGE_TYPE.CHANGE_NETWORK:
+          this.changeNetwork(request.networkIndex);
+          break;
+        case MESSAGE_TYPE.GET_NETWORKS:
+          sendResponse(NetworkController.NETWORKS);
+          break;
+        case MESSAGE_TYPE.GET_NETWORK_INDEX:
+          sendResponse(this.networkIndex);
+          break;
+        case MESSAGE_TYPE.GET_NETWORK_EXPLORER_URL:
+          sendResponse(this.explorerUrl);
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error(err);
+      this.main.displayErrorOnPopup(err);
     }
   }
 }

@@ -496,7 +496,8 @@ export default class AccountController extends IController {
           break;
       }
     } catch (err) {
-      this.displayErrorOnPopup(err);
+      console.error(err);
+      this.main.displayErrorOnPopup(err);
     }
   }
 }

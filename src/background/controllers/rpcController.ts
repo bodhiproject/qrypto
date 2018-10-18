@@ -171,6 +171,7 @@ export default class RPCController extends IController {
       }
     } catch (err) {
       console.error(err);
+      this.main.displayErrorOnPopup(err);
     }
   }
 }

@@ -58,4 +58,8 @@ export default class QryptoController {
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.ROUTE_LOGIN });
     }
   }
+
+  public displayErrorOnPopup = (err: Error)  => {
+    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
+  }
 }

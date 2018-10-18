@@ -254,24 +254,29 @@ export default class TokenController extends IController {
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
-    switch (request.type) {
-      case MESSAGE_TYPE.GET_QRC_TOKEN_LIST:
-        sendResponse(this.tokens);
-        break;
-      case MESSAGE_TYPE.SEND_QRC_TOKENS:
-        this.sendQRCToken(request.receiverAddress, request.amount, request.token, request.gasLimit, request.gasPrice);
-        break;
-      case MESSAGE_TYPE.ADD_TOKEN:
-        this.addToken(request.contractAddress, request.name, request.symbol, request.decimals);
-        break;
-      case MESSAGE_TYPE.GET_QRC_TOKEN_DETAILS:
-        this.getQRCTokenDetails(request.contractAddress);
-        break;
-      case MESSAGE_TYPE.REMOVE_TOKEN:
-        this.removeToken(request.contractAddress);
-        break;
-      default:
-        break;
+    try {
+      switch (request.type) {
+        case MESSAGE_TYPE.GET_QRC_TOKEN_LIST:
+          sendResponse(this.tokens);
+          break;
+        case MESSAGE_TYPE.SEND_QRC_TOKENS:
+          this.sendQRCToken(request.receiverAddress, request.amount, request.token, request.gasLimit, request.gasPrice);
+          break;
+        case MESSAGE_TYPE.ADD_TOKEN:
+          this.addToken(request.contractAddress, request.name, request.symbol, request.decimals);
+          break;
+        case MESSAGE_TYPE.GET_QRC_TOKEN_DETAILS:
+          this.getQRCTokenDetails(request.contractAddress);
+          break;
+        case MESSAGE_TYPE.REMOVE_TOKEN:
+          this.removeToken(request.contractAddress);
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error(err);
+      this.main.displayErrorOnPopup(err);
     }
   }
 }
