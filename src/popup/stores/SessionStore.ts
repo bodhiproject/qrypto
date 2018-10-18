@@ -27,7 +27,7 @@ export default class SessionStore {
     return this.networkName === NETWORK_NAMES.MAINNET;
   }
   @computed public get networkBalAnnotation() {
-    return  this.isMainNet ? undefined : `(${this.networkName}, no value)`;
+    return  this.isMainNet ? '' : `(${this.networkName}, no value)`;
   }
 
   private qtumUSD?: number = INIT_VALUES.qtumUSD;
