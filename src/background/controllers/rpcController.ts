@@ -155,18 +155,23 @@ export default class RPCController extends IController {
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender) => {
-    switch (request.type) {
-      case MESSAGE_TYPE.EXTERNAL_RAW_CALL:
-        this.externalRawCall(request.id, request.method, request.args);
-        break;
-      case MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT:
-        this.externalSendToContract(request.id, request.args);
-        break;
-      case MESSAGE_TYPE.EXTERNAL_CALL_CONTRACT:
-        this.externalCallContract(request.id, request.args);
-        break;
-      default:
-        break;
+    try {
+      switch (request.type) {
+        case MESSAGE_TYPE.EXTERNAL_RAW_CALL:
+          this.externalRawCall(request.id, request.method, request.args);
+          break;
+        case MESSAGE_TYPE.EXTERNAL_SEND_TO_CONTRACT:
+          this.externalSendToContract(request.id, request.args);
+          break;
+        case MESSAGE_TYPE.EXTERNAL_CALL_CONTRACT:
+          this.externalCallContract(request.id, request.args);
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error(err);
+      this.main.displayErrorOnPopup(err);
     }
   }
 }

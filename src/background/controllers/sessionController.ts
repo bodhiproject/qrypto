@@ -69,25 +69,30 @@ export default class SessionController extends IController {
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
-    switch (request.type) {
-      case MESSAGE_TYPE.RESTORE_SESSION:
-        if (this.main.account.loggedInAccount) {
-          sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
-          const isSessionRestore = true;
-          this.main.account.onAccountLoggedIn(isSessionRestore);
-        } else if (this.main.crypto.hasValidPasswordHash()) {
-          sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
-          this.main.account.routeToAccountPage();
-        }
-        break;
-      case MESSAGE_TYPE.GET_SESSION_LOGOUT_INTERVAL:
-        sendResponse(this.sessionLogoutInterval);
-        break;
-      case MESSAGE_TYPE.SAVE_SESSION_LOGOUT_INTERVAL:
-        this.sessionLogoutInterval = request.value;
-        break;
-      default:
-        break;
+    try {
+      switch (request.type) {
+        case MESSAGE_TYPE.RESTORE_SESSION:
+          if (this.main.account.loggedInAccount) {
+            sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
+            const isSessionRestore = true;
+            this.main.account.onAccountLoggedIn(isSessionRestore);
+          } else if (this.main.crypto.hasValidPasswordHash()) {
+            sendResponse(RESPONSE_TYPE.RESTORING_SESSION);
+            this.main.account.routeToAccountPage();
+          }
+          break;
+        case MESSAGE_TYPE.GET_SESSION_LOGOUT_INTERVAL:
+          sendResponse(this.sessionLogoutInterval);
+          break;
+        case MESSAGE_TYPE.SAVE_SESSION_LOGOUT_INTERVAL:
+          this.sessionLogoutInterval = request.value;
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error(err);
+      this.main.displayErrorOnPopup(err);
     }
   }
 }
