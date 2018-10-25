@@ -415,10 +415,6 @@ export default class AccountController extends IController {
     }
   }
 
-  private displayErrorOnPopup = (err: Error)  => {
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
-  }
-
   /**
    * We update the maxQtum amount under 2 scnearios
    * 1 - When wallet.info has been updated because a new balance has a new maxQtumSend
