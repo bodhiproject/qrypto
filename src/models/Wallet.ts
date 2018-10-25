@@ -1,5 +1,6 @@
 import { action } from 'mobx';
 import { Wallet as QtumWallet, Insight, WalletRPCProvider } from 'qtumjs-wallet';
+import deepEqual from 'deep-equal';
 
 import { ISigner } from '../types';
 import { ISendTxOptions } from 'qtumjs-wallet/lib/tx';
@@ -18,11 +19,19 @@ export default class Wallet implements ISigner {
   }
 
   @action
-  public getInfo = async () => {
+  public updateInfo = async () => {
     if (!this.qjsWallet) {
-      console.error('Cannot getInfo without qjsWallet instance.');
+      console.error('Cannot updateInfo without qjsWallet instance.');
     }
-    this.info = await this.qjsWallet!.getInfo();
+    const newInfo = await this.qjsWallet!.getInfo();
+
+    // if they are not equal, then the balance has changed
+    if (!deepEqual(this.info, newInfo)) {
+      this.info = newInfo;
+      return true;
+    }
+
+    return false;
   }
 
   // @param amount: (unit - whole QTUM)
@@ -33,14 +42,6 @@ export default class Wallet implements ISigner {
 
     // convert amount units from whole QTUM => SATOSHI QTUM
     return await this.qjsWallet!.send(to, amount * 1e8, { feeRate: options.feeRate });
-  }
-
-  public calcMaxQtumSend = async (networkName: string) => {
-    if (!this.qjsWallet || !this.info) {
-      throw Error('Cannot calculate max send amount without wallet or this.info.');
-    }
-    this.maxQtumSend = await this.qjsWallet.sendEstimateMaxValue(this.maxQtumSendToAddress(networkName));
-    return this.maxQtumSend;
   }
 
   public sendTransaction = async (args: any[]): Promise<any> => {
@@ -56,6 +57,14 @@ export default class Wallet implements ISigner {
     } catch (err) {
       throw err;
     }
+  }
+
+  public calcMaxQtumSend = async (networkName: string) => {
+    if (!this.qjsWallet || !this.info) {
+      throw Error('Cannot calculate max send amount without wallet or this.info.');
+    }
+    this.maxQtumSend = await this.qjsWallet.sendEstimateMaxValue(this.maxQtumSendToAddress(networkName));
+    return this.maxQtumSend;
   }
 
   /**
