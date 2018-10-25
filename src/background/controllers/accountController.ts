@@ -84,12 +84,8 @@ export default class AccountController extends IController {
   * Initial login with the master password and routing to the correct account login page.
   */
   public login = async (password: string) => {
-    try {
-      this.main.crypto.generateAppSaltIfNecessary();
-      this.main.crypto.derivePasswordHash(password);
-    } catch (err) {
-      this.displayErrorOnPopup(err);
-    }
+    this.main.crypto.generateAppSaltIfNecessary();
+    this.main.crypto.derivePasswordHash(password);
   }
 
   public finishLogin = async () => {
@@ -145,26 +141,21 @@ export default class AccountController extends IController {
   * @param mnemonic The mnemonic to derive the wallet from.
   */
   public importMnemonic = async (accountName: string, mnemonic: string) => {
-    try {
-      // Non-empty mnemonic is already validated in the popup ui
-      assert(mnemonic, 'invalid mnemonic');
+    // Non-empty mnemonic is already validated in the popup ui
+    assert(mnemonic, 'invalid mnemonic');
 
-      const network = this.main.network.network;
-      const wallet = network.fromMnemonic(mnemonic);
-      const privateKeyHash = this.getPrivateKeyHash(wallet);
+    const network = this.main.network.network;
+    const wallet = network.fromMnemonic(mnemonic);
+    const privateKeyHash = this.getPrivateKeyHash(wallet);
 
-      // Validate that we don't already have the wallet in our accountList
-      const exists = await this.walletAlreadyExists(privateKeyHash);
-      if (exists) {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
-        return;
-      }
-
-      await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
-    } catch (e) {
-      console.log(e);
-      this.displayErrorOnPopup(e);
+    // Validate that we don't already have the wallet in our accountList
+    const exists = await this.walletAlreadyExists(privateKeyHash);
+    if (exists) {
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
+      return;
     }
+
+    await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
   }
 
   /*
@@ -173,27 +164,22 @@ export default class AccountController extends IController {
   * @param privateKey The private key to derive the wallet from.
   */
   public importPrivateKey = async (accountName: string, privateKey: string) => {
-    try {
-      // Non-empty privateKey is already validated in the popup ui
-      assert(privateKey, 'invalid privateKey');
+    // Non-empty privateKey is already validated in the popup ui
+    assert(privateKey, 'invalid privateKey');
 
-      // recover wallet and privateKeyHash
-      const network = this.main.network.network;
-      const wallet = network.fromWIF(privateKey);
-      const privateKeyHash = this.getPrivateKeyHash(wallet);
+    // recover wallet and privateKeyHash
+    const network = this.main.network.network;
+    const wallet = network.fromWIF(privateKey);
+    const privateKeyHash = this.getPrivateKeyHash(wallet);
 
-      // validate that we don't already have the wallet in our accountList accountList
-      const exists = await this.walletAlreadyExists(privateKeyHash);
-      if (exists) {
-        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
-        return;
-      }
-
-      await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
-    } catch (e) {
-      console.log(e);
-      this.displayErrorOnPopup(e);
+    // validate that we don't already have the wallet in our accountList accountList
+    const exists = await this.walletAlreadyExists(privateKeyHash);
+    if (exists) {
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.IMPORT_MNEMONIC_PRKEY_FAILURE });
+      return;
     }
+
+    await this.addAccountAndLogin(accountName, privateKeyHash, wallet);
   }
 
   /*
@@ -238,8 +224,8 @@ export default class AccountController extends IController {
 
       await this.onAccountLoggedIn();
     } catch (err) {
-      console.error(err);
       this.resetAccount();
+      throw err;
     }
   }
 
@@ -425,7 +411,7 @@ export default class AccountController extends IController {
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_SUCCESS });
     } catch (err) {
       chrome.runtime.sendMessage({ type: MESSAGE_TYPE.SEND_TOKENS_FAILURE, error: err });
-      this.displayErrorOnPopup(err);
+      throw (err);
     }
   }
 
@@ -455,58 +441,62 @@ export default class AccountController extends IController {
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
-    switch (request.type) {
-      case MESSAGE_TYPE.LOGIN:
-        this.login(request.password);
-        break;
-      case MESSAGE_TYPE.IMPORT_MNEMONIC:
-        this.importMnemonic(request.accountName, request.mnemonicPrivateKey);
-        break;
-      case MESSAGE_TYPE.IMPORT_PRIVATE_KEY:
-        this.importPrivateKey(request.accountName, request.mnemonicPrivateKey);
-        break;
-      case MESSAGE_TYPE.SAVE_TO_FILE:
-        this.saveToFile(request.accountName, request.mnemonicPrivateKey);
-        break;
-      case MESSAGE_TYPE.ACCOUNT_LOGIN:
-        this.loginAccount(request.selectedWalletName);
-        break;
-      case MESSAGE_TYPE.SEND_TOKENS:
-        this.sendTokens(request.receiverAddress, request.amount, request.transactionSpeed);
-        break;
-      case MESSAGE_TYPE.LOGOUT:
-        this.logoutAccount();
-        break;
-      case MESSAGE_TYPE.HAS_ACCOUNTS:
-        sendResponse(this.hasAccounts);
-        break;
-      case MESSAGE_TYPE.GET_ACCOUNTS:
-        sendResponse(this.accounts);
-        break;
-      case MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT:
-        sendResponse(this.loggedInAccount && this.loggedInAccount.wallet && this.loggedInAccount.wallet.info
-          ? { name: this.loggedInAccount.name, address: this.loggedInAccount!.wallet!.info!.addrStr }
-          : undefined);
-        break;
-      case MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME:
-        sendResponse(this.loggedInAccount ? this.loggedInAccount.name : undefined);
-        break;
-      case MESSAGE_TYPE.GET_WALLET_INFO:
-        sendResponse(this.loggedInAccount && this.loggedInAccount.wallet
-          ? this.loggedInAccount.wallet.info : undefined);
-        break;
-      case MESSAGE_TYPE.GET_QTUM_USD:
-        sendResponse(this.loggedInAccount && this.loggedInAccount.wallet
-          ? this.loggedInAccount.wallet.qtumUSD : undefined);
-        break;
-      case MESSAGE_TYPE.VALIDATE_WALLET_NAME:
-        sendResponse(this.isWalletNameTaken(request.name));
-        break;
-      case MESSAGE_TYPE.GET_MAX_QTUM_SEND:
-        this.updateAndSendMaxQtumAmountToPopup();
-        break;
-      default:
-        break;
+    try {
+      switch (request.type) {
+        case MESSAGE_TYPE.LOGIN:
+          this.login(request.password);
+          break;
+        case MESSAGE_TYPE.IMPORT_MNEMONIC:
+          this.importMnemonic(request.accountName, request.mnemonicPrivateKey);
+          break;
+        case MESSAGE_TYPE.IMPORT_PRIVATE_KEY:
+          this.importPrivateKey(request.accountName, request.mnemonicPrivateKey);
+          break;
+        case MESSAGE_TYPE.SAVE_TO_FILE:
+          this.saveToFile(request.accountName, request.mnemonicPrivateKey);
+          break;
+        case MESSAGE_TYPE.ACCOUNT_LOGIN:
+          this.loginAccount(request.selectedWalletName);
+          break;
+        case MESSAGE_TYPE.SEND_TOKENS:
+          this.sendTokens(request.receiverAddress, request.amount, request.transactionSpeed);
+          break;
+        case MESSAGE_TYPE.LOGOUT:
+          this.logoutAccount();
+          break;
+        case MESSAGE_TYPE.HAS_ACCOUNTS:
+          sendResponse(this.hasAccounts);
+          break;
+        case MESSAGE_TYPE.GET_ACCOUNTS:
+          sendResponse(this.accounts);
+          break;
+        case MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT:
+          sendResponse(this.loggedInAccount && this.loggedInAccount.wallet && this.loggedInAccount.wallet.info
+            ? { name: this.loggedInAccount.name, address: this.loggedInAccount!.wallet!.info!.addrStr }
+            : undefined);
+          break;
+        case MESSAGE_TYPE.GET_LOGGED_IN_ACCOUNT_NAME:
+          sendResponse(this.loggedInAccount ? this.loggedInAccount.name : undefined);
+          break;
+        case MESSAGE_TYPE.GET_WALLET_INFO:
+          sendResponse(this.loggedInAccount && this.loggedInAccount.wallet
+            ? this.loggedInAccount.wallet.info : undefined);
+          break;
+        case MESSAGE_TYPE.GET_QTUM_USD:
+          sendResponse(this.loggedInAccount && this.loggedInAccount.wallet
+            ? this.loggedInAccount.wallet.qtumUSD : undefined);
+          break;
+        case MESSAGE_TYPE.VALIDATE_WALLET_NAME:
+          sendResponse(this.isWalletNameTaken(request.name));
+          break;
+        case MESSAGE_TYPE.GET_MAX_QTUM_SEND:
+          this.updateAndSendMaxQtumAmountToPopup();
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      this.displayErrorOnPopup(err);
     }
   }
 }
