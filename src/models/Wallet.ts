@@ -1,15 +1,17 @@
 import { action } from 'mobx';
 import { Wallet as QtumWallet, Insight, WalletRPCProvider } from 'qtumjs-wallet';
+import deepEqual from 'deep-equal';
 
 import { ISigner } from '../types';
 import { ISendTxOptions } from 'qtumjs-wallet/lib/tx';
-import { RPC_METHOD } from '../constants';
+import { RPC_METHOD, NETWORK_NAMES } from '../constants';
 
 export default class Wallet implements ISigner {
   public qjsWallet?: QtumWallet;
   public rpcProvider?: WalletRPCProvider;
   public info?: Insight.IGetInfo;
   public qtumUSD?: number;
+  public maxQtumSend?: number;
 
   constructor(qjsWallet: QtumWallet) {
     this.qjsWallet = qjsWallet;
@@ -17,11 +19,19 @@ export default class Wallet implements ISigner {
   }
 
   @action
-  public getInfo = async () => {
+  public updateInfo = async () => {
     if (!this.qjsWallet) {
-      console.error('Cannot getInfo without qjsWallet instance.');
+      console.error('Cannot updateInfo without qjsWallet instance.');
     }
-    this.info = await this.qjsWallet!.getInfo();
+    const newInfo = await this.qjsWallet!.getInfo();
+
+    // if they are not equal, then the balance has changed
+    if (!deepEqual(this.info, newInfo)) {
+      this.info = newInfo;
+      return true;
+    }
+
+    return false;
   }
 
   // @param amount: (unit - whole QTUM)
@@ -47,5 +57,24 @@ export default class Wallet implements ISigner {
     } catch (err) {
       throw err;
     }
+  }
+
+  public calcMaxQtumSend = async (networkName: string) => {
+    if (!this.qjsWallet || !this.info) {
+      throw Error('Cannot calculate max send amount without wallet or this.info.');
+    }
+    this.maxQtumSend = await this.qjsWallet.sendEstimateMaxValue(this.maxQtumSendToAddress(networkName));
+    return this.maxQtumSend;
+  }
+
+  /**
+   * We just need to pass a valid sendTo address belonging to that network for the
+   * qtumjs-wallet library to calculate the maxQtumSend amount.  It does not matter what
+   * the specific address is, as that does not affect the value of the
+   * maxQtumSend amount
+   */
+  private maxQtumSendToAddress = (networkName: string) => {
+    return networkName === NETWORK_NAMES.MAINNET ?
+      'QN8HYBmMxVyf7MQaDvBNtneBN8np5dZwoW' : 'qLJsx41F8Uv1KFF3RbrZfdLnyWQzvPdeF9';
   }
 }

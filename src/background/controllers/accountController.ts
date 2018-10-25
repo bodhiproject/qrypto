@@ -372,19 +372,16 @@ export default class AccountController extends IController {
       return;
     }
 
-    let existingBalance;
-    if (this.loggedInAccount.wallet.info) {
-      existingBalance = this.loggedInAccount.wallet.info!.balance;
+    const infoDidUpdate = await this.loggedInAccount.wallet.updateInfo();
+    if (infoDidUpdate) {
+      chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.wallet.info });
+
+      if (sendInpageUpdate) {
+        this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.BALANCE_CHANGE);
+      }
+
+      this.updateAndSendMaxQtumAmountToPopup();
     }
-
-    await this.loggedInAccount.wallet.getInfo();
-    const newBalance = this.loggedInAccount.wallet.info!.balance;
-
-    if (sendInpageUpdate && existingBalance !== newBalance) {
-      this.main.inpageAccount.sendInpageAccountAllPorts(QRYPTO_ACCOUNT_CHANGE.BALANCE_CHANGE);
-    }
-
-    chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_WALLET_INFO_RETURN, info: this.loggedInAccount.wallet.info });
   }
 
   /*
@@ -403,7 +400,7 @@ export default class AccountController extends IController {
   * @param receiverAddress The address to send Qtum to.
   * @param amount The amount to send.
   */
-  private sendTokens = async (receiverAddress: string, amount: number, transactionSpeed: string) => {
+  private sendTokens = async (receiverAddress: string, amount: number, transactionSpeed: TRANSACTION_SPEED) => {
     if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
       throw Error('Cannot send with no wallet instance.');
     }
@@ -434,6 +431,31 @@ export default class AccountController extends IController {
 
   private displayErrorOnPopup = (err: Error)  => {
     chrome.runtime.sendMessage({ type: MESSAGE_TYPE.UNEXPECTED_ERROR, error: err.message });
+  }
+
+  /**
+   * We update the maxQtum amount under 2 scnearios
+   * 1 - When wallet.info has been updated because a new balance has a new maxQtumSend
+   * 2 - Whenever the maxQtumSend is requested, because even if the balance does not
+   * change, the available UTXOs can change(which causes a change in maxQtumSend).
+   * For instance when a user sends Qtum, but that transaction has not confirmed yet,
+   * the balance will not change, but calcMaxQtumSend is able to account for those
+   * unconfirmed UTXOs and update maxQtumSend accordingly.
+   */
+  private updateAndSendMaxQtumAmountToPopup = async () => {
+    if (!this.loggedInAccount || !this.loggedInAccount.wallet || !this.loggedInAccount.wallet.qjsWallet) {
+      throw Error('Cannot calculate max balance with no wallet instance.');
+    }
+
+    try {
+      const calcMQSPr = this.loggedInAccount.wallet.calcMaxQtumSend(this.main.network.networkName);
+      calcMQSPr.then(() => {
+        chrome.runtime.sendMessage({ type: MESSAGE_TYPE.GET_MAX_QTUM_SEND_RETURN,
+          maxQtumAmount: this.loggedInAccount!.wallet!.maxQtumSend });
+      });
+    } catch (err) {
+      this.displayErrorOnPopup(err);
+    }
   }
 
   private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
@@ -483,6 +505,9 @@ export default class AccountController extends IController {
         break;
       case MESSAGE_TYPE.VALIDATE_WALLET_NAME:
         sendResponse(this.isWalletNameTaken(request.name));
+        break;
+      case MESSAGE_TYPE.GET_MAX_QTUM_SEND:
+        this.updateAndSendMaxQtumAmountToPopup();
         break;
       default:
         break;
