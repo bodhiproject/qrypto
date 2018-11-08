@@ -436,23 +436,24 @@ export default class AccountController extends IController {
     });
   }
 
-  private handleMessage = (request: any, _: chrome.runtime.MessageSender, sendResponse: (response: any) => void) => {
+  private handleMessage = async (request: any, _: chrome.runtime.MessageSender,
+                                 sendResponse: (response: any) => void) => {
     try {
       switch (request.type) {
         case MESSAGE_TYPE.LOGIN:
           this.login(request.password);
           break;
         case MESSAGE_TYPE.IMPORT_MNEMONIC:
-          this.importMnemonic(request.accountName, request.mnemonicPrivateKey);
+          await this.importMnemonic(request.accountName, request.mnemonicPrivateKey);
           break;
         case MESSAGE_TYPE.IMPORT_PRIVATE_KEY:
-          this.importPrivateKey(request.accountName, request.mnemonicPrivateKey);
+          await this.importPrivateKey(request.accountName, request.mnemonicPrivateKey);
           break;
         case MESSAGE_TYPE.SAVE_TO_FILE:
           this.saveToFile(request.accountName, request.mnemonicPrivateKey);
           break;
         case MESSAGE_TYPE.ACCOUNT_LOGIN:
-          this.loginAccount(request.selectedWalletName);
+          await this.loginAccount(request.selectedWalletName);
           break;
         case MESSAGE_TYPE.SEND_TOKENS:
           this.sendTokens(request.receiverAddress, request.amount, request.transactionSpeed);
