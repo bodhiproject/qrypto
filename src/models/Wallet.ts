@@ -29,17 +29,17 @@ export default class Wallet implements ISigner {
      * (This happens if the insight api is down)
      */
     let timedOut = false;
-    const timeoutPromise = new Promise((reject) => {
+    const timeoutPromise = new Promise((_, reject) => {
       const wait = setTimeout(() => {
         clearTimeout(wait);
         timedOut = true;
-        reject('wallet.getInfo failed, insight api may be down');
+        reject(Error('wallet.getInfo failed, insight api may be down'));
       }, 30000);
     });
 
     const getInfoPromise = this.qjsWallet!.getInfo();
     const promises = [timeoutPromise, getInfoPromise];
-    let newInfo;
+    let newInfo: any;
     try {
       newInfo = await Promise.race(promises);
 

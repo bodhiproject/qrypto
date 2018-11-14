@@ -1,6 +1,5 @@
 {
   "name": "qrypto",
-  "version": "1.4.2-beta",
   "private": true,
   "scripts": {
     "clean": "rm -rf dist",
