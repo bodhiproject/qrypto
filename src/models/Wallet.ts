@@ -23,12 +23,33 @@ export default class Wallet implements ISigner {
     if (!this.qjsWallet) {
       console.error('Cannot updateInfo without qjsWallet instance.');
     }
-    const newInfo = await this.qjsWallet!.getInfo();
 
-    // if they are not equal, then the balance has changed
-    if (!deepEqual(this.info, newInfo)) {
-      this.info = newInfo;
-      return true;
+    /**
+     * We add a timeout promise to handle if qjsWallet hangs when executing getInfo.
+     * (This happens if the insight api is down)
+     */
+    let timedOut = false;
+    const timeoutPromise = new Promise((_, reject) => {
+      const wait = setTimeout(() => {
+        clearTimeout(wait);
+        timedOut = true;
+        reject(Error('wallet.getInfo failed, insight api may be down'));
+      }, 30000);
+    });
+
+    const getInfoPromise = this.qjsWallet!.getInfo();
+    const promises = [timeoutPromise, getInfoPromise];
+    let newInfo: any;
+    try {
+      newInfo = await Promise.race(promises);
+
+      // if they are not equal, then the balance has changed
+      if (!timedOut && !deepEqual(this.info, newInfo)) {
+        this.info = newInfo;
+        return true;
+      }
+    } catch (e) {
+      throw(Error(e));
     }
 
     return false;
